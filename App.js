@@ -5,7 +5,11 @@ import { Button, Text } from 'react-native';
 
 import Login from './LoginScreen';
 import Home from './HomeScreen';
+import Basket from './BasketScreen'
 import * as Font from 'expo-font';
+import Shopping from './ShoppingScreen';
+import Wallet from './WalletScreen';
+import Scan from './ScanScreen';
 
 const Stack = createStackNavigator();
 
@@ -65,6 +69,34 @@ class App extends Component {
               headerShown: false 
             })}
           />
+
+        <Stack.Screen name="Basket" component={Basket} 
+            options={({ navigation }) => ({
+              title: '', 
+              headerShown: false 
+            })}
+          />
+
+        <Stack.Screen name="Scan" component={Scan} 
+                    options={({ navigation }) => ({
+                      title: '', 
+                      headerShown: false 
+                    })}
+                  />
+
+        <Stack.Screen name="Shopping" component={Shopping} 
+                            options={({ navigation }) => ({
+                              title: '', 
+                              headerShown: false 
+                            })}
+                          />
+
+        <Stack.Screen name="Wallet" component={Wallet} 
+                                    options={({ navigation }) => ({
+                                      title: '', 
+                                      headerShown: false 
+                                    })}
+                                  />
         </Stack.Navigator>
       </NavigationContainer>
     );

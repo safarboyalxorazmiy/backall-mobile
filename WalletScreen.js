@@ -5,30 +5,20 @@ import { StyleSheet, Text, View, Dimensions, Image, TouchableOpacity } from 'rea
 
 const screenWidth = Dimensions.get('window').width;
 
-class Home extends Component {
+class Wallet extends Component {
   render() {
     const { navigation } = this.props;
 
     return (
         <>
             <View style={styles.container}>
-                <View style={styles.cards}>
-                    <View style={styles.card}>
-                        <Text style={styles.cardTitle}>Bugungi kirim</Text>
-                        <Text style={styles.cardDescription}>3.000.000<Text style={styles.currency}>UZS</Text></Text>
-                    </View>
-
-                    <View style={styles.card}>
-                    <Text style={styles.cardTitle}>Bugungi foyda</Text>
-                        <Text style={styles.cardDescription}>500.000<Text style={styles.currency}>UZS</Text></Text>
-                    </View>
-                </View>
+                
                 <StatusBar style="auto" />
             </View>
 
             <View style={styles.navbar}>
                 <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Home')}>
-                    <View style={styles.activeBorder}></View>
+                    <View style={styles.inactiveBorder}></View>
                     <Image source={require("./assets/dashboard-icon.png")} />
                 </TouchableOpacity>
 
@@ -47,13 +37,11 @@ class Home extends Component {
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Wallet')}>
-                    <View style={styles.inactiveBorder}></View>
+                    <View style={styles.activeBorder}></View>
                     <Image source={require("./assets/wallet-icon.png")} />
                 </TouchableOpacity>
             </View>
         </>
-        
-      
     );
   }
 }
@@ -141,4 +129,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default Home;
+export default Wallet;
