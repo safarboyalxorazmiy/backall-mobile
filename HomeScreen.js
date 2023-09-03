@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TextInput, Dimensions, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, Image } from 'react-native';
 
 
 const screenWidth = Dimensions.get('window').width;
@@ -21,15 +21,33 @@ class Home extends Component {
                     <Text style={styles.cardDescription}>500.000<Text style={styles.currency}>UZS</Text></Text>
                 </View>
             </View>
-
-           
-            
-
             <StatusBar style="auto" />
         </View>
 
         <View style={styles.navbar}>
-            <Text  style={{color: "red"}}> dalskfnasdf</Text>
+            <View style={styles.navItem}>
+                <View style={styles.activeBorder}></View>
+                <Image source={require("./assets/dashboard-icon.png")} />
+            </View>
+
+            <View style={styles.navItem}>
+                <View style={styles.inactiveBorder}></View>
+                <Image source={require("./assets/basket-icon.png")} />
+            </View>
+        
+            <View style={styles.scan}>
+                <Image source={require("./assets/scan-icon.png")} />
+            </View>
+            
+            <View style={styles.navItem}>
+                <View style={styles.inactiveBorder}></View>
+                <Image source={require("./assets/shopping-icon.png")} />
+            </View>
+
+            <View style={styles.navItem}>
+                <View style={styles.inactiveBorder}></View>
+                <Image source={require("./assets/wallet-icon.png")} />
+            </View>
         </View>
         </>
         
@@ -79,9 +97,45 @@ const styles = StyleSheet.create({
     },
 
     navbar: {
-        padding: 30,
+        paddingHorizontal: 30,
         width: screenWidth,
+        backgroundColor: "white",
+        height: 93,
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "flex-start"
+    },
+
+    navItem: {
+        display: "flex",
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    
+    activeBorder: {
+        marginBottom: 30,
+        width: 47,
+        height: 4,
+        borderBottomLeftRadius: 2,
+        borderBottomRightRadius: 2,
         backgroundColor: "black"
+    },
+
+    inactiveBorder: {
+        marginBottom: 30,
+        width: 47,
+        height: 4,
+        borderBottomLeftRadius: 2,
+        borderBottomRightRadius: 2,
+        // backgroundColor: "black"
+    },
+
+    scan: {
+        backgroundColor: "black",
+        padding: 21,
+        borderRadius: "50%",
+        marginTop: 10
     }
 });
 
