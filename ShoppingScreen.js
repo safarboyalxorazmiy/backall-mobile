@@ -53,7 +53,7 @@ class Shopping extends Component {
                                 </View>
                             </TouchableOpacity>
                         </View>
-                    </View>
+                </View>
 
                 <StatusBar style="auto" />
             </View>
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
         alignItems: 'center',
-        paddingTop: 100
+        paddingTop: 50
         // justifyContent: 'center',
     },
 
