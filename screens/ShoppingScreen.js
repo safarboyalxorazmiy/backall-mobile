@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Dimensions, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, Image, TouchableOpacity, ScrollView } from 'react-native';
 
 
 const screenWidth = Dimensions.get('window').width;
@@ -13,7 +13,7 @@ class Shopping extends Component {
         <>
             <View style={styles.container}>
                 
-                <View style={styles.productList}>
+                <ScrollView style={styles.productList}>
                         <View style={styles.product}>
                             <Text style={styles.productTitle}>Qora Gorilla</Text>
                             <Text style={styles.productCount}>3 ta</Text>
@@ -38,7 +38,39 @@ class Shopping extends Component {
                             <Text style={styles.hour}>20:04</Text>
                         </View>
 
-                        <View style={styles.buttons}>
+                        <View style={styles.product}>
+                            <Text style={styles.productTitle}>Qora Gorilla</Text>
+                            <Text  style={styles.productCount}>3</Text>
+                            <Text style={styles.hour}>20:04</Text>
+                        </View>
+
+                        <View style={styles.product}>
+                            <Text style={styles.productTitle}>Qora Gorilla</Text>
+                            <Text  style={styles.productCount}>3</Text>
+                            <Text style={styles.hour}>20:04</Text>
+                        </View>
+
+                        <View style={styles.product}>
+                            <Text style={styles.productTitle}>Qora Gorilla</Text>
+                            <Text  style={styles.productCount}>3</Text>
+                            <Text style={styles.hour}>20:04</Text>
+                        </View>
+
+                        <View style={styles.product}>
+                            <Text style={styles.productTitle}>Qora Gorilla</Text>
+                            <Text  style={styles.productCount}>3</Text>
+                            <Text style={styles.hour}>20:04</Text>
+                        </View>
+
+                        <View style={styles.product}>
+                            <Text style={styles.productTitle}>Qora Gorilla</Text>
+                            <Text  style={styles.productCount}>3</Text>
+                            <Text style={styles.hour}>20:04</Text>
+                        </View>
+                        
+                </ScrollView>
+
+                <View style={styles.buttons}>
                             <TouchableOpacity>
                                 <View style={styles.button}>
                                     <Image source={require("../assets/back-icon.png")} />
@@ -53,8 +85,6 @@ class Shopping extends Component {
                                 </View>
                             </TouchableOpacity>
                         </View>
-                </View>
-
                 <StatusBar style="auto" />
             </View>
 
@@ -134,7 +164,7 @@ const styles = StyleSheet.create({
     scan: {
         backgroundColor: "black",
         padding: 21,
-        borderRadius: "50%",
+        borderRadius: 50,
         marginTop: 10
     },
 
@@ -172,10 +202,12 @@ const styles = StyleSheet.create({
     },
 
     buttons: {
+        width: screenWidth - (17 + 17),
         marginTop: 22,
         display: "flex",
         flexDirection: "row",
-        justifyContent: "space-between"
+        justifyContent: "space-between",
+        marginBottom: 40
     },
 
     button: {

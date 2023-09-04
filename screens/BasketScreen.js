@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Dimensions, Image, TouchableOpacity, TextInput } from 'react-native';
-
+import { StyleSheet, Text, View, Dimensions, Image, TouchableOpacity, TextInput, ScrollView } from 'react-native';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -18,7 +17,7 @@ class Basket extends Component {
                     placeholderTextColor="white"
                 />
 
-                <View style={styles.productList}>
+                <ScrollView style={styles.productList}>
                     <View style={styles.product}>
                         <Text style={styles.productTitle}>Qora Gorilla</Text>
                         <Text  style={styles.productCount}>3</Text>
@@ -43,7 +42,43 @@ class Basket extends Component {
                         <Image source={require("../assets/edit-icon.png")} />
                     </View>
 
-                </View>
+                    <View style={styles.product}>
+                        <Text style={styles.productTitle}>Qora Gorilla</Text>
+                        <Text  style={styles.productCount}>3</Text>
+                        <Image source={require("../assets/edit-icon.png")} />
+                    </View>
+
+                    <View style={styles.product}>
+                        <Text style={styles.productTitle}>Qora Gorilla</Text>
+                        <Text  style={styles.productCount}>3</Text>
+                        <Image source={require("../assets/edit-icon.png")} />
+                    </View>
+
+                    <View style={styles.product}>
+                        <Text style={styles.productTitle}>Qora Gorilla</Text>
+                        <Text  style={styles.productCount}>3</Text>
+                        <Image source={require("../assets/edit-icon.png")} />
+                    </View>
+
+                    <View style={styles.product}>
+                        <Text style={styles.productTitle}>Qora Gorilla</Text>
+                        <Text  style={styles.productCount}>3</Text>
+                        <Image source={require("../assets/edit-icon.png")} />
+                    </View>
+
+                    <View style={styles.product}>
+                        <Text style={styles.productTitle}>Qora Gorilla</Text>
+                        <Text  style={styles.productCount}>3</Text>
+                        <Image source={require("../assets/edit-icon.png")} />
+                    </View>
+
+                    <View style={styles.product}>
+                        <Text style={styles.productTitle}>Qora Gorilla</Text>
+                        <Text  style={styles.productCount}>3</Text>
+                        <Image source={require("../assets/edit-icon.png")} />
+                    </View>
+
+                </ScrollView>
 
                 <StatusBar style="auto" />
             </View>
@@ -125,7 +160,7 @@ const styles = StyleSheet.create({
     scan: {
         backgroundColor: "black",
         padding: 21,
-        borderRadius: "50%",
+        borderRadius: 50,
         marginTop: 10
     },
 

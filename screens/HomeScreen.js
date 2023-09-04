@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     scan: {
         backgroundColor: "black",
         padding: 21,
-        borderRadius: "50%",
+        borderRadius: 50,
         marginTop: 10
     }
 });

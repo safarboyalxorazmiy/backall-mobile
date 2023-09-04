@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Dimensions, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, Image, TouchableOpacity, ScrollView } from 'react-native';
 
 
 const screenWidth = Dimensions.get('window').width;
@@ -12,58 +12,103 @@ class Wallet extends Component {
     return (
         <>
             <View style={styles.container}>
-            <View style={styles.productList}>
-                        <View style={styles.product}>
-                            <Text style={styles.productTitle}>+ 3 000  </Text>
-                            <Text style={styles.productCount}>UZS</Text>
-                            <View style={{display: "flex", flexDirection: "row", alignItems: "center", gap: 30}}>
-                                <Text style={styles.hour}>20:04</Text>
-                                <Image source={require("../assets/card-icon.png")} />
-                            </View>
+                <ScrollView style={styles.productList}>
+                    <View style={styles.product}>
+                        <Text style={styles.productTitle}>+ 3 000  </Text>
+                        <Text style={styles.productCount}>UZS</Text>
+                        <View style={{display: "flex", flexDirection: "row", alignItems: "center", gap: 30}}>
+                            <Text style={styles.hour}>20:04</Text>
+                            <Image source={require("../assets/card-icon.png")} />
                         </View>
+                    </View>
 
-                        <View style={styles.product}>
-                            <Text style={styles.productTitle}>+ 3 000  </Text>
-                            <Text  style={styles.productCount}>UZS</Text>
-                            <View style={{display: "flex", flexDirection: "row", alignItems: "center", gap: 30}}>
-                                <Text style={styles.hour}>20:04</Text>
-                                <Image source={require("../assets/card-icon.png")} />
-                            </View>
+                    <View style={styles.product}>
+                        <Text style={styles.productTitle}>+ 3 000  </Text>
+                        <Text  style={styles.productCount}>UZS</Text>
+                        <View style={{display: "flex", flexDirection: "row", alignItems: "center", gap: 30}}>
+                            <Text style={styles.hour}>20:04</Text>
+                            <Image source={require("../assets/card-icon.png")} />
                         </View>
+                    </View>
 
-                        <View style={styles.product}>
-                            <Text style={styles.productTitle}>+ 3 000  </Text>
-                            <Text  style={styles.productCount}>UZS</Text>
-                            <View style={{display: "flex", flexDirection: "row", alignItems: "center", gap: 30}}>
-                                <Text style={styles.hour}>20:04</Text>
-                                <Image source={require("../assets/card-icon.png")} />
-                            </View>
+                    <View style={styles.product}>
+                        <Text style={styles.productTitle}>+ 3 000  </Text>
+                        <Text  style={styles.productCount}>UZS</Text>
+                        <View style={{display: "flex", flexDirection: "row", alignItems: "center", gap: 30}}>
+                            <Text style={styles.hour}>20:04</Text>
+                            <Image source={require("../assets/card-icon.png")} />
                         </View>
+                    </View>
 
-                        <View style={styles.product}>
-                            <Text style={styles.productTitle}>+ 3 000  </Text>
-                            <Text  style={styles.productCount}>UZS</Text>
-                            <View style={{display: "flex", flexDirection: "row", alignItems: "center", gap: 30}}>
-                                <Text style={styles.hour}>20:04</Text>
-                                <Image source={require("../assets/card-icon.png")} />
-                            </View>
+                    <View style={styles.product}>
+                        <Text style={styles.productTitle}>+ 3 000  </Text>
+                        <Text  style={styles.productCount}>UZS</Text>
+                        <View style={{display: "flex", flexDirection: "row", alignItems: "center", gap: 30}}>
+                            <Text style={styles.hour}>20:04</Text>
+                            <Image source={require("../assets/card-icon.png")} />
                         </View>
+                    </View>
 
-                        <View style={styles.buttons}>
-                            <TouchableOpacity>
-                                <View style={styles.button}>
-                                    <Image source={require("../assets/back-icon.png")} />
-                                    <Text style={styles.buttonText}>Oldingi kun</Text>
-                                </View>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity>
-                                <View style={styles.button}>
-                                    <Text style={styles.buttonText}>Kalendar</Text>
-                                    <Image source={require("../assets/calendar-icon.png")} />
-                                </View>
-                            </TouchableOpacity>
+                    <View style={styles.product}>
+                        <Text style={styles.productTitle}>+ 3 000  </Text>
+                        <Text  style={styles.productCount}>UZS</Text>
+                        <View style={{display: "flex", flexDirection: "row", alignItems: "center", gap: 30}}>
+                            <Text style={styles.hour}>20:04</Text>
+                            <Image source={require("../assets/card-icon.png")} />
                         </View>
+                    </View>
+
+                    <View style={styles.product}>
+                        <Text style={styles.productTitle}>+ 3 000  </Text>
+                        <Text  style={styles.productCount}>UZS</Text>
+                        <View style={{display: "flex", flexDirection: "row", alignItems: "center", gap: 30}}>
+                            <Text style={styles.hour}>20:04</Text>
+                            <Image source={require("../assets/card-icon.png")} />
+                        </View>
+                    </View>
+
+                    <View style={styles.product}>
+                        <Text style={styles.productTitle}>+ 3 000  </Text>
+                        <Text  style={styles.productCount}>UZS</Text>
+                        <View style={{display: "flex", flexDirection: "row", alignItems: "center", gap: 30}}>
+                            <Text style={styles.hour}>20:04</Text>
+                            <Image source={require("../assets/card-icon.png")} />
+                        </View>
+                    </View>
+
+                    <View style={styles.product}>
+                        <Text style={styles.productTitle}>+ 3 000  </Text>
+                        <Text  style={styles.productCount}>UZS</Text>
+                        <View style={{display: "flex", flexDirection: "row", alignItems: "center", gap: 30}}>
+                            <Text style={styles.hour}>20:04</Text>
+                            <Image source={require("../assets/card-icon.png")} />
+                        </View>
+                    </View>
+
+                    <View style={styles.product}>
+                        <Text style={styles.productTitle}>+ 3 000  </Text>
+                        <Text  style={styles.productCount}>UZS</Text>
+                        <View style={{display: "flex", flexDirection: "row", alignItems: "center", gap: 30}}>
+                            <Text style={styles.hour}>20:04</Text>
+                            <Image source={require("../assets/card-icon.png")} />
+                        </View>
+                    </View>
+                </ScrollView>
+
+                <View style={styles.buttons}>
+                    <TouchableOpacity>
+                        <View style={styles.button}>
+                            <Image source={require("../assets/back-icon.png")} />
+                            <Text style={styles.buttonText}>Oldingi kun</Text>
+                        </View>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity>
+                        <View style={styles.button}>
+                            <Text style={styles.buttonText}>Kalendar</Text>
+                            <Image source={require("../assets/calendar-icon.png")} />
+                        </View>
+                    </TouchableOpacity>
                 </View>
 
                 <StatusBar style="auto" />
@@ -145,7 +190,7 @@ const styles = StyleSheet.create({
     scan: {
         backgroundColor: "black",
         padding: 21,
-        borderRadius: "50%",
+        borderRadius: 50,
         marginTop: 10
     },
     
@@ -187,7 +232,9 @@ const styles = StyleSheet.create({
         marginTop: 22,
         display: "flex",
         flexDirection: "row",
-        justifyContent: "space-between"
+        justifyContent: "space-between",
+        width: screenWidth - (17 + 17),
+        marginBottom: 40
     },
 
     button: {
