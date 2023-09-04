@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { Button, Text } from 'react-native';
+import { Text } from 'react-native';
 
 import Login from './LoginScreen';
 import Home from './HomeScreen';
@@ -25,9 +25,11 @@ class App extends Component {
   async loadCustomFonts() {
     try {
       await Font.loadAsync({
+        'Roboto-Light': require('./assets/fonts/Roboto-Light.ttf'),
         'Roboto-Regular': require('./assets/fonts/Roboto-Regular.ttf'),
-        'Roboto-Black': require('./assets/fonts/Roboto-Black.ttf'),
-        'Roboto-Bold': require('./assets/fonts/Roboto-Bold.ttf')
+        'Roboto-Medium': require('./assets/fonts/Roboto-Medium.ttf'),
+        'Roboto-Bold': require('./assets/fonts/Roboto-Bold.ttf'),
+        'Roboto-Black': require('./assets/fonts/Roboto-Black.ttf')
       });
       this.setState({ fontsLoaded: true }); // Assuming you have a state variable for tracking font loading
     } catch (error) {

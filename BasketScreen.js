@@ -17,6 +17,34 @@ class Basket extends Component {
                     placeholder="Qidirish..."
                     placeholderTextColor="white"
                 />
+
+                <View style={styles.productList}>
+                    <View style={styles.product}>
+                        <Text style={styles.productTitle}>Qora Gorilla</Text>
+                        <Text  style={styles.productCount}>3</Text>
+                        <Image source={require("./assets/edit-icon.png")} />
+                    </View>
+
+                    <View style={styles.product}>
+                        <Text style={styles.productTitle}>Qora Gorilla</Text>
+                        <Text  style={styles.productCount}>3</Text>
+                        <Image source={require("./assets/edit-icon.png")} />
+                    </View>
+
+                    <View style={styles.product}>
+                        <Text style={styles.productTitle}>Qora Gorilla</Text>
+                        <Text  style={styles.productCount}>3</Text>
+                        <Image source={require("./assets/edit-icon.png")} />
+                    </View>
+
+                    <View style={styles.product}>
+                        <Text style={styles.productTitle}>Qora Gorilla</Text>
+                        <Text  style={styles.productCount}>3</Text>
+                        <Image source={require("./assets/edit-icon.png")} />
+                    </View>
+
+                </View>
+
                 <StatusBar style="auto" />
             </View>
 
@@ -58,7 +86,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         alignItems: 'center',
         paddingTop: 65
-        // justifyContent: 'center',
     }, 
 
     navbar: {
@@ -101,13 +128,40 @@ const styles = StyleSheet.create({
         borderRadius: "50%",
         marginTop: 10
     },
+
     input: {
         backgroundColor: "black",
         color: "white",
         width: screenWidth - (17 + 17),
         paddingVertical: 23,
         paddingHorizontal: 21,
-        borderRadius: 10
+        borderRadius: 10,
+        fontSize: 18
+    },
+
+    productList: {
+        marginTop: 20
+    },
+
+    product: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        width: screenWidth - (17 + 17),
+        paddingVertical: 15,
+        paddingHorizontal: 6,
+        borderTopWidth: 1,
+        borderColor: "#D9D9D9"
+    },
+
+    productTitle: {
+        fontSize: 24,
+        fontWeight: "bold"
+    },
+
+    productCount: {
+        fontSize: 24,
+        fontWeight: "semibold"
     }
 });
 

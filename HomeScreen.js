@@ -6,7 +6,7 @@ import { StyleSheet, Text, View, Dimensions, Image, TouchableOpacity } from 'rea
 const screenWidth = Dimensions.get('window').width;
 
 class Home extends Component {
-  render() {
+    render() {
     const { navigation } = this.props;
 
     return (

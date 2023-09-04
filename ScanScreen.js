@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Dimensions, Image, TouchableOpacity } from 'react-native';
-
-
-const screenWidth = Dimensions.get('window').width;
+import { StyleSheet, View } from 'react-native';
 
 class Scan extends Component {
   render() {
@@ -26,7 +23,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         alignItems: 'center',
         paddingTop: 120
-        // justifyContent: 'center',
     }
 });
 

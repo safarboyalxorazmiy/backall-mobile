@@ -10,7 +10,7 @@ class Login extends Component {
     
     return (
       <View style={styles.container}>
-        <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 20 }}>Assalomu aleykum 👋</Text>
+        <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 20, fontFamily: "Roboto-Black" }}>Assalomu aleykum 👋</Text>
         <TextInput
           style={styles.input}
           placeholder="example@gmail.com"
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     fontSize: 18,
     marginBottom: 10,
-    fontFamily: 'roboto-regular',
+    fontFamily: 'Roboto-Regular',
   },
   button: {
     width: screenWidth - (24 + 24),

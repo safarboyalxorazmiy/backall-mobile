@@ -55,37 +55,6 @@ const styles = StyleSheet.create({
         // justifyContent: 'center',
     },
 
-    cards: {
-        width: screenWidth - (24 + 24)
-    },
-
-    card: {
-        paddingTop: 45,
-        paddingLeft: 38,
-        paddingBottom: 46,
-        backgroundColor: 'black',
-        marginBottom: 25,
-        borderRadius: 22
-    },
-
-    cardTitle: {
-        color: "white",
-        fontSize: 15,
-        fontWeight: "bold",
-        marginBottom: 5,
-        textTransform: "uppercase"
-    },
-
-    cardDescription: {
-        color: "white",
-        fontSize: 38,
-        fontWeight: "bold"
-    },
-
-    currency: {
-        fontSize: 15
-    },
-
     navbar: {
         paddingHorizontal: 30,
         width: screenWidth,
