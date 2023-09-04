@@ -147,6 +147,7 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-between",
+        alignItems: "center",
         width: screenWidth - (17 + 17),
         paddingVertical: 15,
         paddingHorizontal: 6,
@@ -156,13 +157,15 @@ const styles = StyleSheet.create({
 
     productTitle: {
         fontSize: 24,
-        fontWeight: "bold"
+        fontWeight: "bold",
+        width: 150
     },
 
     productCount: {
+        fontFamily: "Roboto-Bold",
         fontSize: 24,
         fontWeight: "semibold"
-    }
+    },
 });
 
 export default Basket;
