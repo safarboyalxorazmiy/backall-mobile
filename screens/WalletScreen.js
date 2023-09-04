@@ -18,7 +18,7 @@ class Wallet extends Component {
                             <Text style={styles.productCount}>UZS</Text>
                             <View style={{display: "flex", flexDirection: "row", alignItems: "center", gap: 30}}>
                                 <Text style={styles.hour}>20:04</Text>
-                                <Image source={require("./assets/card-icon.png")} />
+                                <Image source={require("../assets/card-icon.png")} />
                             </View>
                         </View>
 
@@ -27,7 +27,7 @@ class Wallet extends Component {
                             <Text  style={styles.productCount}>UZS</Text>
                             <View style={{display: "flex", flexDirection: "row", alignItems: "center", gap: 30}}>
                                 <Text style={styles.hour}>20:04</Text>
-                                <Image source={require("./assets/card-icon.png")} />
+                                <Image source={require("../assets/card-icon.png")} />
                             </View>
                         </View>
 
@@ -36,7 +36,7 @@ class Wallet extends Component {
                             <Text  style={styles.productCount}>UZS</Text>
                             <View style={{display: "flex", flexDirection: "row", alignItems: "center", gap: 30}}>
                                 <Text style={styles.hour}>20:04</Text>
-                                <Image source={require("./assets/card-icon.png")} />
+                                <Image source={require("../assets/card-icon.png")} />
                             </View>
                         </View>
 
@@ -45,14 +45,14 @@ class Wallet extends Component {
                             <Text  style={styles.productCount}>UZS</Text>
                             <View style={{display: "flex", flexDirection: "row", alignItems: "center", gap: 30}}>
                                 <Text style={styles.hour}>20:04</Text>
-                                <Image source={require("./assets/card-icon.png")} />
+                                <Image source={require("../assets/card-icon.png")} />
                             </View>
                         </View>
 
                         <View style={styles.buttons}>
                             <TouchableOpacity>
                                 <View style={styles.button}>
-                                    <Image source={require("./assets/back-icon.png")} />
+                                    <Image source={require("../assets/back-icon.png")} />
                                     <Text style={styles.buttonText}>Oldingi kun</Text>
                                 </View>
                             </TouchableOpacity>
@@ -60,7 +60,7 @@ class Wallet extends Component {
                             <TouchableOpacity>
                                 <View style={styles.button}>
                                     <Text style={styles.buttonText}>Kalendar</Text>
-                                    <Image source={require("./assets/calendar-icon.png")} />
+                                    <Image source={require("../assets/calendar-icon.png")} />
                                 </View>
                             </TouchableOpacity>
                         </View>
@@ -72,26 +72,26 @@ class Wallet extends Component {
             <View style={styles.navbar}>
                 <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Home')}>
                     <View style={styles.inactiveBorder}></View>
-                    <Image source={require("./assets/dashboard-icon.png")} />
+                    <Image source={require("../assets/dashboard-icon.png")} />
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Basket')}>
                     <View style={styles.inactiveBorder}></View>
-                    <Image source={require("./assets/basket-icon.png")} />
+                    <Image source={require("../assets/basket-icon.png")} />
                 </TouchableOpacity>
             
                 <TouchableOpacity style={styles.scan} onPress={() => navigation.navigate('Scan')}>
-                    <Image source={require("./assets/scan-icon.png")} />
+                    <Image source={require("../assets/scan-icon.png")} />
                 </TouchableOpacity>
                 
                 <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Shopping')}>
                     <View style={styles.inactiveBorder}></View>
-                    <Image source={require("./assets/shopping-icon.png")} />
+                    <Image source={require("../assets/shopping-icon.png")} />
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Wallet')}>
                     <View style={styles.activeBorder}></View>
-                    <Image source={require("./assets/wallet-icon.png")} />
+                    <Image source={require("../assets/wallet-icon.png")} />
                 </TouchableOpacity>
             </View>
         </>
@@ -105,7 +105,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         alignItems: 'center',
         paddingTop: 50
-        // justifyContent: 'center',
     },
 
     navbar: {
@@ -192,7 +191,7 @@ const styles = StyleSheet.create({
     },
 
     button: {
-        backgroundColor: 'black', // Change the background color as needed
+        backgroundColor: 'black',
         paddingVertical: 10,
         paddingHorizontal: 14,
         borderRadius: 10,
@@ -202,7 +201,7 @@ const styles = StyleSheet.create({
     },
     
     buttonText: {
-        color: 'white', // Change the text color as needed
+        color: 'white',
         fontSize: 16,
         textAlign: 'center',
         fontFamily: "Roboto-Bold",

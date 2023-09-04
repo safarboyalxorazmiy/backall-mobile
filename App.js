@@ -3,13 +3,13 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Text } from 'react-native';
 
-import Login from './LoginScreen';
-import Home from './HomeScreen';
-import Basket from './BasketScreen'
+import Login from './screens/LoginScreen';
+import Home from './screens/HomeScreen';
+import Basket from './screens/BasketScreen'
 import * as Font from 'expo-font';
-import Shopping from './ShoppingScreen';
-import Wallet from './WalletScreen';
-import Scan from './ScanScreen';
+import Shopping from './screens/ShoppingScreen';
+import Wallet from './screens/WalletScreen';
+import Scan from './screens/ScanScreen';
 
 const Stack = createStackNavigator();
 

@@ -29,26 +29,26 @@ class Home extends Component {
             <View style={styles.navbar}>
                 <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Home')}>
                     <View style={styles.activeBorder}></View>
-                    <Image source={require("./assets/dashboard-icon.png")} />
+                    <Image source={require("../assets/dashboard-icon.png")} />
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Basket')}>
                     <View style={styles.inactiveBorder}></View>
-                    <Image source={require("./assets/basket-icon.png")} />
+                    <Image source={require("../assets/basket-icon.png")} />
                 </TouchableOpacity>
             
                 <TouchableOpacity style={styles.scan} onPress={() => navigation.navigate('Scan')}>
-                    <Image source={require("./assets/scan-icon.png")} />
+                    <Image source={require("../assets/scan-icon.png")} />
                 </TouchableOpacity>
                 
                 <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Shopping')}>
                     <View style={styles.inactiveBorder}></View>
-                    <Image source={require("./assets/shopping-icon.png")} />
+                    <Image source={require("../assets/shopping-icon.png")} />
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Wallet')}>
                     <View style={styles.inactiveBorder}></View>
-                    <Image source={require("./assets/wallet-icon.png")} />
+                    <Image source={require("../assets/wallet-icon.png")} />
                 </TouchableOpacity>
             </View>
         </>

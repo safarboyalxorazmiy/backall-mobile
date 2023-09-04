@@ -22,25 +22,25 @@ class Basket extends Component {
                     <View style={styles.product}>
                         <Text style={styles.productTitle}>Qora Gorilla</Text>
                         <Text  style={styles.productCount}>3</Text>
-                        <Image source={require("./assets/edit-icon.png")} />
+                        <Image source={require("../assets/edit-icon.png")} />
                     </View>
 
                     <View style={styles.product}>
                         <Text style={styles.productTitle}>Qora Gorilla</Text>
                         <Text  style={styles.productCount}>3</Text>
-                        <Image source={require("./assets/edit-icon.png")} />
+                        <Image source={require("../assets/edit-icon.png")} />
                     </View>
 
                     <View style={styles.product}>
                         <Text style={styles.productTitle}>Qora Gorilla</Text>
                         <Text  style={styles.productCount}>3</Text>
-                        <Image source={require("./assets/edit-icon.png")} />
+                        <Image source={require("../assets/edit-icon.png")} />
                     </View>
 
                     <View style={styles.product}>
                         <Text style={styles.productTitle}>Qora Gorilla</Text>
                         <Text  style={styles.productCount}>3</Text>
-                        <Image source={require("./assets/edit-icon.png")} />
+                        <Image source={require("../assets/edit-icon.png")} />
                     </View>
 
                 </View>
@@ -51,26 +51,26 @@ class Basket extends Component {
             <View style={styles.navbar}>
                 <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Home')}>
                     <View style={styles.inactiveBorder}></View>
-                    <Image source={require("./assets/dashboard-icon.png")} />
+                    <Image source={require("../assets/dashboard-icon.png")} />
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Basket')}>
                     <View style={styles.activeBorder}></View>
-                    <Image source={require("./assets/basket-icon.png")} />
+                    <Image source={require("../assets/basket-icon.png")} />
                 </TouchableOpacity>
             
                 <TouchableOpacity style={styles.scan} onPress={() => navigation.navigate('Scan')}>
-                    <Image source={require("./assets/scan-icon.png")} />
+                    <Image source={require("../assets/scan-icon.png")} />
                 </TouchableOpacity>
                 
                 <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Shopping')}>
                     <View style={styles.inactiveBorder}></View>
-                    <Image source={require("./assets/shopping-icon.png")} />
+                    <Image source={require("../assets/shopping-icon.png")} />
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Wallet')}>
                     <View style={styles.inactiveBorder}></View>
-                    <Image source={require("./assets/wallet-icon.png")} />
+                    <Image source={require("../assets/wallet-icon.png")} />
                 </TouchableOpacity>
             </View>
         </>
