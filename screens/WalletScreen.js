@@ -125,7 +125,7 @@ class Wallet extends Component {
                     <Image source={require("../assets/basket-icon.png")} />
                 </TouchableOpacity>
             
-                <TouchableOpacity style={styles.scan} onPress={() => navigation.navigate('Scan')}>
+                <TouchableOpacity style={styles.scan} onPress={() => navigation.navigate('Sell')}>
                     <Image source={require("../assets/scan-icon.png")} />
                 </TouchableOpacity>
                 
