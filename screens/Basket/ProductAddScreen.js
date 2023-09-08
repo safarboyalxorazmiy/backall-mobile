@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Dimensions, Image, TouchableOpacity, TextInput,  } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, Image, TouchableOpacity, TextInput } from 'react-native';
+import { CheckBox } from 'react-native-elements'; // Import CheckBox from react-native-elements
 
 const screenWidth = Dimensions.get('window').width;
+
+let nds = false;
 
 class ProductAdd extends Component {
     render() {
@@ -11,7 +14,7 @@ class ProductAdd extends Component {
         return (
             <>
                 <View style={styles.container}>
-                    <Text style={{fontSize: 28, fontFamily: "Roboto-Black", marginBottom: 21}}>Maxsulot qo’shish</Text>
+                    <Text style={{ fontSize: 28, fontFamily: "Roboto-Black", marginBottom: 21 }}>Maxsulot qo’shish</Text>
                     <TextInput
                         style={styles.input}
                         placeholder="Brand nomi: "
@@ -31,10 +34,9 @@ class ProductAdd extends Component {
                             placeholderTextColor="black"
                         />
                         <View style={styles.amountType}>
-                            <Text style={{color: "white", fontSize: 18, fontFamily: "Roboto-Regular"}}>KG</Text>
+                            <Text style={{ color: "white", fontSize: 18, fontFamily: "Roboto-Regular" }}>KG</Text>
                         </View>
                     </View>
-
 
                     <TextInput
                         style={styles.input}
@@ -49,7 +51,7 @@ class ProductAdd extends Component {
                             placeholderTextColor="black"
                         />
 
-                        <Text style={{fontSize: 18, fontFamily: 'Roboto-Regular'}}>yoki</Text>
+                        <Text style={{ fontSize: 18, fontFamily: 'Roboto-Regular' }}>yoki</Text>
 
                         <TextInput
                             style={styles.percentageInput}
@@ -58,8 +60,13 @@ class ProductAdd extends Component {
                         />
                     </View>
 
-                    <View style={{display: "flex",  width: screenWidth - (17 + 17)}}>
-                        <Text style={{fontSize: 18, fontFamily: 'Roboto-Regular'}}>NDS soliq</Text>
+                    <View style={{ display: "flex", flexDirection: "row", alignItems: "center", width: screenWidth - (17 + 17) }}>
+                        <CheckBox
+                            checked={nds}
+                            onPress={() => {nds = true}}
+                            containerStyle={{ margin: 0, padding: 0, borderWidth: 0, backgroundColor: 'transparent' }}
+                        />
+                        <Text style={{ fontSize: 18, fontFamily: 'Roboto-Regular' }}>NDS soliq</Text>
                     </View>
 
                     <View style={styles.buttons}>
@@ -73,8 +80,6 @@ class ProductAdd extends Component {
                     </View>
                 </View>
             </>
-
-
         );
     }
 }
