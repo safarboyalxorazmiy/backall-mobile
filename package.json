@@ -21,8 +21,12 @@
     "react-native-gesture-handler": "^2.12.1",
     "react-native-reanimated": "^3.4.2",
     "react-native-screens": "^3.25.0",
+    "react-native-sqlite-storage": "^6.0.1",
     "react-native-svg": "^13.13.0",
-    "react-native-vector-icons": "^10.0.0"
+    "react-native-vector-icons": "^10.0.0",
+    "expo-sqlite": "~11.3.3",
+    "expo-file-system": "~15.4.3",
+    "expo-asset": "~8.10.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

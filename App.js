@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {Text} from 'react-native';
-
+import { AppRegistry } from 'react-native';
 import Login from './screens/LoginScreen';
 import Home from './screens/HomeScreen';
 import Basket from './screens/Basket/BasketScreen'
@@ -13,6 +13,10 @@ import Scan from './screens/Scan/ScanScreen';
 import ProductAdd from "./screens/Basket/ProductAddScreen";
 import Scanned from "./screens/Scan/ScannedScreen";
 import Sell from "./screens/Sell/SellScreen";
+import DatabaseService from './database/DatabaseService';
+import { name as appName } from './app.json';
+
+AppRegistry.registerComponent(appName, () => App);
 
 const Stack = createStackNavigator();
 
@@ -34,14 +38,22 @@ class App extends Component {
                 'Roboto-Bold': require('./assets/fonts/Roboto-Bold.ttf'),
                 'Roboto-Black': require('./assets/fonts/Roboto-Black.ttf')
             });
-            this.setState({fontsLoaded: true}); // Assuming you have a state variable for tracking font loading
+            this.setState({fontsLoaded: true})
         } catch (error) {
             console.error('Error loading custom fonts:', error);
         }
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         this.loadCustomFonts();
+
+        const dbService = new DatabaseService();
+        try {
+            await dbService.init();
+            console.log("Database initialized successfully");
+        } catch (error) {
+            console.error("Error initializing database:", error);
+        }
     }
 
     render() {
@@ -52,7 +64,6 @@ class App extends Component {
                     <Text>Loading</Text>
                 </>
             )
-            // Return a loading indicator or some other UI until fonts are loaded
             return null;
         }
 
