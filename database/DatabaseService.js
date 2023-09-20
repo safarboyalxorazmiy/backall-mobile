@@ -1,7 +1,5 @@
 import * as SQLite from 'expo-sqlite';
 
-
-// SQLite.openDatabase({ name: 'backall.db', location: 'default' });
 let db = SQLite.openDatabase('backall.db', 1);
 
 class DatabaseService {
@@ -254,6 +252,10 @@ class DatabaseService {
           );
         });
       });
+    }
+
+    async getProductIdBySeria() {
+
     }
 }
 

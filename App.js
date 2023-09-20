@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
-import {Text} from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { Text } from 'react-native';
 import { AppRegistry } from 'react-native';
 import Login from './screens/LoginScreen';
 import Home from './screens/HomeScreen';
@@ -15,6 +15,7 @@ import Scanned from "./screens/Scan/ScannedScreen";
 import Sell from "./screens/Sell/SellScreen";
 import DatabaseService from './database/DatabaseService';
 import { name as appName } from './app.json';
+import NetInfo from "@react-native-community/netinfo";
 
 AppRegistry.registerComponent(appName, () => App);
 
@@ -22,10 +23,13 @@ const Stack = createStackNavigator();
 
 class App extends Component {
 
+    
+
     constructor(props) {
         super(props);
         this.state = {
             fontsLoaded: false,
+            isConnected: null
         };
     }
 
@@ -54,6 +58,19 @@ class App extends Component {
         } catch (error) {
             console.error("Error initializing database:", error);
         }
+
+        this.unsubscribe = NetInfo.addEventListener((state) => {
+            this.setState({ isConnected: state.isConnected });
+        });
+      
+        this.logInternetStatusInterval = setInterval(() => {
+        console.log("Is connected?", this.state.isConnected === null ? 'Loading...' : this.state.isConnected ? 'Yes' : 'No');
+        }, 5000);
+    }
+
+    componentWillUnmount() {
+        this.unsubscribe();
+        clearInterval(this.logInternetStatusInterval);
     }
 
     render() {
