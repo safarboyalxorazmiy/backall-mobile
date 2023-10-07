@@ -39,6 +39,7 @@ class App extends Component {
                 'Gilroy-Light': require('./assets/fonts/gilroy/Gilroy-Light.ttf'),
                 'Gilroy-Regular': require('./assets/fonts/gilroy/Gilroy-Regular.ttf'),
                 'Gilroy-Medium': require('./assets/fonts/gilroy/Gilroy-Medium.ttf'),
+                'Gilroy-SemiBold': require('./assets/fonts/gilroy/Gilroy-SemiBold.ttf'),
                 'Gilroy-Bold': require('./assets/fonts/gilroy/Gilroy-Bold.ttf'),
                 'Gilroy-Black': require('./assets/fonts/gilroy/Gilroy-Black.ttf')
             });

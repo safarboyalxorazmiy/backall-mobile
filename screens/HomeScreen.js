@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Dimensions, Image, TouchableOpacity } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
 
 const screenWidth = Dimensions.get('window').width;
@@ -12,17 +13,74 @@ class Home extends Component {
     return (
         <>
             <View style={styles.container}>
+                <Text style={{
+                    fontSize: 18, 
+                    fontFamily: "Gilroy-SemiBold", 
+                    height: 44, 
+                    borderBottomColor: "#AFAFAF", 
+                    borderBottomWidth: 1, 
+                    width: screenWidth - (24 + 24), 
+                    textAlign: 'center',
+                    marginBottom: 24
+                }}>Statistika</Text>
+                
                 <View style={styles.cards}>
-                    <View style={styles.card}>
-                        <Text style={styles.cardTitle}>Bugungi kirim</Text>
-                        <Text style={styles.cardDescription}>3.000.000<Text style={styles.currency}>UZS</Text></Text>
-                    </View>
+                    <LinearGradient 
+                        colors={['#E59C0D', '#FDD958']}
+                        start={{ x: 0, y: 0.5 }}
+                        style={styles.card}>
 
-                    <View style={styles.card}>
-                    <Text style={styles.cardTitle}>Bugungi foyda</Text>
-                        <Text style={styles.cardDescription}>500.000<Text style={styles.currency}>UZS</Text></Text>
+                        <View style={{
+                            width: 141, 
+                            height: 141, 
+                            borderRadius: 100,
+                            backgroundColor: "#F8E08D", 
+                            position: 'absolute', 
+                            right: -70, 
+                            top: -70,
+                            shadowColor: 'rgba(0, 0, 0, 0.05)',
+                            shadowOffset: {
+                                width: -10,
+                                height: 10,
+                            },
+                            shadowOpacity: 1,
+                            shadowRadius: 20,
+                            elevation: 5
+                        }}>
+                            <Image style={{ position: 'absolute', bottom: 28, left: 25}} source={require("../assets/home/shopping-icon.png")} />
+                        </View>
+
+                        <Text style={styles.cardTitle}>Bugungi kirim</Text>
+                        <Text style={styles.cardDescription}>3.000.000 <Text style={styles.currency}>UZS</Text></Text>
+                    </LinearGradient>
+
+                    <LinearGradient 
+                        style={styles.card}
+                        colors={['#2C8134', '#1DCB00']}
+                        start={{ x: 0, y: 0.5 }} 
+                    >
+                    <View style={{
+                        width: 141, 
+                        height: 141, 
+                        borderRadius: 100,
+                        backgroundColor: "#1EC703", 
+                        position: 'absolute', 
+                        right: -70, 
+                        top: -70,
+                        elevation: 5,
+                        shadowColor: 'rgba(0, 0, 0, 0.05)',
+                        shadowOffset: {
+                          width: -10,
+                          height: 10,
+                        },
+                        shadowRadius: 20
+                    }}>
+                        <Image style={{ position: 'absolute', bottom: 28, left: 25, zIndex: 1}} source={require("../assets/home/benefit-icon.png")} />
                     </View>
-                </View>
+                        <Text style={styles.cardTitle}>Bugungi foyda</Text>
+                        <Text style={styles.cardDescription}>500.000 <Text style={styles.currency}>UZS</Text></Text>
+                    </LinearGradient>
+                    </View>
                 <StatusBar style="auto" />
             </View>
 
@@ -63,7 +121,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
         alignItems: 'center',
-        paddingTop: 120
+        paddingTop: 52
         // justifyContent: 'center',
     },
 
@@ -72,33 +130,42 @@ const styles = StyleSheet.create({
     },
 
     card: {
-        paddingTop: 45,
-        paddingLeft: 38,
-        paddingBottom: 46,
-        backgroundColor: 'black',
+        paddingTop: 24,
+        paddingLeft: 24,
+        paddingBottom: 24,
         marginBottom: 25,
-        borderRadius: 22
+        borderRadius: 12,
+        position: 'relative',
+        overflow: 'hidden'
     },
 
     cardTitle: {
         color: "white",
-        fontSize: 15,
-        fontWeight: "bold",
-        marginBottom: 5,
+        fontSize: 16,
+        fontFamily: "Gilroy-Medium",
+        fontWeight: "500",
+        marginBottom: 10,
         textTransform: "uppercase"
     },
 
     cardDescription: {
         color: "white",
-        fontSize: 38,
-        fontWeight: "bold"
+        fontSize: 24,
+        fontFamily: "Gilroy-SemiBold",
+        fontWeight: "bold",
+        fontWeight: "600"
     },
 
     currency: {
-        fontSize: 15
+        fontSize: 16,
+        fontFamily: "Gilroy-Medium",
+        fontWeight: "500",
+        marginLeft: 4
     },
 
     navbar: {
+        borderTopWidth: 1,
+        borderTopColor: "#EFEFEF",
         paddingHorizontal: 30,
         width: screenWidth,
         backgroundColor: "white",

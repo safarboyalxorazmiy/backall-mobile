@@ -8,10 +8,10 @@ class Scan extends Component {
 
     return (
         <>
-            <View style={styles.container}>
+            {/* <View style={styles.container}>
                 <Image source={require("../../assets/bigscan-icon.png")}></Image>
                 <StatusBar style="auto" />
-            </View>
+            </View> */}
             <TouchableOpacity style={styles.navigator} onPress={() => navigation.navigate('Scanned')}>
                 <Image style={{marginRight: 15}} source={require("../../assets/rightarrow-icon.png")}></Image>
             </TouchableOpacity>

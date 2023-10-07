@@ -128,6 +128,8 @@ const styles = StyleSheet.create({
     },
 
     navbar: {
+        borderTopWidth: 1,
+        borderTopColor: "#EFEFEF",
         paddingHorizontal: 30,
         width: screenWidth,
         backgroundColor: "white",
