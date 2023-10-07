@@ -1,35 +1,61 @@
 import React, { Component } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TextInput, Dimensions, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Dimensions, TouchableOpacity, Image, ScrollView } from 'react-native';
 
 const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
+
 
 class Login extends Component {
   render() {
     const { navigation } = this.props;
     
     return (
-      <View style={styles.container}>
-        <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 20, fontFamily: "Roboto-Black" }}>Assalomu aleykum 👋</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="example@gmail.com"
-          placeholderTextColor="black"
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="********"
-          placeholderTextColor="black"
-        />
+      <ScrollView contentContainerStyle={styles.container}>
+        <Image 
+          source={require('../assets/logo.png')}
+          style={styles.logo}
+        />   
+        
+        <View style={styles.form}>
+          <Text style={styles.label}>Loginni kiriting</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="admin"
+            placeholderTextColor="black"
+          />
 
-        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-          <View style={styles.button}>
-            <Text style={styles.buttonText}>Kirish</Text>
-          </View>
-        </TouchableOpacity>
+          <Text style={styles.label}>Parolni kiriting</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="********"
+            placeholderTextColor="black"
+          />
+
+          <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+            <View style={styles.button}>
+              <Text style={styles.buttonText}>Kirish</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+
+
+        <TouchableOpacity onPress={() => navigation.navigate('Home')} style={{ 
+         marginTop: 168
+        }}>
+            <View style={{
+              height: 52,
+              width: screenWidth - (24 + 24), 
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+             }}>
+              <Text style={{fontFamily: 'Gilroy-Medium', fontWeight: '500', fontSize: 16}}>Parolni unutdingizmi?</Text>
+            </View>
+          </TouchableOpacity>
 
         <StatusBar style="auto" />
-      </View>
+      </ScrollView>
     );
   }
 }
@@ -39,8 +65,24 @@ const styles= StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
+    paddingTop: 104,
+    height: screenHeight
   },
+
+  logo: {
+    width: 220.313, 
+    height: 96.563, 
+    objectFit: "cover", 
+    marginBottom: 83
+  },
+
+  label: {
+    fontSize: 16,
+    fontWeight: '500',
+    fontFamily: 'Gilroy-Medium',
+    marginBottom: 4
+  },
+
   input: {
     height: 64,
     width: screenWidth - (24 + 24),
@@ -49,23 +91,25 @@ const styles= StyleSheet.create({
     paddingVertical: 23,
     paddingHorizontal: 20,
     fontSize: 18,
-    marginBottom: 10,
-    fontFamily: 'Roboto-Regular',
+    marginBottom: 16,
+    fontFamily: 'Gilroy-Regular',
   },
+
   button: {
     width: screenWidth - (24 + 24),
-    height: 64,
-    backgroundColor: 'black',
+    backgroundColor: '#222',
     color: 'white',
-    paddingVertical: 20,
+    paddingVertical: 14,
     borderRadius: 10,
   },
+
   buttonText: {
     color: 'white',
     textAlign: 'center',
     fontSize: 20,
-    textTransform: 'uppercase',
-    fontWeight: 'bold',
+    textTransform: 'capitalize',
+    fontWeight: '500',
+    fontFamily: 'Gilroy-Medium'
   },
 });
 

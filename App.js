@@ -36,12 +36,13 @@ class App extends Component {
     async loadCustomFonts() {
         try {
             await Font.loadAsync({
-                'Roboto-Light': require('./assets/fonts/Roboto-Light.ttf'),
-                'Roboto-Regular': require('./assets/fonts/Roboto-Regular.ttf'),
-                'Roboto-Medium': require('./assets/fonts/Roboto-Medium.ttf'),
-                'Roboto-Bold': require('./assets/fonts/Roboto-Bold.ttf'),
-                'Roboto-Black': require('./assets/fonts/Roboto-Black.ttf')
+                'Gilroy-Light': require('./assets/fonts/gilroy/Gilroy-Light.ttf'),
+                'Gilroy-Regular': require('./assets/fonts/gilroy/Gilroy-Regular.ttf'),
+                'Gilroy-Medium': require('./assets/fonts/gilroy/Gilroy-Medium.ttf'),
+                'Gilroy-Bold': require('./assets/fonts/gilroy/Gilroy-Bold.ttf'),
+                'Gilroy-Black': require('./assets/fonts/gilroy/Gilroy-Black.ttf')
             });
+            
             this.setState({fontsLoaded: true})
         } catch (error) {
             console.error('Error loading custom fonts:', error);
