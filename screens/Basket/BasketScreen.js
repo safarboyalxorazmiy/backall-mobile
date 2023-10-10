@@ -11,71 +11,65 @@ class Basket extends Component {
     return (
         <>
             <View style={styles.container}>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Qidirish..."
-                    placeholderTextColor="white"
-                />
+                <View style={styles.inputWrapper}>
+                    <Image source={require("../../assets/search-icon.png")} />
+
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Mahsulot qidirish"
+                        placeholderTextColor="#AAA"
+                    />
+                </View>
 
                 <ScrollView style={styles.productList}>
+                    <View style={styles.productOdd}>
+                        <Text style={styles.productTitle}>Coca Cola</Text>
+                        <Text  style={styles.productCount}>10 blok</Text>
+                    </View>
+
                     <View style={styles.product}>
+                        <Text style={styles.productTitle}>Pepsi 1.5L</Text>
+                        <Text  style={styles.productCount}>10 blok</Text>
+                    </View>
+
+                    <View style={styles.productOdd}>
                         <Text style={styles.productTitle}>Qora Gorilla</Text>
-                        <Text  style={styles.productCount}>3</Text>
-                        <Image source={require("../../assets/edit-icon.png")} />
+                        <Text  style={styles.productCount}>50 dona</Text>
                     </View>
 
                     <View style={styles.product}>
                         <Text style={styles.productTitle}>Qora Gorilla</Text>
-                        <Text  style={styles.productCount}>3</Text>
-                        <Image source={require("../../assets/edit-icon.png")} />
+                        <Text  style={styles.productCount}>120 blok</Text>
+                    </View>
+
+                    <View style={styles.productOdd}>
+                        <Text style={styles.productTitle}>Qora Gorilla</Text>
+                        <Text  style={styles.productCount}>10 dona</Text>
                     </View>
 
                     <View style={styles.product}>
                         <Text style={styles.productTitle}>Qora Gorilla</Text>
-                        <Text  style={styles.productCount}>3</Text>
-                        <Image source={require("../../assets/edit-icon.png")} />
+                        <Text  style={styles.productCount}>120 blok</Text>
+                    </View>
+
+                    <View style={styles.productOdd}>
+                        <Text style={styles.productTitle}>Qora Gorilla</Text>
+                        <Text  style={styles.productCount}>120 blok</Text>
                     </View>
 
                     <View style={styles.product}>
                         <Text style={styles.productTitle}>Qora Gorilla</Text>
-                        <Text  style={styles.productCount}>3</Text>
-                        <Image source={require("../../assets/edit-icon.png")} />
+                        <Text  style={styles.productCount}>120 blok</Text>
+                    </View>
+
+                    <View style={styles.productOdd}>
+                        <Text style={styles.productTitle}>Qora Gorilla</Text>
+                        <Text  style={styles.productCount}>120 blok</Text>
                     </View>
 
                     <View style={styles.product}>
                         <Text style={styles.productTitle}>Qora Gorilla</Text>
-                        <Text  style={styles.productCount}>3</Text>
-                        <Image source={require("../../assets/edit-icon.png")} />
-                    </View>
-
-                    <View style={styles.product}>
-                        <Text style={styles.productTitle}>Qora Gorilla</Text>
-                        <Text  style={styles.productCount}>3</Text>
-                        <Image source={require("../../assets/edit-icon.png")} />
-                    </View>
-
-                    <View style={styles.product}>
-                        <Text style={styles.productTitle}>Qora Gorilla</Text>
-                        <Text  style={styles.productCount}>3</Text>
-                        <Image source={require("../../assets/edit-icon.png")} />
-                    </View>
-
-                    <View style={styles.product}>
-                        <Text style={styles.productTitle}>Qora Gorilla</Text>
-                        <Text  style={styles.productCount}>3</Text>
-                        <Image source={require("../../assets/edit-icon.png")} />
-                    </View>
-
-                    <View style={styles.product}>
-                        <Text style={styles.productTitle}>Qora Gorilla</Text>
-                        <Text  style={styles.productCount}>3</Text>
-                        <Image source={require("../../assets/edit-icon.png")} />
-                    </View>
-
-                    <View style={styles.product}>
-                        <Text style={styles.productTitle}>Qora Gorilla</Text>
-                        <Text style={styles.productCount}>3</Text>
-                        <Image source={require("../../assets/edit-icon.png")} />
+                        <Text style={styles.productCount}>120 blok</Text>
                     </View>
 
                 </ScrollView>
@@ -90,26 +84,26 @@ class Basket extends Component {
             <View style={styles.navbar}>
                 <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Home')}>
                     <View style={styles.inactiveBorder}></View>
-                    <Image source={require("../../assets/dashboard-icon.png")} />
+                    <Image source={require("../../assets/navbar/dashboard-icon.png")} />
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Basket')}>
                     <View style={styles.activeBorder}></View>
-                    <Image source={require("../../assets/basket-icon.png")} />
+                    <Image source={require("../../assets/navbar/basket-icon-active.png")} />
                 </TouchableOpacity>
             
                 <TouchableOpacity style={styles.scan} onPress={() => navigation.navigate('Sell')}>
-                    <Image source={require("../../assets/scan-icon.png")} />
+                    <Image source={require("../../assets/navbar/scan-icon.png")} />
                 </TouchableOpacity>
                 
                 <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Shopping')}>
                     <View style={styles.inactiveBorder}></View>
-                    <Image source={require("../../assets/shopping-icon.png")} />
+                    <Image source={require("../../assets/navbar/shopping-icon.png")} />
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Wallet')}>
                     <View style={styles.inactiveBorder}></View>
-                    <Image source={require("../../assets/wallet-icon.png")} />
+                    <Image source={require("../../assets/navbar/wallet-icon.png")} />
                 </TouchableOpacity>
             </View>
         </>
@@ -171,14 +165,27 @@ const styles = StyleSheet.create({
         marginTop: 10
     },
 
-    input: {
-        backgroundColor: "black",
-        color: "white",
+    inputWrapper: {
+        display: "flex",
+        alignItems: "center",
+        flexDirection: "row",
         width: screenWidth - (17 + 17),
-        paddingVertical: 23,
-        paddingHorizontal: 21,
-        borderRadius: 10,
-        fontSize: 18
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        borderColor: "#AFAFAF",
+        borderWidth: 1,
+        paddingHorizontal: 16,
+        paddingVertical: 14,
+        borderRadius: 8,
+    },
+
+    input: {
+        backgroundColor: "white",
+        color: "black",
+        paddingLeft: 10,
+        fontSize: 16,
+        fontFamily: 'Gilroy-Medium',
+        fontWeight: '500'
     },
 
     productList: {
@@ -191,31 +198,41 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         width: screenWidth - (17 + 17),
-        paddingVertical: 15,
-        paddingHorizontal: 6,
-        borderTopWidth: 1,
-        borderColor: "#D9D9D9"
+        paddingVertical: 13,
+        paddingHorizontal: 4
+    },
+
+    productOdd: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: screenWidth - (17 + 17),
+        paddingVertical: 13,
+        paddingHorizontal: 4,
+        backgroundColor: "#F1F1F1"
     },
 
     productTitle: {
-        fontSize: 24,
-        fontWeight: "bold",
-        width: 150
+        fontSize: 16,
+        fontFamily: "Gilroy-Medium",
+        fontWeight: "500"
     },
 
     productCount: {
-        fontFamily: "Roboto-Bold",
-        fontSize: 24,
-        fontWeight: "semibold"
+        fontFamily: "Gilroy-Medium",
+        fontSize: 16,
+        lineHeight: 24,
+        fontWeight: "500"
     },
 
     addButton: {
-        width: 66,
-        height: 66,
-        backgroundColor: "black",
+        width: 60,
+        height: 60,
+        backgroundColor: "#272727",
         position: "absolute",
-        right: 26,
-        bottom: 30,
+        right: 20,
+        bottom: 20,
         borderRadius: 50,
         display: "flex",
         alignItems: "center",

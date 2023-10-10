@@ -26,7 +26,7 @@ class Scanned extends Component {
                 />
 
                 <TouchableOpacity style={styles.button}>
-                    <Text style={styles.buttonText} onPress={() => navigation.navigate('Scan')}>Saqlash</Text>
+                    <Text style={styles.buttonText} onPress={() => navigation.navigate('Sell')}>Saqlash</Text>
                 </TouchableOpacity>
 
                 <StatusBar style="auto" />

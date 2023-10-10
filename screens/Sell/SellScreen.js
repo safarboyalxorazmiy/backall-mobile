@@ -80,7 +80,7 @@ class Sell extends Component {
                         <Text style={styles.price}>105,000 so’m</Text>
 
                         <TouchableOpacity style={styles.scan} onPress={() => navigation.navigate('Scan')}>
-                            <Image source={require("../../assets/scan-icon.png")}></Image>
+                            <Image source={require("../../assets/navbar/scan-icon.png")}></Image>
                         </TouchableOpacity>
                     </View>
 
