@@ -152,7 +152,6 @@ const styles = StyleSheet.create({
         color: "white",
         fontSize: 24,
         fontFamily: "Gilroy-SemiBold",
-        fontWeight: "bold",
         fontWeight: "600"
     },
 
