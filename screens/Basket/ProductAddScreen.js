@@ -7,6 +7,7 @@ import {
   Dimensions,
   TouchableOpacity,
   TextInput,
+  Image
 } from 'react-native';
 import { CheckBox } from 'react-native-elements';
 
@@ -54,83 +55,115 @@ class ProductAdd extends Component {
     return (
       <>
         <ScrollView contentContainerStyle={styles.container}>
-          <Text style={{ fontSize: 28, fontFamily: "Roboto-Black", marginBottom: 21 }}>Maxsulot qo’shish</Text>
-          <TextInput
-              style={styles.input}
-              placeholder="Seriya"
-              placeholderTextColor="black"
-              onChangeText={(text) => this.setState({ seriyaInputValue: text })}
-          />
 
-          <TextInput
-              style={styles.input}
-              placeholder="Brand nomi: "
-              placeholderTextColor="black"
-              onChangeText={(text) => this.setState({ brandInputValue: text })}
-          />
+    
+          <View style={{width: screenWidth - (17 + 17), display: "flex", flexDirection: "row", alignItems: "center", marginBottom: 16 }}>
+            <View style={{backgroundColor: "#F5F5F7", paddingVertical: 16, paddingHorizontal: 19, borderRadius: 8}}>
+              <Image source={require("../../assets/arrow-left-icon.png")} />
+            </View>
 
-          <TextInput
-              style={styles.input}
-              placeholder="Maxsulot nomi: "
-              placeholderTextColor="black"
-              onChangeText={(text) => this.setState({ productInputValue: text })}
-          />
+            <Text style={{width: 299, textAlign: "center", fontSize: 28, fontFamily: "Gilroy-SemiBold", fontWeight: 600}}>
+              Maxsulot qo’shish
+            </Text>
+          </View>
 
-          <View style={styles.amountGroup}>
+          <View style={styles.inputWrapper}>
+            <Text style={styles.label}>Mahsulot seriyasi</Text>
             <TextInput
-                style={styles.amountInput}
-                placeholder="Maxsulot miqdori: "
-                placeholderTextColor="black"
-                onChangeText={(text) => this.setState({ amountInputValue: text })}
+                style={styles.input}
+                placeholder="Seriyasini kiriting"
+                placeholderTextColor="#AAAAAA"
+                onChangeText={(text) => this.setState({ seriyaInputValue: text })}
             />
-            <View style={styles.amountType}>
-              <Text style={{ color: "white", fontSize: 18, fontFamily: "Roboto-Regular" }}>KG</Text>
+          </View>
+
+          <View style={styles.inputWrapper}>
+            <Text style={styles.label}>Brand nomi</Text>
+            <TextInput
+                style={styles.input}
+                placeholder="Brand nomini kiriting"
+                placeholderTextColor="#AAAAAA"
+                onChangeText={(text) => this.setState({ brandInputValue: text })}
+            />
+          </View>
+
+          <View style={styles.inputWrapper}>
+            <Text style={styles.label}>Mahsulot nomi</Text>
+            <TextInput
+                style={styles.input}
+                placeholder="Nomini kiriting"
+                placeholderTextColor="#AAAAAA"
+                onChangeText={(text) => this.setState({ productInputValue: text })}
+            />
+          </View>
+
+          
+          <View style={styles.inputWrapper}>
+            <Text style={styles.label}>Mahsulot miqdori</Text>
+            <View style={styles.amountGroup}>
+              <TextInput
+                  style={styles.amountInput}
+                  placeholder="Miqdorini kiriting"
+                  placeholderTextColor="#AAAAAA"
+                  onChangeText={(text) => this.setState({ amountInputValue: text })}
+              />
+
+              <View style={styles.amountType}>
+                <Text style={{ color: "white", fontSize: 16, fontFamily: "Gilroy-Medium", fontWeight: "500" }}>
+                  DONA
+                </Text>
+
+                <Image source={require("../../assets/dropdown-icon.png")} />
+              </View>
             </View>
           </View>
 
-          <TextInput
-              style={styles.input}
-              placeholder="Tan narxi: "
-              placeholderTextColor="black"
-              onChangeText={(text) => this.setState({ priceInputValue: text })}
-          />
-
-          <View style={styles.inputGroup}>
+          <View style={styles.inputWrapper}>
+            <Text style={styles.label}>Tan narxi</Text>
             <TextInput
-                style={styles.priceInput}
-                placeholder="Sotilish narxi: "
-                placeholderTextColor="black"
-                onChangeText={(text) => this.setState({ sellingPriceInputValue: text })}
-            />
-
-            <Text style={{ fontSize: 18, fontFamily: 'Roboto-Regular' }}>yoki</Text>
-
-            <TextInput
-                style={styles.percentageInput}
-                placeholder="%"
-                placeholderTextColor="black"
-                onChangeText={(text) => this.setState({ percentageInputValue: text })}
+                style={styles.input}
+                placeholder="Narxini kiriting"
+                placeholderTextColor="#AAAAAA"
+                onChangeText={(text) => this.setState({ priceInputValue: text })}
             />
           </View>
+          
+          <View style={styles.inputWrapper}>
+            <Text style={styles.label}>Sotilish narxi (so’mda)</Text>
+            <View style={styles.inputGroup}>
+              <TextInput
+                  style={styles.priceInput}
+                  placeholder="Sotilish narxi: "
+                  placeholderTextColor="#AAAAAA"
+                  onChangeText={(text) => this.setState({ sellingPriceInputValue: text })}
+              />
 
+              <View style={styles.priceType}>
+                <Text style={{ color: "white", fontSize: 16, fontFamily: "Gilroy-Medium", fontWeight: "500" }}>
+                  %
+                </Text>
+
+                <Image source={require("../../assets/dropdown-icon.png")} />
+              </View>
+            </View>
+          </View>
+          
           <View style={{ display: "flex", flexDirection: "row", alignItems: "center", width: screenWidth - (17 + 17) }}>
             <CheckBox
                 checked={true}
                 // onPress={() => {nds = true}}
                 containerStyle={{ margin: 0, padding: 0, borderWidth: 0, backgroundColor: 'transparent' }}
             />
-            <Text style={{ fontSize: 18, fontFamily: 'Roboto-Regular' }}>NDS soliq</Text>
+            <Text style={{ fontSize: 18, fontFamily: 'Gilroy-Medium' }}>NDS soliq</Text>
           </View>
 
-          <View style={styles.buttons}>
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Basket')}>
-              <Text style={styles.buttonText}>Bekor qilish</Text>
-            </TouchableOpacity>
+          <TouchableOpacity style={styles.buttonDark} onPress={this.handleButtonClick}>
+            <Text style={styles.buttonDarkText}>Mahsulotni qo’shish</Text>
+          </TouchableOpacity>
 
-            <TouchableOpacity style={styles.button} onPress={this.handleButtonClick}>
-              <Text style={styles.buttonText}>Saqlash</Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity style={styles.buttonLight} onPress={() => navigation.navigate('Basket')}>
+            <Text style={styles.buttonLightText}>Bekor qilish</Text>
+          </TouchableOpacity>
         </ScrollView>
       </>
     );
@@ -139,51 +172,64 @@ class ProductAdd extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     alignItems: "center",
-    paddingTop: 70,
-    position: "relative",
-    gap: 10
+    paddingTop: 52,
+    gap: 10,
+    height: "auto"
+  },
+
+  label: {
+    fontFamily: "Gilroy-Medium",
+    fontWeight: "500",
+    fontSize: 16,
+    marginBottom: 4
+  }, 
+
+  inputWrapper: {
+    marginBottom: 16
   },
 
   input: {
-    height: 64,
     width: screenWidth - (17 + 17),
     borderWidth: 1,
+    borderColor: "#AFAFAF",
     borderRadius: 10,
-    paddingVertical: 23,
-    paddingHorizontal: 20,
-    fontSize: 18,
-    fontFamily: 'Roboto-Regular'
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    fontSize: 16,
+    fontFamily: 'Gilroy-Medium'
   },
 
   inputGroup: {
     width: screenWidth - (17 + 17),
     display: "flex",
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "space-between"
   },
 
   priceInput: {
     borderWidth: 1,
-    borderRadius: 10,
-    paddingVertical: 23,
-    paddingHorizontal: 20,
-    width: "50%",
-    fontSize: 18,
-    fontFamily: 'Roboto-Regular',
+    borderColor: "#AFAFAF",
+    borderTopLeftRadius: 10,
+    borderBottomLeftRadius: 10,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    width: screenWidth - (17 + 17 + 122),
+    fontSize: 16,
+    fontFamily: 'Gilroy-Medium',
   },
 
-  percentageInput: {
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingVertical: 23,
-    paddingHorizontal: 20,
-    width: "30%",
-    fontSize: 18,
-    fontFamily: 'Roboto-Regular',
+  priceType: {
+    display: "flex",
+    flexDirection: "row",
+    gap: 25,
+    alignItems: "center",
+    justifyContent: "center",
+    width: 122,
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
+    backgroundColor: "#444444"
   },
 
   amountGroup: {
@@ -193,23 +239,26 @@ const styles = StyleSheet.create({
 
   amountInput: {
     borderWidth: 1,
-    paddingVertical: 23,
-    paddingHorizontal: 20,
-    width: screenWidth - (17 + 17 + 90),
-    fontSize: 18,
-    fontFamily: 'Roboto-Regular',
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderColor: "#AFAFAF",
+    width: screenWidth - (17 + 17 + 122),
+    fontSize: 16,
+    fontFamily: 'Gilroy-Medium',
     borderTopLeftRadius: 10,
     borderBottomLeftRadius: 10
   },
 
   amountType: {
     display: "flex",
+    flexDirection: "row",
+    gap: 25,
     alignItems: "center",
-    backgroundColor: "black",
     justifyContent: "center",
-    width: 90,
+    width: 122,
     borderTopRightRadius: 10,
-    borderBottomRightRadius: 10
+    borderBottomRightRadius: 10,
+    backgroundColor: "#444444"
   },
 
   buttons: {
@@ -220,17 +269,37 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  button: {
-    backgroundColor: "black",
-    paddingVertical: 16,
+  buttonDark: {
+    backgroundColor: "#222222",
+    paddingVertical: 14,
     paddingHorizontal: 47,
-    borderRadius: 10
+    borderRadius: 8,
+    width: screenWidth - (17 + 17)
   },
 
-  buttonText: {
+  buttonLight: {
+    backgroundColor: "#fff",
+    paddingVertical: 14,
+    paddingHorizontal: 47,
+    borderRadius: 8,
+    width: screenWidth - (17 + 17),
+    borderWidth: 1,
+    borderColor: "#222222",
+    marginBottom: 12
+  },
+
+  buttonLightText:  {
+    color: "black",
+    fontFamily: "Gilroy-Medium",
+    fontSize: 16,
+    textAlign: "center",
+  },
+
+  buttonDarkText: {
     color: "white",
-    fontFamily: "Roboto-Bold",
-    fontSize: 16
+    fontFamily: "Gilroy-Medium",
+    fontSize: 16,
+    textAlign: "center"
   }
 });
 
