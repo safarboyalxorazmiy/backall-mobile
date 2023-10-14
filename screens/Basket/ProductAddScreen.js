@@ -58,9 +58,9 @@ class ProductAdd extends Component {
 
     
           <View style={{width: screenWidth - (17 + 17), display: "flex", flexDirection: "row", alignItems: "center", marginBottom: 16 }}>
-            <View style={{backgroundColor: "#F5F5F7", paddingVertical: 16, paddingHorizontal: 19, borderRadius: 8}}>
+            <TouchableOpacity onPress={() => navigation.navigate('Basket')} style={{backgroundColor: "#F5F5F7", paddingVertical: 16, paddingHorizontal: 19, borderRadius: 8}}>
               <Image source={require("../../assets/arrow-left-icon.png")} />
-            </View>
+            </TouchableOpacity>
 
             <Text style={{width: 299, textAlign: "center", fontSize: 28, fontFamily: "Gilroy-SemiBold", fontWeight: 600}}>
               Maxsulot qo’shish
