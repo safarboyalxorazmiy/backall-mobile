@@ -5,14 +5,14 @@ import { Text } from 'react-native';
 import { AppRegistry } from 'react-native';
 import Login from './screens/LoginScreen';
 import Home from './screens/HomeScreen';
-import Basket from './screens/Basket/BasketScreen'
 import * as Font from 'expo-font';
-import Shopping from './screens/ShoppingScreen';
-import Wallet from './screens/WalletScreen';
-import Scan from './screens/Scan/ScanScreen';
-import ProductAdd from "./screens/Basket/ProductAddScreen";
-import Scanned from "./screens/Scan/ScannedScreen";
-import Sell from "./screens/Sell/SellScreen";
+import Basket from './screens/basket/BasketScreen';
+import Shopping from './screens/shopping/ShoppingScreen';
+import Wallet from './screens/wallet/WalletScreen';
+import Scan from './screens/scanning/ScanScreen';
+import ProductAdd from "./screens/basket/ProductAddScreen";
+import Scanned from "./screens/scanning/ScannedScreen";
+import Sell from "./screens/selling/SellScreen";
 import DatabaseService from './database/DatabaseService';
 import { name as appName } from './app.json';
 import NetInfo from "@react-native-community/netinfo";
@@ -22,8 +22,6 @@ AppRegistry.registerComponent(appName, () => App);
 const Stack = createStackNavigator();
 
 class App extends Component {
-
-    
 
     constructor(props) {
         super(props);
