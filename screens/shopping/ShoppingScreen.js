@@ -54,50 +54,50 @@ class Shopping extends Component {
                     </View>
 
                     <View>
-                        <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, paddingHorizontal: 4, paddingVertical: 6}}>
+                        <TouchableOpacity style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, paddingHorizontal: 4, paddingVertical: 6}} onPress={() => navigation.navigate('ShoppingDetail')}>
                             <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
                                 <Image source={require("../../assets/sell-icon.png")} />
                                 <Text style={{marginLeft: 10, fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16}}>25.000 so’m</Text>
                             </View>
 
                             <Text style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 14}}>10:45</Text>
-                        </View>
+                        </TouchableOpacity>
 
-                        <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, paddingHorizontal: 4, paddingVertical: 6}}>
+                        <TouchableOpacity style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, paddingHorizontal: 4, paddingVertical: 6}} onPress={() => navigation.navigate('ShoppingDetail')}>
                             <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
                                 <Image source={require("../../assets/sell-icon.png")} />
                                 <Text style={{marginLeft: 10, fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16}}>25.000 so’m</Text>
                             </View>
 
                             <Text style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 14}}>10:45</Text>
-                        </View>
+                        </TouchableOpacity>
 
-                        <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, paddingHorizontal: 4, paddingVertical: 6}}>
+                        <TouchableOpacity style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, paddingHorizontal: 4, paddingVertical: 6}} onPress={() => navigation.navigate('ShoppingDetail')}>
                             <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
                                 <Image source={require("../../assets/sell-icon.png")} />
                                 <Text style={{marginLeft: 10, fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16}}>25.000 so’m</Text>
                             </View>
 
                             <Text style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 14}}>10:45</Text>
-                        </View>
+                        </TouchableOpacity>
 
-                        <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, paddingHorizontal: 4, paddingVertical: 6}}>
+                        <TouchableOpacity style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, paddingHorizontal: 4, paddingVertical: 6}}  onPress={() => navigation.navigate('ShoppingDetail')}>
                             <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
                                 <Image source={require("../../assets/sell-icon.png")} />
                                 <Text style={{marginLeft: 10, fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16}}>25.000 so’m</Text>
                             </View>
 
                             <Text style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 14}}>10:45</Text>
-                        </View>
+                        </TouchableOpacity>
 
-                        <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, paddingHorizontal: 4, paddingVertical: 6}}>
+                        <TouchableOpacity style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, paddingHorizontal: 4, paddingVertical: 6}} onPress={() => navigation.navigate('ShoppingDetail')}>
                             <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
                                 <Image source={require("../../assets/sell-icon.png")} />
                                 <Text style={{marginLeft: 10, fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16}}>25.000 so’m</Text>
                             </View>
 
                             <Text style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 14}}>10:45</Text>
-                        </View>
+                        </TouchableOpacity>
                     </View>
                 </View>
 
@@ -181,7 +181,7 @@ class Shopping extends Component {
                     <Image source={require("../../assets/navbar/shopping-icon-active.png")} />
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Wallet')}>
+                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Profit')}>
                     <View style={styles.inactiveBorder}></View>
                     <Image source={require("../../assets/navbar/wallet-icon.png")} />
                 </TouchableOpacity>

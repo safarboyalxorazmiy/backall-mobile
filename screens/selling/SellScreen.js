@@ -12,60 +12,47 @@ class Sell extends Component {
         return (
             <>
                 <View style={styles.container}>
-                    <View style={{width: screenWidth - (16 + 16), display: "flex", flexDirection: "row", alignItems: "center", marginBottom: 24 }}>
-                        <TouchableOpacity onPress={() => navigation.navigate('Basket')} style={{backgroundColor: "#F5F5F7", paddingVertical: 16, paddingHorizontal: 19, borderRadius: 8}}>
-                            <Image source={require("../../assets/arrow-left-icon.png")} />
+                    <View style={{
+                        width: screenWidth - (16 + 16),
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        marginBottom: 24
+                    }}>
+                        <TouchableOpacity onPress={() => navigation.navigate('Basket')} style={{
+                            backgroundColor: "#F5F5F7",
+                            paddingVertical: 16,
+                            paddingHorizontal: 19,
+                            borderRadius: 8
+                        }}>
+                            <Image source={require("../../assets/arrow-left-icon.png")}/>
                         </TouchableOpacity>
 
-                        <Text style={{width: 299, textAlign: "center", fontSize: 18, fontFamily: "Gilroy-SemiBold", fontWeight: 600}}>
+                        <Text style={{
+                            width: 299,
+                            textAlign: "center",
+                            fontSize: 18,
+                            fontFamily: "Gilroy-SemiBold",
+                            fontWeight: 600
+                        }}>
                             Sotiladigan mahsulotlar
                         </Text>
                     </View>
 
-                    <ScrollView>    
+                    <ScrollView>
                         <View style={styles.productOdd}>
                             <Text style={styles.productTitle}>Coca Cola</Text>
-                            <Text  style={styles.productCount}>10 blok</Text>
+                            <Text style={styles.productCount}>10 blok</Text>
                         </View>
 
                         <View style={styles.product}>
                             <Text style={styles.productTitle}>Pepsi 1.5L</Text>
-                            <Text  style={styles.productCount}>10 blok</Text>
+                            <Text style={styles.productCount}>10 blok</Text>
                         </View>
 
                         <View style={styles.productOdd}>
                             <Text style={styles.productTitle}>Qora Gorilla</Text>
-                            <Text  style={styles.productCount}>50 dona</Text>
-                        </View>
-
-                        <View style={styles.product}>
-                            <Text style={styles.productTitle}>Qora Gorilla</Text>
-                            <Text  style={styles.productCount}>120 blok</Text>
-                        </View>
-
-                        <View style={styles.productOdd}>
-                            <Text style={styles.productTitle}>Qora Gorilla</Text>
-                            <Text  style={styles.productCount}>10 dona</Text>
-                        </View>
-
-                        <View style={styles.product}>
-                            <Text style={styles.productTitle}>Qora Gorilla</Text>
-                            <Text  style={styles.productCount}>120 blok</Text>
-                        </View>
-
-                        <View style={styles.productOdd}>
-                            <Text style={styles.productTitle}>Qora Gorilla</Text>
-                            <Text  style={styles.productCount}>120 blok</Text>
-                        </View>
-
-                        <View style={styles.product}>
-                            <Text style={styles.productTitle}>Qora Gorilla</Text>
-                            <Text  style={styles.productCount}>120 blok</Text>
-                        </View>
-
-                        <View style={styles.productOdd}>
-                            <Text style={styles.productTitle}>Qora Gorilla</Text>
-                            <Text  style={styles.productCount}>120 blok</Text>
+                            <Text style={styles.productCount}>50 dona</Text>
                         </View>
 
                         <View style={styles.product}>
@@ -75,7 +62,7 @@ class Sell extends Component {
 
                         <View style={styles.productOdd}>
                             <Text style={styles.productTitle}>Qora Gorilla</Text>
-                            <Text  style={styles.productCount}>120 blok</Text>
+                            <Text style={styles.productCount}>10 dona</Text>
                         </View>
 
                         <View style={styles.product}>
@@ -85,9 +72,39 @@ class Sell extends Component {
 
                         <View style={styles.productOdd}>
                             <Text style={styles.productTitle}>Qora Gorilla</Text>
-                            <Text  style={styles.productCount}>120 blok</Text>
+                            <Text style={styles.productCount}>120 blok</Text>
                         </View>
-                        
+
+                        <View style={styles.product}>
+                            <Text style={styles.productTitle}>Qora Gorilla</Text>
+                            <Text style={styles.productCount}>120 blok</Text>
+                        </View>
+
+                        <View style={styles.productOdd}>
+                            <Text style={styles.productTitle}>Qora Gorilla</Text>
+                            <Text style={styles.productCount}>120 blok</Text>
+                        </View>
+
+                        <View style={styles.product}>
+                            <Text style={styles.productTitle}>Qora Gorilla</Text>
+                            <Text style={styles.productCount}>120 blok</Text>
+                        </View>
+
+                        <View style={styles.productOdd}>
+                            <Text style={styles.productTitle}>Qora Gorilla</Text>
+                            <Text style={styles.productCount}>120 blok</Text>
+                        </View>
+
+                        <View style={styles.product}>
+                            <Text style={styles.productTitle}>Qora Gorilla</Text>
+                            <Text style={styles.productCount}>120 blok</Text>
+                        </View>
+
+                        <View style={styles.productOdd}>
+                            <Text style={styles.productTitle}>Qora Gorilla</Text>
+                            <Text style={styles.productCount}>120 blok</Text>
+                        </View>
+
                         <View style={styles.product}>
                             <Text style={styles.productTitle}>Qora Gorilla</Text>
                             <Text style={styles.productCount}>120 blok</Text>
@@ -99,12 +116,12 @@ class Sell extends Component {
                         marginBottom: 16
                     }}>
                         <TouchableOpacity style={{
-                            width: screenWidth - (17 + 17), 
-                            paddingVertical: 14, 
+                            width: screenWidth - (17 + 17),
+                            paddingVertical: 14,
                             borderWidth: 1,
                             borderColor: "#222222",
                             borderRadius: 8,
-                            
+
                         }}>
                             <Text style={{textAlign: "center"}}>Mahsulotni qo’lda kiritish</Text>
                         </TouchableOpacity>
@@ -119,30 +136,30 @@ class Sell extends Component {
                         backgroundColor: "#fff"
                     }}>
                         <View style={{
-                            paddingBottom: 22, 
+                            paddingBottom: 22,
                             paddingTop: 16,
                             paddingHorizontal: 17,
                             width: screenWidth,
-                            display: "flex", 
+                            display: "flex",
                             justifyContent: "space-between",
                             alignItems: "flex-end",
                             flexDirection: "row",
-                            
+
                             shadowColor: 'rgba(0, 0, 0, 0.1)',
-                            shadowOffset: { width: 0, height: -10 },
+                            shadowOffset: {width: 0, height: -10},
                             shadowOpacity: 1,
                             shadowRadius: 30,
                             borderTopWidth: 1,
                             borderColor: "#EEE",
                         }}>
-                            <Text style={styles.priceTitle}>Buyurtma narxi</Text>                        
+                            <Text style={styles.priceTitle}>Buyurtma narxi</Text>
                             <Text style={styles.price}>105,000 so’m</Text>
                         </View>
-                        
+
                         <TouchableOpacity style={styles.button}>
                             <Text style={styles.buttonText}>Sotuvni amalga oshirish</Text>
                         </TouchableOpacity>
-                    </View> 
+                    </View>
 
                     <StatusBar style="auto"/>
                 </View>
@@ -160,8 +177,7 @@ const styles = StyleSheet.create({
         paddingTop: 52
     },
 
-    productList: {
-    },
+    productList: {},
 
     product: {
         display: "flex",
@@ -196,7 +212,7 @@ const styles = StyleSheet.create({
         lineHeight: 24,
         fontWeight: "500"
     },
-    
+
     scan: {
         width: 71,
         height: 71,

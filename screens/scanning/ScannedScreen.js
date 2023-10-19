@@ -1,39 +1,39 @@
-import React, { Component } from 'react';
-import { StatusBar } from 'expo-status-bar';
+import React, {Component} from 'react';
+import {StatusBar} from 'expo-status-bar';
 import {StyleSheet, View, Image, TextInput, Dimensions, Text, TouchableOpacity} from 'react-native';
 
 const screenWidth = Dimensions.get('window').width;
 
 class Scanned extends Component {
 
-  render() {
-    const { navigation } = this.props;
+    render() {
+        const {navigation} = this.props;
 
-    return (
-        <>
-            <View style={styles.container}>
-                <Text style={styles.title}>Maxsulot sotish</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Maxsulot nomi: "
-                    placeholderTextColor="black"
-                />
+        return (
+            <>
+                <View style={styles.container}>
+                    <Text style={styles.title}>Maxsulot sotish</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Maxsulot nomi: "
+                        placeholderTextColor="black"
+                    />
 
-                <TextInput
-                    style={styles.input}
-                    placeholder="Maxsulot miqdori: "
-                    placeholderTextColor="black"
-                />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Maxsulot miqdori: "
+                        placeholderTextColor="black"
+                    />
 
-                <TouchableOpacity style={styles.button}>
-                    <Text style={styles.buttonText} onPress={() => navigation.navigate('Sell')}>Saqlash</Text>
-                </TouchableOpacity>
+                    <TouchableOpacity style={styles.button}>
+                        <Text style={styles.buttonText} onPress={() => navigation.navigate('Sell')}>Saqlash</Text>
+                    </TouchableOpacity>
 
-                <StatusBar style="auto" />
-            </View>
-        </>
-    );
-  }
+                    <StatusBar style="auto"/>
+                </View>
+            </>
+        );
+    }
 }
 
 const styles = StyleSheet.create({

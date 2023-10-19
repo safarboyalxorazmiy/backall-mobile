@@ -1,21 +1,23 @@
 import React, {Component} from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { Text } from 'react-native';
-import { AppRegistry } from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import {Text} from 'react-native';
+import {AppRegistry} from 'react-native';
 import Login from './screens/LoginScreen';
 import Home from './screens/HomeScreen';
 import * as Font from 'expo-font';
 import Basket from './screens/basket/BasketScreen';
 import Shopping from './screens/shopping/ShoppingScreen';
-import Wallet from './screens/wallet/WalletScreen';
 import Scan from './screens/scanning/ScanScreen';
 import ProductAdd from "./screens/basket/ProductAddScreen";
 import Scanned from "./screens/scanning/ScannedScreen";
 import Sell from "./screens/selling/SellScreen";
 import DatabaseService from './database/DatabaseService';
-import { name as appName } from './app.json';
+import {name as appName} from './app.json';
 import NetInfo from "@react-native-community/netinfo";
+import ProfitDetail from './screens/profit/ProfitDetailScreen';
+import Profit from './screens/profit/ProfitScreen';
+import ShoppingDetail from './screens/shopping/ShoppingDetailScreen';
 
 AppRegistry.registerComponent(appName, () => App);
 
@@ -41,7 +43,7 @@ class App extends Component {
                 'Gilroy-Bold': require('./assets/fonts/gilroy/Gilroy-Bold.ttf'),
                 'Gilroy-Black': require('./assets/fonts/gilroy/Gilroy-Black.ttf')
             });
-            
+
             this.setState({fontsLoaded: true})
         } catch (error) {
             console.error('Error loading custom fonts:', error);
@@ -60,11 +62,11 @@ class App extends Component {
         }
 
         this.unsubscribe = NetInfo.addEventListener((state) => {
-            this.setState({ isConnected: state.isConnected });
+            this.setState({isConnected: state.isConnected});
         });
-      
+
         this.logInternetStatusInterval = setInterval(() => {
-        console.log("Is connected?", this.state.isConnected === null ? 'Loading...' : this.state.isConnected ? 'Yes' : 'No');
+            console.log("Is connected?", this.state.isConnected === null ? 'Loading...' : this.state.isConnected ? 'Yes' : 'No');
         }, 5000);
     }
 
@@ -144,7 +146,21 @@ class App extends Component {
                                   })}
                     />
 
-                    <Stack.Screen name="Wallet" component={Wallet}
+                    <Stack.Screen name="ShoppingDetail" component={ShoppingDetail}
+                                  options={({navigation}) => ({
+                                      title: '',
+                                      headerShown: false
+                                  })}
+                    />
+
+                    <Stack.Screen name="Profit" component={Profit}
+                                  options={({navigation}) => ({
+                                      title: '',
+                                      headerShown: false
+                                  })}
+                    />
+
+                    <Stack.Screen name="ProfitDetail" component={ProfitDetail}
                                   options={({navigation}) => ({
                                       title: '',
                                       headerShown: false

@@ -1,119 +1,122 @@
-import React, { Component } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Dimensions, Image, TouchableOpacity } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import React, {Component} from 'react';
+import {StatusBar} from 'expo-status-bar';
+import {StyleSheet, Text, View, Dimensions, Image, TouchableOpacity} from 'react-native';
+import {LinearGradient} from 'expo-linear-gradient';
 
 
 const screenWidth = Dimensions.get('window').width;
 
 class Home extends Component {
     render() {
-    const { navigation } = this.props;
+        const {navigation} = this.props;
 
-    return (
-        <>
-            <View style={styles.container}>
-                <Text style={{
-                    fontSize: 18, 
-                    fontFamily: "Gilroy-SemiBold", 
-                    height: 44, 
-                    borderBottomColor: "#AFAFAF", 
-                    borderBottomWidth: 1, 
-                    width: screenWidth - (24 + 24), 
-                    textAlign: 'center',
-                    marginBottom: 24
-                }}>Statistika</Text>
-                
-                <View style={styles.cards}>
-                    <LinearGradient 
-                        colors={['#E59C0D', '#FDD958']}
-                        start={{ x: 0, y: 0.5 }}
-                        style={styles.card}>
+        return (
+            <>
+                <View style={styles.container}>
+                    <Text style={{
+                        fontSize: 18,
+                        fontFamily: "Gilroy-SemiBold",
+                        height: 44,
+                        borderBottomColor: "#AFAFAF",
+                        borderBottomWidth: 1,
+                        width: screenWidth - (24 + 24),
+                        textAlign: 'center',
+                        marginBottom: 24
+                    }}>Statistika</Text>
 
-                        <View style={{
-                            width: 141, 
-                            height: 141, 
-                            borderRadius: 100,
-                            backgroundColor: "#F8E08D", 
-                            position: 'absolute', 
-                            right: -70, 
-                            top: -70,
-                            shadowColor: 'rgba(0, 0, 0, 0.05)',
-                            shadowOffset: {
-                                width: -10,
-                                height: 10,
-                            },
-                            shadowOpacity: 1,
-                            shadowRadius: 20,
-                            elevation: 5
-                        }}>
-                            <Image style={{ position: 'absolute', bottom: 28, left: 25}} source={require("../assets/home/shopping-icon.png")} />
-                        </View>
+                    <View style={styles.cards}>
+                        <LinearGradient
+                            colors={['#E59C0D', '#FDD958']}
+                            start={{x: 0, y: 0.5}}
+                            style={styles.card}>
 
-                        <Text style={styles.cardTitle}>Bugungi kirim</Text>
-                        <Text style={styles.cardDescription}>3.000.000 <Text style={styles.currency}>UZS</Text></Text>
-                    </LinearGradient>
+                            <View style={{
+                                width: 141,
+                                height: 141,
+                                borderRadius: 100,
+                                backgroundColor: "#F8E08D",
+                                position: 'absolute',
+                                right: -70,
+                                top: -70,
+                                shadowColor: 'rgba(0, 0, 0, 0.05)',
+                                shadowOffset: {
+                                    width: -10,
+                                    height: 10,
+                                },
+                                shadowOpacity: 1,
+                                shadowRadius: 20,
+                                elevation: 5
+                            }}>
+                                <Image style={{position: 'absolute', bottom: 28, left: 25}}
+                                       source={require("../assets/home/shopping-icon.png")}/>
+                            </View>
 
-                    <LinearGradient 
-                        style={styles.card}
-                        colors={['#2C8134', '#1DCB00']}
-                        start={{ x: 0, y: 0.5 }} 
-                    >
-                    <View style={{
-                        width: 141, 
-                        height: 141, 
-                        borderRadius: 100,
-                        backgroundColor: "#1EC703", 
-                        position: 'absolute', 
-                        right: -70, 
-                        top: -70,
-                        elevation: 5,
-                        shadowColor: 'rgba(0, 0, 0, 0.05)',
-                        shadowOffset: {
-                          width: -10,
-                          height: 10,
-                        },
-                        shadowRadius: 20
-                    }}>
-                        <Image style={{ position: 'absolute', bottom: 28, left: 25, zIndex: 1}} source={require("../assets/home/benefit-icon.png")} />
+                            <Text style={styles.cardTitle}>Bugungi kirim</Text>
+                            <Text style={styles.cardDescription}>3.000.000 <Text
+                                style={styles.currency}>UZS</Text></Text>
+                        </LinearGradient>
+
+                        <LinearGradient
+                            style={styles.card}
+                            colors={['#2C8134', '#1DCB00']}
+                            start={{x: 0, y: 0.5}}
+                        >
+                            <View style={{
+                                width: 141,
+                                height: 141,
+                                borderRadius: 100,
+                                backgroundColor: "#1EC703",
+                                position: 'absolute',
+                                right: -70,
+                                top: -70,
+                                elevation: 5,
+                                shadowColor: 'rgba(0, 0, 0, 0.05)',
+                                shadowOffset: {
+                                    width: -10,
+                                    height: 10,
+                                },
+                                shadowRadius: 20
+                            }}>
+                                <Image style={{position: 'absolute', bottom: 28, left: 25, zIndex: 1}}
+                                       source={require("../assets/home/benefit-icon.png")}/>
+                            </View>
+                            <Text style={styles.cardTitle}>Bugungi foyda</Text>
+                            <Text style={styles.cardDescription}>500.000 <Text style={styles.currency}>UZS</Text></Text>
+                        </LinearGradient>
                     </View>
-                        <Text style={styles.cardTitle}>Bugungi foyda</Text>
-                        <Text style={styles.cardDescription}>500.000 <Text style={styles.currency}>UZS</Text></Text>
-                    </LinearGradient>
-                    </View>
-                <StatusBar style="auto" />
-            </View>
+                    <StatusBar style="auto"/>
+                </View>
 
-            <View style={styles.navbar}>
-                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Home')}>
-                    <View style={styles.activeBorder}></View>
-                    <Image source={require("../assets/navbar/dashboard-icon-active.png")} />
-                </TouchableOpacity>
+                <View style={styles.navbar}>
+                    <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Home')}>
+                        <View style={styles.activeBorder}></View>
+                        <Image source={require("../assets/navbar/dashboard-icon-active.png")}/>
+                    </TouchableOpacity>
 
-                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Basket')}>
-                    <View style={styles.inactiveBorder}></View>
-                    <Image source={require("../assets/navbar/basket-icon.png")} />
-                </TouchableOpacity>
-            
-                <TouchableOpacity style={styles.scan} onPress={() => navigation.navigate('Sell')}>
-                    <Image source={require("../assets/navbar/scan-icon.png")} />
-                </TouchableOpacity>
-                
-                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Shopping')}>
-                    <View style={styles.inactiveBorder}></View>
-                    <Image source={require("../assets/navbar/shopping-icon.png")} />
-                </TouchableOpacity>
+                    <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Basket')}>
+                        <View style={styles.inactiveBorder}></View>
+                        <Image source={require("../assets/navbar/basket-icon.png")}/>
+                    </TouchableOpacity>
 
-                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Wallet')}>
-                    <View style={styles.inactiveBorder}></View>
-                    <Image source={require("../assets/navbar/wallet-icon.png")} />
-                </TouchableOpacity>
-            </View>
-        </>
-        
-      
-    );
-  }
+                    <TouchableOpacity style={styles.scan} onPress={() => navigation.navigate('Sell')}>
+                        <Image source={require("../assets/navbar/scan-icon.png")}/>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Shopping')}>
+                        <View style={styles.inactiveBorder}></View>
+                        <Image source={require("../assets/navbar/shopping-icon.png")}/>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Profit')}>
+                        <View style={styles.inactiveBorder}></View>
+                        <Image source={require("../assets/navbar/wallet-icon.png")}/>
+                    </TouchableOpacity>
+                </View>
+            </>
+
+
+        );
+    }
 }
 
 const styles = StyleSheet.create({
@@ -180,7 +183,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center'
     },
-    
+
     activeBorder: {
         marginBottom: 30,
         width: 47,
