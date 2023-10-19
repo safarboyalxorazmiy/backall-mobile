@@ -38,7 +38,7 @@ class Wallet extends Component {
                             }}
                             placeholder="--/--/----"
                             placeholderTextColor="#AAAAAA" />
-                        <Image style={{position: "absolute", right: 16, top: 14}} source={require("../assets/calendar-icon.png")} />
+                        <Image style={{position: "absolute", right: 16, top: 14}} source={require("../../assets/calendar-icon.png")} />
                     </View>
                 </View>
 
@@ -57,7 +57,7 @@ class Wallet extends Component {
                     <View>
                         <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, paddingHorizontal: 4, paddingVertical: 6}}>
                             <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-                                <Image source={require("../assets/profit-icon.png")} />
+                                <Image source={require("../../assets/profit-icon.png")} />
                                 <Text style={{marginLeft: 10, fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16, color: "#0EBA2C"}}>+25.000 so’m</Text>
                             </View>
 
@@ -66,7 +66,7 @@ class Wallet extends Component {
 
                         <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, paddingHorizontal: 4, paddingVertical: 6}}>
                             <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-                                <Image source={require("../assets/profit-icon.png")} />
+                                <Image source={require("../../assets/profit-icon.png")} />
                                 <Text style={{marginLeft: 10, fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16, color: "#0EBA2C"}}>+25.000 so’m</Text>
                             </View>
 
@@ -75,7 +75,7 @@ class Wallet extends Component {
 
                         <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, paddingHorizontal: 4, paddingVertical: 6}}>
                             <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-                                <Image source={require("../assets/profit-icon.png")} />
+                                <Image source={require("../../assets/profit-icon.png")} />
                                 <Text style={{marginLeft: 10, fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16, color: "#0EBA2C"}}>+25.000 so’m</Text>
                             </View>
 
@@ -94,7 +94,7 @@ class Wallet extends Component {
                     <View>
                         <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, paddingHorizontal: 4, paddingVertical: 6}}>
                             <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-                                <Image source={require("../assets/profit-icon.png")} />
+                                <Image source={require("../../assets/profit-icon.png")} />
                                 <Text style={{marginLeft: 10, fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16, color: "#0EBA2C"}}>+25.000 so’m</Text>
                             </View>
 
@@ -103,7 +103,7 @@ class Wallet extends Component {
 
                         <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, paddingHorizontal: 4, paddingVertical: 6}}>
                             <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-                                <Image source={require("../assets/profit-icon.png")} />
+                                <Image source={require("../../assets/profit-icon.png")} />
                                 <Text style={{marginLeft: 10, fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16, color: "#0EBA2C"}}>+25.000 so’m</Text>
                             </View>
 
@@ -112,7 +112,7 @@ class Wallet extends Component {
 
                         <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, paddingHorizontal: 4, paddingVertical: 6}}>
                             <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-                                <Image source={require("../assets/profit-icon.png")} />
+                                <Image source={require("../../assets/profit-icon.png")} />
                                 <Text style={{marginLeft: 10, fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16, color: "#0EBA2C"}}>+25.000 so’m</Text>
                             </View>
 
@@ -129,26 +129,26 @@ class Wallet extends Component {
             <View style={styles.navbar}>
                 <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Home')}>
                     <View style={styles.inactiveBorder}></View>
-                    <Image source={require("../assets/navbar/dashboard-icon.png")} />
+                    <Image source={require("../../assets/navbar/dashboard-icon.png")} />
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Basket')}>
                     <View style={styles.inactiveBorder}></View>
-                    <Image source={require("../assets/navbar/basket-icon.png")} />
+                    <Image source={require("../../assets/navbar/basket-icon.png")} />
                 </TouchableOpacity>
             
                 <TouchableOpacity style={styles.scan} onPress={() => navigation.navigate('Sell')}>
-                    <Image source={require("../assets/navbar/scan-icon.png")} />
+                    <Image source={require("../../assets/navbar/scan-icon.png")} />
                 </TouchableOpacity>
                 
                 <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Shopping')}>
                     <View style={styles.inactiveBorder}></View>
-                    <Image source={require("../assets/navbar/shopping-icon.png")} />
+                    <Image source={require("../../assets/navbar/shopping-icon.png")} />
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Wallet')}>
                     <View style={styles.activeBorder}></View>
-                    <Image source={require("../assets/navbar/wallet-icon-active.png")} />
+                    <Image source={require("../../assets/navbar/wallet-icon-active.png")} />
                 </TouchableOpacity>
             </View>
         </>

@@ -115,10 +115,7 @@ class Sell extends Component {
                     </TouchableOpacity>
 
 
-                    <View style={{ 
-                        // position: "absolute",
-                        // bottom: 0,
-                        // zIndex: 2,
+                    <View style={{
                         backgroundColor: "#fff"
                     }}>
                         <View style={{
