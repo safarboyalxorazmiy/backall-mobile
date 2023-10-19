@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Dimensions, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, TextInput, Text, View, Dimensions, Image, TouchableOpacity, ScrollView } from 'react-native';
 
 
 const screenWidth = Dimensions.get('window').width;
@@ -12,86 +12,159 @@ class Shopping extends Component {
     return (
         <>
             <View style={styles.container}>
+            <ScrollView>
+                <View style={{borderBottomColor: "black", borderBottomWidth: 1, width: screenWidth - (16 * 2), height: 44, display: "flex", alignItems: "center", justifyContent: "center"}}>
+                    <Text style={{fontFamily: "Gilroy-SemiBold", fontWeight: "600", fontSize: 18, lineHeight: 24}}>Sotuv tarixi</Text>
+                </View>
+
+                <View style={{marginTop: 24}}>
+                    <Text style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16, marginBottom: 4}}>Muddatni tanlang</Text>
+
+                    <View>
+                        <TextInput  
+                            style={{
+                                width: screenWidth - (16 * 2),
+                                position: "relative", 
+                                paddingHorizontal: 16, 
+                                paddingVertical: 14, 
+                                borderColor: "#AFAFAF", 
+                                borderWidth: 1, 
+                                borderRadius: 8, 
+                                fontSize: 16,
+                                lineHeight: 24,
+                                fontFamily: "Gilroy-Medium",
+                                fontWeight: "500"
+                            }}
+                            placeholder="--/--/----"
+                            placeholderTextColor="#AAAAAA" />
+                        <Image style={{position: "absolute", right: 16, top: 14}} source={require("../assets/calendar-icon.png")} />
+                    </View>
+                </View>
+
+                <View style={{marginTop: 12, width: screenWidth - (16 * 2), display: "flex", flexDirection: "row", justifyContent: "space-between", paddingHorizontal: 16, paddingVertical: 14, backgroundColor: "#4F579F", borderRadius: 8}}>
+                    <Text style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16, lineHeight: 24, color: "#FFF"}}>Jami sotuv</Text>
+                    <Text style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16, lineHeight: 24, color: "#FFF"}}>5.000.000 so’m</Text>
+                </View>
                 
-                <ScrollView style={styles.productList}>
-                        <View style={styles.product}>
-                            <Text style={styles.productTitle}>Qora Gorilla</Text>
-                            <Text style={styles.productCount}>3 ta</Text>
-                            <Text style={styles.hour}>20:04</Text>
+                <View>
+                    <View style={{marginTop: 12, display: "flex", alignItems: "center", flexDirection: "row", justifyContent: "space-between", width: screenWidth - (16 * 2), backgroundColor: "#EEEEEE", height: 42, borderRadius: 4, paddingHorizontal: 10, paddingVertical: 10 }}>
+                        <Text style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 14, lineHeight: 22}}>4-oktyabr, Chorshanba</Text>
+                        <Text style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 14, lineHeight: 22}}>//</Text>
+                        <Text style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 14, lineHeight: 22}}>5.000.000 so’m</Text>
+                    </View>
+
+                    <View>
+                        <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, paddingHorizontal: 4, paddingVertical: 6}}>
+                            <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+                                <Image source={require("../assets/sell-icon.png")} />
+                                <Text style={{marginLeft: 10, fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16}}>25.000 so’m</Text>
+                            </View>
+
+                            <Text style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 14}}>10:45</Text>
                         </View>
 
-                        <View style={styles.product}>
-                            <Text style={styles.productTitle}>Ko’k Gorilla</Text>
-                            <Text  style={styles.productCount}>1 ta</Text>
-                            <Text style={styles.hour}>20:04</Text>
+                        <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, paddingHorizontal: 4, paddingVertical: 6}}>
+                            <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+                                <Image source={require("../assets/sell-icon.png")} />
+                                <Text style={{marginLeft: 10, fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16}}>25.000 so’m</Text>
+                            </View>
+
+                            <Text style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 14}}>10:45</Text>
                         </View>
 
-                        <View style={styles.product}>
-                            <Text style={styles.productTitle}>Shakar</Text>
-                            <Text  style={styles.productCount}>1 kg</Text>
-                            <Text style={styles.hour}>20:04</Text>
+                        <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, paddingHorizontal: 4, paddingVertical: 6}}>
+                            <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+                                <Image source={require("../assets/sell-icon.png")} />
+                                <Text style={{marginLeft: 10, fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16}}>25.000 so’m</Text>
+                            </View>
+
+                            <Text style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 14}}>10:45</Text>
                         </View>
 
-                        <View style={styles.product}>
-                            <Text style={styles.productTitle}>Qora Gorilla</Text>
-                            <Text  style={styles.productCount}>3</Text>
-                            <Text style={styles.hour}>20:04</Text>
+                        <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, paddingHorizontal: 4, paddingVertical: 6}}>
+                            <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+                                <Image source={require("../assets/sell-icon.png")} />
+                                <Text style={{marginLeft: 10, fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16}}>25.000 so’m</Text>
+                            </View>
+
+                            <Text style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 14}}>10:45</Text>
                         </View>
 
-                        <View style={styles.product}>
-                            <Text style={styles.productTitle}>Qora Gorilla</Text>
-                            <Text  style={styles.productCount}>3</Text>
-                            <Text style={styles.hour}>20:04</Text>
+                        <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, paddingHorizontal: 4, paddingVertical: 6}}>
+                            <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+                                <Image source={require("../assets/sell-icon.png")} />
+                                <Text style={{marginLeft: 10, fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16}}>25.000 so’m</Text>
+                            </View>
+
+                            <Text style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 14}}>10:45</Text>
+                        </View>
+                    </View>
+                </View>
+
+                <View>
+                    <View style={{marginTop: 12, display: "flex", alignItems: "center", flexDirection: "row", justifyContent: "space-between", width: screenWidth - (16 * 2), backgroundColor: "#EEEEEE", height: 42, borderRadius: 4, paddingHorizontal: 10, paddingVertical: 10 }}>
+                        <Text style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 14, lineHeight: 22}}>3-oktyabr, Chorshanba</Text>
+                        <Text style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 14, lineHeight: 22}}>//</Text>
+                        <Text style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 14, lineHeight: 22}}>5.000.000 so’m</Text>
+                    </View>
+
+                    <View>
+                        <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, paddingHorizontal: 4, paddingVertical: 6}}>
+                            <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+                                <Image source={require("../assets/sell-icon.png")} />
+                                <Text style={{marginLeft: 10, fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16}}>25.000 so’m</Text>
+                            </View>
+
+                            <Text style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 14}}>10:45</Text>
                         </View>
 
-                        <View style={styles.product}>
-                            <Text style={styles.productTitle}>Qora Gorilla</Text>
-                            <Text  style={styles.productCount}>3</Text>
-                            <Text style={styles.hour}>20:04</Text>
+                        <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, paddingHorizontal: 4, paddingVertical: 6}}>
+                            <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+                                <Image source={require("../assets/sell-icon.png")} />
+                                <Text style={{marginLeft: 10, fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16}}>25.000 so’m</Text>
+                            </View>
+
+                            <Text style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 14}}>10:45</Text>
                         </View>
 
-                        <View style={styles.product}>
-                            <Text style={styles.productTitle}>Qora Gorilla</Text>
-                            <Text  style={styles.productCount}>3</Text>
-                            <Text style={styles.hour}>20:04</Text>
+                        <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, paddingHorizontal: 4, paddingVertical: 6}}>
+                            <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+                                <Image source={require("../assets/sell-icon.png")} />
+                                <Text style={{marginLeft: 10, fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16}}>25.000 so’m</Text>
+                            </View>
+
+                            <Text style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 14}}>10:45</Text>
                         </View>
 
-                        <View style={styles.product}>
-                            <Text style={styles.productTitle}>Qora Gorilla</Text>
-                            <Text  style={styles.productCount}>3</Text>
-                            <Text style={styles.hour}>20:04</Text>
+                        <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, paddingHorizontal: 4, paddingVertical: 6}}>
+                            <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+                                <Image source={require("../assets/sell-icon.png")} />
+                                <Text style={{marginLeft: 10, fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16}}>25.000 so’m</Text>
+                            </View>
+
+                            <Text style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 14}}>10:45</Text>
                         </View>
 
-                        <View style={styles.product}>
-                            <Text style={styles.productTitle}>Qora Gorilla</Text>
-                            <Text  style={styles.productCount}>3</Text>
-                            <Text style={styles.hour}>20:04</Text>
-                        </View>
-                        
-                </ScrollView>
+                        <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, paddingHorizontal: 4, paddingVertical: 6}}>
+                            <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+                                <Image source={require("../assets/sell-icon.png")} />
+                                <Text style={{marginLeft: 10, fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16}}>25.000 so’m</Text>
+                            </View>
 
-                <View style={styles.buttons}>
-                            <TouchableOpacity>
-                                <View style={styles.button}>
-                                    <Image source={require("../assets/back-icon.png")} />
-                                    <Text style={styles.buttonText}>Oldingi kun</Text>
-                                </View>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity>
-                                <View style={styles.button}>
-                                    <Text style={styles.buttonText}>Kalendar</Text>
-                                    <Image source={require("../assets/calendar-icon.png")} />
-                                </View>
-                            </TouchableOpacity>
+                            <Text style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 14}}>10:45</Text>
                         </View>
+                    </View>
+                </View>
+
+            </ScrollView>
+
                 <StatusBar style="auto" />
             </View>
 
             <View style={styles.navbar}>
                 <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Home')}>
                     <View style={styles.inactiveBorder}></View>
-                    <Image source={require("../assets/navbar/dashboard-icon.png")} />
+                    <Image source={require("../assets/calendar-icon.png")} />
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Basket')}>
