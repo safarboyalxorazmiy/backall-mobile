@@ -98,7 +98,7 @@ class Home extends Component {
                         <Image source={require("../assets/navbar/basket-icon.png")}/>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.scan} onPress={() => navigation.navigate('Scan')}>
+                    <TouchableOpacity style={styles.scan} onPress={() => navigation.navigate('Sell')}>
                         <Image source={require("../assets/navbar/scan-icon.png")}/>
                     </TouchableOpacity>
 
