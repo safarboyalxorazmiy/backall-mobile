@@ -1,6 +1,9 @@
 import React, {Component} from 'react';
 import {StatusBar} from 'expo-status-bar';
-import {StyleSheet, Text, View, TextInput, Dimensions, TouchableOpacity, Image, ScrollView} from 'react-native';
+import {StyleSheet, Text, View, TextInput, Dimensions, TouchableOpacity, ScrollView} from 'react-native';
+
+import Logo from '../assets/logo.svg';          // SVG File
+
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -12,10 +15,7 @@ class Login extends Component {
 
         return (
             <ScrollView contentContainerStyle={styles.container}>
-                <Image
-                    source={require('../assets/logo.png')}
-                    style={styles.logo}
-                />
+                <Logo style={styles.logo} resizeMode="cover" />
 
                 <View style={styles.form}>
                     <Text style={styles.label}>Loginni kiriting</Text>
@@ -71,9 +71,9 @@ const styles = StyleSheet.create({
     },
 
     logo: {
+        display: "block",
         width: 220.313,
         height: 96.563,
-        objectFit: "cover",
         marginBottom: 83
     },
 
