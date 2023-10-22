@@ -215,7 +215,7 @@ class ProductAdd extends Component {
                                     %
                                 </Text>
 
-                                <Image source={require("../../assets/dropdown-icon.png")}/>
+                                {/* <Image source={require("../../assets/dropdown-icon.png")}/> */}
                             </View>
                         </View>
                     </View>

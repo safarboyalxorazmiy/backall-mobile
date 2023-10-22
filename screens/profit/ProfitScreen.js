@@ -41,7 +41,12 @@ class Profit extends Component {
                             }}>Sof foyda</Text>
                         </View>
 
-                        <View style={{marginTop: 24}}>
+                        <View style={{
+                            marginTop: 24, 
+                            width: screenWidth - (16 * 2),
+                            marginRight: "auto",
+                            marginLeft: "auto"
+                        }}>
                             <Text
                                 style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16, marginBottom: 4}}>Muddatni
                                 tanlang</Text>
@@ -49,7 +54,7 @@ class Profit extends Component {
                             <View>
                                 <TextInput
                                     style={{
-                                        width: screenWidth - (16 * 2),
+                                        
                                         position: "relative",
                                         paddingHorizontal: 16,
                                         paddingVertical: 14,
@@ -72,6 +77,8 @@ class Profit extends Component {
                         <View style={{
                             marginTop: 12,
                             width: screenWidth - (16 * 2),
+                            marginRight: "auto",
+                            marginLeft: "auto",
                             display: "flex",
                             flexDirection: "row",
                             justifyContent: "space-between",
@@ -96,14 +103,13 @@ class Profit extends Component {
                             }}>5.000.000 so’m</Text>
                         </View>
 
-                        <View>
+                        <View style={{width: screenWidth, paddingLeft: 16, paddingRight: 16}}>
                             <View style={{
                                 marginTop: 12,
                                 display: "flex",
                                 alignItems: "center",
                                 flexDirection: "row",
                                 justifyContent: "space-between",
-                                width: screenWidth - (16 * 2),
                                 backgroundColor: "#EEEEEE",
                                 height: 42,
                                 borderRadius: 4,
@@ -217,19 +223,141 @@ class Profit extends Component {
                             </View>
                         </View>
 
-                        <View>
+                        <View style={{width: screenWidth, paddingLeft: 16, paddingRight: 16}}>
                             <View style={{
                                 marginTop: 12,
                                 display: "flex",
                                 alignItems: "center",
                                 flexDirection: "row",
                                 justifyContent: "space-between",
-                                width: screenWidth - (16 * 2),
                                 backgroundColor: "#EEEEEE",
                                 height: 42,
                                 borderRadius: 4,
                                 paddingHorizontal: 10,
                                 paddingVertical: 10
+                            }}>
+                                <Text style={{
+                                    fontFamily: "Gilroy-Medium",
+                                    fontWeight: "500",
+                                    fontSize: 14,
+                                    lineHeight: 22
+                                }}>4-oktyabr, Chorshanba</Text>
+                                <Text style={{
+                                    fontFamily: "Gilroy-Medium",
+                                    fontWeight: "500",
+                                    fontSize: 14,
+                                    lineHeight: 22
+                                }}>//</Text>
+                                <Text style={{
+                                    fontFamily: "Gilroy-Medium",
+                                    fontWeight: "500",
+                                    fontSize: 14,
+                                    lineHeight: 22
+                                }}>5.000.000 so’m</Text>
+                            </View>
+
+                            <View>
+                                <View style={{
+                                    display: "flex",
+                                    flexDirection: "row",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                    height: 50,
+                                    marginTop: 4,
+                                    paddingHorizontal: 4,
+                                    paddingVertical: 6
+                                }}>
+                                    <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+                                        <ProfitIcon />
+                                        <Text style={{
+                                            marginLeft: 10,
+                                            fontFamily: "Gilroy-Medium",
+                                            fontWeight: "500",
+                                            fontSize: 16,
+                                            color: "#0EBA2C"
+                                        }}>+25.000 so’m</Text>
+                                    </View>
+
+                                    <Text style={{
+                                        fontFamily: "Gilroy-Medium",
+                                        fontWeight: "500",
+                                        fontSize: 14
+                                    }}>10:45</Text>
+                                </View>
+
+                                <View style={{
+                                    display: "flex",
+                                    flexDirection: "row",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                    height: 50,
+                                    marginTop: 4,
+                                    paddingHorizontal: 4,
+                                    paddingVertical: 6
+                                }}>
+                                    <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+                                        <ProfitIcon />
+                                        <Text style={{
+                                            marginLeft: 10,
+                                            fontFamily: "Gilroy-Medium",
+                                            fontWeight: "500",
+                                            fontSize: 16,
+                                            color: "#0EBA2C"
+                                        }}>+25.000 so’m</Text>
+                                    </View>
+
+                                    <Text style={{
+                                        fontFamily: "Gilroy-Medium",
+                                        fontWeight: "500",
+                                        fontSize: 14
+                                    }}>10:45</Text>
+                                </View>
+
+                                <View style={{
+                                    display: "flex",
+                                    flexDirection: "row",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                    height: 50,
+                                    marginTop: 4,
+                                    paddingHorizontal: 4,
+                                    paddingVertical: 6
+                                }}>
+                                    <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+                                        <ProfitIcon />
+                                        <Text style={{
+                                            marginLeft: 10,
+                                            fontFamily: "Gilroy-Medium",
+                                            fontWeight: "500",
+                                            fontSize: 16,
+                                            color: "#0EBA2C"
+                                        }}>+25.000 so’m</Text>
+                                    </View>
+
+                                    <Text style={{
+                                        fontFamily: "Gilroy-Medium",
+                                        fontWeight: "500",
+                                        fontSize: 14
+                                    }}>10:45</Text>
+                                </View>
+                            </View>
+                        </View>
+
+                        <View style={{width: screenWidth, paddingLeft: 16, paddingRight: 16}}>
+                            <View style={{
+                                marginTop: 12,
+                                display: "flex",
+                                alignItems: "center",
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                                width: screenWidth,
+                                paddingRight: 16,
+                                paddingLeft: 16,
+                                backgroundColor: "#EEEEEE",
+                                height: 42,
+                                borderRadius: 4,
+                                paddingHorizontal: 10,
+                                // paddingVertical: 10
                             }}>
                                 <Text style={{
                                     fontFamily: "Gilroy-Medium",

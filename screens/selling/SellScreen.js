@@ -3,6 +3,8 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View, Image, Dimensions, Text, TextInput, TouchableOpacity, Modal } from 'react-native';
 import SwipeableFlatList from 'react-native-swipeable-list';
 
+import BackIcon from "../../assets/arrow-left-icon.svg";
+
 const screenWidth = Dimensions.get('window').width;
 
 const data = [
@@ -101,7 +103,7 @@ class Sell extends Component {
                 borderRadius: 8,
               }}
             >
-              <Image source={require('../../assets/arrow-left-icon.png')} />
+              <BackIcon />
             </TouchableOpacity>
 
             <Text

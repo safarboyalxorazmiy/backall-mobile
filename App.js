@@ -8,9 +8,7 @@ import Home from './screens/HomeScreen';
 import * as Font from 'expo-font';
 import Basket from './screens/basket/BasketScreen';
 import Shopping from './screens/shopping/ShoppingScreen';
-import Scan from './screens/scanning/ScanScreen';
 import ProductAdd from "./screens/basket/ProductAddScreen";
-import Scanned from "./screens/scanning/ScannedScreen";
 import Sell from "./screens/selling/SellScreen";
 import DatabaseService from './database/DatabaseService';
 import {name as appName} from './app.json';
@@ -120,19 +118,6 @@ class App extends Component {
                     />
 
                     <Stack.Screen name="Sell" component={Sell}
-                                  options={({navigation}) => ({
-                                      title: '',
-                                      headerShown: false
-                                  })}
-                    />
-                    <Stack.Screen name="Scan" component={Scan}
-                                  options={({navigation}) => ({
-                                      title: '',
-                                      headerShown: false
-                                  })}
-                    />
-
-                    <Stack.Screen name="Scanned" component={Scanned}
                                   options={({navigation}) => ({
                                       title: '',
                                       headerShown: false

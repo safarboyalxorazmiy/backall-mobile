@@ -10,6 +10,8 @@ import ShoppingIcon from '../../assets/navbar/shopping-icon.svg';
 import WalletIcon from "../../assets/navbar/wallet-icon.svg";
 import PlusIcon from "../../assets/plus-icon.svg";
 
+import SearchIcon from "../../assets/search-icon.svg";
+
 const screenWidth = Dimensions.get('window').width;
 
 class Basket extends Component {
@@ -20,7 +22,7 @@ class Basket extends Component {
             <>
                 <View style={styles.container}>
                     <View style={styles.inputWrapper}>
-                        <Image source={require("../../assets/search-icon.png")}/>
+                        <SearchIcon />
 
                         <TextInput
                             style={styles.input}
