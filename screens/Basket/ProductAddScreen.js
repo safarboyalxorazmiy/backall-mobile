@@ -11,7 +11,8 @@ import {
 } from 'react-native';
 import {CheckBox} from 'react-native-elements';
 import { Dropdown } from 'react-native-element-dropdown';
-import AntDesign from '@expo/vector-icons/AntDesign';
+
+import BackIcon from '../../assets/arrow-left-icon.svg'
 
 const data = [
   { label: 'Dona', value: '1' },
@@ -94,7 +95,7 @@ class ProductAdd extends Component {
                             paddingHorizontal: 19,
                             borderRadius: 8
                         }}>
-                            <Image source={require("../../assets/arrow-left-icon.png")}/>
+                            <BackIcon />
                         </TouchableOpacity>
 
                         <Text style={{

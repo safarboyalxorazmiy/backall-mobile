@@ -2,6 +2,9 @@ import React, {Component} from 'react';
 import {View, Text, TouchableOpacity, Image, StyleSheet, Dimensions} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 
+import BackIcon from '../../assets/arrow-left-icon.svg'
+
+
 const screenWidth = Dimensions.get('window').width;
 
 class ShoppingDetail extends Component {
@@ -16,7 +19,7 @@ class ShoppingDetail extends Component {
                             onPress={() => navigation.navigate('Shopping')}
                             style={styles.backButton}
                         >
-                            <Image source={require('../../assets/arrow-left-icon.png')}/>
+                            <BackIcon />
                         </TouchableOpacity>
 
                         <Text style={styles.title}>Sotilgan mahsulotlar</Text>

@@ -1,8 +1,17 @@
-import React, {Component} from 'react';
-import {StatusBar} from 'expo-status-bar';
-import {StyleSheet, Text, View, Dimensions, Image, TouchableOpacity} from 'react-native';
-import {LinearGradient} from 'expo-linear-gradient';
+import React, { Component } from 'react';
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View, Dimensions, Image, TouchableOpacity } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
+// NAVBAR ICONS
+import Dashboard from '../assets/navbar/dashboard-icon-active.svg';
+import Basket from '../assets/navbar/basket-icon.svg';
+import Scan from '../assets/navbar/scan-icon.svg';
+import Shopping from '../assets/navbar/shopping-icon.svg';
+import Wallet from '../assets/navbar/wallet-icon.svg';
+
+import ShoppingIcon from "../assets/home/shopping-icon.svg";
+import BenefitIcon from "../assets/home/benefit-icon.svg";
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -47,8 +56,9 @@ class Home extends Component {
                                 shadowRadius: 20,
                                 elevation: 5
                             }}>
-                                <Image style={{position: 'absolute', bottom: 28, left: 25}}
-                                       source={require("../assets/home/shopping-icon.png")}/>
+                                <ShoppingIcon 
+                                    style={{position: 'absolute', bottom: 28, left: 25}} 
+                                    resizeMode="cover"  />
                             </View>
 
                             <Text style={styles.cardTitle}>Bugungi kirim</Text>
@@ -77,8 +87,9 @@ class Home extends Component {
                                 },
                                 shadowRadius: 20
                             }}>
-                                <Image style={{position: 'absolute', bottom: 28, left: 25, zIndex: 1}}
-                                       source={require("../assets/home/benefit-icon.png")}/>
+                                <BenefitIcon  
+                                    style={{position: 'absolute', bottom: 28, left: 25, zIndex: 1}}
+                                    resizeMode="cover"/>
                             </View>
                             <Text style={styles.cardTitle}>Bugungi foyda</Text>
                             <Text style={styles.cardDescription}>500.000 <Text style={styles.currency}>UZS</Text></Text>
@@ -90,26 +101,26 @@ class Home extends Component {
                 <View style={styles.navbar}>
                     <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Home')}>
                         <View style={styles.activeBorder}></View>
-                        <Image source={require("../assets/navbar/dashboard-icon-active.png")}/>
+                        <Dashboard resizeMode="cover" />
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Basket')}>
                         <View style={styles.inactiveBorder}></View>
-                        <Image source={require("../assets/navbar/basket-icon.png")}/>
+                        <Basket resizeMode="cover" />
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.scan} onPress={() => navigation.navigate('Sell')}>
-                        <Image source={require("../assets/navbar/scan-icon.png")}/>
+                        <Scan resizeMode="cover" />
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Shopping')}>
                         <View style={styles.inactiveBorder}></View>
-                        <Image source={require("../assets/navbar/shopping-icon.png")}/>
+                        <Shopping  resizeMode="cover" />
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Profit')}>
                         <View style={styles.inactiveBorder}></View>
-                        <Image source={require("../assets/navbar/wallet-icon.png")}/>
+                        <Wallet resizeMode="cover" />
                     </TouchableOpacity>
                 </View>
             </>

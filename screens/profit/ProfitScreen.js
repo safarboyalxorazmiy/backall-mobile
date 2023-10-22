@@ -2,6 +2,17 @@ import React, {Component} from 'react';
 import {StatusBar} from 'expo-status-bar';
 import {StyleSheet, Text, TextInput, View, Dimensions, Image, TouchableOpacity, ScrollView} from 'react-native';
 
+// NAVBAR ICONS
+import DashboardIcon from '../../assets/navbar/dashboard-icon.svg';
+import BasketIcon from '../../assets/navbar/basket-icon.svg';
+import ScanIcon from '../../assets/navbar/scan-icon.svg';
+import ShoppingIcon from '../../assets/navbar/shopping-icon.svg';
+import WalletIcon from '../../assets/navbar/wallet-icon-active.svg';
+
+import CalendarIcon from "../../assets/calendar-icon.svg";
+import ProfitIcon from "../../assets/profit-icon.svg";
+
+
 const screenWidth = Dimensions.get('window').width;
 
 class Profit extends Component {
@@ -52,8 +63,9 @@ class Profit extends Component {
                                     }}
                                     placeholder="--/--/----"
                                     placeholderTextColor="#AAAAAA"/>
-                                <Image style={{position: "absolute", right: 16, top: 14}}
-                                       source={require("../../assets/calendar-icon.png")}/>
+                                 <CalendarIcon 
+                                    style={{position: "absolute", right: 16, top: 14}}
+                                    resizeMode="cover" />
                             </View>
                         </View>
 
@@ -130,7 +142,7 @@ class Profit extends Component {
                                     paddingVertical: 6
                                 }} onPress={() => navigation.navigate('ProfitDetail')}>
                                     <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-                                        <Image source={require("../../assets/profit-icon.png")}/>
+                                        <ProfitIcon />
                                         <Text style={{
                                             marginLeft: 10,
                                             fontFamily: "Gilroy-Medium",
@@ -158,7 +170,7 @@ class Profit extends Component {
                                     paddingVertical: 6
                                 }} onPress={() => navigation.navigate('ProfitDetail')}>
                                     <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-                                        <Image source={require("../../assets/profit-icon.png")}/>
+                                        <ProfitIcon />
                                         <Text style={{
                                             marginLeft: 10,
                                             fontFamily: "Gilroy-Medium",
@@ -186,7 +198,7 @@ class Profit extends Component {
                                     paddingVertical: 6
                                 }} onPress={() => navigation.navigate('ProfitDetail')}>
                                     <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-                                        <Image source={require("../../assets/profit-icon.png")}/>
+                                        <ProfitIcon />
                                         <Text style={{
                                             marginLeft: 10,
                                             fontFamily: "Gilroy-Medium",
@@ -251,7 +263,7 @@ class Profit extends Component {
                                     paddingVertical: 6
                                 }}>
                                     <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-                                        <Image source={require("../../assets/profit-icon.png")}/>
+                                        <ProfitIcon />
                                         <Text style={{
                                             marginLeft: 10,
                                             fontFamily: "Gilroy-Medium",
@@ -279,7 +291,7 @@ class Profit extends Component {
                                     paddingVertical: 6
                                 }}>
                                     <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-                                        <Image source={require("../../assets/profit-icon.png")}/>
+                                        <ProfitIcon />
                                         <Text style={{
                                             marginLeft: 10,
                                             fontFamily: "Gilroy-Medium",
@@ -307,7 +319,7 @@ class Profit extends Component {
                                     paddingVertical: 6
                                 }}>
                                     <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-                                        <Image source={require("../../assets/profit-icon.png")}/>
+                                        <ProfitIcon />
                                         <Text style={{
                                             marginLeft: 10,
                                             fontFamily: "Gilroy-Medium",
@@ -334,26 +346,26 @@ class Profit extends Component {
                 <View style={styles.navbar}>
                     <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Home')}>
                         <View style={styles.inactiveBorder}></View>
-                        <Image source={require("../../assets/navbar/dashboard-icon.png")}/>
+                        <DashboardIcon resizeMode="cover" />
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Basket')}>
                         <View style={styles.inactiveBorder}></View>
-                        <Image source={require("../../assets/navbar/basket-icon.png")}/>
+                        <BasketIcon resizeMode="cover" />
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.scan} onPress={() => navigation.navigate('Sell')}>
-                        <Image source={require("../../assets/navbar/scan-icon.png")}/>
+                        <ScanIcon resizeMode="cover" />
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Shopping')}>
                         <View style={styles.inactiveBorder}></View>
-                        <Image source={require("../../assets/navbar/shopping-icon.png")}/>
+                        <ShoppingIcon  resizeMode="cover" />
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Wallet')}>
+                    <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Profit')}>
                         <View style={styles.activeBorder}></View>
-                        <Image source={require("../../assets/navbar/wallet-icon-active.png")}/>
+                        <WalletIcon resizeMode="cover" />
                     </TouchableOpacity>
                 </View>
             </>

@@ -2,6 +2,15 @@ import React, { Component } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, TextInput, Text, View, Dimensions, Image, TouchableOpacity, ScrollView } from 'react-native';
 
+// NAVBAR ICONS
+import DashboardIcon from '../../assets/navbar/dashboard-icon.svg';
+import BasketIcon from '../../assets/navbar/basket-icon.svg';
+import ScanIcon from '../../assets/navbar/scan-icon.svg';
+import ShoppingIcon from '../../assets/navbar/shopping-icon-active.svg';
+import WalletIcon from '../../assets/navbar/wallet-icon.svg';
+
+import CalendarIcon from "../../assets/calendar-icon.svg";
+import SellIcon from "../../assets/sell-icon.svg";
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -37,7 +46,10 @@ class Shopping extends Component {
                             }}
                             placeholder="--/--/----"
                             placeholderTextColor="#AAAAAA" />
-                        <Image style={{position: "absolute", right: 16, top: 14}} source={require("../../assets/calendar-icon.png")} />
+                            
+                        <CalendarIcon 
+                            style={{position: "absolute", right: 16, top: 14}}
+                            resizeMode="cover" />
                     </View>
                 </View>
 
@@ -56,7 +68,7 @@ class Shopping extends Component {
                     <View>
                         <TouchableOpacity style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, width: screenWidth, paddingHorizontal: 16, paddingVertical: 6}} onPress={() => navigation.navigate('ShoppingDetail')}>
                             <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-                                <Image source={require("../../assets/sell-icon.png")} />
+                                <SellIcon />
                                 <Text style={{marginLeft: 10, fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16}}>25.000 so’m</Text>
                             </View>
 
@@ -65,7 +77,7 @@ class Shopping extends Component {
 
                         <TouchableOpacity style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, paddingHorizontal: 16, paddingVertical: 6}} onPress={() => navigation.navigate('ShoppingDetail')}>
                             <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-                                <Image source={require("../../assets/sell-icon.png")} />
+                                <SellIcon />
                                 <Text style={{marginLeft: 10, fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16}}>25.000 so’m</Text>
                             </View>
 
@@ -74,7 +86,7 @@ class Shopping extends Component {
 
                         <TouchableOpacity style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, paddingHorizontal: 16, paddingVertical: 6}} onPress={() => navigation.navigate('ShoppingDetail')}>
                             <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-                                <Image source={require("../../assets/sell-icon.png")} />
+                                <SellIcon />
                                 <Text style={{marginLeft: 10, fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16}}>25.000 so’m</Text>
                             </View>
 
@@ -83,7 +95,7 @@ class Shopping extends Component {
 
                         <TouchableOpacity style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, paddingHorizontal: 16, paddingVertical: 6}}  onPress={() => navigation.navigate('ShoppingDetail')}>
                             <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-                                <Image source={require("../../assets/sell-icon.png")} />
+                                <SellIcon />
                                 <Text style={{marginLeft: 10, fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16}}>25.000 so’m</Text>
                             </View>
 
@@ -92,7 +104,7 @@ class Shopping extends Component {
 
                         <TouchableOpacity style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, paddingHorizontal: 16, paddingVertical: 6}} onPress={() => navigation.navigate('ShoppingDetail')}>
                             <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-                                <Image source={require("../../assets/sell-icon.png")} />
+                                <SellIcon />
                                 <Text style={{marginLeft: 10, fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16}}>25.000 so’m</Text>
                             </View>
 
@@ -111,7 +123,7 @@ class Shopping extends Component {
                     <View>
                         <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, paddingHorizontal: 16, paddingVertical: 6}}>
                             <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-                                <Image source={require("../../assets/sell-icon.png")} />
+                                <SellIcon />
                                 <Text style={{marginLeft: 10, fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16}}>25.000 so’m</Text>
                             </View>
 
@@ -120,7 +132,7 @@ class Shopping extends Component {
 
                         <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, paddingHorizontal: 16, paddingVertical: 6}}>
                             <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-                                <Image source={require("../../assets/sell-icon.png")} />
+                                <SellIcon />
                                 <Text style={{marginLeft: 10, fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16}}>25.000 so’m</Text>
                             </View>
 
@@ -129,7 +141,7 @@ class Shopping extends Component {
 
                         <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, paddingHorizontal: 16, paddingVertical: 6}}>
                             <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-                                <Image source={require("../../assets/sell-icon.png")} />
+                                <SellIcon />
                                 <Text style={{marginLeft: 10, fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16}}>25.000 so’m</Text>
                             </View>
 
@@ -138,7 +150,7 @@ class Shopping extends Component {
 
                         <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, paddingHorizontal: 16, paddingVertical: 6}}>
                             <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-                                <Image source={require("../../assets/sell-icon.png")} />
+                                <SellIcon />
                                 <Text style={{marginLeft: 10, fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16}}>25.000 so’m</Text>
                             </View>
 
@@ -147,7 +159,7 @@ class Shopping extends Component {
 
                         <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, paddingHorizontal: 16, paddingVertical: 6}}>
                             <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-                                <Image source={require("../../assets/sell-icon.png")} />
+                                <SellIcon />
                                 <Text style={{marginLeft: 10, fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16}}>25.000 so’m</Text>
                             </View>
 
@@ -164,26 +176,26 @@ class Shopping extends Component {
             <View style={styles.navbar}>
                 <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Home')}>
                     <View style={styles.inactiveBorder}></View>
-                    <Image source={require("../../assets/navbar/dashboard-icon.png")} />
+                    <DashboardIcon resizeMode="cover" />
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Basket')}>
                     <View style={styles.inactiveBorder}></View>
-                    <Image source={require("../../assets/navbar/basket-icon.png")} />
+                    <BasketIcon resizeMode="cover" />
                 </TouchableOpacity>
-            
+
                 <TouchableOpacity style={styles.scan} onPress={() => navigation.navigate('Sell')}>
-                    <Image source={require("../../assets/navbar/scan-icon.png")} />
+                    <ScanIcon resizeMode="cover" />
                 </TouchableOpacity>
-                
+
                 <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Shopping')}>
                     <View style={styles.activeBorder}></View>
-                    <Image source={require("../../assets/navbar/shopping-icon-active.png")} />
+                    <ShoppingIcon resizeMode="cover" />
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Profit')}>
                     <View style={styles.inactiveBorder}></View>
-                    <Image source={require("../../assets/navbar/wallet-icon.png")} />
+                    <WalletIcon resizeMode="cover" />
                 </TouchableOpacity>
             </View>
         </>

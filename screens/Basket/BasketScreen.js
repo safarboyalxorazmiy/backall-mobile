@@ -1,6 +1,14 @@
 import React, {Component} from 'react';
-import {StatusBar} from 'expo-status-bar';
-import {StyleSheet, Text, View, Dimensions, Image, TouchableOpacity, TextInput, ScrollView} from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View, Dimensions, Image, TouchableOpacity, TextInput, ScrollView } from 'react-native';
+
+// NAVBAR ICONS
+import DashboardIcon from '../../assets/navbar/dashboard-icon.svg';
+import BasketIcon from '../../assets/navbar/basket-icon-active.svg';
+import ScanIcon from '../../assets/navbar/scan-icon.svg';
+import ShoppingIcon from '../../assets/navbar/shopping-icon.svg';
+import WalletIcon from "../../assets/navbar/wallet-icon.svg";
+import PlusIcon from "../../assets/plus-icon.svg";
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -100,7 +108,7 @@ class Basket extends Component {
                     </ScrollView>
 
                     <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('ProductAdd')}>
-                        <Image source={require("../../assets/plus-icon.png")}></Image>
+                        <PlusIcon />
                     </TouchableOpacity>
 
                     <StatusBar style="auto"/>
@@ -109,26 +117,26 @@ class Basket extends Component {
                 <View style={styles.navbar}>
                     <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Home')}>
                         <View style={styles.inactiveBorder}></View>
-                        <Image source={require("../../assets/navbar/dashboard-icon.png")}/>
+                        <DashboardIcon resizeMode="cover" />
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Basket')}>
                         <View style={styles.activeBorder}></View>
-                        <Image source={require("../../assets/navbar/basket-icon-active.png")}/>
+                        <BasketIcon resizeMode="cover" />
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.scan} onPress={() => navigation.navigate('Sell')}>
-                        <Image source={require("../../assets/navbar/scan-icon.png")}/>
+                        <ScanIcon resizeMode="cover" />
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Shopping')}>
                         <View style={styles.inactiveBorder}></View>
-                        <Image source={require("../../assets/navbar/shopping-icon.png")}/>
+                        <ShoppingIcon  resizeMode="cover" />
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Profit')}>
                         <View style={styles.inactiveBorder}></View>
-                        <Image source={require("../../assets/navbar/wallet-icon.png")}/>
+                        <WalletIcon resizeMode="cover" />
                     </TouchableOpacity>
                 </View>
             </>
