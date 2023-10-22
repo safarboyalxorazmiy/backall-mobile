@@ -34,66 +34,71 @@ class Home extends Component {
                     }}>Statistika</Text>
 
                     <View style={styles.cards}>
-                        <LinearGradient
-                            colors={['#E59C0D', '#FDD958']}
-                            start={{x: 0, y: 0.5}}
-                            style={styles.card}>
+                        <TouchableOpacity onPress={() => navigation.navigate('Shopping')}>
+                            <LinearGradient
+                                colors={['#E59C0D', '#FDD958']}
+                                start={{x: 0, y: 0.5}}
+                                style={styles.card}>
 
-                            <View style={{
-                                width: 141,
-                                height: 141,
-                                borderRadius: 100,
-                                backgroundColor: "#F8E08D",
-                                position: 'absolute',
-                                right: -70,
-                                top: -70,
-                                shadowColor: 'rgba(0, 0, 0, 0.05)',
-                                shadowOffset: {
-                                    width: -10,
-                                    height: 10,
-                                },
-                                shadowOpacity: 1,
-                                shadowRadius: 20,
-                                elevation: 5
-                            }}>
-                                <ShoppingIcon 
-                                    style={{position: 'absolute', bottom: 28, left: 25}} 
-                                    resizeMode="cover"  />
-                            </View>
+                                <View style={{
+                                    width: 141,
+                                    height: 141,
+                                    borderRadius: 100,
+                                    backgroundColor: "#F8E08D",
+                                    position: 'absolute',
+                                    right: -70,
+                                    top: -70,
+                                    shadowColor: 'rgba(0, 0, 0, 0.05)',
+                                    shadowOffset: {
+                                        width: -10,
+                                        height: 10,
+                                    },
+                                    shadowOpacity: 1,
+                                    shadowRadius: 20,
+                                    elevation: 5
+                                }}>
+                                    <ShoppingIcon 
+                                        style={{position: 'absolute', bottom: 28, left: 25}} 
+                                        resizeMode="cover"  />
+                                </View>
 
-                            <Text style={styles.cardTitle}>Bugungi kirim</Text>
-                            <Text style={styles.cardDescription}>3.000.000 <Text
-                                style={styles.currency}>UZS</Text></Text>
-                        </LinearGradient>
+                                <Text style={styles.cardTitle}>Bugungi kirim</Text>
+                                <Text style={styles.cardDescription}>3.000.000 <Text
+                                    style={styles.currency}>UZS</Text></Text>
+                            </LinearGradient>
+                        </TouchableOpacity>                        
 
-                        <LinearGradient
-                            style={styles.card}
-                            colors={['#2C8134', '#1DCB00']}
-                            start={{x: 0, y: 0.5}}
-                        >
-                            <View style={{
-                                width: 141,
-                                height: 141,
-                                borderRadius: 100,
-                                backgroundColor: "#1EC703",
-                                position: 'absolute',
-                                right: -70,
-                                top: -70,
-                                elevation: 5,
-                                shadowColor: 'rgba(0, 0, 0, 0.05)',
-                                shadowOffset: {
-                                    width: -10,
-                                    height: 10,
-                                },
-                                shadowRadius: 20
-                            }}>
-                                <BenefitIcon  
-                                    style={{position: 'absolute', bottom: 28, left: 25, zIndex: 1}}
-                                    resizeMode="cover"/>
-                            </View>
-                            <Text style={styles.cardTitle}>Bugungi foyda</Text>
-                            <Text style={styles.cardDescription}>500.000 <Text style={styles.currency}>UZS</Text></Text>
-                        </LinearGradient>
+                        <TouchableOpacity onPress={() => navigation.navigate('Profit')}>
+                            <LinearGradient
+                                style={styles.card}
+                                colors={['#2C8134', '#1DCB00']}
+                                start={{x: 0, y: 0.5}}
+                            >
+                                <View style={{
+                                    width: 141,
+                                    height: 141,
+                                    borderRadius: 100,
+                                    backgroundColor: "#1EC703",
+                                    position: 'absolute',
+                                    right: -70,
+                                    top: -70,
+                                    elevation: 5,
+                                    shadowColor: 'rgba(0, 0, 0, 0.05)',
+                                    shadowOffset: {
+                                        width: -10,
+                                        height: 10,
+                                    },
+                                    shadowRadius: 20
+                                }}>
+                                    <BenefitIcon  
+                                        style={{position: 'absolute', bottom: 28, left: 25, zIndex: 1}}
+                                        resizeMode="cover"/>
+                                </View>
+                                <Text style={styles.cardTitle}>Bugungi foyda</Text>
+                                <Text style={styles.cardDescription}>500.000 <Text style={styles.currency}>UZS</Text></Text>
+                            </LinearGradient>
+                        </TouchableOpacity>
+                        
                     </View>
                     <StatusBar style="auto"/>
                 </View>
