@@ -104,7 +104,7 @@ class ProductAdd extends Component {
                             fontFamily: "Gilroy-SemiBold",
                             fontWeight: 600
                         }}>
-                            Maxsulot qo’shish
+                            Mahsulot qo’shish
                         </Text>
                     </View>
 

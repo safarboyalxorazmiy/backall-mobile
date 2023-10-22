@@ -23,7 +23,6 @@ const data = [
     { id: 14, text: 'Item 3' },
     { id: 15, text: 'Item 3' },
     { id: 16, text: 'Item 3' },
-    { id: 16, text: 'Item 3' },
     { id: 17, text: 'Item 3' },
     { id: 18, text: 'Item 3' },
     { id: 19, text: 'Item 3' },

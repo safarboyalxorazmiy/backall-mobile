@@ -72,7 +72,7 @@ class Basket extends Component {
                             <Text style={styles.productCount}>120 blok</Text>
                         </View>
 
-                        <View style={styles.product}>
+                        <View style={styles.productOdd}>
                             <Text style={styles.productTitle}>Qora Gorilla</Text>
                             <Text style={styles.productCount}>120 blok</Text>
                         </View>
@@ -82,7 +82,7 @@ class Basket extends Component {
                             <Text style={styles.productCount}>120 blok</Text>
                         </View>
 
-                        <View style={styles.product}>
+                        <View style={styles.productOdd}>
                             <Text style={styles.productTitle}>Qora Gorilla</Text>
                             <Text style={styles.productCount}>120 blok</Text>
                         </View>
@@ -92,7 +92,7 @@ class Basket extends Component {
                             <Text style={styles.productCount}>120 blok</Text>
                         </View>
 
-                        <View style={styles.product}>
+                        <View style={styles.productOdd}>
                             <Text style={styles.productTitle}>Qora Gorilla</Text>
                             <Text style={styles.productCount}>120 blok</Text>
                         </View>
