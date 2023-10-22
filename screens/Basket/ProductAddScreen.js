@@ -10,13 +10,26 @@ import {
     Image
 } from 'react-native';
 import {CheckBox} from 'react-native-elements';
+import { Dropdown } from 'react-native-element-dropdown';
+import AntDesign from '@expo/vector-icons/AntDesign';
+
+const data = [
+  { label: 'Dona', value: '1' },
+  { label: 'KG', value: '2' },
+  { label: 'GR', value: '3' },
+  { label: 'Litr', value: '4' }
+];
+
 
 const screenWidth = Dimensions.get('window').width;
 
 class ProductAdd extends Component {
     constructor(props) {
         super(props);
+    
         this.state = {
+            selectedItem: null,
+
             seriyaInputValue: '',
             brandInputValue: '',
             productInputValue: '',
@@ -49,14 +62,25 @@ class ProductAdd extends Component {
         // You can do further processing with the values here
     };
 
+    handleDropdownSelect = (value) => {
+        this.setState({ value });
+      };
+    
+      getSelectedItem = () => {
+        const selectedItem = data.find((item) => item.value === this.state.value);
+        return selectedItem ? selectedItem.label : 'Dona';
+      };
+
     render() {
         const {navigation} = this.props;
 
         return (
             <>
+                 <View style={styles.container}>
+                    
+                </View>
+
                 <ScrollView contentContainerStyle={styles.container}>
-
-
                     <View style={{
                         width: screenWidth - (17 + 17),
                         display: "flex",
@@ -114,7 +138,6 @@ class ProductAdd extends Component {
                         />
                     </View>
 
-
                     <View style={styles.inputWrapper}>
                         <Text style={styles.label}>Mahsulot miqdori</Text>
                         <View style={styles.amountGroup}>
@@ -126,16 +149,37 @@ class ProductAdd extends Component {
                             />
 
                             <View style={styles.amountType}>
+                            <Dropdown
+                                data={data}
+                                labelField="label"
+                                valueField="value"
+                                value="1"
+                                onChange={this.handleDropdownSelect}
+                                style={styles.dropdown}
+                                baseColor="white"
+
+                                selectedTextProps={{
+                                    style: {
+                                      fontSize: 20, 
+                                      color: 'white',
+                                    },
+                                }}
+
+                                selectedTextStyle={{
+                                  fontSize: 13,
+                                  color: 'black',
+                                }}
+                            />
+                             {/* {this.state.value && (
                                 <Text style={{
                                     color: "white",
                                     fontSize: 16,
                                     fontFamily: "Gilroy-Medium",
                                     fontWeight: "500"
                                 }}>
-                                    DONA
+                                    {this.getSelectedItem()}
                                 </Text>
-
-                                <Image source={require("../../assets/dropdown-icon.png")}/>
+                            )}  */}
                             </View>
                         </View>
                     </View>
@@ -290,7 +334,12 @@ const styles = StyleSheet.create({
         width: 122,
         borderTopRightRadius: 10,
         borderBottomRightRadius: 10,
-        backgroundColor: "#444444"
+        backgroundColor: "#444444",
+        color: "white"
+    },
+
+    dropdown: {
+        width: 122,
     },
 
     buttons: {

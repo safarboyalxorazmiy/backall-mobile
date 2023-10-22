@@ -222,7 +222,9 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        width: screenWidth - (17 + 17),
+        width: screenWidth,
+        paddingLeft: 17,
+        paddingRight: 17,
         paddingVertical: 13,
         paddingHorizontal: 4
     },
@@ -232,7 +234,9 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        width: screenWidth - (17 + 17),
+        width: screenWidth,
+        paddingLeft: 17,
+        paddingRight: 17,
         paddingVertical: 13,
         paddingHorizontal: 4,
         backgroundColor: "#F1F1F1"
