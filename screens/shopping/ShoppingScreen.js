@@ -30,7 +30,7 @@ class Shopping extends Component {
                     <Text style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16, marginBottom: 4}}>Muddatni tanlang</Text>
 
                     <View>
-                        <TextInput  
+                        <TouchableOpacity onPress={() => navigation.navigate('Calendar')}
                             style={{
                                 width: screenWidth - (16 * 2),
                                 position: "relative", 
@@ -39,13 +39,15 @@ class Shopping extends Component {
                                 borderColor: "#AFAFAF", 
                                 borderWidth: 1, 
                                 borderRadius: 8, 
-                                fontSize: 16,
-                                lineHeight: 24,
-                                fontFamily: "Gilroy-Medium",
-                                fontWeight: "500"
-                            }}
-                            placeholder="--/--/----"
-                            placeholderTextColor="#AAAAAA" />
+                               
+                            }}>
+                                <Text style={{ 
+                                    fontSize: 16,
+                                    lineHeight: 24,
+                                    fontFamily: "Gilroy-Medium",
+                                    fontWeight: "500",
+                                    color: "#AAAAAA"}}>--/--/----</Text>
+                        </TouchableOpacity>
                             
                         <CalendarIcon 
                             style={{position: "absolute", right: 16, top: 14}}

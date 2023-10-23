@@ -28,6 +28,8 @@ class Profit extends Component {
                             borderBottomColor: "black",
                             borderBottomWidth: 1,
                             width: screenWidth - (16 * 2),
+                            marginLeft: "auto",
+                            marginRight: "auto",
                             height: 44,
                             display: "flex",
                             alignItems: "center",

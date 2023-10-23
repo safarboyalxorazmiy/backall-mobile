@@ -1,8 +1,8 @@
-import React, {Component} from 'react';
-import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
-import {Text} from 'react-native';
-import {AppRegistry} from 'react-native';
+import React, { Component } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { Text } from 'react-native';
+import { AppRegistry } from 'react-native';
 import Login from './screens/LoginScreen';
 import Home from './screens/HomeScreen';
 import * as Font from 'expo-font';
@@ -11,11 +11,12 @@ import Shopping from './screens/shopping/ShoppingScreen';
 import ProductAdd from "./screens/basket/ProductAddScreen";
 import Sell from "./screens/selling/SellScreen";
 import DatabaseService from './database/DatabaseService';
-import {name as appName} from './app.json';
+import { name as appName } from './app.json';
 import NetInfo from "@react-native-community/netinfo";
 import ProfitDetail from './screens/profit/ProfitDetailScreen';
 import Profit from './screens/profit/ProfitScreen';
 import ShoppingDetail from './screens/shopping/ShoppingDetailScreen';
+import Calendar from './screens/CalendarScreen';
 
 AppRegistry.registerComponent(appName, () => App);
 
@@ -150,6 +151,13 @@ class App extends Component {
                                       title: '',
                                       headerShown: false
                                   })}
+                    />
+
+                    <Stack.Screen name="Calendar" component={Calendar}
+                                    options={({navigation}) => ({
+                                        title: '',
+                                        headerShown: false
+                                    })}
                     />
                 </Stack.Navigator>
             </NavigationContainer>
