@@ -59,7 +59,7 @@ class Calendar extends Component {
 
                     <View style={{display: "flex", flexDirection: "row", gap: 12}}>
                         <TextInput placeholder='04' style={styles.input} />
-                        <TextInput placeholder='dekabr' style={styles.input}  />
+                        <TextInput placeholder='dekabr' style={[styles.input, {width: 66}]}  />
                         <TextInput placeholder='2022'  style={styles.input} />
                     </View>
 
@@ -71,7 +71,7 @@ class Calendar extends Component {
 
                     <View style={{display: "flex", flexDirection: "row", gap: 12}}>
                         <TextInput placeholder='04' style={styles.input} />
-                        <TextInput placeholder='dekabr' style={styles.input}  />
+                        <TextInput placeholder='dekabr' style={[styles.input, {width: 66}]}  />
                         <TextInput placeholder='2022'  style={styles.input} />
                     </View>
 
@@ -89,7 +89,7 @@ class Calendar extends Component {
 const styles = StyleSheet.create({
     container: {
         width: screenWidth,
-        height: screenHeight,
+        height: screenHeight + 30,
         paddingTop: 52,
         display: "flex",
         alignItems: "center",

@@ -270,7 +270,6 @@ const styles = StyleSheet.create({
         position: "absolute",
         right: 20,
         bottom: 130,
-        // top: 0,
         borderRadius: 50,
         display: "flex",
         alignItems: "center",
