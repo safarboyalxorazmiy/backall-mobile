@@ -147,7 +147,7 @@ class Basket extends Component {
 const styles = StyleSheet.create({
     container: {
         // flex: 1,
-        height: screenHeight + 30,
+        height: screenHeight, // + 40
         backgroundColor: '#fff',
         // alignItems: 'center',
         paddingTop: 65,
