@@ -4,8 +4,11 @@ import { StyleSheet, View, Image, Dimensions, Text, TextInput, TouchableOpacity,
 import SwipeableFlatList from 'react-native-swipeable-list';
 
 import BackIcon from "../../assets/arrow-left-icon.svg";
+import { ScreenHeight } from 'react-native-elements/dist/helpers';
+import CrossIcon from "../../assets/cross-icon.svg";
 
 const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
 
 const data = [
   { id: 1, text: 'Coca Cola'},
@@ -128,39 +131,69 @@ class Sell extends Component {
 
           <StatusBar style="auto" />
 
-          <Modal visible={isModalVisible} animationType="slide" style={{backgroundColor: "#000", opacity: 0.5}}>
-            <View style={{backgroundColor: "red"}}>
-              <View style={styles.modalContent}>
-                <View style={styles.crossIconWrapper}>
+          <Modal visible={isModalVisible} animationType="slide" style={{
+            
+          }} transparent={true}>
+            <View style={{
+              position: "absolute", 
+              width: screenWidth, 
+              height: screenHeight, 
+              flex: 1, 
+              backgroundColor: "#00000099",
+
+            }}></View>
+
+            <View style={{
+              height: screenHeight, 
+              display: "flex", 
+              alignItems: "center",
+              justifyContent: "center"
+            }}>
+              <View style={{
+                width: screenWidth - (16 * 2), 
+                maxWidth: 343, 
+                marginLeft: "auto", 
+                marginRight: "auto", 
+                flex: 1, 
+                alignItems: "center",
+                justifyContent: "center"
+              }}>
+                <View style={{
+                  width: "100%", 
+                  padding: 20, 
+                  borderWidth: 1, 
+                  borderRadius: 12, 
+                  backgroundColor: "#fff",
+                }}>
+                  <View style={styles.crossIconWrapper}>
                     <TouchableOpacity onPress={this.toggleModal}>
-                        <Image style={styles.crossIcon} source={require("../../assets/cross-icon.png")}/>
+                      <CrossIcon />
                     </TouchableOpacity>
-                </View>
+                  </View>
 
-                <View>
+                  <View>
                     <Text style={styles.modalLabel}>Mahsulot nomi</Text>
-                    <TextInput style={styles.modalInput}
-                        placeholder="Nomini kiriting"
-                        placeholderTextColor="#AAAAAA" />
-                </View>
+                    <TextInput style={styles.modalInput} placeholder="Nomini kiriting" placeholderTextColor="#AAAAAA" />
+                  </View>
 
-                <View style={{marginTop: 16}}>
+                  <View style={styles.inputBlock}>
                     <Text style={styles.modalLabel}>Qiymati</Text>
-                    <TextInput style={styles.modalInput}
-                        placeholder="Sonini kiriting"
-                        placeholderTextColor="#AAAAAA" />
-                </View>
+                    <TextInput style={styles.modalInput} placeholder="Sonini kiriting" placeholderTextColor="#AAAAAA" />
+                  </View>
 
-                <View style={{marginTop: 16}}>
-                    <Text style={styles.modalLabel}>Sotuvdagi narxi  (1 kg/dona)</Text>
-                    <TextInput style={styles.modalInput}
-                        placeholder="1 kg/dona narxini kiriting"
-                        placeholderTextColor="#AAAAAA" />
+                  <View style={styles.inputBlock}>
+                    <Text style={styles.modalLabel}>Sotuvdagi narxi (1 kg/dona)</Text>
+                    <TextInput
+                      style={styles.modalInput}
+                      placeholder="1 kg/dona narxini kiriting"
+                      placeholderTextColor="#AAAAAA"
+                    />
+                  </View>
+
+                  <TouchableOpacity style={styles.modalButton} onPress={this.toggleModal}>
+                    <Text style={styles.modalButtonText}>Savatga qo’shish</Text>
+                  </TouchableOpacity>
                 </View>
-                
-                <TouchableOpacity style={styles.modalButton} onPress={this.toggleModal}>
-                  <Text style={styles.modalButtonText}>Savatga qo’shish</Text>
-                </TouchableOpacity>
               </View>
             </View>
           </Modal>
@@ -193,7 +226,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 18,
     fontFamily: 'Gilroy-SemiBold',
-    fontWeight: 600,
+    fontWeight: "600",
   },
   
   backIconWrapper: {
@@ -301,6 +334,7 @@ const styles = StyleSheet.create({
 
   crossIconWrapper: {
     height: 24, 
+    width: "100%",
     display: "flex", 
     alignItems: "flex-end", 
     justifyContent: "flex-end", 
@@ -334,7 +368,48 @@ const styles = StyleSheet.create({
     shadowRadius: 30,
     borderTopWidth: 1,
     borderColor: '#EEE',
+  },
+
+  modalInput: {
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    borderWidth: 1,
+    borderColor: "#AFAFAF",
+    borderRadius: 8,
+
+    fontFamily: "Gilroy-Medium",
+    fontWeight: "500",
+    fontSize: 16,
+    lineHeight: 24,
+    marginTop: 4
+  },
+
+  modalLabel: {
+    fontFamily: "Gilroy-Medium",
+    fontWeight: "500",
+    fontSize: 16,
+    lineHeight: 24
+  },
+
+  inputBlock: { 
+    marginTop: 16 
+  },
+
+  modalButton: {
+    marginTop: 24,
+    backgroundColor: "#222222",
+    paddingVertical: 14,
+    borderRadius: 8
+  },
+
+  modalButtonText: {
+    color: "#fff",
+    fontFamily: "Gilroy-Medium",
+    fontWeight: "500",
+    fontSize: 16,
+    textAlign: "center"
   }
+
 });
 
 export default Sell;

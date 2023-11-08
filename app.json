@@ -25,6 +25,7 @@
       "package": "com.safarboyalkhwarizmi.Backallmobile"
     },
     "web": {
+      "bundler": "metro",
       "favicon": "./assets/favicon.png"
     },
     "extra": {

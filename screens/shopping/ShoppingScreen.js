@@ -41,7 +41,7 @@ class Shopping extends Component {
                       <View>
                           <TouchableOpacity onPress={() => navigation.navigate("Calendar")}
                               style={styles.calendarInput}>
-                                  <Text style={calendarInputPlaceholder}>--/--/----</Text>
+                                  <Text style={styles.calendarInputPlaceholder}>--/--/----</Text>
                           </TouchableOpacity>
                               
                           <CalendarIcon 
