@@ -8,7 +8,11 @@ import Basket from './screens/basket/BasketScreen';
 import Sell from './screens/selling/SellScreen';
 import Shopping from './screens/shopping/ShoppingScreen';
 import Profit from './screens/profit/ProfitScreen';
+import Login from './screens/LoginScreen';
+import ProductAdd from "./screens/basket/ProductAddScreen";
 import ProfitDetail from './screens/profit/ProfitDetailScreen';
+import CalendarPage from './screens/CalendarScreen';
+import ShoppingDetail from './screens/shopping/ShoppingDetailScreen';
 
 import DashboardIcon from './assets/navbar/dashboard-icon.svg';
 import DashboardIconActive from './assets/navbar/dashboard-icon-active.svg';
@@ -26,16 +30,23 @@ const Tab = createBottomTabNavigator();
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
+const routesWithoutNavbar = ['ProfitDetail', 'Login', 'ProductAdd', 'ShoppingDetail', 'ProfitDetail', 'Calendar'];
+
 function CustomTabBar({ state, descriptors, navigation }) {
     const focusedRouteName = state.routes[state.index].name;
   
-    if (focusedRouteName === 'Sell' || focusedRouteName == "ProfitDetail") {
+    if (focusedRouteName === 'Sell' || routesWithoutNavbar.includes(focusedRouteName)) {
       return null; // Do not render the navbar when the focused route is 'Sell'
     }
   
     return (
       <View style={styles.navbar}>
         {state.routes.map((route, index) => {
+
+          if (routesWithoutNavbar.includes(route.name)) {
+            return;
+          }
+
           const { options } = descriptors[route.key];
           const isFocused = state.index === index;
   
@@ -149,6 +160,39 @@ const styles = StyleSheet.create({
                             tabBarVisible: false,
                             headerShown: false,
                         })}
+                />
+
+                <Tab.Screen 
+                    name="Login"
+                    component={Login}
+                    options={({navigation}) => ({
+                        title: '',
+                        headerShown: false
+                    })}
+                />
+
+                <Tab.Screen
+                  name="ProductAdd" component={ProductAdd}
+                  options={({navigation}) => ({
+                      title: '',
+                      headerShown: false
+                  })}
+                />
+
+                <Tab.Screen 
+                  name="ShoppingDetail" component={ShoppingDetail}
+                  options={({navigation}) => ({
+                      title: '',
+                      headerShown: false
+                  })}
+                />
+
+                <Tab.Screen
+                  name="Calendar" component={CalendarPage}
+                  options={({navigation}) => ({
+                      title: '',
+                      headerShown: false
+                  })}
                 />
 
             </Tab.Navigator>
