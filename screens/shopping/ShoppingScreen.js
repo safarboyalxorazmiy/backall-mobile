@@ -70,7 +70,7 @@ class Shopping extends Component {
                       </View>
 
                       <View>
-                          <TouchableOpacity style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, width: screenWidth, paddingHorizontal: 16, paddingVertical: 6}} onPress={() => navigation.navigate("ShoppingDetail")}>
+                          <TouchableOpacity style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 50, marginTop: 4, width: "100%", paddingHorizontal: 16, paddingVertical: 6}} onPress={() => navigation.navigate("ShoppingDetail")}>
                               <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
                                   <SellIcon />
                                   <Text style={{marginLeft: 10, fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16}}>25.000 so’m</Text>
