@@ -21,7 +21,7 @@ class Profit extends Component {
     return (
         <>
             <View style={styles.container}>
-                <ScrollView>
+                <ScrollView style={{ width: "100%" }}>
                     <View style={{
                         borderBottomColor: "black",
                         borderBottomWidth: 1,
@@ -54,7 +54,6 @@ class Profit extends Component {
                         <View>
                             <TextInput
                                 style={{
-                                    
                                     position: "relative",
                                     paddingHorizontal: 16,
                                     paddingVertical: 14,
@@ -103,7 +102,7 @@ class Profit extends Component {
                         }}>5.000.000 so’m</Text>
                     </View>
 
-                    <View style={{ width: screenWidth, paddingLeft: 16, paddingRight: 16 }}>
+                    <View style={{ width: "100%", paddingLeft: 16, paddingRight: 16 }}>
                         <View style={{
                             marginTop: 12,
                             display: "flex",
@@ -223,7 +222,7 @@ class Profit extends Component {
                         </View>
                     </View>
 
-                    <View style={{ width: screenWidth, paddingLeft: 16, paddingRight: 16 }}>
+                    <View style={{ width: "100%", paddingLeft: 16, paddingRight: 16 }}>
                         <View style={{
                             marginTop: 12,
                             display: "flex",
@@ -343,7 +342,7 @@ class Profit extends Component {
                         </View>
                     </View>
 
-                    <View style={{ width: screenWidth, paddingLeft: 16, paddingRight: 16 }}>
+                    <View style={{ width: "100%", paddingLeft: 16, paddingRight: 16}}>
                         <View style={{
                             marginTop: 12,
                             display: "flex",
@@ -462,7 +461,6 @@ class Profit extends Component {
                             </View>
                         </View>
                     </View>
-
                 </ScrollView>
 
                 <StatusBar style="auto"/>
@@ -528,6 +526,7 @@ class Profit extends Component {
 
 const styles = StyleSheet.create({
   container: {
+        width: "100%",
       flex: 1,
       backgroundColor: '#fff',
       alignItems: 'center',
@@ -538,7 +537,7 @@ const styles = StyleSheet.create({
       borderTopWidth: 1,
       borderTopColor: "#EFEFEF",
       paddingHorizontal: 30,
-      width: screenWidth,
+      width: "100%",
       backgroundColor: "white",
       height: 93,
       display: "flex",
