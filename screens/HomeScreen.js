@@ -5,17 +5,10 @@ import {
   Text, 
   View, 
   Dimensions, 
-  Image,
   TouchableOpacity,
   Platform
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-
-import Dashboard from "../assets/navbar/dashboard-icon-active.svg";
-import Basket from "../assets/navbar/basket-icon.svg";
-import Scan from "../assets/navbar/scan-icon.svg";
-import Shopping from "../assets/navbar/shopping-icon.svg";
-import Wallet from "../assets/navbar/wallet-icon.svg";
 
 import ShoppingIcon from "../assets/home/shopping-icon.svg";
 import BenefitIcon from "../assets/home/benefit-icon.svg";
@@ -83,52 +76,6 @@ class Home extends Component {
                       
                   </View>
                   <StatusBar style="auto"/>
-              </View>
-
-              <View style={styles.navbar}>
-                  <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Home")}>
-                        <View style={styles.activeBorder}></View>
-                        { Platform.OS === 'android' || Platform.OS === 'ios' ? (
-                            <Dashboard resizeMode="cover" />
-                        ) : (
-                            <Dashboard />
-                        )}
-                  </TouchableOpacity>
-
-                  <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Basket")}>
-                        <View style={styles.inactiveBorder}></View>
-                        { Platform.OS === 'android' || Platform.OS === 'ios' ? (
-                            <Basket resizeMode="cover" />
-                        ) : (
-                            <Basket />
-                        )}
-                  </TouchableOpacity>
-
-                  <TouchableOpacity style={styles.scan} onPress={() => navigation.navigate("Sell")}>
-                        { Platform.OS === 'android' || Platform.OS === 'ios' ? (
-                            <Scan resizeMode="cover" />
-                        ) : (
-                            <Scan />
-                        )}
-                  </TouchableOpacity>
-
-                  <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Shopping")}>
-                        <View style={styles.inactiveBorder}></View>
-                        { Platform.OS === 'android' || Platform.OS === 'ios' ? (
-                            <Shopping resizeMode="cover" />
-                        ) : (
-                            <Shopping />
-                        )}
-                  </TouchableOpacity>
-
-                  <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Profit")}>
-                      <View style={styles.inactiveBorder}></View>
-                      { Platform.OS === 'android' || Platform.OS === 'ios' ? (
-                        <Wallet resizeMode="cover" />
-                      ) : (
-                        <Wallet />
-                      )}
-                  </TouchableOpacity>
               </View>
           </>
       );
@@ -237,49 +184,6 @@ const styles = StyleSheet.create({
       fontFamily: "Gilroy-Medium",
       fontWeight: "500",
       marginLeft: 4
-  },
-
-  navbar: {
-      borderTopWidth: 1,
-      borderTopColor: "#EFEFEF",
-      paddingHorizontal: 30,
-      width: screenWidth,
-      backgroundColor: "white",
-      height: 93,
-      display: "flex",
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "flex-start"
-  },
-
-  navItem: {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center"
-  },
-
-  activeBorder: {
-      marginBottom: 30,
-      width: 47,
-      height: 4,
-      borderBottomLeftRadius: 2,
-      borderBottomRightRadius: 2,
-      backgroundColor: "black"
-  },
-
-  inactiveBorder: {
-      marginBottom: 30,
-      width: 47,
-      height: 4,
-      borderBottomLeftRadius: 2,
-      borderBottomRightRadius: 2
-  },
-
-  scan: {
-      backgroundColor: "black",
-      padding: 21,
-      borderRadius: 50,
-      marginTop: 10
   }
 });
 

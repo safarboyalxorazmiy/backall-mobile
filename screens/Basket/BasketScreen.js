@@ -1,6 +1,6 @@
-import React, {Component} from 'react';
+import React, { Component, useRef } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Dimensions, Image, TouchableOpacity, TextInput, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, Image, TouchableOpacity, TextInput, ScrollView, TouchableWithoutFeedback  } from 'react-native';
 
 // NAVBAR ICONS
 import DashboardIcon from '../../assets/navbar/dashboard-icon.svg';
@@ -16,20 +16,33 @@ const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
 class Basket extends Component {
+    
+    constructor(props) {
+        super(props);
+        this.textInputRef = React.createRef();
+    }
+
+    handlePress = () => {
+        if (this.textInputRef.current) {
+          this.textInputRef.current.focus();
+        }
+    };
+
     render() {
         const {navigation} = this.props;
 
         return (
           <View style={styles.container}>
-            <View style={styles.inputWrapper}>
+            <TouchableOpacity style={styles.inputWrapper} onPress={this.handlePress}>
                 <SearchIcon />
 
-                <TextInput
+                <TextInput 
+                    ref={this.textInputRef}
                     style={styles.input}
                     placeholder="Mahsulot qidirish"
                     placeholderTextColor="#AAA"
                 />
-            </View>
+            </TouchableOpacity >
 
             <ScrollView style={styles.productList}>
                 <View style={styles.productOdd}>
@@ -112,61 +125,6 @@ class Basket extends Component {
             <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('ProductAdd')}>
                 <PlusIcon />
             </TouchableOpacity>
-
-            { Platform.OS === 'android' || Platform.OS === 'ios' ? (
-              <View style={styles.navbar} >
-                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Home")}>
-                    <View style={styles.inactiveBorder}></View>
-                    <DashboardIcon resizeMode="cover" />
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Basket")}>
-                    <View style={styles.activeBorder}></View>
-                    <BasketIcon resizeMode="cover" />
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.scan} onPress={() => navigation.navigate("Sell")}>
-                    <ScanIcon resizeMode="cover" />
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Shopping")}>
-                    <View style={styles.inactiveBorder}></View>
-                    <ShoppingIcon resizeMode="cover" />
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Profit")}>
-                    <View style={styles.inactiveBorder}></View>
-                    <WalletIcon resizeMode="cover" />
-                </TouchableOpacity>
-              </View>
-            ) : (
-              <View style={[styles.navbar, Platform.OS === 'web' && styles.navbarWeb]} >
-                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Home")}>
-                    <View style={styles.inactiveBorder}></View>
-                    <DashboardIcon />
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Basket")}>
-                    <View style={styles.activeBorder}></View>
-                    <BasketIcon />
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.scan} onPress={() => navigation.navigate("Sell")}>
-                    <ScanIcon />
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Shopping")}>
-                    <View style={styles.inactiveBorder}></View>
-                    <ShoppingIcon />
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Profit")}>
-                    <View style={styles.inactiveBorder}></View>
-                    <WalletIcon />
-                </TouchableOpacity>
-              </View>
-            )}
-
           </View>
         );
     }
@@ -180,53 +138,6 @@ const styles = StyleSheet.create({
         // alignItems: 'center',
         paddingTop: 65,
         position: "relative"
-    },
-
-    navbar: {
-        borderTopWidth: 1,
-        borderTopColor: "#EFEFEF",
-        paddingHorizontal: 30,
-        width: "100%",
-        backgroundColor: "white",
-        height: 93,
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "flex-start"
-    },
-
-    navbarWeb: {
-      width: "100%" - 20
-    },
-
-    navItem: {
-        display: "flex",
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
-
-    activeBorder: {
-        marginBottom: 30,
-        width: 47,
-        height: 4,
-        borderBottomLeftRadius: 2,
-        borderBottomRightRadius: 2,
-        backgroundColor: "black"
-    },
-
-    inactiveBorder: {
-        marginBottom: 30,
-        width: 47,
-        height: 4,
-        borderBottomLeftRadius: 2,
-        borderBottomRightRadius: 2,
-    },
-
-    scan: {
-        backgroundColor: "black",
-        padding: 21,
-        borderRadius: 50,
-        marginTop: 10
     },
 
     inputWrapper: {
@@ -249,7 +160,8 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         fontSize: 16,
         fontFamily: 'Gilroy-Medium',
-        fontWeight: '500'
+        fontWeight: '500',
+        borderWidth: 0
     },
 
     productList: {

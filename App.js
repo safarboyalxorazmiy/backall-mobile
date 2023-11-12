@@ -18,6 +18,7 @@ import Profit from './screens/profit/ProfitScreen';
 import ShoppingDetail from './screens/shopping/ShoppingDetailScreen';
 import CalendarPage from './screens/CalendarScreen';
 import { Platform } from 'react-native';
+import Tabs from './Tabs';
 
 AppRegistry.registerComponent(appName, () => App);
 
@@ -88,7 +89,9 @@ class App extends Component {
       }
 
       return (
-          <NavigationContainer>
+         <Tabs />
+        
+          /*<NavigationContainer>
               <Stack.Navigator>
                   <Stack.Screen
                       name="Login"
@@ -162,7 +165,7 @@ class App extends Component {
                                   })}
                   />
               </Stack.Navigator>
-          </NavigationContainer>
+          </NavigationContainer>*/
       );
   }
 }
