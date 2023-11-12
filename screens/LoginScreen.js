@@ -7,8 +7,10 @@ import {
   TextInput,
   Dimensions, 
   TouchableOpacity, 
-  ScrollView 
+  ScrollView,
+  Platform
 } from 'react-native';
+
 
 import Logo from '../assets/logo.svg';          
 
@@ -20,49 +22,53 @@ class Login extends Component {
       const {navigation} = this.props;
 
       return (
-          <ScrollView contentContainerStyle={styles.container}>
-              <Logo style={styles.logo} resizeMode="cover" />
+        <ScrollView contentContainerStyle={styles.container}>
+            {Platform.OS === 'android' || Platform.OS === 'ios' ? (
+                <Logo style={styles.logo} resizeMode="cover" />
+            ) : (
+                <Logo style={styles.logo} />
+            )}
+              
+            <View style={styles.form}>
+                <Text style={styles.label}>Loginni kiriting</Text>
+                <TextInput
+                    style={styles.input}
+                    placeholder="admin"
+                    placeholderTextColor="black"
+                />
 
-              <View style={styles.form}>
-                  <Text style={styles.label}>Loginni kiriting</Text>
-                  <TextInput
-                      style={styles.input}
-                      placeholder="admin"
-                      placeholderTextColor="black"
-                  />
+                <Text style={styles.label}>Parolni kiriting</Text>
+                <TextInput
+                    style={styles.input}
+                    placeholder="********"
+                    placeholderTextColor="black"
+                />
 
-                  <Text style={styles.label}>Parolni kiriting</Text>
-                  <TextInput
-                      style={styles.input}
-                      placeholder="********"
-                      placeholderTextColor="black"
-                  />
-
-                  <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-                      <View style={styles.button}>
-                          <Text style={styles.buttonText}>Kirish</Text>
-                      </View>
-                  </TouchableOpacity>
-              </View>
+                <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+                    <View style={styles.button}>
+                        <Text style={styles.buttonText}>Kirish</Text>
+                    </View>
+                </TouchableOpacity>
+            </View>
 
 
-              <TouchableOpacity onPress={() => navigation.navigate('Home')} style={{
-                  marginTop: 168
-              }}>
-                  <View style={{
-                      height: 52,
-                      width: screenWidth - (24 + 24),
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                  }}>
-                      <Text style={{fontFamily: 'Gilroy-Medium', fontWeight: '500', fontSize: 16}}>Parolni
-                          unutdingizmi?</Text>
-                  </View>
-              </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('Home')} style={{
+                marginTop: 168
+            }}>
+                <View style={{
+                    height: 52,
+                    width: screenWidth - (24 + 24),
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}>
+                    <Text style={{fontFamily: 'Gilroy-Medium', fontWeight: '500', fontSize: 16}}>Parolni
+                        unutdingizmi?</Text>
+                </View>
+            </TouchableOpacity>
 
-              <StatusBar style="auto"/>
-          </ScrollView>
+            <StatusBar style="auto"/>
+        </ScrollView>
       );
   }
 }

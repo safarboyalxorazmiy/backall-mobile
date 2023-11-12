@@ -16,7 +16,8 @@ import NetInfo from "@react-native-community/netinfo";
 import ProfitDetail from './screens/profit/ProfitDetailScreen';
 import Profit from './screens/profit/ProfitScreen';
 import ShoppingDetail from './screens/shopping/ShoppingDetailScreen';
-import Calendar from './screens/CalendarScreen';
+import CalendarPage from './screens/CalendarScreen';
+import { Platform } from 'react-native';
 
 AppRegistry.registerComponent(appName, () => App);
 
@@ -51,21 +52,23 @@ class App extends Component {
   async componentDidMount() {
       this.loadCustomFonts();
 
-      const dbService = new DatabaseService();
-      try {
-          await dbService.init();
-          console.log("Database initialized successfully");
-      } catch (error) {
-          console.error("Error initializing database:", error);
+      if (Platform.OS == 'android' || Platform.OS == 'ios') {
+        const dbService = new DatabaseService();
+        try {
+            await dbService.init();
+            console.log("Database initialized successfully");
+        } catch (error) {
+            console.error("Error initializing database:", error);
+        }
+
+        this.unsubscribe = NetInfo.addEventListener((state) => {
+            this.setState({isConnected: state.isConnected});
+        });
+
+        this.logInternetStatusInterval = setInterval(() => {
+            console.log("Is connected?", this.state.isConnected === null ? 'Loading...' : this.state.isConnected ? 'Yes' : 'No');
+        }, 5000);
       }
-
-      this.unsubscribe = NetInfo.addEventListener((state) => {
-          this.setState({isConnected: state.isConnected});
-      });
-
-      this.logInternetStatusInterval = setInterval(() => {
-          console.log("Is connected?", this.state.isConnected === null ? 'Loading...' : this.state.isConnected ? 'Yes' : 'No');
-      }, 5000);
   }
 
   componentWillUnmount() {
@@ -152,7 +155,7 @@ class App extends Component {
                                 })}
                   />
 
-                  <Stack.Screen name="Calendar" component={Calendar}
+                  <Stack.Screen name="Calendar" component={CalendarPage}
                                   options={({navigation}) => ({
                                       title: '',
                                       headerShown: false

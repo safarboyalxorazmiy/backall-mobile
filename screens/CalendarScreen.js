@@ -1,22 +1,45 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import { 
   StyleSheet, 
   Text, 
   View, 
   Dimensions, 
-  TouchableOpacity 
+  TouchableOpacity,
+  Modal
 } from 'react-native';
 import BackIcon from '../assets/arrow-left-icon.svg'
 import DeleteIcon from '../assets/delete-icon.svg'
 import CalendarIcon from '../assets/blue-calendar-icon.svg';
 import { TextInput } from 'react-native-gesture-handler';
+import { Calendar } from 'react-native-calendars';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-class Calendar extends Component {
+class CalendarPage extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+          isModalVisible: false,
+          selectedDate: ''
+        };
+      }
+
+      toggleModal = () => {
+        this.setState((prevState) => ({
+          isModalVisible: !prevState.isModalVisible,
+        }));
+      };
+
+      onDayPress = (day) => {
+        this.setState({ selectedDate: day.dateString });
+
+        console.log(day)
+      };
+  
   render() {
-      const {navigation} = this.props;
+      const { navigation } = this.props;
+      const { isModalVisible, selectedDate } = this.state;
 
       return (
           <View style={styles.container}>
@@ -69,8 +92,66 @@ class Calendar extends Component {
                       <TextInput placeholder='2022'  style={styles.input} />
                   </View>
 
-                  <CalendarIcon />
+                  <CalendarIcon onPress={this.toggleModal} />
               </View>
+
+              <Modal visible={isModalVisible} animationType="slide" transparent={true}>
+                <View style={{
+                    position: "absolute", 
+                    width: screenWidth, 
+                    height: screenHeight, 
+                    flex: 1, 
+                    backgroundColor: "#00000099",
+
+                }}></View>
+
+                <View style={{
+                    height: screenHeight, 
+                    display: "flex", 
+                    alignItems: "center",
+                    justifyContent: "center"
+                }}>
+                    <View style={{
+                        width: screenWidth - (16 * 2), 
+                        maxWidth: 343, 
+                        marginLeft: "auto", 
+                        marginRight: "auto", 
+                        flex: 1, 
+                        alignItems: "center",
+                        justifyContent: "center"
+                    }}>
+                        <View style={{
+                            width: "100%", 
+                            borderRadius: 12, 
+                            backgroundColor: "#fff",
+                        }}>
+                            <View style={{borderBottomColor: "#CAC4D0", borderBottomWidth: 1}}>
+                                <View style={{paddingTop: 16, paddingLeft: 24, paddingBottom: 12, paddingRight: 12}}>
+                                    <Text style={{fontFamily: "Gilroy-Medium", fontSize: 14, fontWeight: "500", marginBottom: 12}}>2023</Text>
+                                    <Text style={{fontFamily: "Gilroy-Medium", fontSize: 24, fontWeight: "500"}}>Juma, 17-sen</Text>
+                                </View>
+                            </View>
+                            
+                            <Calendar
+                                onDayPress={this.onDayPress}
+                                markedDates={{
+                                    [selectedDate]: { selected: true, selectedColor: 'blue' },
+                                }}
+                            />
+
+                            <View style={{paddingHorizontal: 12, paddingTop: 8, paddingBottom: 12, display: "flex", flexDirection: "row", justifyContent: "flex-end", gap: 8}}>
+                                <TouchableOpacity style={{paddingHorizontal: 14, paddingVertical: 10}}>
+                                    <Text style={{color: "#6750A4", fontWeight: "500", fontSize: 14}}>Bekor qilish</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity style={{paddingHorizontal: 14, paddingVertical: 10}}>
+                                    <Text style={{color: "#6750A4", fontWeight: "500", fontSize: 14}}>Tasdiqlash</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                </View>
+                </Modal>
 
               <View style={{marginTop: 26, width: screenWidth - (16 * 2), display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
                   <Text style={styles.label}>gacha</Text>
@@ -151,4 +232,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Calendar;
+export default CalendarPage;

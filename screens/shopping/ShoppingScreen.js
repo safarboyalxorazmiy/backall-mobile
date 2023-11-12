@@ -27,7 +27,7 @@ class Shopping extends Component {
 
     return (
       <>
-          <View style={styles.container}>
+          <View style={[styles.container, Platform.OS === 'web' && {width: "100%"}]}>
               <ScrollView>
                   <View style={styles.pageTitle}>
                       <Text style={styles.pageTitleText}>Sotuv tarixi</Text>
@@ -43,10 +43,17 @@ class Shopping extends Component {
                               style={styles.calendarInput}>
                                   <Text style={styles.calendarInputPlaceholder}>--/--/----</Text>
                           </TouchableOpacity>
-                              
-                          <CalendarIcon 
-                              style={styles.calendarIcon}
-                              resizeMode="cover" />
+
+                             { Platform.OS === 'android' || Platform.OS === 'ios' ? (
+                              <CalendarIcon 
+                                style={styles.calendarIcon}
+                                resizeMode="cover" />
+                             )
+                             : (
+                              <CalendarIcon 
+                                style={styles.calendarIcon}
+                               />
+                             ) } 
                       </View>
                   </View>
 
@@ -169,31 +176,62 @@ class Shopping extends Component {
               <StatusBar style="auto" />
           </View>
 
-          <View style={styles.navbar}>
+          { Platform.OS === 'android' || Platform.OS === 'ios' ? (
+              <View style={styles.navbar} >
+                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Home")}>
+                    <View style={styles.inactiveBorder}></View>
+                    <DashboardIcon resizeMode="cover" />
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Basket")}>
+                    <View style={styles.inactiveBorder}></View>
+                    <BasketIcon resizeMode="cover" />
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.scan} onPress={() => navigation.navigate("Sell")}>
+                    <ScanIcon resizeMode="cover" />
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.navItem} 
+                  onPress={() => navigation.navigate("Shopping")}>
+                    <View style={styles.activeBorder}></View>
+                    <ShoppingIcon resizeMode="cover" />
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Profit")}>
+                    <View style={styles.inactiveBorder}></View>
+                    <WalletIcon resizeMode="cover" />
+                </TouchableOpacity>
+              </View>
+          ) : (
+            <View style={[styles.navbar, Platform.OS === 'web' && styles.navbarWeb]} >
               <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Home")}>
                   <View style={styles.inactiveBorder}></View>
-                  <DashboardIcon resizeMode="cover" />
+                  <DashboardIcon />
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Basket")}>
                   <View style={styles.inactiveBorder}></View>
-                  <BasketIcon resizeMode="cover" />
+                  <BasketIcon />
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.scan} onPress={() => navigation.navigate("Sell")}>
-                  <ScanIcon resizeMode="cover" />
+                  <ScanIcon />
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Shopping")}>
                   <View style={styles.activeBorder}></View>
-                  <ShoppingIcon resizeMode="cover" />
+                  <ShoppingIcon />
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Profit")}>
                   <View style={styles.inactiveBorder}></View>
-                  <WalletIcon resizeMode="cover" />
+                  <WalletIcon />
               </TouchableOpacity>
-          </View>
+            </View>
+          )}
+
+          
       </>
     );
   }
@@ -230,13 +268,17 @@ const styles = StyleSheet.create({
       borderTopWidth: 1,
       borderTopColor: "#EFEFEF",
       paddingHorizontal: 30,
-      width: screenWidth,
+      width: "100%",
       backgroundColor: "white",
       height: 93,
       display: "flex",
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "flex-start"
+  },
+
+  navbarWeb: {
+    width: "100%" - 20
   },
 
   navItem: {

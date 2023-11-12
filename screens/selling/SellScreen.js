@@ -350,13 +350,14 @@ const styles = StyleSheet.create({
 
   footer: {
     backgroundColor: '#fff',
+    width: "100%",
   },
 
   footerTitle: {
     paddingBottom: 22,
     paddingTop: 16,
     paddingHorizontal: 17,
-    width: screenWidth,
+    width: "100%",
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'flex-end',

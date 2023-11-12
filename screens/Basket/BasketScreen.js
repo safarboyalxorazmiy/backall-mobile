@@ -20,126 +20,154 @@ class Basket extends Component {
         const {navigation} = this.props;
 
         return (
-            <View style={styles.container}>
-                <View style={styles.inputWrapper}>
-                    <SearchIcon />
+          <View style={styles.container}>
+            <View style={styles.inputWrapper}>
+                <SearchIcon />
 
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Mahsulot qidirish"
-                        placeholderTextColor="#AAA"
-                    />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Mahsulot qidirish"
+                    placeholderTextColor="#AAA"
+                />
+            </View>
+
+            <ScrollView style={styles.productList}>
+                <View style={styles.productOdd}>
+                    <Text style={styles.productTitle}>Coca Cola</Text>
+                    <Text style={styles.productCount}>10 blok</Text>
                 </View>
 
-                <ScrollView style={styles.productList}>
-                    <View style={styles.productOdd}>
-                        <Text style={styles.productTitle}>Coca Cola</Text>
-                        <Text style={styles.productCount}>10 blok</Text>
-                    </View>
+                <View style={styles.product}>
+                    <Text style={styles.productTitle}>Pepsi 1.5L</Text>
+                    <Text style={styles.productCount}>10 blok</Text>
+                </View>
 
-                    <View style={styles.product}>
-                        <Text style={styles.productTitle}>Pepsi 1.5L</Text>
-                        <Text style={styles.productCount}>10 blok</Text>
-                    </View>
+                <View style={styles.productOdd}>
+                    <Text style={styles.productTitle}>Qora Gorilla</Text>
+                    <Text style={styles.productCount}>50 dona</Text>
+                </View>
 
-                    <View style={styles.productOdd}>
-                        <Text style={styles.productTitle}>Qora Gorilla</Text>
-                        <Text style={styles.productCount}>50 dona</Text>
-                    </View>
+                <View style={styles.product}>
+                    <Text style={styles.productTitle}>Qora Gorilla</Text>
+                    <Text style={styles.productCount}>120 blok</Text>
+                </View>
 
-                    <View style={styles.product}>
-                        <Text style={styles.productTitle}>Qora Gorilla</Text>
-                        <Text style={styles.productCount}>120 blok</Text>
-                    </View>
+                <View style={styles.productOdd}>
+                    <Text style={styles.productTitle}>Qora Gorilla</Text>
+                    <Text style={styles.productCount}>10 dona</Text>
+                </View>
 
-                    <View style={styles.productOdd}>
-                        <Text style={styles.productTitle}>Qora Gorilla</Text>
-                        <Text style={styles.productCount}>10 dona</Text>
-                    </View>
+                <View style={styles.product}>
+                    <Text style={styles.productTitle}>Qora Gorilla</Text>
+                    <Text style={styles.productCount}>120 blok</Text>
+                </View>
 
-                    <View style={styles.product}>
-                        <Text style={styles.productTitle}>Qora Gorilla</Text>
-                        <Text style={styles.productCount}>120 blok</Text>
-                    </View>
+                <View style={styles.productOdd}>
+                    <Text style={styles.productTitle}>Qora Gorilla</Text>
+                    <Text style={styles.productCount}>120 blok</Text>
+                </View>
 
-                    <View style={styles.productOdd}>
-                        <Text style={styles.productTitle}>Qora Gorilla</Text>
-                        <Text style={styles.productCount}>120 blok</Text>
-                    </View>
+                <View style={styles.product}>
+                    <Text style={styles.productTitle}>Qora Gorilla</Text>
+                    <Text style={styles.productCount}>120 blok</Text>
+                </View>
 
-                    <View style={styles.product}>
-                        <Text style={styles.productTitle}>Qora Gorilla</Text>
-                        <Text style={styles.productCount}>120 blok</Text>
-                    </View>
+                <View style={styles.productOdd}>
+                    <Text style={styles.productTitle}>Qora Gorilla</Text>
+                    <Text style={styles.productCount}>120 blok</Text>
+                </View>
 
-                    <View style={styles.productOdd}>
-                        <Text style={styles.productTitle}>Qora Gorilla</Text>
-                        <Text style={styles.productCount}>120 blok</Text>
-                    </View>
+                <View style={styles.product}>
+                    <Text style={styles.productTitle}>Qora Gorilla</Text>
+                    <Text style={styles.productCount}>120 blok</Text>
+                </View>
 
-                    <View style={styles.product}>
-                        <Text style={styles.productTitle}>Qora Gorilla</Text>
-                        <Text style={styles.productCount}>120 blok</Text>
-                    </View>
+                <View style={styles.productOdd}>
+                    <Text style={styles.productTitle}>Qora Gorilla</Text>
+                    <Text style={styles.productCount}>120 blok</Text>
+                </View>
 
-                    <View style={styles.productOdd}>
-                        <Text style={styles.productTitle}>Qora Gorilla</Text>
-                        <Text style={styles.productCount}>120 blok</Text>
-                    </View>
+                <View style={styles.product}>
+                    <Text style={styles.productTitle}>Qora Gorilla</Text>
+                    <Text style={styles.productCount}>120 blok</Text>
+                </View>
 
-                    <View style={styles.product}>
-                        <Text style={styles.productTitle}>Qora Gorilla</Text>
-                        <Text style={styles.productCount}>120 blok</Text>
-                    </View>
+                <View style={styles.productOdd}>
+                    <Text style={styles.productTitle}>Qora Gorilla</Text>
+                    <Text style={styles.productCount}>120 blok</Text>
+                </View>
 
-                    <View style={styles.productOdd}>
-                        <Text style={styles.productTitle}>Qora Gorilla</Text>
-                        <Text style={styles.productCount}>120 blok</Text>
-                    </View>
+                <View style={styles.product}>
+                    <Text style={styles.productTitle}>Qora Gorilla</Text>
+                    <Text style={styles.productCount}>120 blok</Text>
+                </View>
 
-                    <View style={styles.product}>
-                        <Text style={styles.productTitle}>Qora Gorilla</Text>
-                        <Text style={styles.productCount}>120 blok</Text>
-                    </View>
+                <View style={styles.productOdd}>
+                    <Text style={styles.productTitle}>Qora Gorilla</Text>
+                    <Text style={styles.productCount}>120 blok</Text>
+                </View>
 
-                    <View style={styles.productOdd}>
-                        <Text style={styles.productTitle}>Qora Gorilla</Text>
-                        <Text style={styles.productCount}>120 blok</Text>
-                    </View>
+            </ScrollView>
 
-                </ScrollView>
+            <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('ProductAdd')}>
+                <PlusIcon />
+            </TouchableOpacity>
 
-                <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('ProductAdd')}>
-                    <PlusIcon />
-                </TouchableOpacity>
-            
-
-            <View style={styles.navbar}>
-                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Home')}>
+            { Platform.OS === 'android' || Platform.OS === 'ios' ? (
+              <View style={styles.navbar} >
+                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Home")}>
                     <View style={styles.inactiveBorder}></View>
                     <DashboardIcon resizeMode="cover" />
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Basket')}>
+                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Basket")}>
                     <View style={styles.activeBorder}></View>
                     <BasketIcon resizeMode="cover" />
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.scan} onPress={() => navigation.navigate('Sell')}>
+                <TouchableOpacity style={styles.scan} onPress={() => navigation.navigate("Sell")}>
                     <ScanIcon resizeMode="cover" />
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Shopping')}>
+                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Shopping")}>
                     <View style={styles.inactiveBorder}></View>
-                    <ShoppingIcon  resizeMode="cover" />
+                    <ShoppingIcon resizeMode="cover" />
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Profit')}>
+                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Profit")}>
                     <View style={styles.inactiveBorder}></View>
                     <WalletIcon resizeMode="cover" />
                 </TouchableOpacity>
-            </View>
-            </View>
+              </View>
+            ) : (
+              <View style={[styles.navbar, Platform.OS === 'web' && styles.navbarWeb]} >
+                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Home")}>
+                    <View style={styles.inactiveBorder}></View>
+                    <DashboardIcon />
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Basket")}>
+                    <View style={styles.activeBorder}></View>
+                    <BasketIcon />
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.scan} onPress={() => navigation.navigate("Sell")}>
+                    <ScanIcon />
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Shopping")}>
+                    <View style={styles.inactiveBorder}></View>
+                    <ShoppingIcon />
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Profit")}>
+                    <View style={styles.inactiveBorder}></View>
+                    <WalletIcon />
+                </TouchableOpacity>
+              </View>
+            )}
+
+          </View>
         );
     }
 }
@@ -147,7 +175,7 @@ class Basket extends Component {
 const styles = StyleSheet.create({
     container: {
         // flex: 1,
-        height: screenHeight, // + 40
+        height: "100%", // + 40
         backgroundColor: '#fff',
         // alignItems: 'center',
         paddingTop: 65,
@@ -158,13 +186,17 @@ const styles = StyleSheet.create({
         borderTopWidth: 1,
         borderTopColor: "#EFEFEF",
         paddingHorizontal: 30,
-        width: screenWidth,
+        width: "100%",
         backgroundColor: "white",
         height: 93,
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "flex-start"
+    },
+
+    navbarWeb: {
+      width: "100%" - 20
     },
 
     navItem: {
@@ -230,7 +262,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        width: screenWidth,
+        width: "100%",
         paddingLeft: 17,
         paddingRight: 17,
         paddingVertical: 13,
@@ -242,7 +274,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        width: screenWidth,
+        width: "100%",
         paddingLeft: 17,
         paddingRight: 17,
         paddingVertical: 13,

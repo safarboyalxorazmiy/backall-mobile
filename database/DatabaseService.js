@@ -1,6 +1,10 @@
 import * as SQLite from 'expo-sqlite';
+import { Platform } from 'react-native';
 
-let db = SQLite.openDatabase('backall.db', 1);
+let db
+if (Platform.OS == 'ios' || Platform.OS == 'android') {
+  db = SQLite.openDatabase('backall.db', 1);
+}
 
 class DatabaseService {
     constructor() {}

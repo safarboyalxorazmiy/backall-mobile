@@ -6,7 +6,8 @@ import {
   View, 
   Dimensions, 
   Image,
-  TouchableOpacity 
+  TouchableOpacity,
+  Platform
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -28,7 +29,7 @@ class Home extends Component {
       return (
           <>
               <View style={styles.container}>
-                  <Text style={styles.pageTitle}>Statistika</Text>
+                  <Text style={styles.pageTitle}>Bosh sahifa</Text>
 
                   <View style={styles.cards}>
                       <TouchableOpacity onPress={() => navigation.navigate("Shopping")}>
@@ -38,9 +39,14 @@ class Home extends Component {
                               style={styles.card}>
 
                               <View style={styles.shoppingIconWrapper}>
-                                  <ShoppingIcon 
-                                      style={styles.shoppingIcon} 
-                                      resizeMode="cover"  />
+                                    { Platform.OS === 'android' || Platform.OS === 'ios' ? (
+                                    <ShoppingIcon 
+                                        style={styles.shoppingIcon} 
+                                        resizeMode="cover"  />
+                                    ) : (
+                                        <ShoppingIcon 
+                                            style={styles.shoppingIcon} />
+                                    )}
                               </View>
 
                               <Text style={styles.cardTitle}>Bugungi kirim</Text>
@@ -57,10 +63,15 @@ class Home extends Component {
                               colors={["#2C8134", "#1DCB00"]}
                               start={{x: 0, y: 0.5}}
                           >
-                              <View style={styles.benefitIconWrapper}>
+                            <View style={styles.benefitIconWrapper}>
+                                { Platform.OS === 'android' || Platform.OS === 'ios' ? (
                                   <BenefitIcon  
-                                      style={styles.benefitIcon}
-                                      resizeMode="cover"/>
+                                    style={styles.benefitIcon}
+                                    resizeMode="cover" />
+                                ) : (
+                                    <BenefitIcon  
+                                        style={styles.benefitIcon} />
+                                )}
                               </View>
                               <Text style={styles.cardTitle}>Bugungi foyda</Text>
                               <Text style={styles.cardDescription}>
@@ -76,27 +87,47 @@ class Home extends Component {
 
               <View style={styles.navbar}>
                   <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Home")}>
-                      <View style={styles.activeBorder}></View>
-                      <Dashboard resizeMode="cover" />
+                        <View style={styles.activeBorder}></View>
+                        { Platform.OS === 'android' || Platform.OS === 'ios' ? (
+                            <Dashboard resizeMode="cover" />
+                        ) : (
+                            <Dashboard />
+                        )}
                   </TouchableOpacity>
 
                   <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Basket")}>
-                      <View style={styles.inactiveBorder}></View>
-                      <Basket resizeMode="cover" />
+                        <View style={styles.inactiveBorder}></View>
+                        { Platform.OS === 'android' || Platform.OS === 'ios' ? (
+                            <Basket resizeMode="cover" />
+                        ) : (
+                            <Basket />
+                        )}
                   </TouchableOpacity>
 
                   <TouchableOpacity style={styles.scan} onPress={() => navigation.navigate("Sell")}>
-                      <Scan resizeMode="cover" />
+                        { Platform.OS === 'android' || Platform.OS === 'ios' ? (
+                            <Scan resizeMode="cover" />
+                        ) : (
+                            <Scan />
+                        )}
                   </TouchableOpacity>
 
                   <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Shopping")}>
-                      <View style={styles.inactiveBorder}></View>
-                      <Shopping  resizeMode="cover" />
+                        <View style={styles.inactiveBorder}></View>
+                        { Platform.OS === 'android' || Platform.OS === 'ios' ? (
+                            <Shopping resizeMode="cover" />
+                        ) : (
+                            <Shopping />
+                        )}
                   </TouchableOpacity>
 
                   <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Profit")}>
                       <View style={styles.inactiveBorder}></View>
-                      <Wallet resizeMode="cover" />
+                      { Platform.OS === 'android' || Platform.OS === 'ios' ? (
+                        <Wallet resizeMode="cover" />
+                      ) : (
+                        <Wallet />
+                      )}
                   </TouchableOpacity>
               </View>
           </>
