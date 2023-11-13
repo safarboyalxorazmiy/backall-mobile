@@ -3,26 +3,27 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { StyleSheet, Text, View, Dimensions, Image, TouchableOpacity, TextInput, ScrollView, TouchableWithoutFeedback  } from 'react-native';
 
-import Home from './screens/HomeScreen';
-import Basket from './screens/basket/BasketScreen';
-import Sell from './screens/selling/SellScreen';
-import Shopping from './screens/shopping/ShoppingScreen';
-import Profit from './screens/profit/ProfitScreen';
-import Login from './screens/LoginScreen';
-import ProductAdd from "./screens/basket/ProductAddScreen";
-import ProfitDetail from './screens/profit/ProfitDetailScreen';
-import CalendarPage from './screens/CalendarScreen';
-import ShoppingDetail from './screens/shopping/ShoppingDetailScreen';
+import Home from '../screens/HomeScreen';
+import Basket from '../screens/basket/BasketScreen';
+import Sell from '../screens/selling/SellScreen';
+import Shopping from '../screens/shopping/ShoppingScreen';
+import Profit from '../screens/profit/ProfitScreen';
+import Login from '../screens/LoginScreen';
+import ProductAdd from "../screens/basket/ProductAddScreen";
+import ProfitDetail from '../screens/profit/ProfitDetailScreen';
+import CalendarPage from '../screens/CalendarScreen';
+import ShoppingDetail from '../screens/shopping/ShoppingDetailScreen';
 
-import DashboardIcon from './assets/navbar/dashboard-icon.svg';
-import DashboardIconActive from './assets/navbar/dashboard-icon-active.svg';
-import BasketIcon from './assets/navbar/basket-icon.svg';
-import BasketIconActive from './assets/navbar/basket-icon-active.svg';
-import ScanIcon from './assets/navbar/scan-icon.svg';
-import ShoppingIcon from './assets/navbar/shopping-icon.svg';
-import ShoppingIconActive from './assets/navbar/shopping-icon-active.svg';
-import WalletIcon from "./assets/navbar/wallet-icon.svg";
-import WalletIconActive from "./assets/navbar/wallet-icon-active.svg";
+import DashboardIcon from '../assets/navbar/dashboard-icon.svg';
+import DashboardIconActive from '../assets/navbar/dashboard-icon-active.svg';
+import BasketIcon from '../assets/navbar/basket-icon.svg';
+import BasketIconActive from '../assets/navbar/basket-icon-active.svg';
+import ScanIcon from '../assets/navbar/scan-icon.svg';
+import ShoppingIcon from '../assets/navbar/shopping-icon.svg';
+import ShoppingIconActive from '../assets/navbar/shopping-icon-active.svg';
+import WalletIcon from "../assets/navbar/wallet-icon.svg";
+import WalletIconActive from "../assets/navbar/wallet-icon-active.svg";
+import TokenService from './TokenService';
 
 
 const Tab = createBottomTabNavigator();
@@ -31,12 +32,27 @@ const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
 const routesWithoutNavbar = ['ProfitDetail', 'Login', 'ProductAdd', 'ShoppingDetail', 'ProfitDetail', 'Calendar'];
+const tokenService = new TokenService();
+
+async function getToken(navigation, route) {
+  const retrievedToken = await tokenService.retrieveToken();
+  if (retrievedToken == null) {
+    const event = navigation.emit({
+      type: 'tabPress',
+      canPreventDefault: true,
+    });
+    navigation.navigate("Login")
+  }
+  return retrievedToken;
+}
 
 function CustomTabBar({ state, descriptors, navigation }) {
+  getToken(navigation);
+
     const focusedRouteName = state.routes[state.index].name;
   
     if (focusedRouteName === 'Sell' || routesWithoutNavbar.includes(focusedRouteName)) {
-      return null; // Do not render the navbar when the focused route is 'Sell'
+      return null;
     }
   
     return (
@@ -58,7 +74,6 @@ function CustomTabBar({ state, descriptors, navigation }) {
             });
   
             if (!isFocused && !event.defaultPrevented) {
-              // Only navigate if not focused and the press event is not prevented
               navigation.navigate(route.name);
             }
           };
@@ -200,7 +215,7 @@ const styles = StyleSheet.create({
     );
   }
 
-  export default function Tabs() {
+  export default function NavigationService() {
     return (
       <NavigationContainer>
         <MainTabNavigator />

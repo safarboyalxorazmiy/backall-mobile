@@ -10,7 +10,7 @@ import Basket from './screens/basket/BasketScreen';
 import Shopping from './screens/shopping/ShoppingScreen';
 import ProductAdd from "./screens/basket/ProductAddScreen";
 import Sell from "./screens/selling/SellScreen";
-import DatabaseService from './database/DatabaseService';
+import DatabaseService from './services/DatabaseService';
 import { name as appName } from './app.json';
 import NetInfo from "@react-native-community/netinfo";
 import ProfitDetail from './screens/profit/ProfitDetailScreen';
@@ -18,7 +18,7 @@ import Profit from './screens/profit/ProfitScreen';
 import ShoppingDetail from './screens/shopping/ShoppingDetailScreen';
 import CalendarPage from './screens/CalendarScreen';
 import { Platform } from 'react-native';
-import Tabs from './Tabs';
+import NavigationService from './services/NavigationService';
 
 AppRegistry.registerComponent(appName, () => App);
 
@@ -89,7 +89,7 @@ class App extends Component {
       }
 
       return (
-         <Tabs />
+         <NavigationService />
         
           /*<NavigationContainer>
               <Stack.Navigator>

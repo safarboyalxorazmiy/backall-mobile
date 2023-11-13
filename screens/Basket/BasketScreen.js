@@ -1,13 +1,6 @@
 import React, { Component, useRef } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Dimensions, Image, TouchableOpacity, TextInput, ScrollView, TouchableWithoutFeedback  } from 'react-native';
-
-// NAVBAR ICONS
-import DashboardIcon from '../../assets/navbar/dashboard-icon.svg';
-import BasketIcon from '../../assets/navbar/basket-icon-active.svg';
-import ScanIcon from '../../assets/navbar/scan-icon.svg';
-import ShoppingIcon from '../../assets/navbar/shopping-icon.svg';
-import WalletIcon from "../../assets/navbar/wallet-icon.svg";
 import PlusIcon from "../../assets/plus-icon.svg";
 
 import SearchIcon from "../../assets/search-icon.svg";

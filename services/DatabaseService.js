@@ -261,6 +261,10 @@ class DatabaseService {
     async getProductIdBySeria() {
 
     }
+
+    async getToken() {
+      
+    }
 }
 
 export default DatabaseService;  

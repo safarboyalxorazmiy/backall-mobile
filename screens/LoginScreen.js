@@ -11,13 +11,18 @@ import {
   Platform
 } from 'react-native';
 
-
-import Logo from '../assets/logo.svg';          
+import Logo from '../assets/logo.svg';  
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
 class Login extends Component {
+    
+    async login(navigation) {
+        
+        navigation.navigate('Home');
+    }
+
   render() {
       const {navigation} = this.props;
 
@@ -44,7 +49,7 @@ class Login extends Component {
                     placeholderTextColor="black"
                 />
 
-                <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+                <TouchableOpacity onPress={this.login(navigation)}>
                     <View style={styles.button}>
                         <Text style={styles.buttonText}>Kirish</Text>
                     </View>
