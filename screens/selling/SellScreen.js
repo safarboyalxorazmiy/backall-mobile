@@ -1,10 +1,17 @@
-import React, { Component, useState } from 'react';
+import React, { Component } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, Image, Dimensions, Text, TextInput, TouchableOpacity, Modal } from 'react-native';
+import { 
+  StyleSheet, 
+  View, 
+  Dimensions, 
+  Text, 
+  TextInput, 
+  TouchableOpacity, 
+  Modal 
+} from 'react-native';
 import SwipeableFlatList from 'react-native-swipeable-list';
 
 import BackIcon from "../../assets/arrow-left-icon.svg";
-import { ScreenHeight } from 'react-native-elements/dist/helpers';
 import CrossIcon from "../../assets/cross-icon.svg";
 
 const screenWidth = Dimensions.get('window').width;
@@ -57,7 +64,6 @@ const renderItem = ({ item }) => {
   );
 };
 
-// QUICK ACTIONS
 const renderQuickActions = () => (
   <View style={{ flex: 1, backgroundColor: 'red', justifyContent: 'center', alignItems: 'flex-end' }}>
       <Text style={{ color: 'white', padding: 10 }}>Delete</Text>

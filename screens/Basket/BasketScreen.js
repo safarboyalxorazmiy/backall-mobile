@@ -1,5 +1,4 @@
 import React, { Component, useRef } from 'react';
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Dimensions, Image, TouchableOpacity, TextInput, ScrollView, TouchableWithoutFeedback  } from 'react-native';
 import PlusIcon from "../../assets/plus-icon.svg";
 
@@ -8,8 +7,7 @@ import SearchIcon from "../../assets/search-icon.svg";
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-class Basket extends Component {
-    
+class Basket extends Component {    
     constructor(props) {
         super(props);
         this.textInputRef = React.createRef();
@@ -125,10 +123,8 @@ class Basket extends Component {
 
 const styles = StyleSheet.create({
     container: {
-        // flex: 1,
-        height: "100%", // + 40
+        height: "100%",
         backgroundColor: '#fff',
-        // alignItems: 'center',
         paddingTop: 65,
         position: "relative"
     },

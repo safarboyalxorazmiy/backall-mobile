@@ -1,28 +1,14 @@
 import React, { Component } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
 import { Text } from 'react-native';
 import { AppRegistry } from 'react-native';
-import Login from './screens/LoginScreen';
-import Home from './screens/HomeScreen';
-import * as Font from 'expo-font';
-import Basket from './screens/basket/BasketScreen';
-import Shopping from './screens/shopping/ShoppingScreen';
-import ProductAdd from "./screens/basket/ProductAddScreen";
-import Sell from "./screens/selling/SellScreen";
-import DatabaseService from './services/DatabaseService';
 import { name as appName } from './app.json';
-import NetInfo from "@react-native-community/netinfo";
-import ProfitDetail from './screens/profit/ProfitDetailScreen';
-import Profit from './screens/profit/ProfitScreen';
-import ShoppingDetail from './screens/shopping/ShoppingDetailScreen';
-import CalendarPage from './screens/CalendarScreen';
 import { Platform } from 'react-native';
+import * as Font from 'expo-font';
+import DatabaseService from './services/DatabaseService';
+import NetInfo from "@react-native-community/netinfo";
 import NavigationService from './services/NavigationService';
 
 AppRegistry.registerComponent(appName, () => App);
-
-const Stack = createStackNavigator();
 
 class App extends Component {
   constructor(props) {
@@ -90,82 +76,6 @@ class App extends Component {
 
       return (
          <NavigationService />
-        
-          /*<NavigationContainer>
-              <Stack.Navigator>
-                  <Stack.Screen
-                      name="Login"
-                      component={Login}
-                      options={({navigation}) => ({
-                          title: '',
-                          headerShown: false
-                      })}
-                  />
-
-                  <Stack.Screen name="Home" component={Home}
-                                options={({navigation}) => ({
-                                    title: '',
-                                    headerShown: false
-                                })}
-                  />
-
-                  <Stack.Screen name="Basket" component={Basket}
-                                options={({navigation}) => ({
-                                    title: '',
-                                    headerShown: false
-                                })}
-                  />
-
-                  <Stack.Screen name="ProductAdd" component={ProductAdd}
-                                options={({navigation}) => ({
-                                    title: '',
-                                    headerShown: false
-                                })}
-                  />
-
-                  <Stack.Screen name="Sell" component={Sell}
-                                options={({navigation}) => ({
-                                    title: '',
-                                    headerShown: false
-                                })}
-                  />
-
-                  <Stack.Screen name="Shopping" component={Shopping}
-                                options={({navigation}) => ({
-                                    title: '',
-                                    headerShown: false
-                                })}
-                  />
-
-                  <Stack.Screen name="ShoppingDetail" component={ShoppingDetail}
-                                options={({navigation}) => ({
-                                    title: '',
-                                    headerShown: false
-                                })}
-                  />
-
-                  <Stack.Screen name="Profit" component={Profit}
-                                options={({navigation}) => ({
-                                    title: '',
-                                    headerShown: false
-                                })}
-                  />
-
-                  <Stack.Screen name="ProfitDetail" component={ProfitDetail}
-                                options={({navigation}) => ({
-                                    title: '',
-                                    headerShown: false
-                                })}
-                  />
-
-                  <Stack.Screen name="Calendar" component={CalendarPage}
-                                  options={({navigation}) => ({
-                                      title: '',
-                                      headerShown: false
-                                  })}
-                  />
-              </Stack.Navigator>
-          </NavigationContainer>*/
       );
   }
 }

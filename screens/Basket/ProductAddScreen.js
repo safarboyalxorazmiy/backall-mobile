@@ -6,8 +6,7 @@ import {
   ScrollView,
   Dimensions,
   TouchableOpacity,
-  TextInput,
-  Image
+  TextInput
 } from "react-native";
 import { CheckBox } from "react-native-elements";
 import { Dropdown } from "react-native-element-dropdown";

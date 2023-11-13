@@ -1,5 +1,11 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, Image, StyleSheet, Dimensions } from 'react-native';
+import { 
+    View, 
+    Text, 
+    TouchableOpacity, 
+    StyleSheet, 
+    Dimensions 
+} from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 
 import BackIcon from '../../assets/arrow-left-icon.svg'
