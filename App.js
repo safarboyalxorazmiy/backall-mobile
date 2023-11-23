@@ -7,6 +7,10 @@ import * as Font from 'expo-font';
 import DatabaseService from './services/DatabaseService';
 import NetInfo from "@react-native-community/netinfo";
 import NavigationService from './services/NavigationService';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import TokenService from './services/TokenService';
+
+const tokenService = new TokenService();
 
 AppRegistry.registerComponent(appName, () => App);
 
@@ -17,6 +21,9 @@ class App extends Component {
           fontsLoaded: false,
           isConnected: null
       };
+      
+      const {navigation} = this.props;
+      tokenService.checkTokens(navigation);  
   }
 
   async loadCustomFonts() {
@@ -64,7 +71,7 @@ class App extends Component {
   }
 
   render() {
-
+    
       if (!this.state.fontsLoaded) {
           return (
               <>
@@ -75,7 +82,9 @@ class App extends Component {
       }
 
       return (
-         <NavigationService />
+        <GestureHandlerRootView style={{ flex: 1 }}>
+            <NavigationService />
+        </GestureHandlerRootView>
       );
   }
 }

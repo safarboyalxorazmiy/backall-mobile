@@ -113,7 +113,8 @@ class Basket extends Component {
 
             </ScrollView>
 
-            <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('ProductAdd')}>
+            <TouchableOpacity style={styles.addButton} 
+                onPress={() => navigation.navigate('ProductAdd')}>
                 <PlusIcon />
             </TouchableOpacity>
           </View>

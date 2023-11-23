@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
-import { StyleSheet, Text, View, Dimensions, Image, TouchableOpacity, TextInput, ScrollView, TouchableWithoutFeedback  } from 'react-native';
+import { StyleSheet, View, Dimensions, TouchableOpacity } from 'react-native';
 
 import Home from '../screens/HomeScreen';
 import Basket from '../screens/basket/BasketScreen';
@@ -34,21 +34,8 @@ const screenHeight = Dimensions.get('window').height;
 const routesWithoutNavbar = ['ProfitDetail', 'Login', 'ProductAdd', 'ShoppingDetail', 'ProfitDetail', 'Calendar'];
 const tokenService = new TokenService();
 
-async function getToken(navigation, route) {
-  const retrievedToken = await tokenService.retrieveToken();
-  if (retrievedToken == null) {
-    const event = navigation.emit({
-      type: 'tabPress',
-      canPreventDefault: true,
-    });
-    navigation.navigate("Login")
-  }
-  return retrievedToken;
-}
 
 function CustomTabBar({ state, descriptors, navigation }) {
-  getToken(navigation);
-
     const focusedRouteName = state.routes[state.index].name;
   
     if (focusedRouteName === 'Sell' || routesWithoutNavbar.includes(focusedRouteName)) {
@@ -215,10 +202,10 @@ const styles = StyleSheet.create({
     );
   }
 
-  export default function NavigationService() {
-    return (
-      <NavigationContainer>
-        <MainTabNavigator />
-      </NavigationContainer>
-    );
-  }
+export default function NavigationService() {
+  return (
+    <NavigationContainer>
+      <MainTabNavigator />
+    </NavigationContainer>
+  );
+}

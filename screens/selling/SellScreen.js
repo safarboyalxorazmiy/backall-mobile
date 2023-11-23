@@ -13,6 +13,7 @@ import SwipeableFlatList from 'react-native-swipeable-list';
 
 import BackIcon from "../../assets/arrow-left-icon.svg";
 import CrossIcon from "../../assets/cross-icon.svg";
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -137,17 +138,20 @@ class Sell extends Component {
 
           <StatusBar style="auto" />
 
-          <Modal visible={isModalVisible} animationType="slide" style={{
+          <Modal visible={isModalVisible} animationType="none" style={{
             
           }} transparent={true}>
-            <View style={{
-              position: "absolute", 
-              width: screenWidth, 
-              height: screenHeight, 
-              flex: 1, 
-              backgroundColor: "#00000099",
+            <TouchableOpacity activeOpacity={1} onPress={this.toggleModal}>
+              <View style={{
+                position: "absolute", 
+                width: screenWidth, 
+                height: screenHeight, 
+                flex: 1, 
+                backgroundColor: "#00000099",
 
-            }}></View>
+              }}></View>
+            </TouchableOpacity>
+            
 
             <View style={{
               height: screenHeight, 
@@ -167,7 +171,6 @@ class Sell extends Component {
                 <View style={{
                   width: "100%", 
                   padding: 20, 
-                  borderWidth: 1, 
                   borderRadius: 12, 
                   backgroundColor: "#fff",
                 }}>

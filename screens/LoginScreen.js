@@ -1,82 +1,120 @@
-import React, {Component} from 'react';
+import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { 
-  StyleSheet, 
-  Text, 
-  View, 
+import {
+  StyleSheet,
+  Text,
+  View,
   TextInput,
-  Dimensions, 
-  TouchableOpacity, 
+  Dimensions,
+  TouchableOpacity,
   ScrollView,
-  Platform
+  Platform,
 } from 'react-native';
 
-import Logo from '../assets/logo.svg';  
+import Logo from '../assets/logo.svg';
+import TokenService from '../services/TokenService';
+
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-class Login extends Component {
-    
-    async login(navigation) {
-        
-        navigation.navigate('Home');
+const tokenService = new TokenService();
+
+const LoginForm = ({ onSubmit }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  return (
+    <View style={styles.form}>
+      <Text style={styles.label}>Loginni kiriting</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="admin"
+        placeholderTextColor="black"
+        value={email}
+        onChangeText={(text) => setEmail(text)}
+      />
+
+      <Text style={styles.label}>Parolni kiriting</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="********"
+        placeholderTextColor="black"
+        secureTextEntry
+        value={password}
+        onChangeText={(text) => setPassword(text)}
+      />
+
+      <TouchableOpacity onPress={() => onSubmit(email, password)}>
+        <View style={styles.button}>
+          <Text style={styles.buttonText}>Kirish</Text>
+        </View>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+const ForgotPasswordLink = ({ onPress }) => (
+  <TouchableOpacity onPress={onPress} style={{ marginTop: 168 }}>
+    <View style={styles.forgotPasswordLink}>
+      <Text style={styles.forgotPasswordText}>Parolni unutdingizmi?</Text>
+    </View>
+  </TouchableOpacity>
+);
+
+const Login = ({ navigation }) => {
+  const [loading, setLoading] = useState(false);
+
+  const login = async (email, password) => {
+    try {
+      setLoading(true);
+
+      const response = await fetch('http://backall.uz/api/v1/auth/authenticate', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+
+      const result = await response.json();
+
+      // Handle the result here
+      console.log(result);
+
+      tokenService.storeAccessToken(result.access_token);
+      tokenService.storeRefreshToken(result.refresh_token);
+      navigation.navigate("Home");
+
+      console.log(await tokenService.retrieveAccessToken());
+      console.log(await tokenService.retrieveRefreshToken());
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false);
     }
+  };
 
-  render() {
-      const {navigation} = this.props;
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      {Platform.OS === 'android' || Platform.OS === 'ios' ? (
+        <Logo style={styles.logo} resizeMode="cover" />
+      ) : (
+        <Logo style={styles.logo} />
+      )}
 
-      return (
-        <ScrollView contentContainerStyle={styles.container}>
-            {Platform.OS === 'android' || Platform.OS === 'ios' ? (
-                <Logo style={styles.logo} resizeMode="cover" />
-            ) : (
-                <Logo style={styles.logo} />
-            )}
-              
-            <View style={styles.form}>
-                <Text style={styles.label}>Loginni kiriting</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="admin"
-                    placeholderTextColor="black"
-                />
+      <LoginForm onSubmit={login} />
 
-                <Text style={styles.label}>Parolni kiriting</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="********"
-                    placeholderTextColor="black"
-                />
+      <ForgotPasswordLink onPress={() => navigation.navigate('Home')} />
 
-                <TouchableOpacity onPress={this.login(navigation)}>
-                    <View style={styles.button}>
-                        <Text style={styles.buttonText}>Kirish</Text>
-                    </View>
-                </TouchableOpacity>
-            </View>
-
-
-            <TouchableOpacity onPress={() => navigation.navigate('Home')} style={{
-                marginTop: 168
-            }}>
-                <View style={{
-                    height: 52,
-                    width: screenWidth - (24 + 24),
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                }}>
-                    <Text style={{fontFamily: 'Gilroy-Medium', fontWeight: '500', fontSize: 16}}>Parolni
-                        unutdingizmi?</Text>
-                </View>
-            </TouchableOpacity>
-
-            <StatusBar style="auto"/>
-        </ScrollView>
-      );
-  }
-}
+      <StatusBar style="auto" />
+    </ScrollView>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {

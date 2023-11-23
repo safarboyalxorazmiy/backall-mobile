@@ -12,12 +12,15 @@ import { LinearGradient } from "expo-linear-gradient";
 
 import ShoppingIcon from "../assets/home/shopping-icon.svg";
 import BenefitIcon from "../assets/home/benefit-icon.svg";
+import TokenService from '../services/TokenService';
 
 const screenWidth = Dimensions.get("window").width;
+const tokenService = new TokenService();
 
 class Home extends Component {
   render() {
       const {navigation} = this.props;
+      tokenService.checkTokens(navigation);
 
       return (
           <>

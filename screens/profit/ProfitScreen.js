@@ -2,12 +2,6 @@ import React, {Component} from 'react';
 import {StatusBar} from 'expo-status-bar';
 import {StyleSheet, Text, TextInput, View, Dimensions, Image, TouchableOpacity, ScrollView} from 'react-native';
 
-import DashboardIcon from '../../assets/navbar/dashboard-icon.svg';
-import BasketIcon from '../../assets/navbar/basket-icon.svg';
-import ScanIcon from '../../assets/navbar/scan-icon.svg';
-import ShoppingIcon from '../../assets/navbar/shopping-icon.svg';
-import WalletIcon from '../../assets/navbar/wallet-icon-active.svg';
-
 import CalendarIcon from "../../assets/calendar-icon.svg";
 import ProfitIcon from "../../assets/profit-icon.svg";
 

@@ -1,24 +1,58 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class TokenService {
-    // To store a token
-    storeToken = async (token) => {
+    isLoggedIn = false;
+
+    storeAccessToken = async (access_token) => {
         try {
-            await AsyncStorage.setItem('token', token);
+            await AsyncStorage.setItem('access_token', access_token);
         } catch (error) {
             console.error('Error storing token:', error);
         }
     };
 
-    // To retrieve a token
-    retrieveToken = async () => {
+    storeRefreshToken = async (refresh_token) => {
         try {
-            const token = await AsyncStorage.getItem('token');
+            await AsyncStorage.setItem('refresh_token', refresh_token);
+        } catch (error) {
+            console.error('Error storing token:', error);
+        }
+    };
+
+    retrieveAccessToken = async () => {
+        try {
+            const token = await AsyncStorage.getItem('access_token');
             return token;
         } catch (error) {
             console.error('Error retrieving token:', error);
         }
     };
+
+    retrieveRefreshToken = async () => {
+        try {
+            const token = await AsyncStorage.getItem('refresh_token');
+            return token;
+        } catch (error) {
+            console.error('Error retrieving token:', error);
+        }
+    };
+
+    checkTokens = async (navigation) => {
+        if (this.isLoggedIn) {
+            return;
+        }
+        
+        const access_token = await this.retrieveAccessToken();
+    
+        console.log(access_token)
+    
+        if (access_token == null) {
+            navigation.navigate("Login")
+        }
+    
+        this.isLoggedIn = true;
+        return access_token;
+    }
 }
 
 export default TokenService;

@@ -6,7 +6,8 @@ import {
   ScrollView,
   Dimensions,
   TouchableOpacity,
-  TextInput
+  TextInput,
+  Image
 } from "react-native";
 import { CheckBox } from "react-native-elements";
 import { Dropdown } from "react-native-element-dropdown";
@@ -416,7 +417,7 @@ const styles = StyleSheet.create({
       textAlign: "center",
       fontSize: 28,
       fontFamily: "Gilroy-SemiBold",
-      fontWeight: 600
+      fontWeight: "600"
   },
 
   backIcon:{

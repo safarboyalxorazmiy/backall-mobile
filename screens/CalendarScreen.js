@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import { 
   StyleSheet, 
   Text, 
@@ -18,159 +18,160 @@ const screenHeight = Dimensions.get('window').height;
 
 class CalendarPage extends Component {
     constructor(props) {
-        super(props);
-        this.state = {
-          isModalVisible: false,
-          selectedDate: ''
-        };
-      }
+    super(props);
+    this.state = {
+        isModalVisible: false,
+        selectedDate: ''
+    };
+    }
 
-      toggleModal = () => {
-        this.setState((prevState) => ({
-          isModalVisible: !prevState.isModalVisible,
-        }));
-      };
+    toggleModal = () => {
+    this.setState((prevState) => ({
+    isModalVisible: !prevState.isModalVisible,
+    }));
+    };
 
-      onDayPress = (day) => {
-        this.setState({ selectedDate: day.dateString });
+    onDayPress = (day) => {
+    this.setState({ selectedDate: day.dateString });
 
-        console.log(day)
-      };
-  
-  render() {
-      const { navigation } = this.props;
-      const { isModalVisible, selectedDate } = this.state;
+    console.log(day)
+    };
 
-      return (
-          <View style={styles.container}>
-              <View style={styles.header}>
-                      <TouchableOpacity
-                          onPress={() => navigation.navigate('Shopping')}
-                          style={styles.backButton}
-                      >
-                          <BackIcon />
-                      </TouchableOpacity>
+    render() {
+        const { navigation } = this.props;
 
-                      <Text style={styles.title}>Sotilgan mahsulotlar</Text>
+        const { isModalVisible, selectedDate } = this.state;
 
-                      <TouchableOpacity
-                          onPress={() => navigation.navigate('Shopping')}
-                          style={styles.deleteIcon}
-                      >
-                          <DeleteIcon />
-                      </TouchableOpacity>
-              </View>
-              
-              <View style={{
-                  width: screenWidth - (16 * 2),
-                  display: "flex",
-                  justifyContent: "space-between",
-                  flexDirection: "row",
-                  marginTop: 24
-              }}>
-                  <TouchableOpacity style={{width: (screenWidth / 3) - (16 * 2), backgroundColor: "#272727", padding: 10, borderRadius: 8}}>
-                      <Text style={{color: "white", textAlign: "center", fontFamily: "Gilroy-Medium", fontWeight: "500"}}>Bugun</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={{width: (screenWidth / 3) - (16 * 2), backgroundColor: "#EEEEEE", padding: 10, borderRadius: 8}}>
-                      <Text style={{color: "black", textAlign: "center", fontFamily: "Gilroy-Medium", fontWeight: "500"}}>Hafta</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={{width: (screenWidth / 3) - (16 * 2), backgroundColor: "#EEEEEE", padding: 10, borderRadius: 8}}>
-                      <Text style={{color: "black", textAlign: "center", fontFamily: "Gilroy-Medium", fontWeight: "500"}}>Oy</Text>
-                  </TouchableOpacity>
-              </View>
+        return (
+            <View style={styles.container}>
+                <View style={styles.header}>
+                        <TouchableOpacity
+                            onPress={() => navigation.navigate('Shopping')}
+                            style={styles.backButton}
+                        >
+                            <BackIcon />
+                        </TouchableOpacity>
 
-              <View style={{width: screenWidth - (16 * 2), marginTop: 24}}>
-                  <Text style={{fontFamily: "Gilroy-SemiBold", fontWeight: "600"}}>Davrni tanlang</Text>
-              </View>
+                        <Text style={styles.title}>Sotilgan mahsulotlar</Text>
 
-              <View style={{marginTop: 14, width: screenWidth - (16 * 2), display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
-                  <Text style={styles.label}>dan</Text>
-
-                  <View style={{display: "flex", flexDirection: "row", gap: 12}}>
-                      <TextInput placeholder='04' style={styles.input} />
-                      <TextInput placeholder='dekabr' style={[styles.input, {width: 66}]}  />
-                      <TextInput placeholder='2022'  style={styles.input} />
-                  </View>
-
-                  <CalendarIcon onPress={this.toggleModal} />
-              </View>
-
-              <Modal visible={isModalVisible} animationType="slide" transparent={true}>
+                        <TouchableOpacity
+                            onPress={() => navigation.navigate('Shopping')}
+                            style={styles.deleteIcon}
+                        >
+                            <DeleteIcon />
+                        </TouchableOpacity>
+                </View>
+                
                 <View style={{
-                    position: "absolute", 
-                    width: screenWidth, 
-                    height: screenHeight, 
-                    flex: 1, 
-                    backgroundColor: "#00000099",
-
-                }}></View>
-
-                <View style={{
-                    height: screenHeight, 
-                    display: "flex", 
-                    alignItems: "center",
-                    justifyContent: "center"
+                    width: screenWidth - (16 * 2),
+                    display: "flex",
+                    justifyContent: "space-between",
+                    flexDirection: "row",
+                    marginTop: 24
                 }}>
+                    <TouchableOpacity style={{width: (screenWidth / 3) - (16 * 2), backgroundColor: "#272727", padding: 10, borderRadius: 8}}>
+                        <Text style={{color: "white", textAlign: "center", fontFamily: "Gilroy-Medium", fontWeight: "500"}}>Bugun</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{width: (screenWidth / 3) - (16 * 2), backgroundColor: "#EEEEEE", padding: 10, borderRadius: 8}}>
+                        <Text style={{color: "black", textAlign: "center", fontFamily: "Gilroy-Medium", fontWeight: "500"}}>Hafta</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{width: (screenWidth / 3) - (16 * 2), backgroundColor: "#EEEEEE", padding: 10, borderRadius: 8}}>
+                        <Text style={{color: "black", textAlign: "center", fontFamily: "Gilroy-Medium", fontWeight: "500"}}>Oy</Text>
+                    </TouchableOpacity>
+                </View>
+
+                <View style={{width: screenWidth - (16 * 2), marginTop: 24}}>
+                    <Text style={{fontFamily: "Gilroy-SemiBold", fontWeight: "600"}}>Davrni tanlang</Text>
+                </View>
+
+                <View style={{marginTop: 14, width: screenWidth - (16 * 2), display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
+                    <Text style={styles.label}>dan</Text>
+
+                    <View style={{display: "flex", flexDirection: "row", gap: 12}}>
+                        <TextInput placeholder='04' style={styles.input} />
+                        <TextInput placeholder='dekabr' style={[styles.input, {width: 66}]}  />
+                        <TextInput placeholder='2022'  style={styles.input} />
+                    </View>
+
+                    <CalendarIcon onPress={this.toggleModal} />
+                </View>
+
+                <Modal visible={isModalVisible} animationType="slide" transparent={true}>
                     <View style={{
-                        width: screenWidth - (16 * 2), 
-                        maxWidth: 343, 
-                        marginLeft: "auto", 
-                        marginRight: "auto", 
+                        position: "absolute", 
+                        width: screenWidth, 
+                        height: screenHeight, 
                         flex: 1, 
+                        backgroundColor: "#00000099",
+
+                    }}></View>
+
+                    <View style={{
+                        height: screenHeight, 
+                        display: "flex", 
                         alignItems: "center",
                         justifyContent: "center"
                     }}>
                         <View style={{
-                            width: "100%", 
-                            borderRadius: 12, 
-                            backgroundColor: "#fff",
+                            width: screenWidth - (16 * 2), 
+                            maxWidth: 343, 
+                            marginLeft: "auto", 
+                            marginRight: "auto", 
+                            flex: 1, 
+                            alignItems: "center",
+                            justifyContent: "center"
                         }}>
-                            <View style={{borderBottomColor: "#CAC4D0", borderBottomWidth: 1}}>
-                                <View style={{paddingTop: 16, paddingLeft: 24, paddingBottom: 12, paddingRight: 12}}>
-                                    <Text style={{fontFamily: "Gilroy-Medium", fontSize: 14, fontWeight: "500", marginBottom: 12}}>2023</Text>
-                                    <Text style={{fontFamily: "Gilroy-Medium", fontSize: 24, fontWeight: "500"}}>Juma, 17-sen</Text>
+                            <View style={{
+                                width: "100%", 
+                                borderRadius: 12, 
+                                backgroundColor: "#fff",
+                            }}>
+                                <View style={{borderBottomColor: "#CAC4D0", borderBottomWidth: 1}}>
+                                    <View style={{paddingTop: 16, paddingLeft: 24, paddingBottom: 12, paddingRight: 12}}>
+                                        <Text style={{fontFamily: "Gilroy-Medium", fontSize: 14, fontWeight: "500", marginBottom: 12}}>2023</Text>
+                                        <Text style={{fontFamily: "Gilroy-Medium", fontSize: 24, fontWeight: "500"}}>Juma, 17-sen</Text>
+                                    </View>
                                 </View>
-                            </View>
-                            
-                            <Calendar
-                                onDayPress={this.onDayPress}
-                                markedDates={{
-                                    [selectedDate]: { selected: true, selectedColor: 'blue' },
-                                }}
-                            />
+                                
+                                <Calendar
+                                    onDayPress={this.onDayPress}
+                                    markedDates={{
+                                        [selectedDate]: { selected: true, selectedColor: 'blue' },
+                                    }}
+                                />
 
-                            <View style={{paddingHorizontal: 12, paddingTop: 8, paddingBottom: 12, display: "flex", flexDirection: "row", justifyContent: "flex-end", gap: 8}}>
-                                <TouchableOpacity style={{paddingHorizontal: 14, paddingVertical: 10}}>
-                                    <Text style={{color: "#6750A4", fontWeight: "500", fontSize: 14}}>Bekor qilish</Text>
-                                </TouchableOpacity>
+                                <View style={{paddingHorizontal: 12, paddingTop: 8, paddingBottom: 12, display: "flex", flexDirection: "row", justifyContent: "flex-end", gap: 8}}>
+                                    <TouchableOpacity style={{paddingHorizontal: 14, paddingVertical: 10}}>
+                                        <Text style={{color: "#6750A4", fontWeight: "500", fontSize: 14}}>Bekor qilish</Text>
+                                    </TouchableOpacity>
 
-                                <TouchableOpacity style={{paddingHorizontal: 14, paddingVertical: 10}}>
-                                    <Text style={{color: "#6750A4", fontWeight: "500", fontSize: 14}}>Tasdiqlash</Text>
-                                </TouchableOpacity>
+                                    <TouchableOpacity style={{paddingHorizontal: 14, paddingVertical: 10}}>
+                                        <Text style={{color: "#6750A4", fontWeight: "500", fontSize: 14}}>Tasdiqlash</Text>
+                                    </TouchableOpacity>
+                                </View>
                             </View>
                         </View>
                     </View>
+                    </Modal>
+
+                <View style={{marginTop: 26, width: screenWidth - (16 * 2), display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
+                    <Text style={styles.label}>gacha</Text>
+
+                    <View style={{display: "flex", flexDirection: "row", gap: 12}}>
+                        <TextInput placeholder='04' style={styles.input} />
+                        <TextInput placeholder='dekabr' style={[styles.input, {width: 66}]}  />
+                        <TextInput placeholder='2022'  style={styles.input} />
+                    </View>
+
+                    <CalendarIcon />
                 </View>
-                </Modal>
 
-              <View style={{marginTop: 26, width: screenWidth - (16 * 2), display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
-                  <Text style={styles.label}>gacha</Text>
-
-                  <View style={{display: "flex", flexDirection: "row", gap: 12}}>
-                      <TextInput placeholder='04' style={styles.input} />
-                      <TextInput placeholder='dekabr' style={[styles.input, {width: 66}]}  />
-                      <TextInput placeholder='2022'  style={styles.input} />
-                  </View>
-
-                  <CalendarIcon />
-              </View>
-
-              <TouchableOpacity style={{width: screenWidth - (16 * 2), backgroundColor: "#222222",marginTop: "auto", marginBottom: 44, paddingVertical: 14, borderRadius: 8}}>
-                  <Text style={{color: "#fff", textAlign: "center", fontFamily: "Gilroy-Medium", fontWeight: "500", lineHeight: 24}}>Tasdiqlash</Text>
-              </TouchableOpacity>
-          </View>
-      );
-  }
+                <TouchableOpacity style={{width: screenWidth - (16 * 2), backgroundColor: "#222222",marginTop: "auto", marginBottom: 44, paddingVertical: 14, borderRadius: 8}}>
+                    <Text style={{color: "#fff", textAlign: "center", fontFamily: "Gilroy-Medium", fontWeight: "500", lineHeight: 24}}>Tasdiqlash</Text>
+                </TouchableOpacity>
+            </View>
+        );
+    }
 }
 
 const styles = StyleSheet.create({
