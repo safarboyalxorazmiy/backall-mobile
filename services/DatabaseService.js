@@ -13,18 +13,11 @@ class DatabaseService {
       if (db != null) {
         db.transaction((tx) => {
           tx.executeSql(
-            "CREATE TABLE IF NOT EXISTS brands (" +
-            "   id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            "   name TEXT NOT NULL" +
-            ");"
-          );
-      
-          tx.executeSql(
-            "CREATE TABLE IF NOT EXISTS products (" +
-            "   id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "CREATE TABLE IF NOT EXISTS product (" +
+            "   id INTEGER PRIMARY KEY, " +
             "   name TEXT NOT NULL, " +
-            "   brand_id INTEGER, " +
-            "   FOREIGN KEY (brand_id) REFERENCES brands(id)" +
+            "   brand_name TEXT NOT NULL, " +
+            "   serial_number TEXT NOT NULL " +
             ");"
           );
       
@@ -71,6 +64,70 @@ class DatabaseService {
         });
       }
     }
+
+    async createProducts(products) {
+      for (const currentObject of products) {
+        try {
+          const result = await new Promise((resolve, reject) => {
+            db.transaction((tx) => {
+              tx.executeSql(
+                "INSERT INTO product (id, name, brand_name, serial_number) VALUES (?, ?, ?, ?)",
+                [currentObject.productId, currentObject.productName, currentObject.brandName, currentObject.serialNumber],
+                (tx, results) => {
+                  if (results.insertId) {
+                    resolve(results.insertId);
+                  } else {
+                    reject(new Error("Failed to add product"));
+                  }
+                },
+                (tx, error) => {
+                  reject(error);
+                }
+              );
+            });
+          });
+    
+          console.log(`Product ${currentObject.productId} added with ID: ${result}`);
+        } catch (error) {
+          console.error(`Error adding product ${currentObject.productId}: ${error.message}`);
+        }
+      }
+    }
+
+    async getAllProducts() {
+      try {
+        const result = await new Promise((resolve, reject) => {
+          db.transaction((tx) => {
+            tx.executeSql(
+              "SELECT * from product;",
+              [],
+              (tx, results) => {
+                const products = [];
+                for (let i = 0; i < results.rows.length; i++) {
+                  const row = results.rows.item(i);
+                  products.push({
+                    id: row.id, 
+                    name: row.name, 
+                    brand_name: row.brand_name, 
+                    serial_number: row.serial_number
+                  });
+                }
+                resolve(products);
+              },
+              (tx, error) => {
+                reject(error);
+              }
+            );
+          });
+        });
+        
+        return result; // Return the products fetched from the database
+      } catch (error) {
+        console.error(`Error selecting product: ${error}`);
+        throw error; // Re-throw the error to handle it elsewhere if needed
+      }
+    }
+    
 
     async addProductToStore(productId, price, sellingPrice, percentage, count, countType) {
       try {
@@ -262,9 +319,7 @@ class DatabaseService {
 
     }
 
-    async getToken() {
-      
-    }
+    async getToken() {}
 }
 
 export default DatabaseService;  

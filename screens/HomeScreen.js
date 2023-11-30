@@ -13,14 +13,20 @@ import { LinearGradient } from "expo-linear-gradient";
 import ShoppingIcon from "../assets/home/shopping-icon.svg";
 import BenefitIcon from "../assets/home/benefit-icon.svg";
 import TokenService from '../services/TokenService';
+import DatabaseService from '../services/DatabaseService';
 
 const screenWidth = Dimensions.get("window").width;
 const tokenService = new TokenService();
+const databaseService = new DatabaseService();
 
 class Home extends Component {
+    async get () {
+        console.log(await databaseService.getAllProducts())
+    }
   render() {
       const {navigation} = this.props;
       tokenService.checkTokens(navigation);
+      this.get();
 
       return (
           <>

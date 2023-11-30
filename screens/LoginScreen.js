@@ -13,12 +13,14 @@ import {
 
 import Logo from '../assets/logo.svg';
 import TokenService from '../services/TokenService';
+import DatabaseService from '../services/DatabaseService';
 
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
 const tokenService = new TokenService();
+const databaseService = new DatabaseService();
 
 const LoginForm = ({ onSubmit }) => {
   const [email, setEmail] = useState('');
@@ -63,6 +65,7 @@ const ForgotPasswordLink = ({ onPress }) => (
 );
 
 const Login = ({ navigation }) => {
+  let accessToken = "";
   const [loading, setLoading] = useState(false);
 
   const login = async (email, password) => {
@@ -90,13 +93,30 @@ const Login = ({ navigation }) => {
       tokenService.storeRefreshToken(result.refresh_token);
       navigation.navigate("Home");
 
-      console.log(await tokenService.retrieveAccessToken());
+      accessToken = await tokenService.retrieveAccessToken();
+      console.log(accessToken);
       console.log(await tokenService.retrieveRefreshToken());
+
+      getProducts();
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const getProducts = async() => {
+    fetch("http://backall.uz/api/v1/product/get/all", {
+      method: "GET",
+      headers: {
+        "Authorization": "Bearer " + accessToken
+      }
+    })
+      .then(response => response.json())
+      .then(result => {
+        databaseService.createProducts(result);
+      })
+      .catch(error => console.log('error', error));
   };
 
   return (

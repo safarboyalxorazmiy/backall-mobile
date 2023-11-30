@@ -53,6 +53,16 @@ class TokenService {
         this.isLoggedIn = true;
         return access_token;
     }
+
+    clearAsyncStorage = async () => {
+        try {
+          await AsyncStorage.clear();
+          console.log('AsyncStorage cleared successfully!');
+        } catch (error) {
+          console.error('Error clearing AsyncStorage: ', error);
+        }
+    };
+      
 }
 
 export default TokenService;
