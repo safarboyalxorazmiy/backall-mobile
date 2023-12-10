@@ -1,5 +1,15 @@
-import React, { Component, useRef } from 'react';
-import { StyleSheet, Text, View, Dimensions, Image, TouchableOpacity, TextInput, ScrollView, TouchableWithoutFeedback  } from 'react-native';
+import React, {Component, useRef} from 'react';
+import {
+    StyleSheet,
+    Text,
+    View,
+    Dimensions,
+    Image,
+    TouchableOpacity,
+    TextInput,
+    ScrollView,
+    TouchableWithoutFeedback
+} from 'react-native';
 import PlusIcon from "../../assets/plus-icon.svg";
 
 import SearchIcon from "../../assets/search-icon.svg";
@@ -7,7 +17,7 @@ import SearchIcon from "../../assets/search-icon.svg";
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-class Basket extends Component {    
+class Basket extends Component {
     constructor(props) {
         super(props);
         this.textInputRef = React.createRef();
@@ -15,7 +25,7 @@ class Basket extends Component {
 
     handlePress = () => {
         if (this.textInputRef.current) {
-          this.textInputRef.current.focus();
+            this.textInputRef.current.focus();
         }
     };
 
@@ -23,101 +33,101 @@ class Basket extends Component {
         const {navigation} = this.props;
 
         return (
-          <View style={styles.container}>
-            <TouchableOpacity style={styles.inputWrapper} onPress={this.handlePress}>
-                <SearchIcon />
+            <View style={styles.container}>
+                <TouchableOpacity style={styles.inputWrapper} onPress={this.handlePress}>
+                    <SearchIcon/>
 
-                <TextInput 
-                    ref={this.textInputRef}
-                    style={styles.input}
-                    placeholder="Mahsulot qidirish"
-                    placeholderTextColor="#AAA"
-                />
-            </TouchableOpacity >
+                    <TextInput
+                        ref={this.textInputRef}
+                        style={styles.input}
+                        placeholder="Mahsulot qidirish"
+                        placeholderTextColor="#AAA"
+                    />
+                </TouchableOpacity>
 
-            <ScrollView style={styles.productList}>
-                <View style={styles.productOdd}>
-                    <Text style={styles.productTitle}>Coca Cola</Text>
-                    <Text style={styles.productCount}>10 blok</Text>
-                </View>
+                <ScrollView style={styles.productList}>
+                    <View style={styles.productOdd}>
+                        <Text style={styles.productTitle}>Coca Cola</Text>
+                        <Text style={styles.productCount}>10 blok</Text>
+                    </View>
 
-                <View style={styles.product}>
-                    <Text style={styles.productTitle}>Pepsi 1.5L</Text>
-                    <Text style={styles.productCount}>10 blok</Text>
-                </View>
+                    <View style={styles.product}>
+                        <Text style={styles.productTitle}>Pepsi 1.5L</Text>
+                        <Text style={styles.productCount}>10 blok</Text>
+                    </View>
 
-                <View style={styles.productOdd}>
-                    <Text style={styles.productTitle}>Qora Gorilla</Text>
-                    <Text style={styles.productCount}>50 dona</Text>
-                </View>
+                    <View style={styles.productOdd}>
+                        <Text style={styles.productTitle}>Qora Gorilla</Text>
+                        <Text style={styles.productCount}>50 dona</Text>
+                    </View>
 
-                <View style={styles.product}>
-                    <Text style={styles.productTitle}>Qora Gorilla</Text>
-                    <Text style={styles.productCount}>120 blok</Text>
-                </View>
+                    <View style={styles.product}>
+                        <Text style={styles.productTitle}>Qora Gorilla</Text>
+                        <Text style={styles.productCount}>120 blok</Text>
+                    </View>
 
-                <View style={styles.productOdd}>
-                    <Text style={styles.productTitle}>Qora Gorilla</Text>
-                    <Text style={styles.productCount}>10 dona</Text>
-                </View>
+                    <View style={styles.productOdd}>
+                        <Text style={styles.productTitle}>Qora Gorilla</Text>
+                        <Text style={styles.productCount}>10 dona</Text>
+                    </View>
 
-                <View style={styles.product}>
-                    <Text style={styles.productTitle}>Qora Gorilla</Text>
-                    <Text style={styles.productCount}>120 blok</Text>
-                </View>
+                    <View style={styles.product}>
+                        <Text style={styles.productTitle}>Qora Gorilla</Text>
+                        <Text style={styles.productCount}>120 blok</Text>
+                    </View>
 
-                <View style={styles.productOdd}>
-                    <Text style={styles.productTitle}>Qora Gorilla</Text>
-                    <Text style={styles.productCount}>120 blok</Text>
-                </View>
+                    <View style={styles.productOdd}>
+                        <Text style={styles.productTitle}>Qora Gorilla</Text>
+                        <Text style={styles.productCount}>120 blok</Text>
+                    </View>
 
-                <View style={styles.product}>
-                    <Text style={styles.productTitle}>Qora Gorilla</Text>
-                    <Text style={styles.productCount}>120 blok</Text>
-                </View>
+                    <View style={styles.product}>
+                        <Text style={styles.productTitle}>Qora Gorilla</Text>
+                        <Text style={styles.productCount}>120 blok</Text>
+                    </View>
 
-                <View style={styles.productOdd}>
-                    <Text style={styles.productTitle}>Qora Gorilla</Text>
-                    <Text style={styles.productCount}>120 blok</Text>
-                </View>
+                    <View style={styles.productOdd}>
+                        <Text style={styles.productTitle}>Qora Gorilla</Text>
+                        <Text style={styles.productCount}>120 blok</Text>
+                    </View>
 
-                <View style={styles.product}>
-                    <Text style={styles.productTitle}>Qora Gorilla</Text>
-                    <Text style={styles.productCount}>120 blok</Text>
-                </View>
+                    <View style={styles.product}>
+                        <Text style={styles.productTitle}>Qora Gorilla</Text>
+                        <Text style={styles.productCount}>120 blok</Text>
+                    </View>
 
-                <View style={styles.productOdd}>
-                    <Text style={styles.productTitle}>Qora Gorilla</Text>
-                    <Text style={styles.productCount}>120 blok</Text>
-                </View>
+                    <View style={styles.productOdd}>
+                        <Text style={styles.productTitle}>Qora Gorilla</Text>
+                        <Text style={styles.productCount}>120 blok</Text>
+                    </View>
 
-                <View style={styles.product}>
-                    <Text style={styles.productTitle}>Qora Gorilla</Text>
-                    <Text style={styles.productCount}>120 blok</Text>
-                </View>
+                    <View style={styles.product}>
+                        <Text style={styles.productTitle}>Qora Gorilla</Text>
+                        <Text style={styles.productCount}>120 blok</Text>
+                    </View>
 
-                <View style={styles.productOdd}>
-                    <Text style={styles.productTitle}>Qora Gorilla</Text>
-                    <Text style={styles.productCount}>120 blok</Text>
-                </View>
+                    <View style={styles.productOdd}>
+                        <Text style={styles.productTitle}>Qora Gorilla</Text>
+                        <Text style={styles.productCount}>120 blok</Text>
+                    </View>
 
-                <View style={styles.product}>
-                    <Text style={styles.productTitle}>Qora Gorilla</Text>
-                    <Text style={styles.productCount}>120 blok</Text>
-                </View>
+                    <View style={styles.product}>
+                        <Text style={styles.productTitle}>Qora Gorilla</Text>
+                        <Text style={styles.productCount}>120 blok</Text>
+                    </View>
 
-                <View style={styles.productOdd}>
-                    <Text style={styles.productTitle}>Qora Gorilla</Text>
-                    <Text style={styles.productCount}>120 blok</Text>
-                </View>
+                    <View style={styles.productOdd}>
+                        <Text style={styles.productTitle}>Qora Gorilla</Text>
+                        <Text style={styles.productCount}>120 blok</Text>
+                    </View>
 
-            </ScrollView>
+                </ScrollView>
 
-            <TouchableOpacity style={styles.addButton} 
-                onPress={() => navigation.navigate('ProductAdd')}>
-                <PlusIcon />
-            </TouchableOpacity>
-          </View>
+                <TouchableOpacity style={styles.addButton}
+                                  onPress={() => navigation.navigate('ProductAdd')}>
+                    <PlusIcon/>
+                </TouchableOpacity>
+            </View>
         );
     }
 }
