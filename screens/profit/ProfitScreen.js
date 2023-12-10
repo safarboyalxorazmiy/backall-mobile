@@ -9,577 +9,578 @@ import ProfitIcon from "../../assets/profit-icon.svg";
 const screenWidth = Dimensions.get('window').width;
 
 class Profit extends Component {
-  render() {
-    const {navigation} = this.props;
+    render() {
+        const {navigation} = this.props;
 
-    return (
-        <>
-            <View style={styles.container}>
-                <ScrollView style={{ width: "100%" }}>
-                    <View style={{
-                        borderBottomColor: "black",
-                        borderBottomWidth: 1,
-                        width: screenWidth - (16 * 2),
-                        marginLeft: "auto",
-                        marginRight: "auto",
-                        height: 44,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center"
-                    }}>
-                        <Text style={{
-                            fontFamily: "Gilroy-SemiBold",
-                            fontWeight: "600",
-                            fontSize: 18,
-                            lineHeight: 24
-                        }}>Foyda tarixi</Text>
-                    </View>
+        return (
+            <>
+                <View style={styles.container}>
+                    <ScrollView style={{width: "100%"}}>
+                        <View style={{
+                            borderBottomColor: "black",
+                            borderBottomWidth: 1,
+                            width: screenWidth - (16 * 2),
+                            marginLeft: "auto",
+                            marginRight: "auto",
+                            height: 44,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center"
+                        }}>
+                            <Text style={{
+                                fontFamily: "Gilroy-SemiBold",
+                                fontWeight: "600",
+                                fontSize: 18,
+                                lineHeight: 24
+                            }}>Foyda tarixi</Text>
+                        </View>
 
-                    <View style={{
-                        marginTop: 24, 
-                        width: screenWidth - (16 * 2),
-                        marginRight: "auto",
-                        marginLeft: "auto"
-                    }}>
-                        <Text style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16, marginBottom: 4}}>
+                        <View style={{
+                            marginTop: 24,
+                            width: screenWidth - (16 * 2),
+                            marginRight: "auto",
+                            marginLeft: "auto"
+                        }}>
+                            <Text
+                                style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16, marginBottom: 4}}>
                                 Muddatni tanlang
-                        </Text>
+                            </Text>
 
-                        <View>
-                            <TextInput
-                                style={{
-                                    position: "relative",
-                                    paddingHorizontal: 16,
-                                    paddingVertical: 14,
-                                    borderColor: "#AFAFAF",
-                                    borderWidth: 1,
-                                    borderRadius: 8,
-                                    fontSize: 16,
-                                    lineHeight: 24,
-                                    fontFamily: "Gilroy-Medium",
-                                    fontWeight: "500"
-                                }}
-                                placeholder="--/--/----"
-                                placeholderTextColor="#AAAAAA"/>
-                              <CalendarIcon 
-                                style={{position: "absolute", right: 16, top: 14}}
-                                resizeMode="cover" />
+                            <View>
+                                <TextInput
+                                    style={{
+                                        position: "relative",
+                                        paddingHorizontal: 16,
+                                        paddingVertical: 14,
+                                        borderColor: "#AFAFAF",
+                                        borderWidth: 1,
+                                        borderRadius: 8,
+                                        fontSize: 16,
+                                        lineHeight: 24,
+                                        fontFamily: "Gilroy-Medium",
+                                        fontWeight: "500"
+                                    }}
+                                    placeholder="--/--/----"
+                                    placeholderTextColor="#AAAAAA"/>
+                                <CalendarIcon
+                                    style={{position: "absolute", right: 16, top: 14}}
+                                    resizeMode="cover"/>
+                            </View>
                         </View>
-                    </View>
 
-                    <View style={{
-                        marginTop: 12,
-                        width: screenWidth - (16 * 2),
-                        marginRight: "auto",
-                        marginLeft: "auto",
-                        display: "flex",
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        paddingHorizontal: 16,
-                        paddingVertical: 14,
-                        backgroundColor: "#4F579F",
-                        borderRadius: 8
-                    }}>
-                        <Text style={{
-                            fontFamily: "Gilroy-Medium",
-                            fontWeight: "500",
-                            fontSize: 16,
-                            lineHeight: 24,
-                            color: "#FFF"
-                        }}>Oylik foyda</Text>
-                        <Text style={{
-                            fontFamily: "Gilroy-Medium",
-                            fontWeight: "500",
-                            fontSize: 16,
-                            lineHeight: 24,
-                            color: "#FFF"
-                        }}>5.000.000 so’m</Text>
-                    </View>
-
-                    <View style={{ width: "100%", paddingLeft: 16, paddingRight: 16 }}>
                         <View style={{
                             marginTop: 12,
+                            width: screenWidth - (16 * 2),
+                            marginRight: "auto",
+                            marginLeft: "auto",
                             display: "flex",
-                            alignItems: "center",
                             flexDirection: "row",
                             justifyContent: "space-between",
-                            backgroundColor: "#EEEEEE",
-                            height: 42,
-                            borderRadius: 4,
-                            paddingHorizontal: 10,
-                            paddingVertical: 10
+                            paddingHorizontal: 16,
+                            paddingVertical: 14,
+                            backgroundColor: "#4F579F",
+                            borderRadius: 8
                         }}>
                             <Text style={{
                                 fontFamily: "Gilroy-Medium",
                                 fontWeight: "500",
-                                fontSize: 14,
-                                lineHeight: 22
-                            }}>4-oktyabr, Chorshanba</Text>
+                                fontSize: 16,
+                                lineHeight: 24,
+                                color: "#FFF"
+                            }}>Oylik foyda</Text>
                             <Text style={{
                                 fontFamily: "Gilroy-Medium",
                                 fontWeight: "500",
-                                fontSize: 14,
-                                lineHeight: 22
-                            }}>//</Text>
-                            <Text style={{
-                                fontFamily: "Gilroy-Medium",
-                                fontWeight: "500",
-                                fontSize: 14,
-                                lineHeight: 22
+                                fontSize: 16,
+                                lineHeight: 24,
+                                color: "#FFF"
                             }}>5.000.000 so’m</Text>
                         </View>
 
-                        <View>
-                            <TouchableOpacity style={{
-                                display: "flex",
-                                flexDirection: "row",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                                height: 50,
-                                marginTop: 4,
-                                paddingHorizontal: 4,
-                                paddingVertical: 6
-                            }} onPress={() => navigation.navigate('ProfitDetail')}>
-                                <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-                                    <ProfitIcon />
-                                    <Text style={{
-                                        marginLeft: 10,
-                                        fontFamily: "Gilroy-Medium",
-                                        fontWeight: "500",
-                                        fontSize: 16,
-                                        color: "#0EBA2C"
-                                    }}>+25.000 so’m</Text>
-                                </View>
-
-                                <Text style={{
-                                    fontFamily: "Gilroy-Medium",
-                                    fontWeight: "500",
-                                    fontSize: 14
-                                }}>10:45</Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity style={{
-                                display: "flex",
-                                flexDirection: "row",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                                height: 50,
-                                marginTop: 4,
-                                paddingHorizontal: 4,
-                                paddingVertical: 6
-                            }} onPress={() => navigation.navigate('ProfitDetail')}>
-                                <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-                                    <ProfitIcon />
-                                    <Text style={{
-                                        marginLeft: 10,
-                                        fontFamily: "Gilroy-Medium",
-                                        fontWeight: "500",
-                                        fontSize: 16,
-                                        color: "#0EBA2C"
-                                    }}>+25.000 so’m</Text>
-                                </View>
-
-                                <Text style={{
-                                    fontFamily: "Gilroy-Medium",
-                                    fontWeight: "500",
-                                    fontSize: 14
-                                }}>10:45</Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity style={{
-                                display: "flex",
-                                flexDirection: "row",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                                height: 50,
-                                marginTop: 4,
-                                paddingHorizontal: 4,
-                                paddingVertical: 6
-                            }} onPress={() => navigation.navigate('ProfitDetail')}>
-                                <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-                                    <ProfitIcon />
-                                    <Text style={{
-                                        marginLeft: 10,
-                                        fontFamily: "Gilroy-Medium",
-                                        fontWeight: "500",
-                                        fontSize: 16,
-                                        color: "#0EBA2C"
-                                    }}>+25.000 so’m</Text>
-                                </View>
-
-                                <Text style={{
-                                    fontFamily: "Gilroy-Medium",
-                                    fontWeight: "500",
-                                    fontSize: 14
-                                }}>10:45</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-
-                    <View style={{ width: "100%", paddingLeft: 16, paddingRight: 16 }}>
-                        <View style={{
-                            marginTop: 12,
-                            display: "flex",
-                            alignItems: "center",
-                            flexDirection: "row",
-                            justifyContent: "space-between",
-                            backgroundColor: "#EEEEEE",
-                            height: 42,
-                            borderRadius: 4,
-                            paddingHorizontal: 10,
-                            paddingVertical: 10
-                        }}>
-                            <Text style={{
-                                fontFamily: "Gilroy-Medium",
-                                fontWeight: "500",
-                                fontSize: 14,
-                                lineHeight: 22
-                            }}>4-oktyabr, Chorshanba</Text>
-                            <Text style={{
-                                fontFamily: "Gilroy-Medium",
-                                fontWeight: "500",
-                                fontSize: 14,
-                                lineHeight: 22
-                            }}>//</Text>
-                            <Text style={{
-                                fontFamily: "Gilroy-Medium",
-                                fontWeight: "500",
-                                fontSize: 14,
-                                lineHeight: 22
-                            }}>5.000.000 so’m</Text>
-                        </View>
-
-                        <View>
+                        <View style={{width: "100%", paddingLeft: 16, paddingRight: 16}}>
                             <View style={{
+                                marginTop: 12,
                                 display: "flex",
+                                alignItems: "center",
                                 flexDirection: "row",
                                 justifyContent: "space-between",
-                                alignItems: "center",
-                                height: 50,
-                                marginTop: 4,
-                                paddingHorizontal: 4,
-                                paddingVertical: 6
+                                backgroundColor: "#EEEEEE",
+                                height: 42,
+                                borderRadius: 4,
+                                paddingHorizontal: 10,
+                                paddingVertical: 10
                             }}>
-                                <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-                                    <ProfitIcon />
-                                    <Text style={{
-                                        marginLeft: 10,
-                                        fontFamily: "Gilroy-Medium",
-                                        fontWeight: "500",
-                                        fontSize: 16,
-                                        color: "#0EBA2C"
-                                    }}>+25.000 so’m</Text>
-                                </View>
-
                                 <Text style={{
                                     fontFamily: "Gilroy-Medium",
                                     fontWeight: "500",
-                                    fontSize: 14
-                                }}>10:45</Text>
+                                    fontSize: 14,
+                                    lineHeight: 22
+                                }}>4-oktyabr, Chorshanba</Text>
+                                <Text style={{
+                                    fontFamily: "Gilroy-Medium",
+                                    fontWeight: "500",
+                                    fontSize: 14,
+                                    lineHeight: 22
+                                }}>//</Text>
+                                <Text style={{
+                                    fontFamily: "Gilroy-Medium",
+                                    fontWeight: "500",
+                                    fontSize: 14,
+                                    lineHeight: 22
+                                }}>5.000.000 so’m</Text>
                             </View>
 
-                            <View style={{
-                                display: "flex",
-                                flexDirection: "row",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                                height: 50,
-                                marginTop: 4,
-                                paddingHorizontal: 4,
-                                paddingVertical: 6
-                            }}>
-                                <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-                                    <ProfitIcon />
+                            <View>
+                                <TouchableOpacity style={{
+                                    display: "flex",
+                                    flexDirection: "row",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                    height: 50,
+                                    marginTop: 4,
+                                    paddingHorizontal: 4,
+                                    paddingVertical: 6
+                                }} onPress={() => navigation.navigate('ProfitDetail')}>
+                                    <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+                                        <ProfitIcon/>
+                                        <Text style={{
+                                            marginLeft: 10,
+                                            fontFamily: "Gilroy-Medium",
+                                            fontWeight: "500",
+                                            fontSize: 16,
+                                            color: "#0EBA2C"
+                                        }}>+25.000 so’m</Text>
+                                    </View>
+
                                     <Text style={{
-                                        marginLeft: 10,
                                         fontFamily: "Gilroy-Medium",
                                         fontWeight: "500",
-                                        fontSize: 16,
-                                        color: "#0EBA2C"
-                                    }}>+25.000 so’m</Text>
-                                </View>
+                                        fontSize: 14
+                                    }}>10:45</Text>
+                                </TouchableOpacity>
 
-                                <Text style={{
-                                    fontFamily: "Gilroy-Medium",
-                                    fontWeight: "500",
-                                    fontSize: 14
-                                }}>10:45</Text>
-                            </View>
+                                <TouchableOpacity style={{
+                                    display: "flex",
+                                    flexDirection: "row",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                    height: 50,
+                                    marginTop: 4,
+                                    paddingHorizontal: 4,
+                                    paddingVertical: 6
+                                }} onPress={() => navigation.navigate('ProfitDetail')}>
+                                    <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+                                        <ProfitIcon/>
+                                        <Text style={{
+                                            marginLeft: 10,
+                                            fontFamily: "Gilroy-Medium",
+                                            fontWeight: "500",
+                                            fontSize: 16,
+                                            color: "#0EBA2C"
+                                        }}>+25.000 so’m</Text>
+                                    </View>
 
-                            <View style={{
-                                display: "flex",
-                                flexDirection: "row",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                                height: 50,
-                                marginTop: 4,
-                                paddingHorizontal: 4,
-                                paddingVertical: 6
-                            }}>
-                                <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-                                    <ProfitIcon />
                                     <Text style={{
-                                        marginLeft: 10,
                                         fontFamily: "Gilroy-Medium",
                                         fontWeight: "500",
-                                        fontSize: 16,
-                                        color: "#0EBA2C"
-                                    }}>+25.000 so’m</Text>
-                                </View>
+                                        fontSize: 14
+                                    }}>10:45</Text>
+                                </TouchableOpacity>
 
-                                <Text style={{
-                                    fontFamily: "Gilroy-Medium",
-                                    fontWeight: "500",
-                                    fontSize: 14
-                                }}>10:45</Text>
+                                <TouchableOpacity style={{
+                                    display: "flex",
+                                    flexDirection: "row",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                    height: 50,
+                                    marginTop: 4,
+                                    paddingHorizontal: 4,
+                                    paddingVertical: 6
+                                }} onPress={() => navigation.navigate('ProfitDetail')}>
+                                    <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+                                        <ProfitIcon/>
+                                        <Text style={{
+                                            marginLeft: 10,
+                                            fontFamily: "Gilroy-Medium",
+                                            fontWeight: "500",
+                                            fontSize: 16,
+                                            color: "#0EBA2C"
+                                        }}>+25.000 so’m</Text>
+                                    </View>
+
+                                    <Text style={{
+                                        fontFamily: "Gilroy-Medium",
+                                        fontWeight: "500",
+                                        fontSize: 14
+                                    }}>10:45</Text>
+                                </TouchableOpacity>
                             </View>
                         </View>
-                    </View>
 
-                    <View style={{ width: "100%", paddingLeft: 16, paddingRight: 16}}>
-                        <View style={{
-                            marginTop: 12,
-                            display: "flex",
-                            alignItems: "center",
-                            flexDirection: "row",
-                            justifyContent: "space-between",
-                            backgroundColor: "#EEEEEE",
-                            height: 42,
-                            borderRadius: 4,
-                            paddingHorizontal: 10,
-                            // paddingVertical: 10
-                        }}>
-                            <Text style={{
-                                fontFamily: "Gilroy-Medium",
-                                fontWeight: "500",
-                                fontSize: 14,
-                                lineHeight: 22
-                            }}>4-oktyabr, Chorshanba</Text>
-                            <Text style={{
-                                fontFamily: "Gilroy-Medium",
-                                fontWeight: "500",
-                                fontSize: 14,
-                                lineHeight: 22
-                            }}>//</Text>
-                            <Text style={{
-                                fontFamily: "Gilroy-Medium",
-                                fontWeight: "500",
-                                fontSize: 14,
-                                lineHeight: 22
-                            }}>5.000.000 so’m</Text>
+                        <View style={{width: "100%", paddingLeft: 16, paddingRight: 16}}>
+                            <View style={{
+                                marginTop: 12,
+                                display: "flex",
+                                alignItems: "center",
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                                backgroundColor: "#EEEEEE",
+                                height: 42,
+                                borderRadius: 4,
+                                paddingHorizontal: 10,
+                                paddingVertical: 10
+                            }}>
+                                <Text style={{
+                                    fontFamily: "Gilroy-Medium",
+                                    fontWeight: "500",
+                                    fontSize: 14,
+                                    lineHeight: 22
+                                }}>4-oktyabr, Chorshanba</Text>
+                                <Text style={{
+                                    fontFamily: "Gilroy-Medium",
+                                    fontWeight: "500",
+                                    fontSize: 14,
+                                    lineHeight: 22
+                                }}>//</Text>
+                                <Text style={{
+                                    fontFamily: "Gilroy-Medium",
+                                    fontWeight: "500",
+                                    fontSize: 14,
+                                    lineHeight: 22
+                                }}>5.000.000 so’m</Text>
+                            </View>
+
+                            <View>
+                                <View style={{
+                                    display: "flex",
+                                    flexDirection: "row",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                    height: 50,
+                                    marginTop: 4,
+                                    paddingHorizontal: 4,
+                                    paddingVertical: 6
+                                }}>
+                                    <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+                                        <ProfitIcon/>
+                                        <Text style={{
+                                            marginLeft: 10,
+                                            fontFamily: "Gilroy-Medium",
+                                            fontWeight: "500",
+                                            fontSize: 16,
+                                            color: "#0EBA2C"
+                                        }}>+25.000 so’m</Text>
+                                    </View>
+
+                                    <Text style={{
+                                        fontFamily: "Gilroy-Medium",
+                                        fontWeight: "500",
+                                        fontSize: 14
+                                    }}>10:45</Text>
+                                </View>
+
+                                <View style={{
+                                    display: "flex",
+                                    flexDirection: "row",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                    height: 50,
+                                    marginTop: 4,
+                                    paddingHorizontal: 4,
+                                    paddingVertical: 6
+                                }}>
+                                    <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+                                        <ProfitIcon/>
+                                        <Text style={{
+                                            marginLeft: 10,
+                                            fontFamily: "Gilroy-Medium",
+                                            fontWeight: "500",
+                                            fontSize: 16,
+                                            color: "#0EBA2C"
+                                        }}>+25.000 so’m</Text>
+                                    </View>
+
+                                    <Text style={{
+                                        fontFamily: "Gilroy-Medium",
+                                        fontWeight: "500",
+                                        fontSize: 14
+                                    }}>10:45</Text>
+                                </View>
+
+                                <View style={{
+                                    display: "flex",
+                                    flexDirection: "row",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                    height: 50,
+                                    marginTop: 4,
+                                    paddingHorizontal: 4,
+                                    paddingVertical: 6
+                                }}>
+                                    <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+                                        <ProfitIcon/>
+                                        <Text style={{
+                                            marginLeft: 10,
+                                            fontFamily: "Gilroy-Medium",
+                                            fontWeight: "500",
+                                            fontSize: 16,
+                                            color: "#0EBA2C"
+                                        }}>+25.000 so’m</Text>
+                                    </View>
+
+                                    <Text style={{
+                                        fontFamily: "Gilroy-Medium",
+                                        fontWeight: "500",
+                                        fontSize: 14
+                                    }}>10:45</Text>
+                                </View>
+                            </View>
                         </View>
 
-                        <View>
+                        <View style={{width: "100%", paddingLeft: 16, paddingRight: 16}}>
                             <View style={{
+                                marginTop: 12,
                                 display: "flex",
+                                alignItems: "center",
                                 flexDirection: "row",
                                 justifyContent: "space-between",
-                                alignItems: "center",
-                                height: 50,
-                                marginTop: 4,
-                                paddingHorizontal: 4,
-                                paddingVertical: 6
+                                backgroundColor: "#EEEEEE",
+                                height: 42,
+                                borderRadius: 4,
+                                paddingHorizontal: 10,
+                                // paddingVertical: 10
                             }}>
-                                <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-                                    <ProfitIcon />
-                                    <Text style={{
-                                        marginLeft: 10,
-                                        fontFamily: "Gilroy-Medium",
-                                        fontWeight: "500",
-                                        fontSize: 16,
-                                        color: "#0EBA2C"
-                                    }}>+25.000 so’m</Text>
-                                </View>
-
                                 <Text style={{
                                     fontFamily: "Gilroy-Medium",
                                     fontWeight: "500",
-                                    fontSize: 14
-                                }}>10:45</Text>
+                                    fontSize: 14,
+                                    lineHeight: 22
+                                }}>4-oktyabr, Chorshanba</Text>
+                                <Text style={{
+                                    fontFamily: "Gilroy-Medium",
+                                    fontWeight: "500",
+                                    fontSize: 14,
+                                    lineHeight: 22
+                                }}>//</Text>
+                                <Text style={{
+                                    fontFamily: "Gilroy-Medium",
+                                    fontWeight: "500",
+                                    fontSize: 14,
+                                    lineHeight: 22
+                                }}>5.000.000 so’m</Text>
                             </View>
 
-                            <View style={{
-                                display: "flex",
-                                flexDirection: "row",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                                height: 50,
-                                marginTop: 4,
-                                paddingHorizontal: 4,
-                                paddingVertical: 6
-                            }}>
-                                <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-                                    <ProfitIcon />
+                            <View>
+                                <View style={{
+                                    display: "flex",
+                                    flexDirection: "row",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                    height: 50,
+                                    marginTop: 4,
+                                    paddingHorizontal: 4,
+                                    paddingVertical: 6
+                                }}>
+                                    <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+                                        <ProfitIcon/>
+                                        <Text style={{
+                                            marginLeft: 10,
+                                            fontFamily: "Gilroy-Medium",
+                                            fontWeight: "500",
+                                            fontSize: 16,
+                                            color: "#0EBA2C"
+                                        }}>+25.000 so’m</Text>
+                                    </View>
+
                                     <Text style={{
-                                        marginLeft: 10,
                                         fontFamily: "Gilroy-Medium",
                                         fontWeight: "500",
-                                        fontSize: 16,
-                                        color: "#0EBA2C"
-                                    }}>+25.000 so’m</Text>
+                                        fontSize: 14
+                                    }}>10:45</Text>
                                 </View>
 
-                                <Text style={{
-                                    fontFamily: "Gilroy-Medium",
-                                    fontWeight: "500",
-                                    fontSize: 14
-                                }}>10:45</Text>
-                            </View>
+                                <View style={{
+                                    display: "flex",
+                                    flexDirection: "row",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                    height: 50,
+                                    marginTop: 4,
+                                    paddingHorizontal: 4,
+                                    paddingVertical: 6
+                                }}>
+                                    <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+                                        <ProfitIcon/>
+                                        <Text style={{
+                                            marginLeft: 10,
+                                            fontFamily: "Gilroy-Medium",
+                                            fontWeight: "500",
+                                            fontSize: 16,
+                                            color: "#0EBA2C"
+                                        }}>+25.000 so’m</Text>
+                                    </View>
 
-                            <View style={{
-                                display: "flex",
-                                flexDirection: "row",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                                height: 50,
-                                marginTop: 4,
-                                paddingHorizontal: 4,
-                                paddingVertical: 6
-                            }}>
-                                <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-                                    <ProfitIcon />
                                     <Text style={{
-                                        marginLeft: 10,
                                         fontFamily: "Gilroy-Medium",
                                         fontWeight: "500",
-                                        fontSize: 16,
-                                        color: "#0EBA2C"
-                                    }}>+25.000 so’m</Text>
+                                        fontSize: 14
+                                    }}>10:45</Text>
                                 </View>
 
-                                <Text style={{
-                                    fontFamily: "Gilroy-Medium",
-                                    fontWeight: "500",
-                                    fontSize: 14
-                                }}>10:45</Text>
+                                <View style={{
+                                    display: "flex",
+                                    flexDirection: "row",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                    height: 50,
+                                    marginTop: 4,
+                                    paddingHorizontal: 4,
+                                    paddingVertical: 6
+                                }}>
+                                    <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+                                        <ProfitIcon/>
+                                        <Text style={{
+                                            marginLeft: 10,
+                                            fontFamily: "Gilroy-Medium",
+                                            fontWeight: "500",
+                                            fontSize: 16,
+                                            color: "#0EBA2C"
+                                        }}>+25.000 so’m</Text>
+                                    </View>
+
+                                    <Text style={{
+                                        fontFamily: "Gilroy-Medium",
+                                        fontWeight: "500",
+                                        fontSize: 14
+                                    }}>10:45</Text>
+                                </View>
                             </View>
                         </View>
-                    </View>
-                </ScrollView>
+                    </ScrollView>
 
-                <StatusBar style="auto"/>
-            </View>
-        </>
-    );
-  }
+                    <StatusBar style="auto"/>
+                </View>
+            </>
+        );
+    }
 }
 
 const styles = StyleSheet.create({
-  container: {
+    container: {
         width: "100%",
-      flex: 1,
-      backgroundColor: '#fff',
-      alignItems: 'center',
-      paddingTop: 50
-  },
+        flex: 1,
+        backgroundColor: '#fff',
+        alignItems: 'center',
+        paddingTop: 50
+    },
 
-  navbar: {
-      borderTopWidth: 1,
-      borderTopColor: "#EFEFEF",
-      paddingHorizontal: 30,
-      width: "100%",
-      backgroundColor: "white",
-      height: 93,
-      display: "flex",
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "flex-start"
-  },
+    navbar: {
+        borderTopWidth: 1,
+        borderTopColor: "#EFEFEF",
+        paddingHorizontal: 30,
+        width: "100%",
+        backgroundColor: "white",
+        height: 93,
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "flex-start"
+    },
 
-  navbarWeb: {
-    width: "100%" - 20
-  },
+    navbarWeb: {
+        width: "100%" - 20
+    },
 
-  navItem: {
-      display: "flex",
-      alignItems: 'center',
-      justifyContent: 'center'
-  },
+    navItem: {
+        display: "flex",
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
 
-  activeBorder: {
-      marginBottom: 30,
-      width: 47,
-      height: 4,
-      borderBottomLeftRadius: 2,
-      borderBottomRightRadius: 2,
-      backgroundColor: "black"
-  },
+    activeBorder: {
+        marginBottom: 30,
+        width: 47,
+        height: 4,
+        borderBottomLeftRadius: 2,
+        borderBottomRightRadius: 2,
+        backgroundColor: "black"
+    },
 
-  inactiveBorder: {
-      marginBottom: 30,
-      width: 47,
-      height: 4,
-      borderBottomLeftRadius: 2,
-      borderBottomRightRadius: 2,
-      // backgroundColor: "black"
-  },
+    inactiveBorder: {
+        marginBottom: 30,
+        width: 47,
+        height: 4,
+        borderBottomLeftRadius: 2,
+        borderBottomRightRadius: 2,
+        // backgroundColor: "black"
+    },
 
-  scan: {
-      backgroundColor: "black",
-      padding: 21,
-      borderRadius: 50,
-      marginTop: 10
-  },
+    scan: {
+        backgroundColor: "black",
+        padding: 21,
+        borderRadius: 50,
+        marginTop: 10
+    },
 
-  productList: {
-      marginTop: 0
-  },
+    productList: {
+        marginTop: 0
+    },
 
-  product: {
-      display: "flex",
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      width: screenWidth - (17 + 17),
-      paddingVertical: 15,
-      paddingHorizontal: 6,
-      borderTopWidth: 1,
-      borderColor: "#D9D9D9"
-  },
+    product: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: screenWidth - (17 + 17),
+        paddingVertical: 15,
+        paddingHorizontal: 6,
+        borderTopWidth: 1,
+        borderColor: "#D9D9D9"
+    },
 
-  productTitle: {
-      fontSize: 24,
-      fontWeight: "bold",
-      width: 100
-  },
+    productTitle: {
+        fontSize: 24,
+        fontWeight: "bold",
+        width: 100
+    },
 
-  productCount: {
-      fontFamily: "Roboto-Bold",
-      fontSize: 24,
-      fontWeight: "semibold"
-  },
+    productCount: {
+        fontFamily: "Roboto-Bold",
+        fontSize: 24,
+        fontWeight: "semibold"
+    },
 
-  hour: {
-      color: "#6D7696",
-      fontSize: 12
-  },
+    hour: {
+        color: "#6D7696",
+        fontSize: 12
+    },
 
-  buttons: {
-      marginTop: 22,
-      display: "flex",
-      flexDirection: "row",
-      justifyContent: "space-between",
-      width: screenWidth - (17 + 17),
-      marginBottom: 40
-  },
+    buttons: {
+        marginTop: 22,
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        width: screenWidth - (17 + 17),
+        marginBottom: 40
+    },
 
-  button: {
-      backgroundColor: 'black',
-      paddingVertical: 10,
-      paddingHorizontal: 14,
-      borderRadius: 10,
-      display: "flex",
-      flexDirection: "row",
-      gap: 12
-  },
+    button: {
+        backgroundColor: 'black',
+        paddingVertical: 10,
+        paddingHorizontal: 14,
+        borderRadius: 10,
+        display: "flex",
+        flexDirection: "row",
+        gap: 12
+    },
 
-  buttonText: {
-      color: 'white',
-      fontSize: 16,
-      textAlign: 'center',
-      fontFamily: "Roboto-Bold",
-      textTransform: "uppercase"
-  }
+    buttonText: {
+        color: 'white',
+        fontSize: 16,
+        textAlign: 'center',
+        fontFamily: "Roboto-Bold",
+        textTransform: "uppercase"
+    }
 });
 
 export default Profit;

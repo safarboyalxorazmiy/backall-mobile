@@ -41,28 +41,28 @@ class TokenService {
         if (this.isLoggedIn) {
             return;
         }
-        
+
         const access_token = await this.retrieveAccessToken();
-    
+
         console.log(access_token)
-    
+
         if (access_token == null) {
             navigation.navigate("Login")
         }
-    
+
         this.isLoggedIn = true;
         return access_token;
     }
 
     clearAsyncStorage = async () => {
         try {
-          await AsyncStorage.clear();
-          console.log('AsyncStorage cleared successfully!');
+            await AsyncStorage.clear();
+            console.log('AsyncStorage cleared successfully!');
         } catch (error) {
-          console.error('Error clearing AsyncStorage: ', error);
+            console.error('Error clearing AsyncStorage: ', error);
         }
     };
-      
+
 }
 
 export default TokenService;
