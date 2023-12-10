@@ -127,7 +127,44 @@ class DatabaseService {
         throw error; // Re-throw the error to handle it elsewhere if needed
       }
     }
-    
+
+    async findProductsBySerialNumber(keyword) {
+        if (keyword == "") {
+            return [];
+        }
+
+        try {
+            const result = await new Promise((resolve, reject) => {
+                db.transaction((tx) => {
+                    tx.executeSql(
+                        "SELECT * FROM product WHERE serial_number LIKE ?;",
+                        ['%' + keyword + '%'],
+                        (tx, results) => {
+                            const products = [];
+                            for (let i = 0; i < results.rows.length; i++) {
+                                const row = results.rows.item(i);
+                                products.push({
+                                    id: row.id,
+                                    name: row.name,
+                                    brand_name: row.brand_name,
+                                    serial_number: row.serial_number
+                                });
+                            }
+                            resolve(products);
+                        },
+                        (tx, error) => {
+                            reject(error);
+                        }
+                    );
+                });
+            });
+
+            return result; // Return the products matching the serial number pattern
+        } catch (error) {
+            console.error(`Error finding products by serial number: ${error}`);
+            throw error;
+        }
+    }
 
     async addProductToStore(productId, price, sellingPrice, percentage, count, countType) {
       try {
