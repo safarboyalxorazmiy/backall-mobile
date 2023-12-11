@@ -217,7 +217,6 @@ class ProductAdd extends Component {
 		const {navigation} = this.props;
 		
 		return (
-			//  onTouchStart={this.bodyTouched}
 			<View>
 				<ScrollView contentContainerStyle={styles.container}>
 					<View style={styles.pageTitle}>
@@ -243,20 +242,23 @@ class ProductAdd extends Component {
 						/>
 						
 						<View style={this.state.serialInputContentStyle}>
-							{this.state.products.map((item, index) => (
-								<TouchableOpacity onPress={() => {
-									this.selectProduct(item)
-								}} style={styles.serialInputSuggestion} key={index}>
-									<Text>{item.brand_name}</Text>
-								</TouchableOpacity>
-							))}
+							{
+								this.state.products.map((item, index) => (
+									<TouchableOpacity onPress={() => {
+										this.selectProduct(item)
+									}} style={styles.serialInputSuggestion} key={index}>
+										<Text>{item.brand_name}</Text>
+									</TouchableOpacity>
+								))}
 						</View>
 						
-						{this.state.seriyaError === true ?
-							<Animatable.View animation="shake" duration={500}>
-								<Text style={styles.errorMsg}>Seriya xato kiritildi.</Text>
-							</Animatable.View>
-							: null}
+						{
+							this.state.seriyaError === true ?
+								<Animatable.View animation="shake" duration={500}>
+									<Text style={styles.errorMsg}>Seriya xato kiritildi.</Text>
+								</Animatable.View>
+								: null
+						}
 					</View>
 					
 					
@@ -277,14 +279,16 @@ class ProductAdd extends Component {
 									})
 								}
 							}}
-							
-								/>
-							
-							{this.state.brandErr === true ?
+						
+						/>
+						
+						{
+							this.state.brandErr === true ?
 								<Animatable.View animation="shake" duration={500}>
-							<Text style={styles.errorMsg}>Brand xato kiritildi.</Text>
-						</Animatable.View>
-						: null}
+									<Text style={styles.errorMsg}>Brand xato kiritildi.</Text>
+								</Animatable.View>
+								: null
+						}
 					</View>
 					
 					<View style={styles.inputWrapper}>
@@ -297,11 +301,13 @@ class ProductAdd extends Component {
 							onChangeText={(text) => this.setState({productInputValue: text})}
 						/>
 						
-						{this.state.productNameErr === true ?
-							<Animatable.View animation="shake" duration={500}>
-								<Text style={styles.errorMsg}>Mahsulot nomi xato kiritildi.</Text>
-							</Animatable.View>
-							: null}
+						{
+							this.state.productNameErr === true ?
+								<Animatable.View animation="shake" duration={500}>
+									<Text style={styles.errorMsg}>Mahsulot nomi xato kiritildi.</Text>
+								</Animatable.View>
+								: null
+						}
 					</View>
 					
 					<View style={styles.inputWrapper}>
@@ -755,8 +761,6 @@ const styles = StyleSheet.create({
 	errorMsg: {
 		color: "red"
 	}
-	
-	
 });
 
 export default ProductAdd;

@@ -1,68 +1,68 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class TokenService {
-    isLoggedIn = false;
-
-    storeAccessToken = async (access_token) => {
-        try {
-            await AsyncStorage.setItem('access_token', access_token);
-        } catch (error) {
-            console.error('Error storing token:', error);
-        }
-    };
-
-    storeRefreshToken = async (refresh_token) => {
-        try {
-            await AsyncStorage.setItem('refresh_token', refresh_token);
-        } catch (error) {
-            console.error('Error storing token:', error);
-        }
-    };
-
-    retrieveAccessToken = async () => {
-        try {
-            const token = await AsyncStorage.getItem('access_token');
-            return token;
-        } catch (error) {
-            console.error('Error retrieving token:', error);
-        }
-    };
-
-    retrieveRefreshToken = async () => {
-        try {
-            const token = await AsyncStorage.getItem('refresh_token');
-            return token;
-        } catch (error) {
-            console.error('Error retrieving token:', error);
-        }
-    };
-
-    checkTokens = async (navigation) => {
-        if (this.isLoggedIn) {
-            return;
-        }
-
-        const access_token = await this.retrieveAccessToken();
-
-        console.log(access_token)
-
-        if (access_token == null) {
-            navigation.navigate("Login")
-        }
-
-        this.isLoggedIn = true;
-        return access_token;
-    }
-
-    clearAsyncStorage = async () => {
-        try {
-            await AsyncStorage.clear();
-            console.log('AsyncStorage cleared successfully!');
-        } catch (error) {
-            console.error('Error clearing AsyncStorage: ', error);
-        }
-    };
-
+	isLoggedIn = false;
+	
+	storeAccessToken = async (access_token) => {
+		try {
+			await AsyncStorage.setItem('access_token', access_token);
+		} catch (error) {
+			console.error('Error storing token:', error);
+		}
+	};
+	
+	storeRefreshToken = async (refresh_token) => {
+		try {
+			await AsyncStorage.setItem('refresh_token', refresh_token);
+		} catch (error) {
+			console.error('Error storing token:', error);
+		}
+	};
+	
+	retrieveAccessToken = async () => {
+		try {
+			const token = await AsyncStorage.getItem('access_token');
+			return token;
+		} catch (error) {
+			console.error('Error retrieving token:', error);
+		}
+	};
+	
+	retrieveRefreshToken = async () => {
+		try {
+			const token = await AsyncStorage.getItem('refresh_token');
+			return token;
+		} catch (error) {
+			console.error('Error retrieving token:', error);
+		}
+	};
+	
+	checkTokens = async (navigation) => {
+		if (this.isLoggedIn) {
+			return;
+		}
+		
+		const access_token = await this.retrieveAccessToken();
+		
+		console.log(access_token)
+		
+		if (access_token == null) {
+			navigation.navigate("Login")
+		}
+		
+		this.isLoggedIn = true;
+		return access_token;
+	}
+	
+	clearAsyncStorage = async () => {
+		try {
+			await AsyncStorage.clear();
+			console.log('AsyncStorage cleared successfully!');
+		} catch (error) {
+			console.error('Error clearing AsyncStorage: ', error);
+		}
+	};
+	
 }
 
 export default TokenService;
