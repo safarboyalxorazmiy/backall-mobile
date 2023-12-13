@@ -14,7 +14,9 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "jsEngine": "hermes",
     "ios": {
+      "jsEngine": "jsc",
       "supportsTablet": true
     },
     "android": {
@@ -32,6 +34,12 @@
       "eas": {
         "projectId": "488daa54-ef3c-48ff-b4cb-744370363af0"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/488daa54-ef3c-48ff-b4cb-744370363af0"
     }
   }
 }
