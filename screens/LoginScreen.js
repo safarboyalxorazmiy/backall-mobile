@@ -14,13 +14,14 @@ import {
 import Logo from '../assets/logo.svg';
 import TokenService from '../services/TokenService';
 import DatabaseService from '../services/DatabaseService';
-
+import ApiService from "../services/ApiService";
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-const tokenService = new TokenService();
 const databaseService = new DatabaseService();
+const tokenService = new TokenService();
+const apiService = new ApiService();
 
 const LoginForm = ({onSubmit}) => {
 	const [email, setEmail] = useState('');
@@ -72,32 +73,27 @@ const Login = ({navigation}) => {
 		try {
 			setLoading(true);
 			
-			const response = await fetch('http://backall.uz/api/v1/auth/authenticate', {
-				method: 'POST',
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					email,
-					password,
-				}),
-			});
+			let result;
+			result.access_token = null;
+			result.refresh_token = null;
 			
-			const result = await response.json();
+			result = await apiService.login(email, password);
 			
-			// Handle the result here
-			console.log(result);
-			
-			tokenService.storeAccessToken(result.access_token);
-			tokenService.storeRefreshToken(result.refresh_token);
 			navigation.navigate("Home");
+			
+			if (
+				result.access_token != null &&
+				result.refresh_token != null
+			) {
+				await tokenService.storeAccessToken(result.access_token);
+				await tokenService.storeRefreshToken(result.refresh_token);
+			}
 			
 			accessToken = await tokenService.retrieveAccessToken();
 			console.log(accessToken);
 			console.log(await tokenService.retrieveRefreshToken());
 			
-			getProducts();
+			await getProducts();
 		} catch (error) {
 			console.error('Error fetching data:', error);
 		} finally {
