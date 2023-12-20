@@ -8,11 +8,19 @@ import {
 	TouchableOpacity,
 	TextInput,
 	ScrollView,
-	TouchableWithoutFeedback
+	TouchableWithoutFeedback, Animated,
 } from 'react-native';
 import PlusIcon from "../../assets/plus-icon.svg";
 
 import SearchIcon from "../../assets/search-icon.svg";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+import BasketIcon from "../../assets/basket-icon-light.svg";
+import Modal from "react-native-modal";
+import Success from "../../assets/success.svg";
+
+const Checkmark = Animated.createAnimatedComponent(View);
+const CheckmarkText = Animated.createAnimatedComponent(Text);
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -21,6 +29,35 @@ class Basket extends Component {
 	constructor(props) {
 		super(props);
 		this.textInputRef = React.createRef();
+		
+		this.state = {
+			isCreated: "false"
+		}
+		
+		console.log(this.state)
+		
+	}
+
+	async componentDidMount() {
+		await this.getCreated();
+		
+		// WHEN EVERYTIME SCREEN OPENED
+		const {navigation} = this.props;
+		
+		const screenFocused = navigation.addListener('focus', async () => {
+			console.log("Whatta hell");
+			
+			await this.getCreated();
+		});
+	}
+	
+	async getCreated() {
+		let isCreated = await AsyncStorage.getItem("isCreated");
+		console.log(isCreated);
+		this.setState({isCreated: isCreated});
+		console.log(this.state.isCreated);
+		
+		console.log("HII MOTHERFUCKER");
 	}
 	
 	handlePress = () => {
@@ -127,6 +164,79 @@ class Basket extends Component {
 				                  onPress={() => navigation.navigate('ProductAdd')}>
 					<PlusIcon/>
 				</TouchableOpacity>
+				
+				<Modal
+					style={{
+						backgroundColor: "#FFFFFF",
+						width: "100%",
+						height: screenHeight,
+						margin: 0,
+						padding: 0,
+						position: "absolute",
+						top: 0,
+						left: 0
+					}}
+					isVisible={this.state.isCreated === "true"}
+					animationIn={"slideInUp"}
+					animationOut={"slideOutDown"}
+					animationInTiming={200}>
+					<Checkmark
+						style={{
+							//	transform: [{scale: this.state.checkmarkScale}],
+							margin: 0,
+							padding: 0,
+							width: "100%",
+							display: "flex",
+							alignItems: "center",
+							justifyContent: "center"
+						}}
+					>
+						<Success />
+					</Checkmark>
+					
+					<View style={{
+						width: screenWidth - (15 * 2),
+						marginLeft: "auto",
+						marginRight: "auto",
+						position: "absolute",
+						left: 15,
+						bottom: 30
+					}}>
+						<CheckmarkText
+							style={{
+								// transform: [{scale: this.state.checkmarkScale}],
+								marginLeft: 5,
+								color: "black",
+								fontSize: 24,
+								fontFamily: "Gilroy-SemiBold"
+							}}
+						>
+							Mahsulot muvafaqqiyatli yaratildi!
+						</CheckmarkText>
+						
+						<TouchableOpacity style={{
+							width: 343,
+							backgroundColor: "#222222",
+							borderRadius: 8,
+							display: "flex",
+							flexDirection: "row",
+							justifyContent: "center",
+							paddingVertical: 14,
+							gap: 20,
+							marginTop: 15,
+						}} onPress={async () => {
+							await AsyncStorage.setItem("isCreated", "false")
+							this.setState({isCreated: "false"});
+						}}>
+							<BasketIcon/>
+							<Text style={{
+								fontFamily: "Gilroy-Black",
+								fontSize: 16,
+								color: "#FFFFFF"
+							}}>SAVATGA QAYTISH</Text>
+						</TouchableOpacity>
+					</View>
+				</Modal>
 			</View>
 		);
 	}

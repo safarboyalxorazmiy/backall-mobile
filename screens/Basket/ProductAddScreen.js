@@ -6,13 +6,14 @@ import {
 	ScrollView,
 	Dimensions,
 	TouchableOpacity,
-	TextInput,
+	TextInput, Animated,
 } from "react-native";
 import {Dropdown} from "react-native-element-dropdown";
 import ToggleSwitch from 'toggle-switch-react-native';
 import * as Animatable from 'react-native-animatable';
 import BackIcon from "../../assets/arrow-left-icon.svg"
 import DatabaseService from "../../services/DatabaseService";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const amountData = [
 	{label: "DONA", value: "1"},
@@ -30,8 +31,10 @@ const priceData = [
 
 
 const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 
 const databaseService = new DatabaseService();
+
 
 class ProductAdd extends Component {
 	constructor(props) {
@@ -69,11 +72,18 @@ class ProductAdd extends Component {
 			serialInputContentStyle: {display: "none"},
 			
 			sellingPriceError: false,
-			priceInput: styles.priceInput
+			priceInput: styles.priceInput,
+			
+			checkmarkScale: new Animated.Value(0),
+			isCreated: false
 		};
 	}
 	
-	handleButtonClick = () => {
+	setCheckmarkScale(checkmarkScale) {
+		this.setState({checkmarkScale: checkmarkScale});
+	}
+	
+	handleButtonClick = async () => {
 		const {
 			seriyaInputValue,
 			brandInputValue,
@@ -84,19 +94,19 @@ class ProductAdd extends Component {
 			percentageInputValue,
 		} = this.state;
 		
-		console.log("Seriya Value:", seriyaInputValue);
-		console.log("Brand Value:", brandInputValue);
-		console.log("Product Value:", productInputValue);
-		console.log("Amount Value:", amountInputValue);
-		console.log("Price Value:", priceInputValue);
-		console.log("Selling Price Value:", sellingPriceInputValue);
-		console.log("Percentage Value:", percentageInputValue);
-		
+		let isValidInputValues = true;
 		if (seriyaInputValue.length < 6) {
 			this.setState({
 				seriyaInputValue: "",
 				seriyaError: true,
 				serialInputStyle: styles.serialInputErr
+			})
+			
+			isValidInputValues = false;
+		} else {
+			this.setState({
+				seriyaError: false,
+				serialInputStyle: styles.serialInput
 			})
 		}
 		
@@ -106,6 +116,13 @@ class ProductAdd extends Component {
 				brandInputStyle: styles.inputErr,
 				brandErr: true,
 			})
+			
+			isValidInputValues = false;
+		} else {
+			this.setState({
+				brandErr: false,
+				brandInputStyle: styles.input,
+			})
 		}
 		
 		if (productInputValue.length < 3) {
@@ -114,29 +131,83 @@ class ProductAdd extends Component {
 				productInputStyle: styles.inputErr,
 				productNameErr: true,
 			})
+			
+			isValidInputValues = false;
+		} else {
+			this.setState({
+				productNameErr: false,
+				productInputStyle: styles.input,
+			})
 		}
 		
-		if (amountInputValue.length < 3) {
+		if (amountInputValue <= 0 || amountInputValue.length <= 0) {
 			this.setState({
 				amountInputValue: "",
 				amountInputStyle: styles.amountInputErr,
 				amountErr: true,
 			})
+			
+			isValidInputValues = false;
+		} else {
+			this.setState({
+				amountErr: false,
+				amountInputStyle: styles.amountInput,
+			})
 		}
 		
-		if (priceInputValue.length < 3) {
+		if (priceInputValue <= 0 || priceInputValue.length <= 0) {
 			this.setState({
 				priceInputValue: "",
 				priceInputStyle: styles.inputErr,
 				priceInputErr: true,
 			})
+			
+			isValidInputValues = false;
+		} else {
+			this.setState({
+				priceInputErr: false,
+				priceInputStyle: styles.input,
+			})
 		}
 		
-		if (sellingPriceInputValue.length < 3) {
+		if (sellingPriceInputValue <= 0 || sellingPriceInputValue.length <= 0) {
 			this.setState({
 				sellingPriceError: true,
 				priceInput: styles.priceInputErr
 			})
+			
+			isValidInputValues = false;
+		} else {
+			this.setState({
+				sellingPriceError: false,
+				priceInput: styles.priceInput
+			})
+		}
+		
+		if (isValidInputValues) {
+			console.log("Seriya Value:", seriyaInputValue);
+			console.log("Brand Value:", brandInputValue);
+			console.log("Product Value:", productInputValue);
+			console.log("Amount Value:", amountInputValue);
+			console.log("Price Value:", priceInputValue);
+			console.log("Selling Price Value:", sellingPriceInputValue);
+			console.log("Percentage Value:", percentageInputValue);
+			
+			Animated.timing(this.state.checkmarkScale, {
+				toValue: 1,
+				duration: 500,
+				useNativeDriver: true,
+			}).start();
+			await AsyncStorage.setItem("isCreated", "true");
+			
+			const {navigation} = this.props;
+			navigation.navigate("Basket")
+		} else {
+			Animated.timing(this.state.checkmarkScale, {
+				toValue: 1,
+				duration: 500,
+				useNativeDriver: true,
+			}).stop();
 		}
 	};
 	
@@ -261,7 +332,6 @@ class ProductAdd extends Component {
 						}
 					</View>
 					
-					
 					<View style={styles.inputWrapper}>
 						<Text style={styles.label}>Brand nomi</Text>
 						<TextInput
@@ -318,6 +388,7 @@ class ProductAdd extends Component {
 								style={this.state.amountInputStyle}
 								placeholder="Miqdorini kiriting"
 								placeholderTextColor="#AAAAAA"
+								value={this.state.amountInputValue}
 								onChangeText={(text) => this.setState({amountInputValue: text})}
 							/>
 							
