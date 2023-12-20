@@ -44,7 +44,7 @@ class App extends Component {
 	}
 	
 	async componentDidMount() {
-		this.loadCustomFonts();
+		await this.loadCustomFonts();
 		
 		if (Platform.OS == 'android' || Platform.OS == 'ios') {
 			const dbService = new DatabaseService();
