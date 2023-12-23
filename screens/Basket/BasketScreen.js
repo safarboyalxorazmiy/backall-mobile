@@ -1,14 +1,13 @@
-import React, {Component, useRef} from 'react';
+import React, {Component} from 'react';
 import {
 	StyleSheet,
 	Text,
 	View,
 	Dimensions,
-	Image,
 	TouchableOpacity,
 	TextInput,
 	ScrollView,
-	TouchableWithoutFeedback, Animated,
+	Animated,
 } from 'react-native';
 import PlusIcon from "../../assets/plus-icon.svg";
 
@@ -33,31 +32,20 @@ class Basket extends Component {
 		this.state = {
 			isCreated: "false"
 		}
-		
-		console.log(this.state)
-		
 	}
-
+	
 	async componentDidMount() {
 		await this.getCreated();
-		
-		// WHEN EVERYTIME SCREEN OPENED
 		const {navigation} = this.props;
 		
-		const screenFocused = navigation.addListener('focus', async () => {
-			console.log("Whatta hell");
-			
+		navigation.addListener('focus', async () => {
 			await this.getCreated();
 		});
 	}
 	
 	async getCreated() {
 		let isCreated = await AsyncStorage.getItem("isCreated");
-		console.log(isCreated);
 		this.setState({isCreated: isCreated});
-		console.log(this.state.isCreated);
-		
-		console.log("HII MOTHERFUCKER");
 	}
 	
 	handlePress = () => {
@@ -191,7 +179,7 @@ class Basket extends Component {
 							justifyContent: "center"
 						}}
 					>
-						<Success />
+						<Success/>
 					</Checkmark>
 					
 					<View style={{
@@ -271,7 +259,7 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		fontFamily: 'Gilroy-Medium',
 		fontWeight: '500',
-		borderWidth: 0
+		borderWidth: 0,
 	},
 	
 	productList: {
