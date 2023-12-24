@@ -199,9 +199,19 @@ class ProductAdd extends Component {
 				useNativeDriver: true,
 			}).start();
 			await AsyncStorage.setItem("isCreated", "true");
+			this.setState({
+				seriyaInputValue: "",
+				brandInputValue: "",
+				productInputValue: "",
+				amountInputValue: "",
+				priceInputValue: "",
+				sellingPriceInputValue: "",
+				percentageInputValue: "",
+				nds: false
+			});
 			
 			const {navigation} = this.props;
-			navigation.navigate("Basket")
+			navigation.navigate("Basket");
 		} else {
 			Animated.timing(this.state.checkmarkScale, {
 				toValue: 1,
@@ -259,7 +269,6 @@ class ProductAdd extends Component {
 		this.setSerialInputNotActive();
 		this.defineInputContentStyle(true);
 	}
-	
 	
 	selectProduct = (product) => {
 		console.log("SELECTED PRODUCT: ", product);
@@ -451,6 +460,7 @@ class ProductAdd extends Component {
 							style={this.state.priceInputStyle}
 							placeholder="Narxini kiriting"
 							placeholderTextColor="#AAAAAA"
+							value={this.state.priceInputValue}
 							onChangeText={(text) => this.setState({priceInputValue: text})}
 						/>
 						
@@ -471,6 +481,7 @@ class ProductAdd extends Component {
 								style={this.state.priceInput}
 								placeholder="Sotilish narxi: "
 								placeholderTextColor="#AAAAAA"
+								value={this.state.sellingPriceInputValue}
 								onChangeText={(text) => this.setState({sellingPriceInputValue: text})}
 								onEndEditing={this.checkPrice}
 							/>
