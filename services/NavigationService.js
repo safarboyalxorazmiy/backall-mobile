@@ -1,7 +1,7 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
-import {StyleSheet, View, Dimensions, TouchableOpacity} from 'react-native';
+import {StyleSheet, View, Dimensions, TouchableOpacity, Keyboard} from 'react-native';
 
 import Home from '../screens/HomeScreen';
 import Basket from '../screens/basket/BasketScreen';
@@ -23,65 +23,9 @@ import ShoppingIcon from '../assets/navbar/shopping-icon.svg';
 import ShoppingIconActive from '../assets/navbar/shopping-icon-active.svg';
 import WalletIcon from "../assets/navbar/wallet-icon.svg";
 import WalletIconActive from "../assets/navbar/wallet-icon-active.svg";
-import TokenService from './TokenService';
-
 
 const Tab = createBottomTabNavigator();
-
-const screenWidth = Dimensions.get('window').width;
-const screenHeight = Dimensions.get('window').height;
-
 const routesWithoutNavbar = ['ProfitDetail', 'Login', 'ProductAdd', 'ShoppingDetail', 'ProfitDetail', 'Calendar'];
-const tokenService = new TokenService();
-
-
-function CustomTabBar({state, descriptors, navigation}) {
-	const focusedRouteName = state.routes[state.index].name;
-	
-	if (focusedRouteName === 'Sell' || routesWithoutNavbar.includes(focusedRouteName)) {
-		return null;
-	}
-	
-	return (
-		<View style={styles.navbar}>
-			{state.routes.map((route, index) => {
-				
-				if (routesWithoutNavbar.includes(route.name)) {
-					return;
-				}
-				
-				const {options} = descriptors[route.key];
-				const isFocused = state.index === index;
-				
-				const onPress = () => {
-					const event = navigation.emit({
-						type: 'tabPress',
-						target: route.key,
-						canPreventDefault: true,
-					});
-					
-					if (!isFocused && !event.defaultPrevented) {
-						navigation.navigate(route.name);
-					}
-				};
-				
-				return (
-					<TouchableOpacity key={index} style={styles.navItem} onPress={onPress}>
-						{isFocused && route.name !== 'Sell' && <View style={styles.activeBorder}></View>}
-						{!isFocused && route.name !== 'Sell' && <View style={styles.inactiveBorder}></View>}
-						{route.name === 'Home' && (isFocused ? <DashboardIconActive/> : <DashboardIcon/>)}
-						{route.name === 'Basket' && (isFocused ? <BasketIconActive/> : <BasketIcon/>)}
-						{route.name === 'Sell' &&
-							<View style={{height: 93, display: "flex", justifyContent: "center"}}><ScanIcon/></View>}
-						{route.name === 'Shopping' && (isFocused ? <ShoppingIconActive/> : <ShoppingIcon/>)}
-						{route.name === 'Profit' && (isFocused ? <WalletIconActive/> : <WalletIcon/>)}
-					</TouchableOpacity>
-				);
-			})}
-		</View>
-	);
-}
-
 
 const styles = StyleSheet.create({
 	navbar: {
@@ -128,6 +72,66 @@ const styles = StyleSheet.create({
 	}
 });
 
+const CustomTabBar = ({state, descriptors, navigation}) => {
+	const [navbarStyle, setNavbarStyle] = useState(styles.navbar);
+	
+	Keyboard.addListener('keyboardWillShow', (e) => {
+		console.log(e)
+		setNavbarStyle([styles.navbar, {opacity: 0}]);
+	});
+	
+	Keyboard.addListener('keyboardWillHide', (e) => {
+		console.log(e)
+		setNavbarStyle(styles.navbar);
+	});
+	
+	const focusedRouteName = state.routes[state.index].name;
+	
+	if (focusedRouteName === 'Sell' || routesWithoutNavbar.includes(focusedRouteName)) {
+		return null;
+	}
+	
+	return (
+		<>
+			<View style={navbarStyle}>
+				{state.routes.map((route, index) => {
+					
+					if (routesWithoutNavbar.includes(route.name)) {
+						return;
+					}
+					
+					const {options} = descriptors[route.key];
+					const isFocused = state.index === index;
+					
+					const onPress = () => {
+						const event = navigation.emit({
+							type: 'tabPress',
+							target: route.key,
+							canPreventDefault: true,
+						});
+						
+						if (!isFocused && !event.defaultPrevented) {
+							navigation.navigate(route.name);
+						}
+					};
+					
+					return (
+						<TouchableOpacity key={index} style={styles.navItem} onPress={onPress}>
+							{isFocused && route.name !== 'Sell' && <View style={styles.activeBorder}></View>}
+							{!isFocused && route.name !== 'Sell' && <View style={styles.inactiveBorder}></View>}
+							{route.name === 'Home' && (isFocused ? <DashboardIconActive/> : <DashboardIcon/>)}
+							{route.name === 'Basket' && (isFocused ? <BasketIconActive/> : <BasketIcon/>)}
+							{route.name === 'Sell' &&
+								<View style={{height: 93, display: "flex", justifyContent: "center"}}><ScanIcon/></View>}
+							{route.name === 'Shopping' && (isFocused ? <ShoppingIconActive/> : <ShoppingIcon/>)}
+							{route.name === 'Profit' && (isFocused ? <WalletIconActive/> : <WalletIcon/>)}
+						</TouchableOpacity>
+					);
+				})}
+			</View>
+		</>
+	);
+}
 
 function MainTabNavigator() {
 	return (
