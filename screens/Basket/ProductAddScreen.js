@@ -8,8 +8,6 @@ import {
     TouchableOpacity,
     TextInput,
     Animated,
-    TouchableNativeFeedback,
-    TouchableOpacityBase,
 } from "react-native";
 import {Dropdown} from "react-native-element-dropdown";
 import ToggleSwitch from 'toggle-switch-react-native';
@@ -67,12 +65,15 @@ class ProductAdd extends Component {
             seriyaError: false,
             serialInputStyle: styles.serialInput,
             serialInputContentStyle: {display: "none"},
+            isSerialInputActive: false,
 
             sellingPriceError: false,
             priceInput: styles.priceInput,
 
             checkmarkScale: new Animated.Value(0),
-            isCreated: false
+            isCreated: false,
+
+            ndsWrapperStyle: styles.ndsWrapper
         };
     }
 
@@ -211,14 +212,13 @@ class ProductAdd extends Component {
     defineInputContentStyle = (hide) => {
         if (hide) {
             this.setState({serialInputContentStyle: {display: "none"}});
-            this.setState({serialInputStyle: styles.input})
-
+            this.setState({serialInputStyle: styles.input});
             return;
         }
 
         if (this.state.products.length === 0) {
             this.setState({serialInputContentStyle: {display: "none"}});
-            this.setState({serialInputStyle: styles.input})
+            this.setState({serialInputStyle: styles.serialInputClicked});
         } else {
             this.setState({serialInputStyle: styles.serialInputClicked})
             this.setState({serialInputContentStyle: styles.serialContent});
@@ -227,18 +227,16 @@ class ProductAdd extends Component {
 
     getProductsBySeria = async (seria) => {
         this.setState({seriyaInputValue: seria});
-        console.log(seria);
         this.setState({products: await databaseService.findProductsBySerialNumber(seria)});
 
         this.defineInputContentStyle(false);
-
         this.setState({
-            seriyaError: false, serialInputStyle: styles.serialInput
+            seriyaError: false, serialInputStyle: styles.serialInputClicked
         })
     }
 
-    setSerialInputActive = () => {
-        this.setState({serialInputStyle: styles.serialInputClicked})
+    serialInputPressOut = () => {
+        this.setState({serialInputStyle: styles.input})
 
         this.defineInputContentStyle(false);
     }
@@ -274,8 +272,16 @@ class ProductAdd extends Component {
     }
 
     scrollToTop = (y) => {
-        myScrollViewRef.current?.scrollTo({ x: 0, y: y, animated: true });
+        myScrollViewRef.current?.scrollTo({x: 0, y: y, animated: true});
     };
+
+    ndsPressIn = () => {
+        this.setState({ndsWrapperStyle: styles.ndsWrapperActive})
+    }
+
+    ndsPressOut = () => {
+        this.setState({ndsWrapperStyle: styles.ndsWrapper})
+    }
 
     render() {
         const {navigation} = this.props;
@@ -309,13 +315,15 @@ class ProductAdd extends Component {
                             value={this.state.seriyaInputValue}
 
                             onChangeText={this.getProductsBySeria}
-                            onFocus={() => {
-                                this.setState({serialInputStyle: styles.serialInputClicked})
-                            }}
-                            // onPressIn={() => {
-                            // 	this.setState({serialInputStyle: styles.serialInputClicked})
-                            // }}
+
                             onEndEditing={this.endSerialEditing}
+
+                            onFocus={() => {
+                                this.setState({
+                                    serialInputStyle: styles.serialInputClicked,
+                                    isSerialInputActive: true
+                                })
+                            }}
                         />
 
                         <View style={this.state.serialInputContentStyle}>
@@ -510,14 +518,16 @@ class ProductAdd extends Component {
                     </View>
 
                     <View>
-                        <TouchableWithoutFeedback style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                            width: screenWidth - (17 + 17)
-                        }}
-                        onPress={() => {this.setState({nds: !this.state.nds});}}>
+                        <TouchableWithoutFeedback style={this.state.ndsWrapperStyle}
+                                                  onPress={() => {
+                                                      this.setState({nds: !this.state.nds});
+                                                  }}
+                                                  onPressIn={() => {
+                                                      this.ndsPressIn();
+                                                  }}
+                                                  onPressOut={() => {
+                                                      this.ndsPressOut();
+                                                  }}>
                             <Text style={{fontSize: 16, fontFamily: "Gilroy-Medium"}}>NDS soliq</Text>
 
                             <ToggleSwitch
@@ -660,10 +670,7 @@ const styles = StyleSheet.create({
         paddingVertical: 14,
         paddingHorizontal: 16,
         fontSize: 16,
-        fontFamily: "Gilroy-Medium",
-        borderBottomWidth: 0,
-        borderBottomLeftRadius: 0,
-        borderBottomRightRadius: 0
+        fontFamily: "Gilroy-Medium"
     },
 
     serialInputValued: {
@@ -740,7 +747,8 @@ const styles = StyleSheet.create({
     },
 
     amountGroup: {
-        display: "flex", flexDirection: "row"
+        display: "flex",
+        flexDirection: "row"
     },
 
     amountInput: {
@@ -840,8 +848,31 @@ const styles = StyleSheet.create({
 
     backIcon: {
         backgroundColor: "#F5F5F7", paddingVertical: 16, paddingHorizontal: 19, borderRadius: 8
-    }, errorMsg: {
+    },
+
+    errorMsg: {
         color: "red"
+    },
+
+    ndsWrapper: {
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        width: screenWidth,
+        paddingVertical: 10,
+        paddingHorizontal: 17
+    },
+
+    ndsWrapperActive: {
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        width: screenWidth,
+        backgroundColor: "#F5F5F7",
+        paddingVertical: 10,
+        paddingHorizontal: 17
     }
 });
 
