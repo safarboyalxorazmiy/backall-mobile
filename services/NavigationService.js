@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
 import {StyleSheet, View, Dimensions, TouchableOpacity, Keyboard} from 'react-native';
@@ -75,15 +75,25 @@ const styles = StyleSheet.create({
 const CustomTabBar = ({state, descriptors, navigation}) => {
 	const [navbarStyle, setNavbarStyle] = useState(styles.navbar);
 	
-	Keyboard.addListener('keyboardWillShow', (e) => {
-		console.log(e)
-		setNavbarStyle([styles.navbar, {opacity: 0}]);
-	});
-	
-	Keyboard.addListener('keyboardWillHide', (e) => {
-		console.log(e)
-		setNavbarStyle(styles.navbar);
-	});
+	useEffect(() => {
+		const keyboardDidShowListener = Keyboard.addListener(
+			'keyboardDidShow',
+			() => {
+				setNavbarStyle({display: "none"});
+			}
+		);
+		const keyboardDidHideListener = Keyboard.addListener(
+			'keyboardDidHide',
+			() => {
+				setNavbarStyle(styles.navbar);
+			}
+		);
+		
+		return () => {
+			keyboardDidShowListener.remove();
+			keyboardDidHideListener.remove();
+		};
+	}, []);
 	
 	const focusedRouteName = state.routes[state.index].name;
 	
