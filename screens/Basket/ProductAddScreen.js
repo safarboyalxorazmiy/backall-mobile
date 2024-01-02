@@ -217,12 +217,16 @@ class ProductAdd extends Component {
         if (hide) {
             this.setState({serialInputContentStyle: {display: "none"}});
             this.setState({serialInputStyle: styles.input});
+
+            console.log("SERIAL CONTENT CLOSED")
             return;
         }
 
         if (this.state.products.length === 0) {
             this.setState({serialInputContentStyle: {display: "none"}});
             this.setState({serialInputStyle: styles.serialInputClicked});
+
+            console.log("SERIAL CONTENT CLOSED 'COS PRODUCT LENGTH 0")
         } else {
             this.setState({serialInputStyle: styles.serialInputClicked})
             this.setState({serialInputContentStyle: styles.serialContent});
@@ -246,6 +250,7 @@ class ProductAdd extends Component {
         this.setState({seriyaInputValue: product.serial_number})
         this.setState({brandInputValue: product.brand_name})
         this.setState({productInputValue: product.name})
+
         this.defineInputContentStyle(true);
     }
 
@@ -271,15 +276,16 @@ class ProductAdd extends Component {
             seriyaError: false, serialInputStyle: styles.serialInputClicked
         })
     }
+
     onFocusSerialInput = () => {
         this.setState({
             serialInputStyle: styles.serialInputClicked,
             isSerialInputActive: true
         })
     }
+
     onEndSerialEditing = (e) => {
         this.setSerialInputNotActive();
-        this.defineInputContentStyle(true);
     }
 
 
@@ -294,6 +300,8 @@ class ProductAdd extends Component {
         }
     }
     onFocusBrandInput = () => {
+        this.defineInputContentStyle(true);
+
         this.setState({brandInputStyle: styles.inputActive});
     }
     onEndEditingBrandInput = () => {
@@ -307,6 +315,8 @@ class ProductAdd extends Component {
         })
     }
     onFocusProductInput = () => {
+        this.defineInputContentStyle(true);
+
         this.setState({
             productInputStyle: styles.inputActive
         })
@@ -322,6 +332,8 @@ class ProductAdd extends Component {
         this.setState({amountInputValue: text});
     }
     onFocusAmountInput = () => {
+        this.defineInputContentStyle(true);
+
         this.setState({amountInputStyle: styles.amountInputActive});
     }
     onEndEditingAmountInput = () => {
@@ -333,6 +345,8 @@ class ProductAdd extends Component {
         this.setState({priceInputValue: text})
     }
     onFocusPriceInput = () => {
+        this.defineInputContentStyle(true);
+
         this.setState({priceInputStyle: styles.inputActive})
     }
     onEndEditingPriceInput = () => {
@@ -345,6 +359,8 @@ class ProductAdd extends Component {
         this.setState({sellingPriceInputValue: text});
     }
     onFocusSellingPriceInput = () => {
+        this.defineInputContentStyle(true);
+
         this.setState({
             priceInput: styles.priceInputActive
         })
@@ -399,11 +415,24 @@ class ProductAdd extends Component {
                         />
 
                         <View style={this.state.serialInputContentStyle}>
-                            {this.state.products.map((item, index) => (<TouchableOpacity onPress={() => {
-                                this.selectProduct(item)
-                            }} style={styles.serialInputSuggestion} key={index}>
-                                <Text>{item.brand_name}</Text>
-                            </TouchableOpacity>))}
+                            {
+                                this.state.products.map(
+                                    (item, index) =>
+                                        (
+                                            <TouchableOpacity
+                                                onPress={() => {
+                                                    console.log(item.brand_name);
+                                                    this.selectProduct(item);
+                                                }}
+
+                                                style={styles.serialInputSuggestion}
+                                                key={index}>
+
+                                                <Text>{item.brand_name}</Text>
+                                            </TouchableOpacity>
+                                        )
+                                )
+                            }
                         </View>
 
                         {this.state.seriyaError === true ? <Animatable.View animation="shake" duration={500}>
