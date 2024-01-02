@@ -1,31 +1,38 @@
-import React, {useEffect, useState} from 'react';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {NavigationContainer} from '@react-navigation/native';
-import {StyleSheet, View, Dimensions, TouchableOpacity, Keyboard} from 'react-native';
+import React, {useEffect, useState} from "react";
+import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
+import {NavigationContainer} from "@react-navigation/native";
+import {StyleSheet, View, TouchableOpacity, Keyboard} from "react-native";
 
-import Home from '../screens/HomeScreen';
-import Basket from '../screens/basket/BasketScreen';
-import Sell from '../screens/selling/SellScreen';
-import Shopping from '../screens/shopping/ShoppingScreen';
-import Profit from '../screens/profit/ProfitScreen';
-import Login from '../screens/LoginScreen';
+import Home from "../screens/HomeScreen";
+import Basket from "../screens/basket/BasketScreen";
+import Sell from "../screens/selling/SellScreen";
+import Shopping from "../screens/shopping/ShoppingScreen";
+import Profit from "../screens/profit/ProfitScreen";
+import Login from "../screens/LoginScreen";
 import ProductAdd from "../screens/basket/ProductAddScreen";
-import ProfitDetail from '../screens/profit/ProfitDetailScreen';
-import CalendarPage from '../screens/CalendarScreen';
-import ShoppingDetail from '../screens/shopping/ShoppingDetailScreen';
+import ProfitDetail from "../screens/profit/ProfitDetailScreen";
+import CalendarPage from "../screens/CalendarScreen";
+import ShoppingDetail from "../screens/shopping/ShoppingDetailScreen";
 
-import DashboardIcon from '../assets/navbar/dashboard-icon.svg';
-import DashboardIconActive from '../assets/navbar/dashboard-icon-active.svg';
-import BasketIcon from '../assets/navbar/basket-icon.svg';
-import BasketIconActive from '../assets/navbar/basket-icon-active.svg';
-import ScanIcon from '../assets/navbar/scan-icon.svg';
-import ShoppingIcon from '../assets/navbar/shopping-icon.svg';
-import ShoppingIconActive from '../assets/navbar/shopping-icon-active.svg';
+import DashboardIcon from "../assets/navbar/dashboard-icon.svg";
+import DashboardIconActive from "../assets/navbar/dashboard-icon-active.svg";
+import BasketIcon from "../assets/navbar/basket-icon.svg";
+import BasketIconActive from "../assets/navbar/basket-icon-active.svg";
+import ScanIcon from "../assets/navbar/scan-icon.svg";
+import ShoppingIcon from "../assets/navbar/shopping-icon.svg";
+import ShoppingIconActive from "../assets/navbar/shopping-icon-active.svg";
 import WalletIcon from "../assets/navbar/wallet-icon.svg";
 import WalletIconActive from "../assets/navbar/wallet-icon-active.svg";
 
 const Tab = createBottomTabNavigator();
-const routesWithoutNavbar = ['ProfitDetail', 'Login', 'ProductAdd', 'ShoppingDetail', 'ProfitDetail', 'Calendar'];
+const routesWithoutNavbar = [
+	"ProfitDetail",
+	"Login",
+	"ProductAdd",
+	"ShoppingDetail",
+	"ProfitDetail",
+	"Calendar"
+];
 
 const styles = StyleSheet.create({
 	navbar: {
@@ -77,13 +84,13 @@ const CustomTabBar = ({state, descriptors, navigation}) => {
 	
 	useEffect(() => {
 		const keyboardDidShowListener = Keyboard.addListener(
-			'keyboardDidShow',
+			"keyboardDidShow",
 			() => {
 				setNavbarStyle({display: "none"});
 			}
 		);
 		const keyboardDidHideListener = Keyboard.addListener(
-			'keyboardDidHide',
+			"keyboardDidHide",
 			() => {
 				setNavbarStyle(styles.navbar);
 			}
@@ -97,7 +104,7 @@ const CustomTabBar = ({state, descriptors, navigation}) => {
 	
 	const focusedRouteName = state.routes[state.index].name;
 	
-	if (focusedRouteName === 'Sell' || routesWithoutNavbar.includes(focusedRouteName)) {
+	if (focusedRouteName === "Sell" || routesWithoutNavbar.includes(focusedRouteName)) {
 		return null;
 	}
 	
@@ -115,7 +122,7 @@ const CustomTabBar = ({state, descriptors, navigation}) => {
 					
 					const onPress = () => {
 						const event = navigation.emit({
-							type: 'tabPress',
+							type: "tabPress",
 							target: route.key,
 							canPreventDefault: true,
 						});
@@ -127,14 +134,14 @@ const CustomTabBar = ({state, descriptors, navigation}) => {
 					
 					return (
 						<TouchableOpacity key={index} style={styles.navItem} onPress={onPress}>
-							{isFocused && route.name !== 'Sell' && <View style={styles.activeBorder}></View>}
-							{!isFocused && route.name !== 'Sell' && <View style={styles.inactiveBorder}></View>}
-							{route.name === 'Home' && (isFocused ? <DashboardIconActive/> : <DashboardIcon/>)}
-							{route.name === 'Basket' && (isFocused ? <BasketIconActive/> : <BasketIcon/>)}
-							{route.name === 'Sell' &&
+							{isFocused && route.name !== "Sell" && <View style={styles.activeBorder}></View>}
+							{!isFocused && route.name !== "Sell" && <View style={styles.inactiveBorder}></View>}
+							{route.name === "Home" && (isFocused ? <DashboardIconActive/> : <DashboardIcon/>)}
+							{route.name === "Basket" && (isFocused ? <BasketIconActive/> : <BasketIcon/>)}
+							{route.name === "Sell" &&
 								<View style={{height: 93, display: "flex", justifyContent: "center"}}><ScanIcon/></View>}
-							{route.name === 'Shopping' && (isFocused ? <ShoppingIconActive/> : <ShoppingIcon/>)}
-							{route.name === 'Profit' && (isFocused ? <WalletIconActive/> : <WalletIcon/>)}
+							{route.name === "Shopping" && (isFocused ? <ShoppingIconActive/> : <ShoppingIcon/>)}
+							{route.name === "Profit" && (isFocused ? <WalletIconActive/> : <WalletIcon/>)}
 						</TouchableOpacity>
 					);
 				})}
@@ -148,23 +155,23 @@ function MainTabNavigator() {
 		<>
 			<Tab.Navigator tabBar={(props) => <CustomTabBar {...props} />}>
 				<Tab.Screen name="Home" component={Home} options={({navigation}) => ({
-					title: '',
+					title: "",
 					headerShown: false
 				})}/>
 				<Tab.Screen name="Basket" component={Basket} options={({navigation}) => ({
-					title: '',
+					title: "",
 					headerShown: false
 				})}/>
 				<Tab.Screen name="Sell" component={Sell} options={({navigation}) => ({
-					title: '',
+					title: "",
 					headerShown: false
 				})}/>
 				<Tab.Screen name="Shopping" component={Shopping} options={({navigation}) => ({
-					title: '',
+					title: "",
 					headerShown: false
 				})}/>
 				<Tab.Screen name="Profit" component={Profit} options={({navigation}) => ({
-					title: '',
+					title: "",
 					headerShown: false
 				})}/>
 				
@@ -182,7 +189,7 @@ function MainTabNavigator() {
 					name="Login"
 					component={Login}
 					options={({navigation}) => ({
-						title: '',
+						title: "",
 						headerShown: false
 					})}
 				/>
@@ -190,7 +197,7 @@ function MainTabNavigator() {
 				<Tab.Screen
 					name="ProductAdd" component={ProductAdd}
 					options={({navigation}) => ({
-						title: '',
+						title: "",
 						headerShown: false
 					})}
 				/>
@@ -198,7 +205,7 @@ function MainTabNavigator() {
 				<Tab.Screen
 					name="ShoppingDetail" component={ShoppingDetail}
 					options={({navigation}) => ({
-						title: '',
+						title: "",
 						headerShown: false
 					})}
 				/>
@@ -206,7 +213,7 @@ function MainTabNavigator() {
 				<Tab.Screen
 					name="Calendar" component={CalendarPage}
 					options={({navigation}) => ({
-						title: '',
+						title: "",
 						headerShown: false
 					})}
 				/>
