@@ -23,6 +23,7 @@ import ShoppingIcon from "../assets/navbar/shopping-icon.svg";
 import ShoppingIconActive from "../assets/navbar/shopping-icon-active.svg";
 import WalletIcon from "../assets/navbar/wallet-icon.svg";
 import WalletIconActive from "../assets/navbar/wallet-icon-active.svg";
+import ProductEdit from "../screens/basket/ProductEditScreen";
 
 const Tab = createBottomTabNavigator();
 const routesWithoutNavbar = [
@@ -196,6 +197,14 @@ function MainTabNavigator() {
 				
 				<Tab.Screen
 					name="ProductAdd" component={ProductAdd}
+					options={({navigation}) => ({
+						title: "",
+						headerShown: false
+					})}
+				/>
+				
+				<Tab.Screen
+					name="ProductEdit" component={ProductEdit}
 					options={({navigation}) => ({
 						title: "",
 						headerShown: false
