@@ -7,7 +7,8 @@ import {
 	Dimensions,
 	TouchableOpacity,
 	TextInput,
-	Animated, Touchable, TouchableNativeFeedback, Pressable,
+	Animated,
+	Pressable, Keyboard,
 } from "react-native";
 import {Dropdown} from "react-native-element-dropdown";
 import ToggleSwitch from 'toggle-switch-react-native';
@@ -36,7 +37,6 @@ const priceData = [
 const screenWidth = Dimensions.get("window").width;
 const databaseService = new DatabaseService();
 const myScrollViewRef = React.createRef();
-
 
 class ProductAdd extends Component {
 	constructor(props) {
@@ -79,9 +79,26 @@ class ProductAdd extends Component {
 			checkmarkScale: new Animated.Value(0),
 			isCreated: false,
 			
-			ndsWrapperStyle: styles.ndsWrapper
+			ndsWrapperStyle: styles.ndsWrapper,
+			
+			scaleValue: new Animated.Value(1),
 		};
 	}
+	
+	
+	handlePressIn = () => {
+		Animated.spring(this.state.scaleValue, {
+			toValue: 0.9,
+			useNativeDriver: true,
+		}).start();
+	};
+	
+	handlePressOut = () => {
+		Animated.spring(this.state.scaleValue, {
+			toValue: 1,
+			useNativeDriver: true,
+		}).start();
+	};
 	
 	setCheckmarkScale(checkmarkScale) {
 		this.setState({checkmarkScale: checkmarkScale});
@@ -245,7 +262,6 @@ class ProductAdd extends Component {
 		this.setState({serialInputStyle: styles.serialInput})
 	}
 	
-	
 	selectProduct = (product) => {
 		console.log("SELECTED PRODUCT: ", product);
 		
@@ -278,18 +294,15 @@ class ProductAdd extends Component {
 			seriyaError: false, serialInputStyle: styles.serialInputClicked
 		})
 	}
-	
 	onFocusSerialInput = () => {
 		this.setState({
 			serialInputStyle: styles.serialInputClicked,
 			isSerialInputActive: true
 		})
 	}
-	
 	onEndSerialEditing = (e) => {
 		this.setSerialInputNotActive();
 	}
-	
 	
 	// BRAND INPUT FUNCTIONS
 	onChangeBrandInput = (text) => {
@@ -379,10 +392,19 @@ class ProductAdd extends Component {
 		}
 	}
 	
-	
+	handleInputBlur = () => {
+		// Dismiss the keyboard when the input loses focus
+		Keyboard.dismiss();
+	};
 	
 	render() {
 		const {navigation} = this.props;
+		const animatedStyle = {
+			backgroundColor: this.state.scaleValue.interpolate({
+				inputRange: [0.9, 1],
+				outputRange: ['green', 'blue'],
+			}),
+		};
 		
 		return (
 			<View style={{backgroundColor: "white"}}>
@@ -391,7 +413,7 @@ class ProductAdd extends Component {
 						onPress={() => navigation.navigate("Basket")}
 						style={styles.backIcon}>
 						
-						<BackIcon />
+						<BackIcon/>
 					</TouchableOpacity>
 					
 					<Text style={styles.pageTitleText}>
@@ -400,58 +422,63 @@ class ProductAdd extends Component {
 				</View>
 				
 				<ScrollView contentContainerStyle={[styles.container]} ref={myScrollViewRef}>
-					
 					<View style={[styles.inputWrapper, {marginTop: 10}]}>
 						<Text style={styles.label}>Mahsulot seriyasi</Text>
-						<TextInput
-							cursorColor="#222222"
-							style={this.state.serialInputStyle}
-							placeholder="Seriyasini kiriting"
-							placeholderTextColor="#AAAAAA"
-							value={this.state.seriyaInputValue}
+							<TextInput
+								cursorColor="#222222"
+								style={this.state.serialInputStyle}
+								placeholder="Seriyasini kiriting"
+								placeholderTextColor="#AAAAAA"
+								value={this.state.seriyaInputValue}
+								
+								onChangeText={this.onChangeSerialInput}
+								onFocus={this.onFocusSerialInput}
+								onEndEditing={this.onEndSerialEditing}
+								
+								onPressIn={() => {
+									this.scrollVertically(0);
+								}}
+								
+								onBlur={this.handleInputBlur}
+							/>
 							
-							onChangeText={this.onChangeSerialInput}
-							onFocus={this.onFocusSerialInput}
-							onEndEditing={this.onEndSerialEditing}
-							
-							onPressIn={() => {
-								this.scrollVertically(0);
-							}}
-						/>
-						
-						<View style={{position: "relative", marginTop: 2}}>
-							<View style={this.state.serialInputContentStyle}>
-								{
-									this.state.products.map(
-										(item, index) =>
-											(
-												<Pressable
-													onPress={() => {
-														console.log(item.brand_name);
-														this.selectProduct(item);
-													}}
-													
-													style=
-														{({ pressed }) => [
-															styles.serialInputSuggestion,
-															{
-																backgroundColor: pressed ? '#F5F5F7' : '#FBFBFB',
-															},
-														]}
-													key={index}
-												>
-													
-													<Text>{item.brand_name}</Text>
-												</Pressable>
-											)
-									)
-								}
+							<View style={{position: "relative", marginTop: 2}}>
+								<View style={this.state.serialInputContentStyle}>
+									{
+										this.state.products.map(
+											(item, index) =>
+												(
+													<Pressable
+														onPress={() => {
+															console.log(item.brand_name);
+															this.selectProduct(item);
+														}}
+														
+														onPressIn={this.handlePressIn}
+														onPressOut={this.handlePressOut}
+														
+														style=
+															{({pressed}) => [
+																styles.serialInputSuggestion,
+																animatedStyle,
+																{
+																	backgroundColor: pressed ? '#CCCCCC' : '#FBFBFB',
+																},
+															]}
+														key={index}
+													>
+														
+														<Text>{item.brand_name}</Text>
+													</Pressable>
+												)
+										)
+									}
+								</View>
 							</View>
-						</View>
-						
-						{this.state.seriyaError === true ? <Animatable.View animation="shake" duration={500}>
-							<Text style={styles.errorMsg}>Seriya xato kiritildi.</Text>
-						</Animatable.View> : null}
+							
+							{this.state.seriyaError === true ? <Animatable.View animation="shake" duration={500}>
+								<Text style={styles.errorMsg}>Seriya xato kiritildi.</Text>
+							</Animatable.View> : null}
 					</View>
 					
 					<View style={styles.inputWrapper}>
