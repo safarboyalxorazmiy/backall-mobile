@@ -32,7 +32,8 @@ const routesWithoutNavbar = [
 	"ProductAdd",
 	"ShoppingDetail",
 	"ProfitDetail",
-	"Calendar"
+	"Calendar",
+	"ProductEdit"
 ];
 
 const styles = StyleSheet.create({
