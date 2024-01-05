@@ -20,27 +20,44 @@ const tokenService = new TokenService();
 const databaseService = new DatabaseService();
 
 class Home extends Component {
+	constructor(state) {
+		super(state);
+
+		this.state = {
+			shoppingCardColors: ["#E59C0D", "#FDD958"],
+			profitCardColors: ["#2C8134", "#1DCB00"]
+		}
+	}
+
 	async get() {
 		console.log(await databaseService.getAllProducts())
 	}
-	
+
 	render() {
 		const {navigation} = this.props;
 		tokenService.checkTokens(navigation);
 		this.get();
-		
+
 		return (
 			<>
 				<View style={styles.container}>
 					<Text style={styles.pageTitle}>Bosh sahifa</Text>
-					
+
 					<View style={styles.cards}>
-						<TouchableOpacity onPress={() => navigation.navigate("Shopping")}>
+						<TouchableOpacity
+							activeOpacity={1}
+							onPressIn={() => {
+								this.setState({shoppingCardColors: ["#FDD958", "#FDD958"]})
+							}}
+							onPressOut={() => {
+								this.setState({shoppingCardColors: ["#E59C0D", "#FDD958"]})
+							}}
+							onPress={() => navigation.navigate("Shopping")}>
 							<LinearGradient
-								colors={["#E59C0D", "#FDD958"]}
+								colors={this.state.shoppingCardColors}
 								start={{x: 0, y: 0.5}}
 								style={styles.card}>
-								
+
 								<View style={styles.shoppingIconWrapper}>
 									{Platform.OS === 'android' || Platform.OS === 'ios' ? (
 										<ShoppingIcon
@@ -51,7 +68,7 @@ class Home extends Component {
 											style={styles.shoppingIcon}/>
 									)}
 								</View>
-								
+
 								<Text style={styles.cardTitle}>Bugungi kirim</Text>
 								<Text style={styles.cardDescription}>
 									3.000.000
@@ -59,11 +76,19 @@ class Home extends Component {
 								</Text>
 							</LinearGradient>
 						</TouchableOpacity>
-						
-						<TouchableOpacity onPress={() => navigation.navigate("Profit")}>
+
+						<TouchableOpacity
+							activeOpacity={1}
+							onPressIn={() => {
+								this.setState({profitCardColors: ["#1EC703", "#1EC703"]})
+							}}
+							onPressOut={() => {
+								this.setState({profitCardColors: ["#2C8134", "#1DCB00"]})
+							}}
+							onPress={() => navigation.navigate("Profit")}>
 							<LinearGradient
 								style={styles.card}
-								colors={["#2C8134", "#1DCB00"]}
+								colors={this.state.profitCardColors}
 								start={{x: 0, y: 0.5}}
 							>
 								<View style={styles.benefitIconWrapper}>
@@ -83,7 +108,7 @@ class Home extends Component {
 								</Text>
 							</LinearGradient>
 						</TouchableOpacity>
-					
+
 					</View>
 					<StatusBar style="auto"/>
 				</View>
@@ -99,7 +124,7 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		paddingTop: 52
 	},
-	
+
 	pageTitle: {
 		fontSize: 18,
 		fontFamily: "Gilroy-SemiBold",
@@ -110,7 +135,7 @@ const styles = StyleSheet.create({
 		textAlign: "center",
 		marginBottom: 24
 	},
-	
+
 	shoppingIconWrapper: {
 		width: 141,
 		height: 141,
@@ -128,13 +153,13 @@ const styles = StyleSheet.create({
 		shadowRadius: 20,
 		elevation: 5
 	},
-	
+
 	shoppingIcon: {
 		position: "absolute",
 		bottom: 28,
 		left: 25
 	},
-	
+
 	benefitIconWrapper: {
 		width: 141,
 		height: 141,
@@ -151,18 +176,18 @@ const styles = StyleSheet.create({
 		},
 		shadowRadius: 20
 	},
-	
+
 	benefitIcon: {
 		position: "absolute",
 		bottom: 28,
 		left: 25,
 		zIndex: 1
 	},
-	
+
 	cards: {
 		width: screenWidth - (24 + 24)
 	},
-	
+
 	card: {
 		paddingTop: 24,
 		paddingLeft: 24,
@@ -172,7 +197,7 @@ const styles = StyleSheet.create({
 		position: "relative",
 		overflow: "hidden"
 	},
-	
+
 	cardTitle: {
 		color: "white",
 		fontSize: 16,
@@ -181,14 +206,14 @@ const styles = StyleSheet.create({
 		marginBottom: 10,
 		textTransform: "uppercase"
 	},
-	
+
 	cardDescription: {
 		color: "white",
 		fontSize: 24,
 		fontFamily: "Gilroy-SemiBold",
 		fontWeight: "600"
 	},
-	
+
 	currency: {
 		fontSize: 16,
 		fontFamily: "Gilroy-Medium",
