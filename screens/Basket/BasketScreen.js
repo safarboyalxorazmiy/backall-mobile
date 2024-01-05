@@ -7,7 +7,7 @@ import {
 	TouchableOpacity,
 	TextInput,
 	ScrollView,
-	Animated,
+	Animated, Keyboard,
 } from 'react-native';
 import PlusIcon from "../../assets/plus-icon.svg";
 
@@ -50,6 +50,7 @@ class Basket extends Component {
 	
 	handlePress = () => {
 		if (this.textInputRef.current) {
+			this.textInputRef.current.blur();
 			this.textInputRef.current.focus();
 		}
 	};
@@ -59,7 +60,10 @@ class Basket extends Component {
 		
 		return (
 			<View style={styles.container}>
-				<TouchableOpacity style={styles.inputWrapper} onPress={this.handlePress}>
+				<TouchableOpacity
+					activeOpacity={1}
+					style={styles.inputWrapper}
+					onPress={this.handlePress}>
 					<SearchIcon/>
 					
 					<TextInput
@@ -148,8 +152,9 @@ class Basket extends Component {
 				
 				</ScrollView>
 				
-				<TouchableOpacity style={styles.addButton}
-				                  onPress={() => navigation.navigate('ProductAdd')}>
+				<TouchableOpacity
+					style={styles.addButton}
+					onPress={() => navigation.navigate('ProductAdd')}>
 					<PlusIcon/>
 				</TouchableOpacity>
 				
