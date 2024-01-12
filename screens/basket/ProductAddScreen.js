@@ -673,21 +673,6 @@ class ProductAdd extends Component {
 		} = this.state;
 		
 		let isValidInputValues = true;
-		if (seriyaInputValue.length < 6) {
-			this.setState({
-				seriyaInputValue: "", 
-        seriyaError: true, 
-        serialInputStyle: styles.serialInputErr
-			})
-			
-			isValidInputValues = false;
-			this.scrollVertically(0);
-		} else {
-			this.setState({
-				seriyaError: false, 
-        serialInputStyle: styles.serialInput
-			})
-		}
 		
 		if (brandInputValue.length < 3) {
 			if (!isValidInputValues) {
