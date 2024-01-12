@@ -19,8 +19,7 @@ import {TouchableWithoutFeedback} from "react-native-gesture-handler";
 import ProductRepository from "../../repository/ProductRepository";
 import StoreProductRepository from "../../repository/StoreProductRepository";
 
-const amountData =
-	[
+const amountData = [
 		{label: "DONA", value: "1"},
 		{label: "KG", value: "2"},
 		{label: "GR", value: "3"},
@@ -29,9 +28,7 @@ const amountData =
 
 const priceData = [
 	{label: "%", value: "1"},
-	{label: "SUM", value: "2"},
-	{label: "$", value: "3"},
-	{label: "EURO", value: "4"}
+	{label: "SUM", value: "2"}
 ];
 
 
