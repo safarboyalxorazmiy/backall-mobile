@@ -14,9 +14,10 @@ import {Dropdown} from "react-native-element-dropdown";
 import ToggleSwitch from 'toggle-switch-react-native';
 import * as Animatable from 'react-native-animatable';
 import BackIcon from "../../assets/arrow-left-icon.svg"
-import DatabaseService from "../../services/DatabaseService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {TouchableWithoutFeedback} from "react-native-gesture-handler";
+import ProductRepository from "../../repository/ProductRepository";
+import StoreProductRepository from "../../repository/StoreProductRepository";
 
 const amountData =
 	[
@@ -35,7 +36,6 @@ const priceData = [
 
 
 const screenWidth = Dimensions.get("window").width;
-const databaseService = new DatabaseService();
 const myScrollViewRef = React.createRef();
 
 class ProductAdd extends Component {
@@ -62,7 +62,6 @@ class ProductAdd extends Component {
 			priceInputErr: false,
 			
 			sellingPriceInputValue: "",
-			percentageInputValue: "",
 			products: [],
 			nds: false,
 			
@@ -82,9 +81,14 @@ class ProductAdd extends Component {
 			ndsWrapperStyle: styles.ndsWrapper,
 			
 			scaleValue: new Animated.Value(1),
+
+			amountType: "DONA",
+			sellingPriceType: "SUM"
 		};
+
+    this.productRepository = new ProductRepository();
+		this.storeProductRepository = new StoreProductRepository();
 	}
-	
 	
 	handlePressIn = () => {
 		Animated.spring(this.state.scaleValue, {
@@ -104,149 +108,25 @@ class ProductAdd extends Component {
 		this.setState({checkmarkScale: checkmarkScale});
 	}
 	
-	handleButtonClick = async () => {
-		const {
-			seriyaInputValue,
-			brandInputValue,
-			productInputValue,
-			amountInputValue,
-			priceInputValue,
-			sellingPriceInputValue,
-			percentageInputValue,
-		} = this.state;
-		
-		let isValidInputValues = true;
-		if (seriyaInputValue.length < 6) {
-			this.setState({
-				seriyaInputValue: "", seriyaError: true, serialInputStyle: styles.serialInputErr
-			})
-			
-			isValidInputValues = false;
-			this.scrollVertically(0);
-		} else {
-			this.setState({
-				seriyaError: false, serialInputStyle: styles.serialInput
-			})
-		}
-		
-		if (brandInputValue.length < 3) {
-			if (!isValidInputValues) {
-				this.scrollVertically(0);
-			} else {
-				this.scrollVertically(110);
-			}
-			
-			this.setState({
-				brandInputValue: "", brandInputStyle: styles.inputErr, brandErr: true,
-			})
-			
-			isValidInputValues = false;
-		} else {
-			this.setState({
-				brandErr: false, brandInputStyle: styles.input,
-			})
-		}
-		
-		if (productInputValue.length < 3) {
-			this.setState({
-				productInputValue: "", productInputStyle: styles.inputErr, productNameErr: true,
-			})
-			
-			isValidInputValues = false;
-		} else {
-			this.setState({
-				productNameErr: false, productInputStyle: styles.input,
-			})
-		}
-		
-		if (amountInputValue <= 0 || amountInputValue.length <= 0) {
-			this.setState({
-				amountInputValue: "", amountInputStyle: styles.amountInputErr, amountErr: true,
-			})
-			
-			isValidInputValues = false;
-		} else {
-			this.setState({
-				amountErr: false, amountInputStyle: styles.amountInput,
-			})
-		}
-		
-		if (priceInputValue <= 0 || priceInputValue.length <= 0) {
-			this.setState({
-				priceInputValue: "", priceInputStyle: styles.inputErr, priceInputErr: true,
-			})
-			
-			isValidInputValues = false;
-		} else {
-			this.setState({
-				priceInputErr: false, priceInputStyle: styles.input,
-			})
-		}
-		
-		if (sellingPriceInputValue <= 0 || sellingPriceInputValue.length <= 0) {
-			this.setState({
-				sellingPriceError: true, priceInput: styles.priceInputErr
-			})
-			
-			isValidInputValues = false;
-		} else {
-			this.setState({
-				sellingPriceError: false, priceInput: styles.priceInput
-			})
-		}
-		
-		if (isValidInputValues) {
-			console.log("Seriya Value:", seriyaInputValue);
-			console.log("Brand Value:", brandInputValue);
-			console.log("Product Value:", productInputValue);
-			console.log("Amount Value:", amountInputValue);
-			console.log("Price Value:", priceInputValue);
-			console.log("Selling Price Value:", sellingPriceInputValue);
-			console.log("Percentage Value:", percentageInputValue);
-			
-			Animated.timing(this.state.checkmarkScale, {
-				toValue: 1, duration: 500, useNativeDriver: true,
-			}).start();
-			await AsyncStorage.setItem("isCreated", "true");
-			this.setState({
-				seriyaInputValue: "",
-				brandInputValue: "",
-				productInputValue: "",
-				amountInputValue: "",
-				priceInputValue: "",
-				sellingPriceInputValue: "",
-				percentageInputValue: "",
-				nds: false
-			});
-			
-			const {navigation} = this.props;
-			navigation.navigate("Basket");
-		} else {
-			Animated.timing(this.state.checkmarkScale, {
-				toValue: 1, duration: 500, useNativeDriver: true,
-			}).stop();
-		}
+	handleAmountTypeSelect = (value) => {
+		this.setState({amountType: value.label});
 	};
-	
-	handleDropdownSelect = (value) => {
-		this.setState({value});
-	};
+
+	handleSellingPriceTypeSelect = (value) => {
+		this.setState({sellingPriceType: value.label});
+	}
 	
 	defineInputContentStyle = (hide) => {
 		if (hide) {
 			this.setState({serialInputContentStyle: {display: "none"}});
 			this.setState({serialInputStyle: styles.input});
-			
-			console.log("SERIAL CONTENT CLOSED")
 			return;
 		}
 		
 		if (this.state.products.length === 0) {
 			this.setState({serialInputContentStyle: {display: "none"}});
-			this.setState({serialInputStyle: styles.serialInputClicked});
-			
-			console.log("SERIAL CONTENT CLOSED 'COS PRODUCT LENGTH 0")
-		} else {
+			this.setState({serialInputStyle: styles.serialInputClicked});	
+    } else {
 			this.setState({serialInputStyle: styles.serialInputClicked})
 			this.setState({serialInputContentStyle: styles.serialContent});
 		}
@@ -287,19 +167,22 @@ class ProductAdd extends Component {
 	// SERIAL INPUT FUNCTIONS
 	onChangeSerialInput = async (seria) => {
 		this.setState({seriyaInputValue: seria});
-		this.setState({products: await databaseService.findProductsBySerialNumber(seria)});
+    console.log(await this.productRepository.findProductsBySerialNumber(seria))
+		this.setState({products: await this.productRepository.findProductsBySerialNumber(seria)});
 		
 		this.defineInputContentStyle(false);
 		this.setState({
 			seriyaError: false, serialInputStyle: styles.serialInputClicked
 		})
 	}
+
 	onFocusSerialInput = () => {
 		this.setState({
 			serialInputStyle: styles.serialInputClicked,
 			isSerialInputActive: true
 		})
 	}
+
 	onEndSerialEditing = (e) => {
 		this.setSerialInputNotActive();
 	}
@@ -314,11 +197,13 @@ class ProductAdd extends Component {
 			})
 		}
 	}
+
 	onFocusBrandInput = () => {
 		this.defineInputContentStyle(true);
 		
 		this.setState({brandInputStyle: styles.inputActive});
 	}
+
 	onEndEditingBrandInput = () => {
 		this.setState({brandInputStyle: styles.input});
 	}
@@ -329,6 +214,7 @@ class ProductAdd extends Component {
 			productInputValue: text
 		})
 	}
+
 	onFocusProductInput = () => {
 		this.defineInputContentStyle(true);
 		
@@ -336,6 +222,7 @@ class ProductAdd extends Component {
 			productInputStyle: styles.inputActive
 		})
 	}
+
 	onEndEditingProductInput = () => {
 		this.setState({
 			productInputStyle: styles.input
@@ -346,11 +233,13 @@ class ProductAdd extends Component {
 	onChangeAmountInput = (text) => {
 		this.setState({amountInputValue: text});
 	}
+
 	onFocusAmountInput = () => {
 		this.defineInputContentStyle(true);
 		
 		this.setState({amountInputStyle: styles.amountInputActive});
 	}
+
 	onEndEditingAmountInput = () => {
 		this.setState({amountInputStyle: styles.amountInput});
 	}
@@ -359,11 +248,13 @@ class ProductAdd extends Component {
 	onChangePriceInput = (text) => {
 		this.setState({priceInputValue: text})
 	}
+
 	onFocusPriceInput = () => {
 		this.defineInputContentStyle(true);
 		
 		this.setState({priceInputStyle: styles.inputActive})
 	}
+
 	onEndEditingPriceInput = () => {
 		this.setState({priceInputStyle: styles.input})
 	}
@@ -373,6 +264,7 @@ class ProductAdd extends Component {
 	onChangeSellingPriceInput = (text) => {
 		this.setState({sellingPriceInputValue: text});
 	}
+
 	onFocusSellingPriceInput = () => {
 		this.defineInputContentStyle(true);
 		
@@ -380,6 +272,7 @@ class ProductAdd extends Component {
 			priceInput: styles.priceInputActive
 		})
 	}
+  
 	onEndEditingSellingPriceInput = () => {
 		if (this.state.sellingPriceInputValue < this.state.priceInputValue) {
 			this.setState({
@@ -393,7 +286,6 @@ class ProductAdd extends Component {
 	}
 	
 	handleInputBlur = () => {
-		// Dismiss the keyboard when the input loses focus
 		Keyboard.dismiss();
 	};
 	
@@ -541,9 +433,12 @@ class ProductAdd extends Component {
 									labelField="label"
 									valueField="value"
 									value="1"
-									onChange={this.handleDropdownSelect}
+									onChange={this.handleAmountTypeSelect}
 									
-									style={[styles.dropdown, {borderRadius: 8}]}
+									style={[
+										styles.dropdown, 
+										{borderRadius: 8}
+									]}
 									
 									baseColor="white"
 									
@@ -558,11 +453,11 @@ class ProductAdd extends Component {
 									
 									activeColor="black"
 									selectedTextStyle={{
-										fontSize: 16, color: "white"
+										fontSize: 16, 
+										color: "white"
 									}}
 									
 									fontFamily="Gilroy-Medium"
-									
 									
 									containerStyle={{
 										backgroundColor: "#444444",
@@ -570,11 +465,20 @@ class ProductAdd extends Component {
 										borderBottomRightRadius: 8,
 										overflow: "hidden"
 									}}
-									itemContainerStyle={{backgroundColor: "#444444"}}
+
+									itemContainerStyle={{
+										backgroundColor: "#444444"
+									}}
 									
-									itemTextStyle={{color: "white"}}
+									itemTextStyle={{
+										color: "white"
+									}}
 									
-									iconStyle={{tintColor: "white", width: 24, height: 24}}
+									iconStyle={{
+										tintColor: "white", 
+										width: 24, 
+										height: 24
+									}}
 								/>
 							</View>
 						</View>
@@ -604,7 +508,7 @@ class ProductAdd extends Component {
 						/>
 						
 						{this.state.priceInputErr === true ? <Animatable.View animation="shake" duration={500}>
-							<Text style={styles.errorMsg}>Mahsulot miqdori xato kiritildi.</Text>
+							<Text style={styles.errorMsg}>Tan narxi xato kiritildi.</Text>
 						</Animatable.View> : null}
 					</View>
 					
@@ -633,7 +537,7 @@ class ProductAdd extends Component {
 									labelField="label"
 									valueField="value"
 									value="1"
-									onChange={this.handleDropdownSelect}
+									onChange={this.handleSellingPriceTypeSelect}
 									
 									style={[styles.dropdown, {borderRadius: 8}]}
 									
@@ -710,7 +614,7 @@ class ProductAdd extends Component {
 					
 					<View style={{height: 250}}>
 						<TouchableOpacity style={[{display: "block"}, styles.buttonDark]}
-						                  onPress={this.handleButtonClick}>
+						                  onPress={this.createProduct}>
 							<Text style={styles.buttonDarkText}>Mahsulotni qo’shish</Text>
 						</TouchableOpacity>
 						
@@ -737,7 +641,6 @@ class ProductAdd extends Component {
 									priceInputErr: false,
 									
 									sellingPriceInputValue: "",
-									percentageInputValue: "",
 									products: [],
 									nds: false,
 									
@@ -761,13 +664,173 @@ class ProductAdd extends Component {
 				</ScrollView>
 			</View>);
 	}
+
+	createProduct = async () => {
+		const {
+			seriyaInputValue,
+			brandInputValue,
+			productInputValue,
+			amountInputValue,
+			priceInputValue,
+			sellingPriceInputValue,
+		} = this.state;
+		
+		let isValidInputValues = true;
+		if (seriyaInputValue.length < 6) {
+			this.setState({
+				seriyaInputValue: "", 
+        seriyaError: true, 
+        serialInputStyle: styles.serialInputErr
+			})
+			
+			isValidInputValues = false;
+			this.scrollVertically(0);
+		} else {
+			this.setState({
+				seriyaError: false, 
+        serialInputStyle: styles.serialInput
+			})
+		}
+		
+		if (brandInputValue.length < 3) {
+			if (!isValidInputValues) {
+				this.scrollVertically(0);
+			} else {
+				this.scrollVertically(110);
+			}
+			
+			this.setState({
+				brandInputValue: "", 
+        brandInputStyle: styles.inputErr, 
+        brandErr: true,
+			})
+			
+			isValidInputValues = false;
+		} else {
+			this.setState({
+				brandErr: false, 
+        brandInputStyle: styles.input,
+			})
+		}
+		
+		if (productInputValue.length < 3) {
+			this.setState({
+				productInputValue: "", 
+        productInputStyle: styles.inputErr, 
+        productNameErr: true,
+			})
+			
+			isValidInputValues = false;
+		} else {
+			this.setState({
+				productNameErr: false, 
+        productInputStyle: styles.input,
+			})
+		}
+		
+		if (amountInputValue <= 0 || amountInputValue.length <= 0) {
+			this.setState({
+				amountInputValue: "", 
+        amountInputStyle: styles.amountInputErr, 
+        amountErr: true,
+			})
+			
+			isValidInputValues = false;
+		} else {
+			this.setState({
+				amountErr: false, 
+        amountInputStyle: styles.amountInput,
+			})
+		}
+		
+		if (priceInputValue <= 0 || priceInputValue.length <= 0) {
+			this.setState({
+				priceInputValue: "", 
+        priceInputStyle: styles.inputErr, 
+        priceInputErr: true,
+			})
+			
+			isValidInputValues = false;
+		} else {
+			this.setState({
+				priceInputErr: false, 
+        priceInputStyle: styles.input,
+			})
+		}
+		
+		if (sellingPriceInputValue <= 0 || sellingPriceInputValue.length <= 0) {
+			this.setState({
+				sellingPriceError: true, 
+        priceInput: styles.priceInputErr
+			})
+			
+			isValidInputValues = false;
+		} else {
+			this.setState({
+				sellingPriceError: false, 
+        priceInput: styles.priceInput
+			})
+		}
+		
+		if (isValidInputValues) {
+			console.log("Seriya Value:", seriyaInputValue);
+			console.log("Brand Value:", brandInputValue);
+			console.log("Product Value:", productInputValue);
+			console.log("Amount Value:", amountInputValue);
+			console.log("Price Value:", priceInputValue);
+			console.log("Selling Price Value:", sellingPriceInputValue);
+			
+			Animated.timing(this.state.checkmarkScale, {
+				toValue: 1, duration: 500, useNativeDriver: true,
+			}).start();
+			await AsyncStorage.setItem("isCreated", "true");
+
+			// SAVE.
+      
+
+			let productId = await this.productRepository.createAndGetProductId(
+				brandInputValue, 
+				seriyaInputValue, 
+				productInputValue
+			)
+
+			await this.storeProductRepository.create(
+				productId, 
+				this.state.nds, 
+				this.state.priceInputValue,
+				this.state.sellingPriceInputValue,
+				this.state.sellingPriceInputValue,
+				this.state.amountInputValue,
+				this.state.amountType
+			);
+		
+			this.setState({
+				seriyaInputValue: "",
+				brandInputValue: "",
+				productInputValue: "",
+				amountInputValue: "",
+				priceInputValue: "",
+				sellingPriceInputValue: "",
+				nds: false
+			});
+			
+			const {navigation} = this.props;
+			navigation.navigate("Basket");
+		} else {
+			Animated.timing(this.state.checkmarkScale, {
+				toValue: 1, duration: 500, useNativeDriver: true,
+			}).stop();
+		}
+	};
 }
 
 
 const styles = StyleSheet.create({
 	container: {
-		backgroundColor: "#fff", alignItems: "center", // paddingBottom: 200,
-		height: "auto", gap: 10
+		backgroundColor: "#fff",
+    alignItems: "center",
+		height: "auto", 
+    gap: 10
 	},
 	
 	label: {
@@ -870,8 +933,6 @@ const styles = StyleSheet.create({
 		width: screenWidth - (17 + 17),
 		zIndex: 10,
 		overflow: "hidden",
-		
-		// SHADOW
 		elevation: 4,
 		shadowColor: 'rgba(0, 0, 0, 0.25)',
 		shadowOffset: {width: 2, height: 4},
@@ -999,7 +1060,9 @@ const styles = StyleSheet.create({
 	},
 	
 	dropdown: {
-		width: 122, paddingHorizontal: 16, backgroundColor: "#444444",
+		width: 122, 
+    paddingHorizontal: 16, 
+    backgroundColor: "#444444"
 	},
 	
 	buttons: {
@@ -1031,11 +1094,17 @@ const styles = StyleSheet.create({
 	},
 	
 	buttonLightText: {
-		color: "black", fontFamily: "Gilroy-Medium", fontSize: 16, textAlign: "center",
+		color: "black", 
+    fontFamily: "Gilroy-Medium", 
+    fontSize: 16, 
+    textAlign: "center",
 	},
 	
 	buttonDarkText: {
-		color: "white", fontFamily: "Gilroy-Medium", fontSize: 16, textAlign: "center"
+		color: "white", 
+    fontFamily: "Gilroy-Medium", 
+    fontSize: 16, 
+    textAlign: "center"
 	},
 	
 	pageTitle: {
@@ -1058,7 +1127,10 @@ const styles = StyleSheet.create({
 	},
 	
 	backIcon: {
-		backgroundColor: "#F5F5F7", paddingVertical: 16, paddingHorizontal: 19, borderRadius: 8
+		backgroundColor: "#F5F5F7", 
+    paddingVertical: 16, 
+    paddingHorizontal: 19, 
+    borderRadius: 8
 	},
 	
 	errorMsg: {

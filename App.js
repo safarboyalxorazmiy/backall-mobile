@@ -1,14 +1,14 @@
-import React, {Component} from 'react';
-import {Text} from 'react-native';
-import {AppRegistry} from 'react-native';
-import {name as appName} from './app.json';
-import {Platform} from 'react-native';
-import * as Font from 'expo-font';
-import DatabaseService from './services/DatabaseService';
+import React, {Component} from "react";
+import {Text} from "react-native";
+import {AppRegistry} from "react-native";
+import {name as appName} from "./app.json";
+import {Platform} from "react-native";
+import * as Font from "expo-font";
 import NetInfo from "@react-native-community/netinfo";
-import NavigationService from './services/NavigationService';
-import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import TokenService from './services/TokenService';
+import NavigationService from "./service/NavigationService";
+import {GestureHandlerRootView} from "react-native-gesture-handler";
+import TokenService from "./service/TokenService";
+import DatabaseRepository from "./repository/DatabaseRepository";
 
 const tokenService = new TokenService();
 
@@ -29,27 +29,27 @@ class App extends Component {
 	async loadCustomFonts() {
 		try {
 			await Font.loadAsync({
-				'Gilroy-Light': require('./assets/fonts/gilroy/Gilroy-Light.ttf'),
-				'Gilroy-Regular': require('./assets/fonts/gilroy/Gilroy-Regular.ttf'),
-				'Gilroy-Medium': require('./assets/fonts/gilroy/Gilroy-Medium.ttf'),
-				'Gilroy-SemiBold': require('./assets/fonts/gilroy/Gilroy-SemiBold.ttf'),
-				'Gilroy-Bold': require('./assets/fonts/gilroy/Gilroy-Bold.ttf'),
-				'Gilroy-Black': require('./assets/fonts/gilroy/Gilroy-Black.ttf')
+				"Gilroy-Light": require("./assets/fonts/gilroy/Gilroy-Light.ttf"),
+				"Gilroy-Regular": require("./assets/fonts/gilroy/Gilroy-Regular.ttf"),
+				"Gilroy-Medium": require("./assets/fonts/gilroy/Gilroy-Medium.ttf"),
+				"Gilroy-SemiBold": require("./assets/fonts/gilroy/Gilroy-SemiBold.ttf"),
+				"Gilroy-Bold": require("./assets/fonts/gilroy/Gilroy-Bold.ttf"),
+				"Gilroy-Black": require("./assets/fonts/gilroy/Gilroy-Black.ttf")
 			});
 			
 			this.setState({fontsLoaded: true})
 		} catch (error) {
-			console.error('Error loading custom fonts:', error);
+			console.error("Error loading custom fonts:", error);
 		}
 	}
 	
 	async componentDidMount() {
 		await this.loadCustomFonts();
 		
-		if (Platform.OS == 'android' || Platform.OS == 'ios') {
-			const dbService = new DatabaseService();
+		if (Platform.OS == "android" || Platform.OS == "ios") {
+			const databaseRepository = new DatabaseRepository();
 			try {
-				await dbService.init();
+				await databaseRepository.init();
 				console.log("Database initialized successfully");
 			} catch (error) {
 				console.error("Error initializing database:", error);
@@ -60,7 +60,11 @@ class App extends Component {
 			});
 			
 			this.logInternetStatusInterval = setInterval(() => {
-				console.log("Is connected?", this.state.isConnected === null ? 'Loading...' : this.state.isConnected ? 'Yes' : 'No');
+				console.log(
+					"Is connected?", 
+					this.state.isConnected === null ? "Loading..." : 
+					this.state.isConnected ? "Yes" : "No"
+				);
 			}, 5000);
 		}
 	}

@@ -12,9 +12,9 @@ import {
 } from 'react-native';
 
 import Logo from '../assets/logo.svg';
-import TokenService from '../services/TokenService';
-import DatabaseService from '../services/DatabaseService';
-import ApiService from "../services/ApiService";
+import TokenService from '../service/TokenService';
+import DatabaseService from '../service/DatabaseService';
+import ApiService from "../service/ApiService";
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;

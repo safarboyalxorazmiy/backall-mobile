@@ -12,8 +12,8 @@ import {LinearGradient} from "expo-linear-gradient";
 
 import ShoppingIcon from "../assets/home/shopping-icon.svg";
 import BenefitIcon from "../assets/home/benefit-icon.svg";
-import TokenService from '../services/TokenService';
-import DatabaseService from '../services/DatabaseService';
+import TokenService from '../service/TokenService';
+import DatabaseService from '../service/DatabaseService';
 
 const screenWidth = Dimensions.get("window").width;
 const tokenService = new TokenService();

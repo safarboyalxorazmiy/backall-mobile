@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component} from "react";
 import {
 	StyleSheet,
 	Text,
@@ -8,21 +8,18 @@ import {
 	TextInput,
 	ScrollView,
 	Animated,
-} from 'react-native';
+} from "react-native";
 import PlusIcon from "../../assets/plus-icon.svg";
-
 import SearchIcon from "../../assets/search-icon.svg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
 import BasketIcon from "../../assets/basket-icon-light.svg";
 import Modal from "react-native-modal";
 import Success from "../../assets/success.svg";
 
 const Checkmark = Animated.createAnimatedComponent(View);
 const CheckmarkText = Animated.createAnimatedComponent(Text);
-
-const screenWidth = Dimensions.get('window').width;
-const screenHeight = Dimensions.get('window').height;
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 
 class Basket extends Component {
 	constructor(props) {
@@ -38,7 +35,7 @@ class Basket extends Component {
 		await this.getCreated();
 		const {navigation} = this.props;
 		
-		navigation.addListener('focus', async () => {
+		navigation.addListener("focus", async () => {
 			await this.getCreated();
 		});
 	}
@@ -154,7 +151,7 @@ class Basket extends Component {
 				
 				<TouchableOpacity
 					style={styles.addButton}
-					onPress={() => navigation.navigate('ProductAdd')}>
+					onPress={() => navigation.navigate("ProductAdd")}>
 					<PlusIcon/>
 				</TouchableOpacity>
 				
@@ -238,7 +235,7 @@ class Basket extends Component {
 const styles = StyleSheet.create({
 	container: {
 		height: "100%",
-		backgroundColor: '#fff',
+		backgroundColor: "#fff",
 		paddingTop: 65,
 		position: "relative"
 	},
@@ -248,8 +245,8 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		flexDirection: "row",
 		width: screenWidth - (17 + 17),
-		marginLeft: 'auto',
-		marginRight: 'auto',
+		marginLeft: "auto",
+		marginRight: "auto",
 		borderColor: "#AFAFAF",
 		borderWidth: 1,
 		paddingHorizontal: 16,
@@ -262,8 +259,8 @@ const styles = StyleSheet.create({
 		color: "black",
 		paddingLeft: 10,
 		fontSize: 16,
-		fontFamily: 'Gilroy-Medium',
-		fontWeight: '500',
+		fontFamily: "Gilroy-Medium",
+		fontWeight: "500",
 		borderWidth: 0,
 	},
 	
