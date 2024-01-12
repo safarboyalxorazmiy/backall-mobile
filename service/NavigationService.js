@@ -4,12 +4,12 @@ import {NavigationContainer} from "@react-navigation/native";
 import {StyleSheet, View, TouchableOpacity, Keyboard} from "react-native";
 
 import Home from "../screens/HomeScreen";
-import Basket from "../screens/baskets/BasketScreen";
+import Basket from "../screens/basket/BasketScreen";
 import Sell from "../screens/selling/SellScreen";
 import Shopping from "../screens/shopping/ShoppingScreen";
 import Profit from "../screens/profit/ProfitScreen";
 import Login from "../screens/LoginScreen";
-import ProductAdd from "../screens/baskets/ProductAddScreen";
+import ProductAdd from "../screens/basket/ProductAddScreen";
 import ProfitDetail from "../screens/profit/ProfitDetailScreen";
 import CalendarPage from "../screens/CalendarScreen";
 import ShoppingDetail from "../screens/shopping/ShoppingDetailScreen";
@@ -23,7 +23,7 @@ import ShoppingIcon from "../assets/navbar/shopping-icon.svg";
 import ShoppingIconActive from "../assets/navbar/shopping-icon-active.svg";
 import WalletIcon from "../assets/navbar/wallet-icon.svg";
 import WalletIconActive from "../assets/navbar/wallet-icon-active.svg";
-import ProductEdit from "../screens/baskets/ProductEditScreen";
+import ProductEdit from "../screens/basket/ProductEditScreen";
 
 const Tab = createBottomTabNavigator();
 const routesWithoutNavbar = [
