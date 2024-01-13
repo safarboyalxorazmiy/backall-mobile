@@ -10,8 +10,8 @@ class StoreProductRepository {
       await new Promise((resolve, reject) => {
         this.db.transaction((tx) => {
           tx.executeSql(
-            `INSERT INTO store_products 
-              (product_id, nds, price, sellingPrice, percentage, count, countType) 
+            `INSERT INTO store_product 
+              (product_id, nds, price, selling_price, percentage, count, count_type) 
               VALUES (?, ?, ?, ?, ?, ?, ?)`,
             [product_id, nds, price, sellingPrice, percentage, count, countType],
             (_, results) => {

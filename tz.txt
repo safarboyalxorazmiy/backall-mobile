@@ -1,0 +1,30 @@
+product: 
+  id, 
+  name, 
+  brand_name, 
+  serial_number
+
+store_product:
+  id, 
+  product_id,
+  nds, 
+  price,
+  selling_price,
+  percentage,
+  count, 
+  countType,
+
+sell_history:
+  id,
+  product_id,
+  count,
+  count_type,
+  created_date,
+
+sell_group:
+  id
+
+sell_history_group
+  id,
+  group_id,
+  history_id
