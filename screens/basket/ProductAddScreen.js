@@ -82,7 +82,7 @@ class ProductAdd extends Component {
 			sellingPriceType: "SO'M",
 
 			profitCalculation: "",
-			profitCalculationIsVisible: false
+			profitCalculationIsVisible: false,
 		};
 
     this.productRepository = new ProductRepository();
@@ -259,7 +259,6 @@ class ProductAdd extends Component {
 		this.setState({priceInputStyle: styles.input})
 	}
 	
-	
 	// SELLING PRICE INPUT FUNCTIONS
 	onChangeSellingPriceInput = (text) => {
 		this.setState({sellingPriceInputValue: text});
@@ -303,7 +302,7 @@ class ProductAdd extends Component {
 			this.state.profitCalculation = exactSellingPrice;
 			this.setState({
 				profitCalculation: (parseInt(this.state.priceInputValue) + exactSellingPrice) + " so'm",
-				profitCalculationIsVisible: false
+				profitCalculationIsVisible: true
 			});
 		}
 	}
