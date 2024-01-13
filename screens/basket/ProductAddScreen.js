@@ -144,9 +144,7 @@ class ProductAdd extends Component {
 		this.setState({serialInputStyle: styles.serialInput})
 	}
 	
-	selectProduct = (product) => {
-		console.log("SELECTED PRODUCT: ", product);
-		
+	selectProduct = (product) => {		
 		this.setState({seriyaInputValue: product.serial_number})
 		this.setState({brandInputValue: product.brand_name})
 		this.setState({productInputValue: product.name})
@@ -169,7 +167,6 @@ class ProductAdd extends Component {
 	// SERIAL INPUT FUNCTIONS
 	onChangeSerialInput = async (seria) => {
 		this.setState({seriyaInputValue: seria});
-    console.log(await this.productRepository.findProductsBySerialNumber(seria))
 		this.setState({products: await this.productRepository.findProductsBySerialNumber(seria)});
 		
 		this.defineInputContentStyle(false);
@@ -373,7 +370,6 @@ class ProductAdd extends Component {
 												(
 													<Pressable
 														onPress={() => {
-															console.log(item.brand_name);
 															this.selectProduct(item);
 														}}
 														
@@ -641,9 +637,6 @@ class ProductAdd extends Component {
 								size="large"
 								
 								isOn={this.state.nds}
-								onToggle={(isOn) => {
-									console.log(isOn)
-								}}
 								
 								animationSpeed={150}
 							/>
@@ -798,14 +791,7 @@ class ProductAdd extends Component {
 		}
 		
 		if (isValidInputValues) {
-			console.log("Seriya Value:", seriyaInputValue);
-			console.log("Brand Value:", brandInputValue);
-			console.log("Product Value:", productInputValue);
-			console.log("Amount Value:", amountInputValue);
-			console.log("Price Value:", priceInputValue);
-			console.log("Selling Price Value:", sellingPriceInputValue);
-			
-			Animated.timing(this.state.checkmarkScale, {
+				Animated.timing(this.state.checkmarkScale, {
 				toValue: 1, duration: 500, useNativeDriver: true,
 			}).start();
 			await AsyncStorage.setItem("isCreated", "true");
@@ -815,12 +801,6 @@ class ProductAdd extends Component {
 				seriyaInputValue, 
 				productInputValue
 			)
-
-			// sellingPrice: null,
-			// percentageOfPrice: null
-
-			console.log("sellingPrice: ", this.state.sellingPrice)
-			console.log("percentageOfPrice: ", this.state.percentageOfPrice)
 
 			await this.storeProductRepository.create(
 				productId, 
