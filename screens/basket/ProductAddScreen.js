@@ -83,6 +83,9 @@ class ProductAdd extends Component {
 
 			profitCalculation: "",
 			profitCalculationIsVisible: false,
+
+			sellingPrice: null,
+			percentageOfPrice: null
 		};
 
     this.productRepository = new ProductRepository();
@@ -295,14 +298,20 @@ class ProductAdd extends Component {
 			const percentage = ((this.state.sellingPriceInputValue - this.state.priceInputValue) / this.state.priceInputValue) * 100;
 			this.setState({
 				profitCalculation: percentage + "%", 
-				profitCalculationIsVisible: true
+				profitCalculationIsVisible: true,
+
+				sellingPrice: this.state.sellingPriceInputValue,
+				percentageOfPrice: percentage
 			});
 		} else {
 			const exactSellingPrice = (this.state.priceInputValue * this.state.sellingPriceInputValue) / 100;
 			this.state.profitCalculation = exactSellingPrice;
 			this.setState({
-				profitCalculation: (parseInt(this.state.priceInputValue) + exactSellingPrice) + " so'm",
-				profitCalculationIsVisible: true
+				profitCalculation: (parseFloat(this.state.priceInputValue) + exactSellingPrice) + " so'm",
+				profitCalculationIsVisible: true,
+
+				sellingPrice: parseFloat(this.state.priceInputValue) + exactSellingPrice,
+				percentageOfPrice: this.state.sellingPriceInputValue
 			});
 		}
 	}
@@ -801,21 +810,24 @@ class ProductAdd extends Component {
 			}).start();
 			await AsyncStorage.setItem("isCreated", "true");
 
-			// SAVE.
-      
-
 			let productId = await this.productRepository.createAndGetProductId(
 				brandInputValue, 
 				seriyaInputValue, 
 				productInputValue
 			)
 
+			// sellingPrice: null,
+			// percentageOfPrice: null
+
+			console.log("sellingPrice: ", this.state.sellingPrice)
+			console.log("percentageOfPrice: ", this.state.percentageOfPrice)
+
 			await this.storeProductRepository.create(
 				productId, 
 				this.state.nds, 
 				this.state.priceInputValue,
-				this.state.sellingPriceInputValue,
-				this.state.sellingPriceInputValue,
+				this.state.sellingPrice,
+				this.state.percentageOfPrice,
 				this.state.amountInputValue,
 				this.state.amountType
 			);
