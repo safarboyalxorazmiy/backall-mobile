@@ -20,17 +20,16 @@ import ProductRepository from "../../repository/ProductRepository";
 import StoreProductRepository from "../../repository/StoreProductRepository";
 
 const amountData = [
-		{label: "DONA", value: "1"},
-		{label: "KG", value: "2"},
-		{label: "GR", value: "3"},
-		{label: "LITR", value: "4"}
+		{label: "DONA"},
+		{label: "KG"},
+		{label: "GR"},
+		{label: "LITR"}
 	];
 
 const priceData = [
-	{label: "%", value: "1"},
-	{label: "SUM", value: "2"}
+	{label: "%"},
+	{label: "SO'M"}
 ];
-
 
 const screenWidth = Dimensions.get("window").width;
 const myScrollViewRef = React.createRef();
@@ -80,7 +79,10 @@ class ProductAdd extends Component {
 			scaleValue: new Animated.Value(1),
 
 			amountType: "DONA",
-			sellingPriceType: "SUM"
+			sellingPriceType: "SO'M",
+
+			profitCalculation: "",
+			profitCalculationIsVisible: false
 		};
 
     this.productRepository = new ProductRepository();
@@ -169,7 +171,8 @@ class ProductAdd extends Component {
 		
 		this.defineInputContentStyle(false);
 		this.setState({
-			seriyaError: false, serialInputStyle: styles.serialInputClicked
+			seriyaError: false, 
+			serialInputStyle: styles.serialInputClicked
 		})
 	}
 
@@ -271,14 +274,37 @@ class ProductAdd extends Component {
 	}
   
 	onEndEditingSellingPriceInput = () => {
-		if (this.state.sellingPriceInputValue < this.state.priceInputValue) {
+		if (this.state.sellingPriceType === "SO'M") {
+			if (
+				this.state.priceInputValue == "" || 
+				this.state.priceInputValue > this.state.sellingPriceInputValue
+			) {
+				this.setState({
+					priceInputValue: "", 
+					priceInputStyle: styles.inputErr, 
+					priceInputErr: true,
+				})
+
+				return;
+			} else {
+				this.setState({
+					priceInputStyle: styles.input, 
+					priceInputErr: false,
+				})
+			}
+
+			const percentage = ((this.state.sellingPriceInputValue - this.state.priceInputValue) / this.state.priceInputValue) * 100;
 			this.setState({
-				sellingPriceError: true, priceInput: styles.priceInputErr
-			})
+				profitCalculation: percentage + "%", 
+				profitCalculationIsVisible: true
+			});
 		} else {
+			const exactSellingPrice = (this.state.priceInputValue * this.state.sellingPriceInputValue) / 100;
+			this.state.profitCalculation = exactSellingPrice;
 			this.setState({
-				sellingPriceError: false, priceInput: styles.priceInput
-			})
+				profitCalculation: (parseInt(this.state.priceInputValue) + exactSellingPrice) + " so'm",
+				profitCalculationIsVisible: false
+			});
 		}
 	}
 	
@@ -428,8 +454,8 @@ class ProductAdd extends Component {
 								<Dropdown
 									data={amountData}
 									labelField="label"
-									valueField="value"
-									value="1"
+									valueField="label"
+									value={this.state.amountType}
 									onChange={this.handleAmountTypeSelect}
 									
 									style={[
@@ -532,8 +558,8 @@ class ProductAdd extends Component {
 								<Dropdown
 									data={priceData}
 									labelField="label"
-									valueField="value"
-									value="1"
+									valueField="label"
+									value={this.state.sellingPriceType}
 									onChange={this.handleSellingPriceTypeSelect}
 									
 									style={[styles.dropdown, {borderRadius: 8}]}
@@ -556,7 +582,6 @@ class ProductAdd extends Component {
 									
 									fontFamily="Gilroy-Medium"
 									
-									
 									containerStyle={{
 										backgroundColor: "#444444",
 										borderTopRightRadius: 8,
@@ -575,6 +600,16 @@ class ProductAdd extends Component {
 						{this.state.sellingPriceError === true ? <Animatable.View animation="shake" duration={500}>
 							<Text style={styles.errorMsg}>Sotilish narxi xato kiritildi.</Text>
 						</Animatable.View> : null}
+
+						<View style={{marginTop: 16}}>
+							{this.state.profitCalculationIsVisible === true ? 
+								<Animatable.View animation="slideInUp" duration={500}>
+									<Text style={{fontFamily: "Gilroy-Bold", fontSize: 16, fontWeight: "bold", color: "#65C466"}}>
+										{this.state.profitCalculation}
+									</Text>
+								</Animatable.View> 
+							: null}
+						</View>
 					</View>
 					
 					<View>
