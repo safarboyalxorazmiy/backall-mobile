@@ -15,6 +15,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import BasketIcon from "../../assets/basket-icon-light.svg";
 import Modal from "react-native-modal";
 import Success from "../../assets/success.svg";
+import StoreProductRepository from "../../repository/StoreProductRepository";
 
 const Checkmark = Animated.createAnimatedComponent(View);
 const CheckmarkText = Animated.createAnimatedComponent(Text);
@@ -27,9 +28,19 @@ class Basket extends Component {
 		this.textInputRef = React.createRef();
 		
 		this.state = {
-			isCreated: "false"
+			isCreated: "false",
+			storeProducts: []
 		}
+		this.storeProductRepository = new StoreProductRepository();
+
+		this.loadData();
 	}
+
+	async loadData() {
+    const storeProducts = await this.storeProductRepository.getStoreProductsInfo();
+    this.setState({ storeProducts });
+    console.log(storeProducts);
+  }
 	
 	async componentDidMount() {
 		await this.getCreated();
@@ -37,6 +48,9 @@ class Basket extends Component {
 		
 		navigation.addListener("focus", async () => {
 			await this.getCreated();
+			let storeProducts = await this.storeProductRepository.getStoreProductsInfo();
+			this.setState({storeProducts: storeProducts})
+			console.log(storeProducts);
 		});
 	}
 	
@@ -54,9 +68,10 @@ class Basket extends Component {
 	
 	render() {
 		const {navigation} = this.props;
-		
+
 		return (
 			<View style={styles.container}>
+				{/* Search section */}
 				<TouchableOpacity
 					activeOpacity={1}
 					style={styles.inputWrapper}
@@ -71,82 +86,14 @@ class Basket extends Component {
 					/>
 				</TouchableOpacity>
 				
+				{/* Store products */}
 				<ScrollView style={styles.productList}>
-					<View style={styles.productOdd}>
-						<Text style={styles.productTitle}>Coca Cola</Text>
-						<Text style={styles.productCount}>10 blok</Text>
-					</View>
-					
-					<View style={styles.product}>
-						<Text style={styles.productTitle}>Pepsi 1.5L</Text>
-						<Text style={styles.productCount}>10 blok</Text>
-					</View>
-					
-					<View style={styles.productOdd}>
-						<Text style={styles.productTitle}>Qora Gorilla</Text>
-						<Text style={styles.productCount}>50 dona</Text>
-					</View>
-					
-					<View style={styles.product}>
-						<Text style={styles.productTitle}>Qora Gorilla</Text>
-						<Text style={styles.productCount}>120 blok</Text>
-					</View>
-					
-					<View style={styles.productOdd}>
-						<Text style={styles.productTitle}>Qora Gorilla</Text>
-						<Text style={styles.productCount}>10 dona</Text>
-					</View>
-					
-					<View style={styles.product}>
-						<Text style={styles.productTitle}>Qora Gorilla</Text>
-						<Text style={styles.productCount}>120 blok</Text>
-					</View>
-					
-					<View style={styles.productOdd}>
-						<Text style={styles.productTitle}>Qora Gorilla</Text>
-						<Text style={styles.productCount}>120 blok</Text>
-					</View>
-					
-					<View style={styles.product}>
-						<Text style={styles.productTitle}>Qora Gorilla</Text>
-						<Text style={styles.productCount}>120 blok</Text>
-					</View>
-					
-					<View style={styles.productOdd}>
-						<Text style={styles.productTitle}>Qora Gorilla</Text>
-						<Text style={styles.productCount}>120 blok</Text>
-					</View>
-					
-					<View style={styles.product}>
-						<Text style={styles.productTitle}>Qora Gorilla</Text>
-						<Text style={styles.productCount}>120 blok</Text>
-					</View>
-					
-					<View style={styles.productOdd}>
-						<Text style={styles.productTitle}>Qora Gorilla</Text>
-						<Text style={styles.productCount}>120 blok</Text>
-					</View>
-					
-					<View style={styles.product}>
-						<Text style={styles.productTitle}>Qora Gorilla</Text>
-						<Text style={styles.productCount}>120 blok</Text>
-					</View>
-					
-					<View style={styles.productOdd}>
-						<Text style={styles.productTitle}>Qora Gorilla</Text>
-						<Text style={styles.productCount}>120 blok</Text>
-					</View>
-					
-					<View style={styles.product}>
-						<Text style={styles.productTitle}>Qora Gorilla</Text>
-						<Text style={styles.productCount}>120 blok</Text>
-					</View>
-					
-					<View style={styles.productOdd}>
-						<Text style={styles.productTitle}>Qora Gorilla</Text>
-						<Text style={styles.productCount}>120 blok</Text>
-					</View>
-				
+					{this.state.storeProducts.map((product, index) => (
+						<View key={index} style={index % 2 === 0 ? styles.product : styles.productOdd}>
+							<Text style={styles.productTitle}>{product.brand_name} {product.name}</Text>
+							<Text style={styles.productCount}>{product.count} {product.count_type}</Text>
+						</View>
+					))}
 				</ScrollView>
 				
 				<TouchableOpacity
@@ -154,7 +101,8 @@ class Basket extends Component {
 					onPress={() => navigation.navigate("ProductAdd")}>
 					<PlusIcon/>
 				</TouchableOpacity>
-				
+
+				{/* Product successfuly created modal. */}
 				<Modal
 					style={{
 						backgroundColor: "#FFFFFF",

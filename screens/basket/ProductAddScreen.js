@@ -635,6 +635,8 @@ class ProductAdd extends Component {
 								offColor="gray"
 								labelStyle={{color: "black", fontWeight: "900"}}
 								size="large"
+
+								onToggle={() => {}}
 								
 								isOn={this.state.nds}
 								
@@ -797,9 +799,9 @@ class ProductAdd extends Component {
 			await AsyncStorage.setItem("isCreated", "true");
 
 			let productId = await this.productRepository.createAndGetProductId(
+				productInputValue,
 				brandInputValue, 
-				seriyaInputValue, 
-				productInputValue
+				seriyaInputValue,
 			)
 
 			await this.storeProductRepository.create(
