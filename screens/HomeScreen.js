@@ -47,7 +47,7 @@ class Home extends Component {
 						<TouchableOpacity
 							activeOpacity={1}
 							onPressIn={() => {
-								this.setState({shoppingCardColors: ["#FDD958", "#FDD958"]})
+								this.setState({shoppingCardColors: ["#E59C0D", "#E59C0D"]})
 							}}
 							onPressOut={() => {
 								this.setState({shoppingCardColors: ["#E59C0D", "#FDD958"]})
