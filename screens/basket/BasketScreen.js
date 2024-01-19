@@ -16,6 +16,7 @@ import BasketIcon from "../../assets/basket-icon-light.svg";
 import Modal from "react-native-modal";
 import Success from "../../assets/success.svg";
 import StoreProductRepository from "../../repository/StoreProductRepository";
+import { Keyboard } from 'react-native';
 
 const Checkmark = Animated.createAnimatedComponent(View);
 const CheckmarkText = Animated.createAnimatedComponent(Text);
@@ -29,12 +30,30 @@ class Basket extends Component {
 		
 		this.state = {
 			isCreated: "false",
-			storeProducts: []
+			storeProducts: [],
+			addButtonStyle: styles.addButton
 		}
 		this.storeProductRepository = new StoreProductRepository();
 
+		this.keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      this.keyboardDidShow
+    );
+    this.keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      this.keyboardDidHide
+    );
+
 		this.loadData();
 	}
+
+	keyboardDidShow = () => {
+    this.setState({ addButtonStyle: { display: 'none' } });
+  };
+
+  keyboardDidHide = () => {
+    this.setState({ addButtonStyle: styles.addButton });
+  };
 
 	async loadData() {
     const storeProducts = await this.storeProductRepository.getStoreProductsInfo();
@@ -96,8 +115,9 @@ class Basket extends Component {
 					))}
 				</ScrollView>
 				
+				{/* Add Button */}
 				<TouchableOpacity
-					style={styles.addButton}
+					style={this.state.addButtonStyle}
 					onPress={() => navigation.navigate("ProductAdd")}>
 					<PlusIcon/>
 				</TouchableOpacity>
@@ -261,7 +281,7 @@ const styles = StyleSheet.create({
 		backgroundColor: "#272727",
 		position: "absolute",
 		right: 20,
-		bottom: 130,
+		bottom: 40,
 		borderRadius: 50,
 		display: "flex",
 		alignItems: "center",
