@@ -7,7 +7,8 @@ import {
 	Text,
 	TextInput,
 	TouchableOpacity,
-	Modal
+	Modal,
+	Keyboard
 } from 'react-native';
 import SwipeableFlatList from 'react-native-swipeable-list';
 
@@ -76,8 +77,10 @@ const keyExtractor = (item) => item.id;
 class Sell extends Component {
 	constructor(props) {
 		super(props);
+		this.inputRef = React.createRef();
 		this.state = {
 			isModalVisible: false,
+			isFocused: true
 		};
 	}
 	
@@ -87,6 +90,15 @@ class Sell extends Component {
 		}));
 	};
 	
+	handleFocus = () => {
+    this.setState({isFocused: true});
+		this.inputRef.current.focus()
+  };
+
+	handleBlur = () => {
+		this.inputRef.current.focus();
+  };
+
 	render() {
 		const {navigation} = this.props;
 		const {isModalVisible} = this.state;
@@ -94,9 +106,7 @@ class Sell extends Component {
 		return (
 			<>
 				<View style={styles.container}>
-					<View
-						style={styles.pageTitle}
-					>
+					<View style={styles.pageTitle}>
 						<TouchableOpacity
 							onPress={() => navigation.navigate('Basket')}
 							style={styles.backIconWrapper}
@@ -108,6 +118,27 @@ class Sell extends Component {
 							Sotiladigan mahsulotlar
 						</Text>
 					</View>
+
+					<TextInput
+							ref={this.inputRef}
+							style={{
+								backgroundColor: "white", 
+								width: screenWidth - (16 + 16),
+								marginBottom: 10,
+								padding: 15,
+								borderRadius: 8,
+								fontFamily: "Gilroy-Medium",
+								fontSize: 16,
+								borderColor: "#222t",
+								borderWidth: 1
+							}} 
+							onFocus={this.handleFocus} 
+							onBlur={this.handleBlur} 
+							autoFocus={true}
+							keyboardType="none" 
+							editable={true}
+							cursorColor={"#222"}
+						/>
 					
 					<SwipeableFlatList
 						data={data}
@@ -227,7 +258,7 @@ const styles = StyleSheet.create({
 		display: 'flex',
 		flexDirection: 'row',
 		alignItems: 'center',
-		marginBottom: 24,
+		marginBottom: 10,
 	},
 	
 	pageTitleText: {
