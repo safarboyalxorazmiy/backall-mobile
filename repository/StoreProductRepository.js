@@ -75,6 +75,29 @@ class StoreProductRepository {
       });
     });
   }  
+
+  async getProductInfoBySerialNumber(serial_number) {
+    return new Promise((resolve, reject) => {
+      this.db.transaction((tx) => {
+        tx.executeSql(
+          `SELECT sp.id, p.serial_number, p.brand_name, p.name, sp.count, sp.count_type
+          FROM store_product sp
+          JOIN product p ON sp.product_id = p.id
+          WHERE p.serial_number = ?;`,
+          [serial_number],
+          (_, { rows }) => {
+            const storeProductsInfo = rows._array; // Get raw result
+            console.log("Store products info retrieved successfully:", storeProductsInfo);
+            resolve(storeProductsInfo);
+          },
+          (_, error) => {
+            console.error("Error retrieving store products info:", error);
+            reject(error);
+          }
+        );
+      });
+    });
+  } 
 }
 
 export default StoreProductRepository;

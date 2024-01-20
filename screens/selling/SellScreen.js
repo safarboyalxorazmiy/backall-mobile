@@ -15,53 +15,25 @@ import SwipeableFlatList from 'react-native-swipeable-list';
 import BackIcon from "../../assets/arrow-left-icon.svg";
 import CrossIcon from "../../assets/cross-icon.svg";
 import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
+import StoreProductRepository from "../../repository/StoreProductRepository";
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
 const data = [
-	{id: 1, text: 'Coca Cola'},
-	{id: 2, text: 'Item 2'},
-	{id: 3, text: 'Item 3'},
-	{id: 4, text: 'Item 3'},
-	{id: 5, text: 'Item 3'},
-	{id: 6, text: 'Item 3'},
-	{id: 7, text: 'Item 3'},
-	{id: 8, text: 'Item 3'},
-	{id: 9, text: 'Item 3'},
-	{id: 10, text: 'Item 3'},
-	{id: 11, text: 'Item 3'},
-	{id: 12, text: 'Item 3'},
-	{id: 13, text: 'Item 3'},
-	{id: 14, text: 'Item 3'},
-	{id: 15, text: 'Item 3'},
-	{id: 16, text: 'Item 3'},
-	{id: 17, text: 'Item 3'},
-	{id: 18, text: 'Item 3'},
-	{id: 19, text: 'Item 3'},
-	{id: 20, text: 'Item 3'},
-	{id: 21, text: 'Item 3'},
-	{id: 22, text: 'Item 3'},
-	{id: 23, text: 'Item 3'},
-	{id: 24, text: 'Item 3'},
-	{id: 25, text: 'Item 3'},
-	{id: 26, text: 'Item 3'},
-	{id: 27, text: 'Item 3'},
-	{id: 28, text: 'Item 3'},
-	{id: 29, text: 'Item 3'},
-	{id: 30, text: 'Item 3'}
+	{"brand_name": "string", "count": 2, "count_type": "DONA", "id": 1, "name": "string", "serial_number": "string"}
 ];
 
 const renderItem = ({item}) => {
-	return item.id % 2 === 1 ? (
+	return item.key % 2 === 1 ? (
 		<View style={styles.productOdd}>
-			<Text style={styles.productTitle}>{item.text}</Text>
-			<Text style={styles.productCount}>10 blok</Text>
+			<Text style={styles.productTitle}>{item.brand_name} {item.name}</Text>
+			<Text style={styles.productCount}>{item.count} {item.count_type}</Text>
 		</View>
 	) : (
 		<View style={styles.product}>
-			<Text style={styles.productTitle}>{item.text}</Text>
-			<Text style={styles.productCount}>10 blok</Text>
+			<Text style={styles.productTitle}>{item.brand_name} {item.name}</Text>
+			<Text style={styles.productCount}>{item.count} {item.count_type}</Text>
 		</View>
 	);
 };
@@ -80,8 +52,12 @@ class Sell extends Component {
 		this.inputRef = React.createRef();
 		this.state = {
 			isModalVisible: false,
-			isFocused: true
+			isFocused: true,
+			sellingProducts: [],
+			seria: ""
 		};
+
+		this.storeProductRepository = new StoreProductRepository();
 	}
 	
 	toggleModal = () => {
@@ -98,6 +74,38 @@ class Sell extends Component {
 	handleBlur = () => {
 		this.inputRef.current.focus();
   };
+
+	onChangeTextSerialInput = async (seriya) => {
+		this.setState({seria: seriya})
+		let storeProduct = await this.storeProductRepository.getProductInfoBySerialNumber(seriya);
+	
+		if (storeProduct[0]) {
+			let newSellingProducts = [...this.state.sellingProducts]; 
+	
+			let existingProductIndex = newSellingProducts.findIndex(element => element.id === storeProduct[0].id);
+	
+			if (existingProductIndex !== -1) {
+				newSellingProducts[existingProductIndex].count += 1;
+			} else {
+				let newSellingProduct = storeProduct[0];
+				newSellingProduct.count = 1
+				newSellingProducts.push(newSellingProduct);
+			}
+	
+			this.setState(
+				{ 
+					sellingProducts: newSellingProducts,
+					seria: ""
+				});
+
+				console.log(this.state.sellingProducts);
+				
+				Keyboard.dismiss();
+			}
+
+			
+		};
+	
 
 	render() {
 		const {navigation} = this.props;
@@ -129,19 +137,20 @@ class Sell extends Component {
 								borderRadius: 8,
 								fontFamily: "Gilroy-Medium",
 								fontSize: 16,
-								borderColor: "#222t",
+								borderColor: "#222",
 								borderWidth: 1
 							}} 
 							onFocus={this.handleFocus} 
 							onBlur={this.handleBlur} 
 							autoFocus={true}
-							keyboardType="none" 
 							editable={true}
 							cursorColor={"#222"}
+							onChangeText={this.onChangeTextSerialInput}
+							value={this.state.seria}
 						/>
-					
+
 					<SwipeableFlatList
-						data={data}
+						data={this.state.sellingProducts}
 						renderItem={renderItem}
 						renderQuickActions={renderQuickActions}
 						keyExtractor={keyExtractor}
