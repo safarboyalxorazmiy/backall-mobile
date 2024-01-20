@@ -20,10 +20,6 @@ import StoreProductRepository from "../../repository/StoreProductRepository";
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-const data = [
-	{"brand_name": "string", "count": 2, "count_type": "DONA", "id": 1, "name": "string", "serial_number": "string"}
-];
-
 const renderItem = ({item}) => {
 	return item.key % 2 === 1 ? (
 		<View style={styles.productOdd}>
@@ -96,14 +92,9 @@ class Sell extends Component {
 				{ 
 					sellingProducts: newSellingProducts,
 					seria: ""
-				});
-
-				console.log(this.state.sellingProducts);
-				
+				});				
 				Keyboard.dismiss();
 			}
-
-			
 		};
 	
 

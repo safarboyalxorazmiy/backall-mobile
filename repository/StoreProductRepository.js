@@ -15,7 +15,6 @@ class StoreProductRepository {
               VALUES (?, ?, ?, ?, ?, ?, ?)`,
             [product_id, nds, price, sellingPrice, percentage, count, countType],
             (_, results) => {
-              console.log("Store product created successfully:", results);
               resolve(true);
             },
             (_, error) => {
@@ -41,7 +40,6 @@ class StoreProductRepository {
           [],
           (_, { rows }) => {
             const storeProductsInfo = rows._array; // Get raw result array
-            console.log("Store products info retrieved successfully:", storeProductsInfo);
             resolve(storeProductsInfo);
           },
           (_, error) => {
@@ -64,7 +62,6 @@ class StoreProductRepository {
           [query, query], // Pass the query parameter twice for brand_name and name
           (_, { rows }) => {
             const storeProductsInfo = rows._array; // Get raw result array
-            console.log("Store products info retrieved successfully:", storeProductsInfo);
             resolve(storeProductsInfo);
           },
           (_, error) => {
@@ -87,7 +84,6 @@ class StoreProductRepository {
           [serial_number],
           (_, { rows }) => {
             const storeProductsInfo = rows._array; // Get raw result
-            console.log("Store products info retrieved successfully:", storeProductsInfo);
             resolve(storeProductsInfo);
           },
           (_, error) => {
