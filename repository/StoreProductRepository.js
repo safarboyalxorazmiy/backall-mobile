@@ -52,6 +52,29 @@ class StoreProductRepository {
       });
     });
   }
+
+  async searchProductsInfo(query) {
+    return new Promise((resolve, reject) => {
+      this.db.transaction((tx) => {
+        tx.executeSql(
+          `SELECT sp.id, p.brand_name, p.name, sp.count, sp.count_type
+          FROM store_product sp
+          JOIN product p ON sp.product_id = p.id
+          WHERE p.brand_name LIKE ? OR p.name LIKE ?;`,
+          [query, query], // Pass the query parameter twice for brand_name and name
+          (_, { rows }) => {
+            const storeProductsInfo = rows._array; // Get raw result array
+            console.log("Store products info retrieved successfully:", storeProductsInfo);
+            resolve(storeProductsInfo);
+          },
+          (_, error) => {
+            console.error("Error retrieving store products info:", error);
+            reject(error);
+          }
+        );
+      });
+    });
+  }  
 }
 
 export default StoreProductRepository;

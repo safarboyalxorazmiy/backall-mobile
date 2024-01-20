@@ -31,7 +31,8 @@ class Basket extends Component {
 		this.state = {
 			isCreated: "false",
 			storeProducts: [],
-			addButtonStyle: styles.addButton
+			addButtonStyle: styles.addButton,
+			searchInputValue: ""
 		}
 		this.storeProductRepository = new StoreProductRepository();
 
@@ -70,12 +71,20 @@ class Basket extends Component {
 			let storeProducts = await this.storeProductRepository.getStoreProductsInfo();
 			this.setState({storeProducts: storeProducts})
 			console.log(storeProducts);
+			this.setState({searchInputValue: ""});
 		});
 	}
 	
 	async getCreated() {
 		let isCreated = await AsyncStorage.getItem("isCreated");
 		this.setState({isCreated: isCreated});
+	}
+
+	onChangeTextSearchInput = async (query) => {
+		this.setState({searchInputValue: query});
+		let storeProducts = await this.storeProductRepository.searchProductsInfo(query + "%");
+		this.setState({storeProducts: storeProducts})
+		console.log(storeProducts);
 	}
 	
 	handlePressSearchInput = () => {
@@ -84,6 +93,8 @@ class Basket extends Component {
 			this.textInputRef.current.focus();
 		}
 	};
+
+	
 	
 	render() {
 		const {navigation} = this.props;
@@ -102,6 +113,10 @@ class Basket extends Component {
 						style={styles.input}
 						placeholder="Mahsulot qidirish"
 						placeholderTextColor="#AAA"
+						onChangeText={this.onChangeTextSearchInput}
+						value={this.state.searchInputValue}
+						defaultValue={""}
+						cursorColor={"black"}
 					/>
 				</TouchableOpacity>
 				
