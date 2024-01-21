@@ -16,6 +16,7 @@ import BackIcon from "../../assets/arrow-left-icon.svg";
 import CrossIcon from "../../assets/cross-icon.svg";
 import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import StoreProductRepository from "../../repository/StoreProductRepository";
+import SellHistoryRepository from '../../repository/SellHistoryRepository';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -50,10 +51,12 @@ class Sell extends Component {
 			isModalVisible: false,
 			isFocused: true,
 			sellingProducts: [],
-			seria: ""
+			seria: "",
+			amount: 0
 		};
 
 		this.storeProductRepository = new StoreProductRepository();
+		this.sellHistoryRepository = new SellHistoryRepository();
 	}
 	
 	toggleModal = () => {
@@ -82,10 +85,14 @@ class Sell extends Component {
 	
 			if (existingProductIndex !== -1) {
 				newSellingProducts[existingProductIndex].count += 1;
+
+				this.setState({amount: this.state.amount + newSellingProducts[existingProductIndex].selling_price});
 			} else {
 				let newSellingProduct = storeProduct[0];
 				newSellingProduct.count = 1
 				newSellingProducts.push(newSellingProduct);
+
+				this.setState({amount: this.state.amount + newSellingProduct.selling_price});
 			}
 	
 			this.setState(
@@ -95,7 +102,7 @@ class Sell extends Component {
 				});				
 				Keyboard.dismiss();
 			}
-		};
+	};
 	
 
 	render() {
@@ -159,10 +166,13 @@ class Sell extends Component {
 							style={styles.footerTitle}
 						>
 							<Text style={styles.priceTitle}>Buyurtma narxi</Text>
-							<Text style={styles.price}>105,000 so’m</Text>
+							<Text style={styles.price}>{this.state.amount} so'm</Text>
 						</View>
 						
-						<TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Shopping')}>
+						<TouchableOpacity 
+							style={styles.button} 
+							onPress={this.sellProducts}
+						>
 							<Text style={styles.buttonText}>Sotuvni amalga oshirish</Text>
 						</TouchableOpacity>
 					</View>
@@ -241,8 +251,49 @@ class Sell extends Component {
 			</>
 		);
 	}
+
+	sellProducts = async () => {
+		let currentDate = new Date();
+
+		console.log(
+			this.state.sellingProducts
+		)
+
+		this.sellHistoryRepository.createSellHistoryGroup(this.state.amount);
+
+
+		this.state.sellingProducts.forEach((sellingProduct) => {
+			this.sellHistoryRepository.createSellHistory(
+				sellingProduct.product_id, 
+				sellingProduct.count, 
+				sellingProduct.count_type,
+				sellingProduct.selling_price,
+				currentDate
+			)
+		});
+
+
+		// Navigate screen
+		const {navigation} = this.props;
+		navigation.navigate('Shopping');
+	}
 }
 
+/* 
+
+let currentDate = new Date();
+const weekDays = ['Yakshanba', 'Dushanba', 'Seshanba', 'Chorshanba', 'Payshanba', 'Juma', 'Shanba'];	
+
+let hourAndMinute = currentDate.getHours() + ":" + currentDate.getMinutes();
+let currentMonth = currentDate.toLocaleString('uz-UZ', { month: 'long' }).toLocaleLowerCase();
+let currentDay = currentDate.getDate();
+let currentWeekDayName = weekDays[currentDate.getDay()];
+
+console.log(hourAndMinute);
+console.log(currentDay + "-" + currentMonth);
+console.log(currentWeekDayName);
+
+*/
 
 const styles = StyleSheet.create({
 	container: {

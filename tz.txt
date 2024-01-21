@@ -20,13 +20,34 @@ sell_history:
   count,
   count_type,
   created_date,
+  selling_price
 
 sell_group:
-  id
+  id,
+  created_date, (21.01.2024TFDF-03:25...)
+  amount (5000000)
+//  date_title, (ex: 4-oktyabr, Chorshanba)
+//  time, (10:45)
 
 sell_history_group
   id,
   group_id,
+  history_id,
+
+
+profit_history:
+  id,
+  product_id,
+  count,
+  count_type,
+
+profit_group:
+  id,
+  time,
+  created_date,
+  price
+
+profit_history_group
+  id,
+  group_id,
   history_id
-
-

@@ -77,7 +77,7 @@ class StoreProductRepository {
     return new Promise((resolve, reject) => {
       this.db.transaction((tx) => {
         tx.executeSql(
-          `SELECT sp.id, p.serial_number, p.brand_name, p.name, sp.count, sp.count_type
+          `SELECT sp.id, p.serial_number, p.brand_name, p.name, sp.count, sp.count_type, sp.price, sp.selling_price, sp.nds, sp.percentage, p.id as product_id
           FROM store_product sp
           JOIN product p ON sp.product_id = p.id
           WHERE p.serial_number = ?;`,

@@ -15,11 +15,14 @@ class DatabaseRepository {
     if (this.db !== null) {
       try {
         this.db.transaction(async (tx) => {
-            const queries = [
+
+          await this.executeQueries(tx, ['DROP TABLE sell_history;']);
+          
+          const queries = [
             'CREATE TABLE IF NOT EXISTS product (id INTEGER PRIMARY KEY, name TEXT NOT NULL, brand_name TEXT NOT NULL, serial_number TEXT NOT NULL);',
             'CREATE TABLE IF NOT EXISTS store_product (id INTEGER PRIMARY KEY AUTOINCREMENT, product_id INTEGER, nds BOOLEAN, price DOUBLE, selling_price DOUBLE, percentage DOUBLE, count DOUBLE, count_type TEXT, FOREIGN KEY (product_id) REFERENCES product(id));',
-            'CREATE TABLE IF NOT EXISTS sell_history (id INTEGER PRIMARY KEY AUTOINCREMENT, product_id INTEGER, count DOUBLE, count_type TEXT, created_date TIMESTAMP, FOREIGN KEY (product_id) REFERENCES product(id));',
-            'CREATE TABLE IF NOT EXISTS sell_group (id INTEGER PRIMARY KEY AUTOINCREMENT);',
+            'CREATE TABLE IF NOT EXISTS sell_history (id INTEGER PRIMARY KEY AUTOINCREMENT, product_id INTEGER, count DOUBLE, count_type TEXT, selling_price DOUBLE, created_date TIMESTAMP, FOREIGN KEY (product_id) REFERENCES product(id));',
+            'CREATE TABLE IF NOT EXISTS sell_group (id INTEGER PRIMARY KEY AUTOINCREMENT, created_date TIMESTAMP, amount DOUBLE);',
             'CREATE TABLE IF NOT EXISTS sell_history_group (id INTEGER PRIMARY KEY AUTOINCREMENT, group_id INTEGER, history_id INTEGER, FOREIGN KEY (group_id) REFERENCES sell_group(id), FOREIGN KEY (history_id) REFERENCES sell_history(id));',
           ];
 
