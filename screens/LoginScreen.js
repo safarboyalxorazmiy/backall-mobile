@@ -70,7 +70,9 @@ const Login = ({navigation}) => {
 	const [loading, setLoading] = useState(false);
 	
 	const login = async (email, password) => {
-		try {
+		navigation.navigate("Home");
+
+		/*try {
 			setLoading(true);
 			
 			let result;
@@ -98,7 +100,7 @@ const Login = ({navigation}) => {
 			console.error('Error fetching data:', error);
 		} finally {
 			setLoading(false);
-		}
+		}*/
 	};
 	
 	const getProducts = async () => {

@@ -14,10 +14,7 @@ class DatabaseRepository {
   async init() {
     if (this.db !== null) {
       try {
-        this.db.transaction(async (tx) => {
-
-          await this.executeQueries(tx, ['DROP TABLE sell_history;']);
-          
+        this.db.transaction(async (tx) => {          
           const queries = [
             'CREATE TABLE IF NOT EXISTS product (id INTEGER PRIMARY KEY, name TEXT NOT NULL, brand_name TEXT NOT NULL, serial_number TEXT NOT NULL);',
             'CREATE TABLE IF NOT EXISTS store_product (id INTEGER PRIMARY KEY AUTOINCREMENT, product_id INTEGER, nds BOOLEAN, price DOUBLE, selling_price DOUBLE, percentage DOUBLE, count DOUBLE, count_type TEXT, FOREIGN KEY (product_id) REFERENCES product(id));',
