@@ -30,15 +30,18 @@ class Shopping extends Component {
 		this.getSellingHistory()
 	}
 
-	async getSellingHistory () {
-		let startingDate = this.state.lastDate; 
-		let endingDate = new Date(startingDate);
-		endingDate.setDate((endingDate.getDate() - 3));
+	async componentDidMount() {
+		const {navigation} = this.props;
+		
+		navigation.addListener("focus", async () => {
+			this.getSellingHistory();
+		});
+	}
 
+	async getSellingHistory () {
 		sellingHistory = await this.sellHistoryRepository.getAllSellGroup();
 		this.setState({sellingHistory: sellingHistory});
 		this.setState({groupedHistories: this.groupByDate(sellingHistory)})
-		console.log(this.calculateCurrentMonthTotal());
 	}
 
 	getFormattedTime = (created_date) => {
