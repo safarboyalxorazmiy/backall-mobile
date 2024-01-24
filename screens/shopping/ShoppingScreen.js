@@ -11,10 +11,91 @@ import {
 
 import CalendarIcon from "../../assets/calendar-icon.svg";
 import SellIcon from "../../assets/sell-icon.svg";
+import SellHistoryRepository from "../../repository/SellHistoryRepository";
 
 const screenWidth = Dimensions.get("window").width;
 
 class Shopping extends Component {
+	constructor(props) {
+		super(props);
+		
+		this.state = {
+			sellingHistory: [],
+			groupedHistories: [],
+			lastDate: new Date(),
+			currentMonthTotal: 0
+		};
+
+		this.sellHistoryRepository = new SellHistoryRepository()
+		this.getSellingHistory()
+	}
+
+	async getSellingHistory () {
+		let startingDate = this.state.lastDate; 
+		let endingDate = new Date(startingDate);
+		endingDate.setDate((endingDate.getDate() - 3));
+
+		sellingHistory = await this.sellHistoryRepository.getAllSellGroup();
+		this.setState({sellingHistory: sellingHistory});
+		this.setState({groupedHistories: this.groupByDate(sellingHistory)})
+		console.log(this.calculateCurrentMonthTotal());
+	}
+
+	getFormattedTime = (created_date) => {
+		let date = new Date(created_date);
+		let hours = date.getHours();
+		let minutes = date.getMinutes();
+		
+		minutes = minutes + "";
+		if (minutes.length != 2) {
+			minutes = "0" + minutes;
+		}
+		return `${hours}:${minutes}`;
+	};
+
+	groupByDate = (histories) => {
+    const grouped = {};
+    histories.forEach((history) => {
+      const date = history.created_date.split('T')[0];
+      const formattedDate = this.formatDate(date);
+      if (!grouped[date]) {
+        grouped[date] = { date, dateInfo: formattedDate, histories: [], totalAmount: 0 };
+      }
+      grouped[date].histories.push(history);
+      grouped[date].totalAmount += history.amount;
+    });
+    return Object.values(grouped);
+  };
+
+  formatDate = (dateString) => {
+		const date = new Date(dateString);
+		const options = { day: 'numeric', month: 'long', weekday: 'long' };
+		const formattedDate = date.toLocaleDateString('uz-UZ', options);
+	
+		let [weekday, day] = formattedDate.split(', ');
+	
+		weekday = weekday.charAt(0).toUpperCase() + weekday.slice(1);
+		return `${day}, ${weekday}`;
+	};
+	
+	calculateCurrentMonthTotal = () => {
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth() + 1; // Months are zero-based in JavaScript (January is 0)
+    let currentMonthTotal = 0;
+
+    this.state.sellingHistory.forEach((history) => {
+      const historyDate = new Date(history.created_date);
+      const historyMonth = historyDate.getMonth() + 1;
+
+      if (historyMonth === currentMonth) {
+        currentMonthTotal += history.amount;
+      }
+    });
+
+		this.setState({currentMonthTotal: currentMonthTotal});
+    return currentMonthTotal;
+  };
+
 	render() {
 		const {navigation} = this.props;
 		
@@ -24,12 +105,12 @@ class Shopping extends Component {
 					<View style={styles.pageTitle}>
 						<Text style={styles.pageTitleText}>Sotuv tarixi</Text>
 					</View>
-					
+
 					<View style={styles.calendarWrapper}>
 						<Text style={styles.calendarLabel}>
 							Muddatni tanlang
 						</Text>
-						
+
 						<View>
 							<TouchableOpacity onPress={() => navigation.navigate("Calendar")}
 							                  style={styles.calendarInput}>
@@ -48,7 +129,7 @@ class Shopping extends Component {
 								)}
 						</View>
 					</View>
-					
+
 					<View style={{
 						marginTop: 12,
 						width: screenWidth - (16 * 2),
@@ -69,320 +150,48 @@ class Shopping extends Component {
 							lineHeight: 24,
 							color: "#FFF"
 						}}>Oylik aylanma</Text>
-						<Text style={{
-							fontFamily: "Gilroy-Medium",
-							fontWeight: "500",
-							fontSize: 16,
-							lineHeight: 24,
-							color: "#FFF"
-						}}>5.000.000 so’m</Text>
+						{(
+							<Text style={{
+								fontFamily: "Gilroy-Medium",
+								fontWeight: "500",
+								fontSize: 16,
+								lineHeight: 24,
+								color: "#FFF"
+							}}>{`${this.state.currentMonthTotal} so’m`}</Text>
+        )}
+						
 					</View>
 					
 					<View>
-						<View style={{
-							marginTop: 12,
-							display: "flex",
-							alignItems: "center",
-							flexDirection: "row",
-							justifyContent: "space-between",
-							width: screenWidth - (16 * 2),
-							marginLeft: "auto",
-							marginRight: "auto",
-							backgroundColor: "#EEEEEE",
-							height: 42,
-							borderRadius: 4,
-							paddingHorizontal: 10,
-							paddingVertical: 10
-						}}>
-							<Text
-								style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 14, lineHeight: 22}}>4-oktyabr,
-								Chorshanba</Text>
-							<Text style={{
-								fontFamily: "Gilroy-Medium",
-								fontWeight: "500",
-								fontSize: 14,
-								lineHeight: 22
-							}}>//</Text>
-							<Text
-								style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 14, lineHeight: 22}}>5.000.000
-								so’m</Text>
-						</View>
-						
-						<View>
-							<TouchableOpacity style={{
-								display: "flex",
-								flexDirection: "row",
-								justifyContent: "space-between",
-								alignItems: "center",
-								height: 50,
-								marginTop: 4,
-								width: "100%",
-								paddingHorizontal: 16,
-								paddingVertical: 6
-							}} onPress={() => navigation.navigate("ShoppingDetail")}>
-								<View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-									<SellIcon/>
-									<Text style={{
-										marginLeft: 10,
-										fontFamily: "Gilroy-Medium",
-										fontWeight: "500",
-										fontSize: 16
-									}}>25.000 so’m</Text>
-								</View>
-								
-								<Text
-									style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 14}}>10:45</Text>
-							</TouchableOpacity>
-							
-							<TouchableOpacity style={{
-								display: "flex",
-								flexDirection: "row",
-								justifyContent: "space-between",
-								alignItems: "center",
-								height: 50,
-								marginTop: 4,
-								paddingHorizontal: 16,
-								paddingVertical: 6
-							}} onPress={() => navigation.navigate("ShoppingDetail")}>
-								<View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-									<SellIcon/>
-									<Text style={{
-										marginLeft: 10,
-										fontFamily: "Gilroy-Medium",
-										fontWeight: "500",
-										fontSize: 16
-									}}>25.000 so’m</Text>
-								</View>
-								
-								<Text
-									style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 14}}>10:45</Text>
-							</TouchableOpacity>
-							
-							<TouchableOpacity style={{
-								display: "flex",
-								flexDirection: "row",
-								justifyContent: "space-between",
-								alignItems: "center",
-								height: 50,
-								marginTop: 4,
-								paddingHorizontal: 16,
-								paddingVertical: 6
-							}} onPress={() => navigation.navigate("ShoppingDetail")}>
-								<View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-									<SellIcon/>
-									<Text style={{
-										marginLeft: 10,
-										fontFamily: "Gilroy-Medium",
-										fontWeight: "500",
-										fontSize: 16
-									}}>25.000 so’m</Text>
-								</View>
-								
-								<Text
-									style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 14}}>10:45</Text>
-							</TouchableOpacity>
-							
-							<TouchableOpacity style={{
-								display: "flex",
-								flexDirection: "row",
-								justifyContent: "space-between",
-								alignItems: "center",
-								height: 50,
-								marginTop: 4,
-								paddingHorizontal: 16,
-								paddingVertical: 6
-							}} onPress={() => navigation.navigate("ShoppingDetail")}>
-								<View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-									<SellIcon/>
-									<Text style={{
-										marginLeft: 10,
-										fontFamily: "Gilroy-Medium",
-										fontWeight: "500",
-										fontSize: 16
-									}}>25.000 so’m</Text>
-								</View>
-								
-								<Text
-									style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 14}}>10:45</Text>
-							</TouchableOpacity>
-							
-							<TouchableOpacity style={{
-								display: "flex",
-								flexDirection: "row",
-								justifyContent: "space-between",
-								alignItems: "center",
-								height: 50,
-								marginTop: 4,
-								paddingHorizontal: 16,
-								paddingVertical: 6
-							}} onPress={() => navigation.navigate("ShoppingDetail")}>
-								<View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-									<SellIcon/>
-									<Text style={{
-										marginLeft: 10,
-										fontFamily: "Gilroy-Medium",
-										fontWeight: "500",
-										fontSize: 16
-									}}>25.000 so’m</Text>
-								</View>
-								
-								<Text
-									style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 14}}>10:45</Text>
-							</TouchableOpacity>
-						</View>
-					</View>
-					
-					<View style={{width: "100%"}}>
-						<View style={{
-							marginTop: 12,
-							display: "flex",
-							alignItems: "center",
-							flexDirection: "row",
-							justifyContent: "space-between",
-							width: screenWidth - (16 * 2),
-							marginLeft: "auto",
-							marginRight: "auto",
-							backgroundColor: "#EEEEEE",
-							height: 42,
-							borderRadius: 4,
-							paddingHorizontal: 10,
-							paddingVertical: 10
-						}}>
-							<Text
-								style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 14, lineHeight: 22}}>3-oktyabr,
-								Chorshanba</Text>
-							<Text style={{
-								fontFamily: "Gilroy-Medium",
-								fontWeight: "500",
-								fontSize: 14,
-								lineHeight: 22
-							}}>//</Text>
-							<Text
-								style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 14, lineHeight: 22}}>5.000.000
-								so’m</Text>
-						</View>
-						
-						<View>
-							<View style={{
-								display: "flex",
-								flexDirection: "row",
-								justifyContent: "space-between",
-								alignItems: "center",
-								height: 50,
-								marginTop: 4,
-								paddingHorizontal: 16,
-								paddingVertical: 6
-							}}>
-								<View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-									<SellIcon/>
-									<Text style={{
-										marginLeft: 10,
-										fontFamily: "Gilroy-Medium",
-										fontWeight: "500",
-										fontSize: 16
-									}}>25.000 so’m</Text>
-								</View>
-								
-								<Text
-									style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 14}}>10:45</Text>
+						{this.state.groupedHistories.map((group) => (
+							<View key={group.date}>
+								{/* Amount Calculation */}
+								{group.totalAmount && (
+									<View style={styles.historyTitleWrapper}>
+										<Text style={styles.historyTitleText}>{group.dateInfo}</Text>
+
+										<Text style={styles.historyTitleText}>//</Text>
+
+										<Text style={styles.historyTitleText}>{`${group.totalAmount} so’m`}</Text>
+									</View>
+								)}
+
+								{group.histories.map((history) => (
+									<TouchableOpacity
+										key={history.id}
+										style={styles.history}
+										onPress={() => navigation.navigate("ShoppingDetail", { history })}
+									>
+										<View style={styles.historyAmountWrapper}>
+											<SellIcon />
+											<Text style={styles.historyAmount}>{`${history.amount} so’m`}</Text>
+										</View>
+
+										<Text style={styles.historyTime}>{this.getFormattedTime(history.created_date)}</Text>
+									</TouchableOpacity>
+								))}
 							</View>
-							
-							<View style={{
-								display: "flex",
-								flexDirection: "row",
-								justifyContent: "space-between",
-								alignItems: "center",
-								height: 50,
-								marginTop: 4,
-								paddingHorizontal: 16,
-								paddingVertical: 6
-							}}>
-								<View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-									<SellIcon/>
-									<Text style={{
-										marginLeft: 10,
-										fontFamily: "Gilroy-Medium",
-										fontWeight: "500",
-										fontSize: 16
-									}}>25.000 so’m</Text>
-								</View>
-								
-								<Text
-									style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 14}}>10:45</Text>
-							</View>
-							
-							<View style={{
-								display: "flex",
-								flexDirection: "row",
-								justifyContent: "space-between",
-								alignItems: "center",
-								height: 50,
-								marginTop: 4,
-								paddingHorizontal: 16,
-								paddingVertical: 6
-							}}>
-								<View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-									<SellIcon/>
-									<Text style={{
-										marginLeft: 10,
-										fontFamily: "Gilroy-Medium",
-										fontWeight: "500",
-										fontSize: 16
-									}}>25.000 so’m</Text>
-								</View>
-								
-								<Text
-									style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 14}}>10:45</Text>
-							</View>
-							
-							<View style={{
-								display: "flex",
-								flexDirection: "row",
-								justifyContent: "space-between",
-								alignItems: "center",
-								height: 50,
-								marginTop: 4,
-								paddingHorizontal: 16,
-								paddingVertical: 6
-							}}>
-								<View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-									<SellIcon/>
-									<Text style={{
-										marginLeft: 10,
-										fontFamily: "Gilroy-Medium",
-										fontWeight: "500",
-										fontSize: 16
-									}}>25.000 so’m</Text>
-								</View>
-								
-								<Text
-									style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 14}}>10:45</Text>
-							</View>
-							
-							<View style={{
-								display: "flex",
-								flexDirection: "row",
-								justifyContent: "space-between",
-								alignItems: "center",
-								height: 50,
-								marginTop: 4,
-								paddingHorizontal: 16,
-								paddingVertical: 6
-							}}>
-								<View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-									<SellIcon/>
-									<Text style={{
-										marginLeft: 10,
-										fontFamily: "Gilroy-Medium",
-										fontWeight: "500",
-										fontSize: 16
-									}}>25.000 so’m</Text>
-								</View>
-								
-								<Text
-									style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 14}}>10:45</Text>
-							</View>
-						</View>
+						))}
 					</View>
 				</ScrollView>
 				
@@ -402,7 +211,7 @@ const styles = StyleSheet.create({
 	},
 	
 	pageTitle: {
-		borderBottomColor: "black",
+		borderBottomColor: "#AFAFAF",
 		borderBottomWidth: 1,
 		width: screenWidth - (16 * 2),
 		marginLeft: "auto",
@@ -563,6 +372,60 @@ const styles = StyleSheet.create({
 		fontWeight: "500",
 		fontSize: 16,
 		marginBottom: 4
+	},
+
+	historyTitleWrapper: {
+		marginTop: 12,
+		display: "flex",
+		alignItems: "center",
+		flexDirection: "row",
+		justifyContent: "space-between",
+		width: screenWidth - (16 * 2),
+		marginLeft: "auto",
+		marginRight: "auto",
+		backgroundColor: "#EEEEEE",
+		height: 42,
+		borderRadius: 4,
+		paddingHorizontal: 10,
+		paddingVertical: 10
+	},
+
+	historyTitleText: {
+		fontFamily: "Gilroy-Medium", 
+		fontWeight: "500", 
+		fontSize: 14, 
+		lineHeight: 22
+	},
+
+	history: {
+		display: "flex",
+		flexDirection: "row",
+		justifyContent: "space-between",
+		alignItems: "center",
+		height: 50,
+		marginTop: 4,
+		width: "100%",
+		paddingHorizontal: 16,
+		paddingVertical: 6
+	},
+
+	historyAmountWrapper: {
+		display: "flex", 
+		flexDirection: "row", 
+		alignItems: "center"
+	},
+
+	historyAmount: {
+		marginLeft: 10,
+		fontFamily: "Gilroy-Medium",
+		fontWeight: "500",
+		fontSize: 16
+	},
+
+	historyTime: {
+		fontFamily: "Gilroy-Medium", 
+		fontWeight: "500", 
+		fontSize: 14
 	}
 });
 

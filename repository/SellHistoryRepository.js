@@ -17,8 +17,6 @@ class SellHistoryRepository {
         await tx.executeSql(query, [createdDate, amount]);
       });
 
-      console.log(this.selectAll("sell_group"))
-
       console.log('Sell group created successfully.');
     } catch (error) {
       console.error("Error creating sell group:", error);
@@ -43,33 +41,66 @@ class SellHistoryRepository {
     }
   }
 
-  async selectAll(tableName) {
+  async getAll() {
     try {
-      const query = `SELECT * FROM ${tableName};`;
+      const query = `
+        SELECT * FROM sell_history;
+      `;
 
       const result = await new Promise((resolve, reject) => {
         this.db.transaction((tx) => {
           tx.executeSql(
             query,
             [],
-            (_, { rows }) => resolve(rows),
+            (_, resultSet) => resolve(resultSet),
             (_, error) => reject(error)
           );
         });
       });
-
-      // Log the selected rows
-      result._array.forEach((row) => {
-        console.log(row);
-      });
-
-      return result._array;
+  
+      if (!result || !result.rows || !result.rows._array) {
+        console.error("Unexpected result structure:", result);
+        throw new Error("Unexpected result structure");
+      }
+  
+      const rows = result.rows._array;
+  
+      console.log('Sell history retrieved successfully:', rows);
+      return rows;
     } catch (error) {
-      console.error(`Error selecting all rows from ${tableName}:`, error);
+      console.error("Error retrieving sell history:", error);
       throw error;
     }
   }
 
+  async getAllSellGroup() {
+    try {
+      const query = `
+        SELECT * FROM sell_group ORDER BY created_date DESC;
+      `;
+
+      const result = await new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+          tx.executeSql(
+            query,
+            [],
+            (_, resultSet) => resolve(resultSet),
+            (_, error) => reject(error)
+          );
+        });
+      });
+  
+      if (!result || !result.rows || !result.rows._array) {
+        throw new Error("Unexpected result structure");
+      }
+  
+      const rows = result.rows._array;
+      return rows;
+    } catch (error) {
+      console.error("Error retrieving sell history:", error);
+      throw error;
+    }
+  }
 }
 
 export default SellHistoryRepository;
