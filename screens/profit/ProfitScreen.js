@@ -133,21 +133,11 @@ class Profit extends Component {
 							</Text>
 							
 							<View>
-								<TextInput
-									style={{
-										position: "relative",
-										paddingHorizontal: 16,
-										paddingVertical: 14,
-										borderColor: "#AFAFAF",
-										borderWidth: 1,
-										borderRadius: 8,
-										fontSize: 16,
-										lineHeight: 24,
-										fontFamily: "Gilroy-Medium",
-										fontWeight: "500"
-									}}
-									placeholder="--/--/----"
-									placeholderTextColor="#AAAAAA"/>
+								<TouchableOpacity onPress={() => navigation.navigate("Calendar")}
+																	style={styles.calendarInput}>
+									<Text style={styles.calendarInputPlaceholder}>--/--/----</Text>
+								</TouchableOpacity>
+
 								<CalendarIcon
 									style={{position: "absolute", right: 16, top: 14}}
 									resizeMode="cover"/>
@@ -390,7 +380,45 @@ const styles = StyleSheet.create({
 		fontWeight: "500",
 		fontSize: 14,
 		lineHeight: 22
-	}
+	},
+
+	calendarWrapper: {
+		marginTop: 24,
+		width: screenWidth - (16 * 2),
+		marginLeft: "auto",
+		marginRight: "auto",
+	},
+	
+	calendarIcon: {
+		position: "absolute",
+		right: 16,
+		top: 14
+	},
+
+	calendarInput: {
+		width: screenWidth - (16 * 2),
+		position: "relative",
+		paddingHorizontal: 16,
+		paddingVertical: 14,
+		borderColor: "#AFAFAF",
+		borderWidth: 1,
+		borderRadius: 8
+	},
+
+	calendarInputPlaceholder: {
+		fontSize: 16,
+		lineHeight: 24,
+		fontFamily: "Gilroy-Medium",
+		fontWeight: "500",
+		color: "#AAAAAA"
+	},
+
+	calendarLabel: {
+		fontFamily: "Gilroy-Medium",
+		fontWeight: "500",
+		fontSize: 16,
+		marginBottom: 4
+	},
 });
 
 export default Profit;
