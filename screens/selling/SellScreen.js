@@ -17,6 +17,7 @@ import CrossIcon from "../../assets/cross-icon.svg";
 import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import StoreProductRepository from "../../repository/StoreProductRepository";
 import SellHistoryRepository from '../../repository/SellHistoryRepository';
+import ProfitHistoryRepository from '../../repository/ProfitHistoryRepository';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -52,11 +53,13 @@ class Sell extends Component {
 			isFocused: true,
 			sellingProducts: [],
 			seria: "",
-			amount: 0
+			amount: 0,
+			profit: 0
 		};
 
 		this.storeProductRepository = new StoreProductRepository();
 		this.sellHistoryRepository = new SellHistoryRepository();
+		this.profitHistoryRepository = new ProfitHistoryRepository();
 	}
 	
 	toggleModal = () => {
@@ -87,12 +90,24 @@ class Sell extends Component {
 				newSellingProducts[existingProductIndex].count += 1;
 
 				this.setState({amount: this.state.amount + newSellingProducts[existingProductIndex].selling_price});
+				this.setState({
+					profit: this.state.profit + (
+						newSellingProducts[existingProductIndex].selling_price - 
+						newSellingProducts[existingProductIndex].price
+					)
+				})
 			} else {
 				let newSellingProduct = storeProduct[0];
 				newSellingProduct.count = 1
 				newSellingProducts.push(newSellingProduct);
 
 				this.setState({amount: this.state.amount + newSellingProduct.selling_price});
+				this.setState({
+					profit: this.state.profit + (
+						newSellingProduct.selling_price - 
+						newSellingProduct.price
+					)
+				})
 			}
 	
 			this.setState(
@@ -260,7 +275,9 @@ class Sell extends Component {
 		)
 
 		this.sellHistoryRepository.createSellHistoryGroup(this.state.amount);
+		this.profitHistoryRepository.createProfitHistoryGroup(this.state.profit);
 
+		console.log("PROFIT ", this.state.profit)
 
 		this.state.sellingProducts.forEach((sellingProduct) => {
 			this.sellHistoryRepository.createSellHistory(
@@ -271,6 +288,7 @@ class Sell extends Component {
 				currentDate
 			)
 		});
+
 
 
 		// Navigate screen

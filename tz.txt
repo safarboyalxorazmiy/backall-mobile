@@ -40,12 +40,15 @@ profit_history:
   product_id,
   count,
   count_type,
+  profit,
+  created_date
 
 profit_group:
   id,
-  time,
   created_date,
-  price
+  profit
+//  time,
+
 
 profit_history_group
   id,
