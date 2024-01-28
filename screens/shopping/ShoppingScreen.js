@@ -73,7 +73,7 @@ class Shopping extends Component {
   formatDate = (dateString) => {
 		const date = new Date(dateString);
 		const options = { day: 'numeric', month: 'long', weekday: 'long' };
-		const formattedDate = date.toLocaleDateString('uz-UZ', options);
+		const formattedDate = date.toLocaleDateString('uz', options);
 	
 		let [weekday, day] = formattedDate.split(', ');
 	

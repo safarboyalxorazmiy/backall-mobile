@@ -49,7 +49,6 @@ profit_group:
   profit
 //  time,
 
-
 profit_history_group
   id,
   group_id,

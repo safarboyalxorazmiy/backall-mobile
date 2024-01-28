@@ -2,10 +2,34 @@ import React, {Component} from 'react';
 import {View, Text, TouchableOpacity, Image, StyleSheet, Dimensions} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import BackIcon from '../../assets/arrow-left-icon.svg'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import ProfitHistoryRepository from '../../repository/ProfitHistoryRepository';
 
 const screenWidth = Dimensions.get('window').width;
 
 class ProfitDetail extends Component {
+	constructor(props) {
+		super(props);
+
+		this.profitHistoryRepository = new ProfitHistoryRepository();
+
+		this.state = {
+			groupId: null
+		}
+	}
+
+	async componentDidMount() {
+		const {navigation} = this.props;
+		
+		navigation.addListener("focus", async () => {
+			console.log(await AsyncStorage.getItem("profit_history_id"));
+			await this.setState({groupId: parseInt(await AsyncStorage.getItem("profit_history_id"))});
+
+			console.log(this.state.groupId);
+			console.log(await this.profitHistoryRepository.getProfitHistoryDetailByGroupId(this.state.groupId));
+		});
+	}
+
 	render() {
 		const {navigation} = this.props;
 		

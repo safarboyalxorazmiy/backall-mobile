@@ -275,12 +275,13 @@ class Sell extends Component {
 		)
 
 		this.sellHistoryRepository.createSellHistoryGroup(this.state.amount);
-		this.profitHistoryRepository.createProfitHistoryGroup(this.state.profit);
+		let groupId = await this.profitHistoryRepository.createProfitHistoryGroup(this.state.profit);
+
 
 		console.log("PROFIT ", this.state.profit)
 
-		this.state.sellingProducts.forEach((sellingProduct) => {
-			this.sellHistoryRepository.createSellHistory(
+		this.state.sellingProducts.forEach(async (sellingProduct) => {
+			await this.sellHistoryRepository.createSellHistory(
 				sellingProduct.product_id, 
 				sellingProduct.count, 
 				sellingProduct.count_type,
@@ -290,6 +291,15 @@ class Sell extends Component {
 		});
 
 
+		this.state.sellingProducts.forEach(async (sellingProduct) => {
+			await this.profitHistoryRepository.createProfitHistoryAndLinkWithGroup(
+				sellingProduct.product_id, 
+				sellingProduct.count, 
+				sellingProduct.count_type,
+				this.state.profit,
+				groupId
+			)
+		});
 
 		// Navigate screen
 		const {navigation} = this.props;

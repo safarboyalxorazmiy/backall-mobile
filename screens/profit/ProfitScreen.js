@@ -5,6 +5,7 @@ import {StyleSheet, Text, TextInput, View, Dimensions, Image, TouchableOpacity, 
 import CalendarIcon from "../../assets/calendar-icon.svg";
 import ProfitIcon from "../../assets/profit-icon.svg";
 import ProfitHistoryRepository from '../../repository/ProfitHistoryRepository';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -57,7 +58,7 @@ class Profit extends Component {
 	formatDate = (dateString) => {
 		const date = new Date(dateString);
 		const options = { day: 'numeric', month: 'long', weekday: 'long' };
-		const formattedDate = date.toLocaleDateString('uz-UZ', options);
+		const formattedDate = date.toLocaleDateString('uz', options);
 	
 		let [weekday, day] = formattedDate.split(', ');
 	
@@ -103,7 +104,7 @@ class Profit extends Component {
 				<View style={styles.container}>
 					<ScrollView style={{width: "100%"}}>
 						<View style={{
-							borderBottomColor: "black",
+							borderBottomColor: "#AFAFAF",
 							borderBottomWidth: 1,
 							width: screenWidth - (16 * 2),
 							marginLeft: "auto",
@@ -190,7 +191,18 @@ class Profit extends Component {
 										<TouchableOpacity
 											key={history.id}
 											style={styles.history}
-											onPress={() => navigation.navigate("ShoppingDetail", { history })}
+											onPress={async () => {
+												let historyId = history.id + "";
+
+												console.log(historyId);
+												try {
+													await AsyncStorage.setItem("profit_history_id", historyId);
+												} catch (error) {
+													console.error('Error profit_history_id:', error);
+												}
+
+												navigation.navigate("ProfitDetail", { history });
+											}}
 										>
 											<View style={styles.historyProfitWrapper}>
 												<ProfitIcon />
