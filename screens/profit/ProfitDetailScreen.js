@@ -1,11 +1,11 @@
-import React, {Component} from 'react';
-import {View, Text, TouchableOpacity, Image, StyleSheet, Dimensions} from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
-import BackIcon from '../../assets/arrow-left-icon.svg'
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import ProfitHistoryRepository from '../../repository/ProfitHistoryRepository';
+import React, {Component} from "react";
+import {View, Text, TouchableOpacity, Image, StyleSheet, Dimensions} from "react-native";
+import {ScrollView} from "react-native-gesture-handler";
+import BackIcon from "../../assets/arrow-left-icon.svg";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import ProfitHistoryRepository from "../../repository/ProfitHistoryRepository";
 
-const screenWidth = Dimensions.get('window').width;
+const screenWidth = Dimensions.get("window").width;
 
 class ProfitDetail extends Component {
 	constructor(props) {
@@ -14,7 +14,8 @@ class ProfitDetail extends Component {
 		this.profitHistoryRepository = new ProfitHistoryRepository();
 
 		this.state = {
-			groupId: null
+			groupId: null,
+			profitHistoryDetail: []
 		}
 	}
 
@@ -23,10 +24,15 @@ class ProfitDetail extends Component {
 		
 		navigation.addListener("focus", async () => {
 			console.log(await AsyncStorage.getItem("profit_history_id"));
-			await this.setState({groupId: parseInt(await AsyncStorage.getItem("profit_history_id"))});
+			await this.setState(
+				{ groupId: parseInt(await AsyncStorage.getItem("profit_history_id")) }
+			);
 
-			console.log(this.state.groupId);
-			console.log(await this.profitHistoryRepository.getProfitHistoryDetailByGroupId(this.state.groupId));
+			await this.setState(
+				{ profitHistoryDetail: await this.profitHistoryRepository.getProfitHistoryDetailByGroupId(this.state.groupId) }
+			);
+
+			console.log("HISTORY DETAIL: " + this.state.profitHistoryDetail);
 		});
 	}
 
@@ -38,7 +44,7 @@ class ProfitDetail extends Component {
 				<View style={styles.container}>
 					<View style={styles.header}>
 						<TouchableOpacity
-							onPress={() => navigation.navigate('Profit')}
+							onPress={() => navigation.navigate("Profit")}
 							style={styles.backButton}
 						>
 							<BackIcon/>
@@ -46,6 +52,7 @@ class ProfitDetail extends Component {
 						
 						<Text style={styles.title}>Mahsulotdan qolgan foyda</Text>
 					</View>
+
 					
 					<View style={styles.infoBar}>
 						<Text style={styles.infoText}>20.000 so’m</Text>
@@ -55,92 +62,36 @@ class ProfitDetail extends Component {
 						<Text style={styles.infoText}>4-oktyabr</Text>
 					</View>
 					
+					{/*
+						this.state.profitHistoryDetail = 
+						[{
+							"count": 1, 
+							"count_type": "DONA", 
+							"created_date": "2024-01-28 16:13:46", 
+							"id": 9, 
+							"product_id": 1, 
+							"profit": 500
+						}] 
+					*/}
 					<View>
-						<View style={styles.profitContainer}>
-							<Text style={styles.profitTitle}>Coca Cola 1.5 L</Text>
-							
-							<View style={styles.profitRow}>
-								<Text style={styles.profitText}>Soni</Text>
-								<Text style={styles.profitPrice}>2 ta</Text>
-							</View>
-							
-							<View style={styles.profitRow}>
-								<Text style={styles.profitText}>Qolgan foyda</Text>
-								<Text style={styles.profitPrice}>+1.000 so’m</Text>
-							</View>
-						</View>
-						
-						<View style={styles.profitContainer}>
-							<Text style={styles.profitTitle}>Coca Cola 1.5 L</Text>
-							
-							<View style={styles.profitRow}>
-								<Text style={styles.profitText}>Soni</Text>
-								<Text style={styles.profitPrice}>2 ta</Text>
-							</View>
-							
-							<View style={styles.profitRow}>
-								<Text style={styles.profitText}>Qolgan foyda</Text>
-								<Text style={styles.profitPrice}>+1.000 so’m</Text>
-							</View>
-						</View>
-						
-						<View style={styles.profitContainer}>
-							<Text style={styles.profitTitle}>Coca Cola 1.5 L</Text>
-							
-							<View style={styles.profitRow}>
-								<Text style={styles.profitText}>Soni</Text>
-								<Text style={styles.profitPrice}>2 ta</Text>
-							</View>
-							
-							<View style={styles.profitRow}>
-								<Text style={styles.profitText}>Qolgan foyda</Text>
-								<Text style={styles.profitPrice}>+1.000 so’m</Text>
-							</View>
-						</View>
-						
-						<View style={styles.profitContainer}>
-							<Text style={styles.profitTitle}>Coca Cola 1.5 L</Text>
-							
-							<View style={styles.profitRow}>
-								<Text style={styles.profitText}>Soni</Text>
-								<Text style={styles.profitPrice}>2 ta</Text>
-							</View>
-							
-							<View style={styles.profitRow}>
-								<Text style={styles.profitText}>Qolgan foyda</Text>
-								<Text style={styles.profitPrice}>+1.000 so’m</Text>
-							</View>
-						</View>
-						
-						<View style={styles.profitContainer}>
-							<Text style={styles.profitTitle}>Coca Cola 1.5 L</Text>
-							
-							<View style={styles.profitRow}>
-								<Text style={styles.profitText}>Soni</Text>
-								<Text style={styles.profitPrice}>2 ta</Text>
-							</View>
-							
-							<View style={styles.profitRow}>
-								<Text style={styles.profitText}>Qolgan foyda</Text>
-								<Text style={styles.profitPrice}>+1.000 so’m</Text>
-							</View>
-						</View>
-						
-						
-						<View style={styles.profitContainer}>
-							<Text style={styles.profitTitle}>Coca Cola 1.5 L</Text>
-							
-							<View style={styles.profitRow}>
-								<Text style={styles.profitText}>Soni</Text>
-								<Text style={styles.profitPrice}>2 ta</Text>
-							</View>
-							
-							<View style={styles.profitRow}>
-								<Text style={styles.profitText}>Qolgan foyda</Text>
-								<Text style={styles.profitPrice}>+1.000 so’m</Text>
-							</View>
-						</View>
-					
+						{/* FOR EACH ROW */}
+						{
+							this.state.profitHistoryDetail.map((item, index) => (
+								<View style={styles.profitContainer} key={index}>
+									<Text style={styles.profitTitle}>Coca Cola 1.5 L</Text>
+
+									<View style={styles.profitRow}>
+										<Text style={styles.profitText}>Soni</Text>
+										<Text style={styles.profitPrice}>{item.count} {item.count_type}</Text>
+									</View>
+
+									<View style={styles.profitRow}>
+										<Text style={styles.profitText}>Qolgan foyda</Text>
+										<Text style={styles.profitPrice}>+{item.profit} so’m</Text>
+									</View>
+								</View>
+							))
+						}
 					</View>
 				</View>
 			
@@ -157,21 +108,21 @@ const styles = StyleSheet.create({
 	container: {
 		marginTop: 52,
 		width: screenWidth - 32,
-		marginLeft: 'auto',
-		marginRight: 'auto',
+		marginLeft: "auto",
+		marginRight: "auto",
 		flex: 1,
-		alignItems: 'center'
+		alignItems: "center"
 	},
 	
 	header: {
 		width: screenWidth - 34,
-		flexDirection: 'row',
-		alignItems: 'center',
+		flexDirection: "row",
+		alignItems: "center",
 		marginBottom: 16,
 	},
 	
 	backButton: {
-		backgroundColor: '#F5F5F7',
+		backgroundColor: "#F5F5F7",
 		paddingVertical: 16,
 		paddingHorizontal: 19,
 		borderRadius: 8,
@@ -179,28 +130,28 @@ const styles = StyleSheet.create({
 	
 	title: {
 		width: 299,
-		textAlign: 'center',
+		textAlign: "center",
 		fontSize: 18,
-		fontFamily: 'Gilroy-SemiBold',
-		fontWeight: '600',
+		fontFamily: "Gilroy-SemiBold",
+		fontWeight: "600",
 	},
 	
 	infoBar: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between',
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-between",
 		width: screenWidth - 32,
-		marginLeft: 'auto',
-		backgroundColor: '#272727',
+		marginLeft: "auto",
+		backgroundColor: "#272727",
 		padding: 10,
 	},
 	
 	infoText: {
-		color: '#FFF',
+		color: "#FFF",
 	},
 	
 	infoDivider: {
-		color: '#FFF',
+		color: "#FFF",
 	},
 	
 	profitContainer: {
@@ -208,10 +159,10 @@ const styles = StyleSheet.create({
 		width: screenWidth - 32,
 		borderWidth: 1,
 		backgroundColor: "#fff",
-		borderColor: '#F1F1F1',
+		borderColor: "#F1F1F1",
 		borderRadius: 8,
 		elevation: 5,
-		shadowColor: 'rgba(0, 0, 0, 0.07)',
+		shadowColor: "rgba(0, 0, 0, 0.07)",
 		shadowOffset: {width: 5, height: 5},
 		shadowOpacity: 1,
 		shadowRadius: 15,
@@ -220,31 +171,31 @@ const styles = StyleSheet.create({
 	},
 	
 	profitTitle: {
-		fontFamily: 'Gilroy-SemiBold',
-		fontWeight: '600',
+		fontFamily: "Gilroy-SemiBold",
+		fontWeight: "600",
 		fontSize: 16,
 		marginBottom: 12,
 	},
 	
 	profitRow: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
+		flexDirection: "row",
+		justifyContent: "space-between",
 		marginBottom: 12,
 	},
 	
 	profitText: {
-		color: '#777',
+		color: "#777",
 		fontSize: 16,
-		fontFamily: 'Gilroy-Medium',
-		fontWeight: '500',
+		fontFamily: "Gilroy-Medium",
+		fontWeight: "500",
 		lineHeight: 24,
 	},
 	
 	profitPrice: {
-		color: '#0EBA2C',
+		color: "#0EBA2C",
 		fontSize: 16,
-		fontFamily: 'Gilroy-Medium',
-		fontWeight: '500',
+		fontFamily: "Gilroy-Medium",
+		fontWeight: "500",
 		lineHeight: 24,
 	},
 });

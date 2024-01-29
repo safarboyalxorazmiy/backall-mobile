@@ -59,6 +59,8 @@ class ProfitHistoryRepository {
 
   async createProfitHistory(product_id, count, count_type, profit, created_date, group_id) {
     try {
+      console.log(await this.getAll());
+
       const insertProfitHistoryQuery = `
         INSERT INTO profit_history (product_id, count, count_type, profit, created_date)
         VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP);
@@ -89,13 +91,11 @@ class ProfitHistoryRepository {
     await this.db.transaction(async (tx) => {
       await tx.executeSql(
         insert,
-        [historyId, group_id]
+        [group_id, historyId]
       );
     });
 
-    console.log(historyId + " " + group_id)
-
-    this.getAll();
+    console.log("History Id: " + historyId + " Group Id: " + group_id)
   }
   
   async getAll() {
@@ -192,17 +192,16 @@ class ProfitHistoryRepository {
 
   async getProfitHistoryDetailByGroupId(group_id) {
     try {
-      console.log("group_id ", group_id)
+      console.log("group_id ", group_id);
       if (group_id === null) {
         console.log('group_id is null. Skipping query.');
         return [];
       }
   
       const query = `
-        SELECT ph.* 
-        FROM profit_history ph
-        JOIN profit_history_group phg ON ph.id = phg.history_id
-        WHERE phg.group_id = ?;
+        SELECT * 
+        FROM profit_history_group
+        WHERE group_id = ?;
       `;
   
       const result = await new Promise((resolve, reject) => {
@@ -220,14 +219,90 @@ class ProfitHistoryRepository {
         throw new Error("Unexpected result structure");
       }
   
-      const rows = result.rows._array;
-      console.log('Profit history details retrieved successfully:', rows);
-      
-      console.log(await this.getAll())
-
-      return rows;
+      console.log("res: ", result.rows._array);
+      const historyGroupLinkedArray = result.rows._array;
+  
+      let historyInfo = [];
+  
+      for (const historyGroupLinked of historyGroupLinkedArray) {
+        let profitHistoryInfo = await this.getProfitHistoryInfoById(historyGroupLinked.history_id);
+        console.log("PROFIT HISTORY INFO INSIDE OF FOR EACH ", profitHistoryInfo[0]);
+        historyInfo = [...historyInfo, profitHistoryInfo[0]];
+        console.log("PROFIT ARRAY: ", historyInfo);
+      }
+  
+      console.log("HISTORY INFO: ", historyInfo);
+      return historyInfo;
     } catch (error) {
       console.error("Error retrieving profit history details:", error);
+      throw error;
+    }
+  }
+  
+
+  // TODO =>
+
+  // GURUHNI MA'LUMOTLARINI ID ORQALI OLISH.
+  async getProfitGroupInfoById (group_id) {
+    try {
+      const query = `
+        SELECT * FROM profit_group WHERE id = ?;
+      `;
+
+      const result = await new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+          tx.executeSql(
+            query,
+            [group_id],
+            (_, resultSet) => resolve(resultSet),
+            (_, error) => reject(error)
+          );
+        });
+      });
+  
+      if (!result || !result.rows || !result.rows._array) {
+        console.error("Unexpected result structure:", result);
+        throw new Error("Unexpected result structure");
+      }
+  
+      console.log("ins res: ", result.rows._array);
+      return result.rows._array;
+    } catch (error) {
+      console.error("Error retrieving sell history:", error);
+      throw error;
+    }
+  }
+
+  // PROFIT HISTORY MA'LUMOTLARINI ID ORQALI OLISH.
+  async getProfitHistoryInfoById (history_id) {
+    try {
+      const query = `
+        SELECT * FROM profit_history WHERE id = ?;
+      `;
+
+      const result = await new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+          tx.executeSql(
+            query,
+            [history_id],
+            (_, resultSet) => resolve(resultSet),
+            (_, error) => reject(error)
+          );
+        });
+      });
+  
+      if (!result || !result.rows || !result.rows._array) {
+        console.error("Unexpected result structure:", result);
+        throw new Error("Unexpected result structure");
+      }
+  
+      const rows = result.rows._array;
+  
+      console.log(result)
+      console.log(rows);
+      return rows;
+    } catch (error) {
+      console.error("Error retrieving sell history:", error);
       throw error;
     }
   }
