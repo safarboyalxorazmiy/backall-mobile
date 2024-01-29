@@ -1,8 +1,10 @@
 import DatabaseRepository from "./DatabaseRepository";
+import ProductRepository from "./ProductRepository";
 
 class ProfitHistoryRepository {
   constructor() {
     this.db = new DatabaseRepository().getDatabase();
+    this.productRepository = new ProductRepository();
   }
 
   async createProfitHistoryGroup(profit) {
@@ -227,7 +229,13 @@ class ProfitHistoryRepository {
       for (const historyGroupLinked of historyGroupLinkedArray) {
         let profitHistoryInfo = await this.getProfitHistoryInfoById(historyGroupLinked.history_id);
         console.log("PROFIT HISTORY INFO INSIDE OF FOR EACH ", profitHistoryInfo[0]);
-        historyInfo = [...historyInfo, profitHistoryInfo[0]];
+        let currentProfitHistoryInfo = profitHistoryInfo[0];
+        let product = await this.productRepository.getProductNameAndBrandById(currentProfitHistoryInfo.product_id);
+
+        currentProfitHistoryInfo.productName = product.name;
+
+
+        historyInfo = [...historyInfo, currentProfitHistoryInfo];
         console.log("PROFIT ARRAY: ", historyInfo);
       }
   

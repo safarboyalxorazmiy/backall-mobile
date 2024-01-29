@@ -78,7 +78,7 @@ class ProfitDetail extends Component {
 						{
 							this.state.profitHistoryDetail.map((item, index) => (
 								<View style={styles.profitContainer} key={index}>
-									<Text style={styles.profitTitle}>Coca Cola 1.5 L</Text>
+									<Text style={styles.profitTitle}>{item.productName}</Text>
 
 									<View style={styles.profitRow}>
 										<Text style={styles.profitText}>Soni</Text>

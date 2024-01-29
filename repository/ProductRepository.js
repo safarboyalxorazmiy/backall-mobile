@@ -138,6 +138,44 @@ class ProductRepository {
       throw error;
     }
   }
+
+  async getProductNameAndBrandById(product_id) {
+    try {
+      const result = await new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+          tx.executeSql(
+            `
+              SELECT p.name, p.brand_name
+              FROM product p
+              WHERE p.id = ?;
+            `,
+            [product_id],
+            (_, results) => {
+              const productInfo = results.rows._array[0];
+  
+              if (productInfo) {
+                resolve({
+                  name: productInfo.name,
+                  brand_name: productInfo.brand_name,
+                });
+              } else {
+                // Product not found
+                resolve(null);
+              }
+            },
+            (_, error) => {
+              reject(error);
+            }
+          );
+        });
+      });
+  
+      return result;
+    } catch (error) {
+      console.error(`Error getting product name and brand by ID: ${error}`);
+      throw error;
+    }
+  }
 }
 
 export default ProductRepository;
