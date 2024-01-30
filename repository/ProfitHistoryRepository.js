@@ -232,8 +232,7 @@ class ProfitHistoryRepository {
         let currentProfitHistoryInfo = profitHistoryInfo[0];
         let product = await this.productRepository.getProductNameAndBrandById(currentProfitHistoryInfo.product_id);
 
-        currentProfitHistoryInfo.productName = product.name;
-
+        currentProfitHistoryInfo.productName = product.brand_name + " " + product.name;
 
         historyInfo = [...historyInfo, currentProfitHistoryInfo];
         console.log("PROFIT ARRAY: ", historyInfo);
