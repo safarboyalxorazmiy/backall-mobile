@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import {StatusBar} from 'expo-status-bar';
+import React, {Component} from "react";
+import {StatusBar} from "expo-status-bar";
 import {
 	StyleSheet,
 	View,
@@ -9,18 +9,17 @@ import {
 	TouchableOpacity,
 	Modal,
 	Keyboard
-} from 'react-native';
-import SwipeableFlatList from 'react-native-swipeable-list';
+} from "react-native";
+import SwipeableFlatList from "react-native-swipeable-list";
 
 import BackIcon from "../../assets/arrow-left-icon.svg";
 import CrossIcon from "../../assets/cross-icon.svg";
-import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import StoreProductRepository from "../../repository/StoreProductRepository";
-import SellHistoryRepository from '../../repository/SellHistoryRepository';
-import ProfitHistoryRepository from '../../repository/ProfitHistoryRepository';
+import SellHistoryRepository from "../../repository/SellHistoryRepository";
+import ProfitHistoryRepository from "../../repository/ProfitHistoryRepository";
 
-const screenWidth = Dimensions.get('window').width;
-const screenHeight = Dimensions.get('window').height;
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 
 const renderItem = ({item}) => {
 	return item.key % 2 === 1 ? (
@@ -37,8 +36,16 @@ const renderItem = ({item}) => {
 };
 
 const renderQuickActions = () => (
-	<View style={{flex: 1, backgroundColor: 'red', justifyContent: 'center', alignItems: 'flex-end'}}>
-		<Text style={{color: 'white', padding: 10}}>Delete</Text>
+	<View style={{
+		flex: 1, 
+		backgroundColor: "red", 
+		justifyContent: "center", 
+		alignItems: "flex-end"
+	}}>
+		<Text style={{
+			color: "white", 
+			padding: 10
+		}}>Delete</Text>
 	</View>
 );
 
@@ -70,7 +77,7 @@ class Sell extends Component {
 	
 	handleFocus = () => {
     this.setState({isFocused: true});
-		this.inputRef.current.focus()
+		this.inputRef.current.focus();
   };
 
 	handleBlur = () => {
@@ -78,30 +85,37 @@ class Sell extends Component {
   };
 
 	onChangeTextSerialInput = async (seriya) => {
-		this.setState({seria: seriya})
+		this.setState({seria: seriya});
 		let storeProduct = await this.storeProductRepository.getProductInfoBySerialNumber(seriya);
 	
 		if (storeProduct[0]) {
 			let newSellingProducts = [...this.state.sellingProducts]; 
 	
-			let existingProductIndex = newSellingProducts.findIndex(element => element.id === storeProduct[0].id);
+			let existingProductIndex = 
+			newSellingProducts.findIndex(
+				element => element.id === storeProduct[0].id
+			);
 	
 			if (existingProductIndex !== -1) {
 				newSellingProducts[existingProductIndex].count += 1;
 
-				this.setState({amount: this.state.amount + newSellingProducts[existingProductIndex].selling_price});
+				this.setState({
+					amount: this.state.amount + newSellingProducts[existingProductIndex].selling_price
+				});
 				this.setState({
 					profit: this.state.profit + (
 						newSellingProducts[existingProductIndex].selling_price - 
 						newSellingProducts[existingProductIndex].price
 					)
-				})
+				});
 			} else {
 				let newSellingProduct = storeProduct[0];
-				newSellingProduct.count = 1
+				newSellingProduct.count = 1;
 				newSellingProducts.push(newSellingProduct);
 
-				this.setState({amount: this.state.amount + newSellingProduct.selling_price});
+				this.setState({
+					amount: this.state.amount + newSellingProduct.selling_price
+				});
 				this.setState({
 					profit: this.state.profit + (
 						newSellingProduct.selling_price - 
@@ -118,7 +132,6 @@ class Sell extends Component {
 				Keyboard.dismiss();
 			}
 	};
-	
 
 	render() {
 		const {navigation} = this.props;
@@ -129,7 +142,7 @@ class Sell extends Component {
 				<View style={styles.container}>
 					<View style={styles.pageTitle}>
 						<TouchableOpacity
-							onPress={() => navigation.navigate('Basket')}
+							onPress={() => navigation.navigate("Basket")}
 							style={styles.backIconWrapper}
 						>
 							<BackIcon/>
@@ -181,7 +194,7 @@ class Sell extends Component {
 							style={styles.footerTitle}
 						>
 							<Text style={styles.priceTitle}>Buyurtma narxi</Text>
-							<Text style={styles.price}>{this.state.amount} so'm</Text>
+							<Text style={styles.price}>{this.state.amount} so"m</Text>
 						</View>
 						
 						<TouchableOpacity 
@@ -194,8 +207,14 @@ class Sell extends Component {
 					
 					<StatusBar style="auto"/>
 					
-					<Modal visible={isModalVisible} animationType="none" style={{}} transparent={true}>
-						<TouchableOpacity activeOpacity={1} onPress={this.toggleModal}>
+					<Modal 
+						visible={isModalVisible} 
+						animationType="none" 
+						style={{}} 
+						transparent={true}>
+						<TouchableOpacity 
+							activeOpacity={1} 
+							onPress={this.toggleModal}>
 							<View style={{
 								position: "absolute",
 								width: screenWidth,
@@ -255,8 +274,11 @@ class Sell extends Component {
 										/>
 									</View>
 									
-									<TouchableOpacity style={styles.modalButton} onPress={this.toggleModal}>
-										<Text style={styles.modalButtonText}>Savatga qo’shish</Text>
+									<TouchableOpacity 
+										style={styles.modalButton}
+										onPress={this.toggleModal}>
+										<Text 
+											style={styles.modalButtonText}>Savatga qo’shish</Text>
 									</TouchableOpacity>
 								</View>
 							</View>
@@ -272,55 +294,56 @@ class Sell extends Component {
 
 		console.log(
 			this.state.sellingProducts
-		)
+		);
 
-		this.sellHistoryRepository.createSellHistoryGroup(this.state.amount);
-		let groupId = await this.profitHistoryRepository.createProfitHistoryGroup(this.state.profit);
-
-
-		console.log("PROFIT ", this.state.profit)
-
-		this.state.sellingProducts.forEach(async (sellingProduct) => {
-			await this.sellHistoryRepository.createSellHistory(
-				sellingProduct.product_id, 
-				sellingProduct.count, 
-				sellingProduct.count_type,
-				sellingProduct.selling_price,
-				currentDate
-			)
-		});
+		let sellGroupId = await this.sellHistoryRepository.createSellHistoryGroup(this.state.amount);
+		let profitGroupId = await this.profitHistoryRepository.createProfitHistoryGroup(this.state.profit);
 
 
-		this.state.sellingProducts.forEach(async (sellingProduct) => {
-			await this.profitHistoryRepository.createProfitHistoryAndLinkWithGroup(
-				sellingProduct.product_id, 
-				sellingProduct.count, 
-				sellingProduct.count_type,
-				this.state.profit,
-				groupId
-			)
-		});
+		console.log("PROFIT ", this.state.profit);
+
+		this.state.sellingProducts.forEach(
+			async (sellingProduct) => {
+				await this.sellHistoryRepository.createSellHistoryAndLinkWithGroup(
+					sellingProduct.product_id, 
+					sellingProduct.count, 
+					sellingProduct.count_type,
+					sellingProduct.selling_price,
+					currentDate,
+					sellGroupId
+				)
+			});
+
+
+		this.state.sellingProducts.forEach(
+			async (sellingProduct) => {
+				await this.profitHistoryRepository.createProfitHistoryAndLinkWithGroup(
+					sellingProduct.product_id, 
+					sellingProduct.count, 
+					sellingProduct.count_type,
+					this.state.profit,
+					profitGroupId
+				)
+			});
 
 		// Navigate screen
 		const {navigation} = this.props;
-		navigation.navigate('Shopping');
+		navigation.navigate("Shopping");
 	}
 }
 
-/* 
-
+/*
 let currentDate = new Date();
-const weekDays = ['Yakshanba', 'Dushanba', 'Seshanba', 'Chorshanba', 'Payshanba', 'Juma', 'Shanba'];	
+const weekDays = ["Yakshanba", "Dushanba", "Seshanba", "Chorshanba", "Payshanba", "Juma", "Shanba"];	
 
 let hourAndMinute = currentDate.getHours() + ":" + currentDate.getMinutes();
-let currentMonth = currentDate.toLocaleString('uz-UZ', { month: 'long' }).toLocaleLowerCase();
+let currentMonth = currentDate.toLocaleString("uz-UZ", { month: "long" }).toLocaleLowerCase();
 let currentDay = currentDate.getDate();
 let currentWeekDayName = weekDays[currentDate.getDay()];
 
 console.log(hourAndMinute);
 console.log(currentDay + "-" + currentMonth);
 console.log(currentWeekDayName);
-
 */
 
 const styles = StyleSheet.create({
@@ -334,22 +357,22 @@ const styles = StyleSheet.create({
 	
 	pageTitle: {
 		width: screenWidth - (16 + 16),
-		display: 'flex',
-		flexDirection: 'row',
-		alignItems: 'center',
+		display: "flex",
+		flexDirection: "row",
+		alignItems: "center",
 		marginBottom: 10,
 	},
 	
 	pageTitleText: {
 		width: 299,
-		textAlign: 'center',
+		textAlign: "center",
 		fontSize: 18,
-		fontFamily: 'Gilroy-SemiBold',
+		fontFamily: "Gilroy-SemiBold",
 		fontWeight: "600",
 	},
 	
 	backIconWrapper: {
-		backgroundColor: '#F5F5F7',
+		backgroundColor: "#F5F5F7",
 		paddingVertical: 16,
 		paddingHorizontal: 19,
 		borderRadius: 8,
@@ -442,13 +465,13 @@ const styles = StyleSheet.create({
 		width: screenWidth - (17 + 17),
 		paddingVertical: 14,
 		borderWidth: 1,
-		borderColor: '#222222',
+		borderColor: "#222222",
 		borderRadius: 8,
 		marginTop: 16
 	},
 	
 	productAddButtonText: {
-		textAlign: 'center'
+		textAlign: "center"
 	},
 	
 	crossIconWrapper: {
@@ -468,7 +491,7 @@ const styles = StyleSheet.create({
 	},
 	
 	footer: {
-		backgroundColor: '#fff',
+		backgroundColor: "#fff",
 		width: "100%",
 	},
 	
@@ -477,12 +500,12 @@ const styles = StyleSheet.create({
 		paddingTop: 16,
 		paddingHorizontal: 17,
 		width: "100%",
-		display: 'flex',
-		justifyContent: 'space-between',
-		alignItems: 'flex-end',
-		flexDirection: 'row',
+		display: "flex",
+		justifyContent: "space-between",
+		alignItems: "flex-end",
+		flexDirection: "row",
 		
-		shadowColor: 'rgba(0, 0, 0, 0.1)',
+		shadowColor: "rgba(0, 0, 0, 0.1)",
 		shadowOffset: {width: 0, height: -10},
 		shadowOpacity: 1,
 		shadowRadius: 30,

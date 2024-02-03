@@ -44,9 +44,22 @@ class DatabaseRepository {
               created_date TIMESTAMP, 
               FOREIGN KEY (product_id) REFERENCES product(id)
             );`,
-            'CREATE TABLE IF NOT EXISTS sell_group (id INTEGER PRIMARY KEY AUTOINCREMENT, created_date TIMESTAMP, amount DOUBLE);',
-            'CREATE TABLE IF NOT EXISTS sell_history_group (id INTEGER PRIMARY KEY AUTOINCREMENT, group_id INTEGER, history_id INTEGER, FOREIGN KEY (group_id) REFERENCES sell_group(id), FOREIGN KEY (history_id) REFERENCES sell_history(id));',
+
+            `CREATE TABLE IF NOT EXISTS sell_group (
+              id INTEGER PRIMARY KEY AUTOINCREMENT, 
+              created_date TIMESTAMP, 
+              amount DOUBLE
+            );`,
+
+            `CREATE TABLE IF NOT EXISTS sell_history_group (
+              id INTEGER PRIMARY KEY AUTOINCREMENT, 
+              group_id INTEGER,
+              history_id INTEGER, 
+              FOREIGN KEY (group_id) REFERENCES sell_group(id), 
+              FOREIGN KEY (history_id) REFERENCES sell_history(id)
+            );`,
           
+            // `DROP TABLE sell_history; DROP TABLE sell_group; DROP TABLE sell_history_group;`
             // `DROP TABLE profit_history;`,
             
             `CREATE TABLE IF NOT EXISTS profit_history (

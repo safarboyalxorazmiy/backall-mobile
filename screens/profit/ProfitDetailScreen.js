@@ -133,7 +133,7 @@ class ProfitDetail extends Component {
 
 									<View style={styles.profitRow}>
 										<Text style={styles.profitText}>Qolgan foyda</Text>
-										<Text style={styles.profitPrice}>+{item.profit} so’m</Text>
+										<Text style={styles.profitPrice}>+{item.profit.toLocaleString()} so’m</Text>
 									</View>
 								</View>
 							))

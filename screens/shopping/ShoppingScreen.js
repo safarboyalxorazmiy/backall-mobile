@@ -12,6 +12,7 @@ import {
 import CalendarIcon from "../../assets/calendar-icon.svg";
 import SellIcon from "../../assets/sell-icon.svg";
 import SellHistoryRepository from "../../repository/SellHistoryRepository";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -119,7 +120,7 @@ class Shopping extends Component {
 							                  style={styles.calendarInput}>
 								<Text style={styles.calendarInputPlaceholder}>--/--/----</Text>
 							</TouchableOpacity>
-							
+
 							{Platform.OS === 'android' || Platform.OS === 'ios' ? (
 									<CalendarIcon
 										style={styles.calendarIcon}
@@ -161,10 +162,10 @@ class Shopping extends Component {
 								lineHeight: 24,
 								color: "#FFF"
 							}}>{`${this.state.currentMonthTotal} so’m`}</Text>
-        )}
+					)}
 						
 					</View>
-					
+
 					<View>
 						{this.state.groupedHistories.map((group) => (
 							<View key={group.date}>
@@ -183,11 +184,21 @@ class Shopping extends Component {
 									<TouchableOpacity
 										key={history.id}
 										style={styles.history}
-										onPress={() => navigation.navigate("ShoppingDetail", { history })}
+										onPress={async () => {
+
+											let historyId = history.id + "";
+
+											console.log(historyId);
+											try {
+												await AsyncStorage.setItem("sell_history_id", historyId);
+											} catch (error) {}
+
+											navigation.navigate("ShoppingDetail", { history })										
+										}}
 									>
 										<View style={styles.historyAmountWrapper}>
 											<SellIcon />
-											<Text style={styles.historyAmount}>{`${history.amount} so’m`}</Text>
+											<Text style={styles.historyAmount}>{`${history.amount.toLocaleString()} so’m`}</Text>
 										</View>
 
 										<Text style={styles.historyTime}>{this.getFormattedTime(history.created_date)}</Text>
@@ -197,7 +208,7 @@ class Shopping extends Component {
 						))}
 					</View>
 				</ScrollView>
-				
+
 				<StatusBar style="auto"/>
 			</View>
 		);
@@ -212,7 +223,7 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		paddingTop: 50
 	},
-	
+
 	pageTitle: {
 		borderBottomColor: "#AFAFAF",
 		borderBottomWidth: 1,

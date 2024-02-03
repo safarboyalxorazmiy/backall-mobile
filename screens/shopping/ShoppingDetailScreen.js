@@ -9,210 +9,263 @@ import {
 import {ScrollView} from 'react-native-gesture-handler';
 
 import BackIcon from '../../assets/arrow-left-icon.svg'
-
+import SellHistoryRepository from '../../repository/SellHistoryRepository';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const screenWidth = Dimensions.get('window').width;
 
 class ShoppingDetail extends Component {
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			sellGroupId: null,
+			sellHistoryDetail: [],
+			sellGroupDetail: {}
+		}
+
+		this.sellHistoryRepository = new SellHistoryRepository();
+	}
+
+	async componentDidMount() {
+		const {navigation} = this.props;
+
+		navigation.addListener("focus", async () => {
+			let sellGroupId = await AsyncStorage.getItem("sell_history_id");
+
+			await this.setState(
+				{ sellGroupId: parseInt(sellGroupId) }
+			);
+
+			await this.setState(
+				{ 
+					sellHistoryDetail: 
+					await this.sellHistoryRepository.getSellHistoryDetailByGroupId(this.state.sellGroupId) 
+				}
+			);
+
+			let sellHistoryDetail = await this.sellHistoryRepository.getSellHistoryDetailByGroupId(this.state.sellGroupId);
+			this.setState({ 
+				sellHistoryDetail: sellHistoryDetail
+			});
+
+			console.log("HISTORY DETAIL: " , this.state.sellHistoryDetail);
+
+			let groupDetail = await this.sellHistoryRepository.getSellGroupInfoById(this.state.sellGroupId);
+			this.setState({ sellGroupDetail: groupDetail[0] });
+
+			console.log("GROUP DETAIL: ", this.state.sellGroupDetail);
+		});
+	}
+
+	
+	getTime(isoString) {
+		var parsedDate = new Date(isoString);
+
+		let hours = parsedDate.getHours();
+		let minutes = parsedDate.getMinutes();
+		let formattedTime = (hours < 10 ? '0' : '') + hours + ':' + (minutes < 10 ? '0' : '') + minutes;
+	
+		return formattedTime;
+	}
+
+	getDay(isoString) {
+		// Parse the ISO string into a Date object
+		var parsedDate = new Date(isoString);
+	
+		// Array of month names (customize as needed)
+		var monthNames = [
+			"yanvar",
+			"fevral",
+			"mart",
+			"aprel",
+			"may",
+			"iyun",
+			"iyul",
+			"avqust",
+			"sentyabr",
+			"oktyabr",
+			"noyabr",
+			"dekabr"
+		];
+	
+		// Get day and month
+		var day = parsedDate.getDate();
+		var monthIndex = parsedDate.getMonth();
+		var monthName = monthNames[monthIndex];
+	
+		// Format the result
+		var formattedResult = day + "-" + monthName;
+	
+		return formattedResult;
+	}
+
+
 	render() {
 		const {navigation} = this.props;
-		
+
 		return (
 			<ScrollView style={styles.body}>
 				<View style={styles.container}>
 					<View style={styles.header}>
 						<TouchableOpacity
-							onPress={() => navigation.navigate('Shopping')}
+							onPress={() => navigation.navigate("Shopping")}
 							style={styles.backButton}
 						>
 							<BackIcon/>
 						</TouchableOpacity>
 						
-						<Text style={styles.title}>Sotilgan mahsulotlar</Text>
+						<Text style={styles.title}>Mahsulotdan qolgan foyda</Text>
 					</View>
+
 					
 					<View style={styles.infoBar}>
-						<Text style={styles.infoText}>20.000 so’m</Text>
+						<Text style={styles.infoText}>{ this.state.sellGroupDetail.amount } so’m</Text>
 						<Text style={styles.infoDivider}>//</Text>
-						<Text style={styles.infoText}>10:45</Text>
+						<Text style={styles.infoText}>{ this.getTime(this.state.sellGroupDetail.created_date) }</Text>
 						<Text style={styles.infoDivider}>//</Text>
-						<Text style={styles.infoText}>4-oktyabr</Text>
+						<Text style={styles.infoText}>{ this.getDay(this.state.sellGroupDetail.created_date) }</Text>
 					</View>
 					
-					<ScrollView style={styles.productList}>
-						<View style={styles.productOdd}>
-							<Text style={styles.productTitle}>Coca Cola</Text>
-							<Text style={styles.productCount}>10 blok</Text>
-						</View>
-						
-						<View style={styles.product}>
-							<Text style={styles.productTitle}>Pepsi 1.5L</Text>
-							<Text style={styles.productCount}>10 blok</Text>
-						</View>
-						
-						<View style={styles.productOdd}>
-							<Text style={styles.productTitle}>Qora Gorilla</Text>
-							<Text style={styles.productCount}>50 dona</Text>
-						</View>
-						
-						<View style={styles.product}>
-							<Text style={styles.productTitle}>Qora Gorilla</Text>
-							<Text style={styles.productCount}>120 blok</Text>
-						</View>
-						
-						<View style={styles.productOdd}>
-							<Text style={styles.productTitle}>Qora Gorilla</Text>
-							<Text style={styles.productCount}>10 dona</Text>
-						</View>
-						
-						<View style={styles.product}>
-							<Text style={styles.productTitle}>Qora Gorilla</Text>
-							<Text style={styles.productCount}>120 blok</Text>
-						</View>
-						
-						<View style={styles.productOdd}>
-							<Text style={styles.productTitle}>Qora Gorilla</Text>
-							<Text style={styles.productCount}>120 blok</Text>
-						</View>
-						
-						<View style={styles.product}>
-							<Text style={styles.productTitle}>Qora Gorilla</Text>
-							<Text style={styles.productCount}>120 blok</Text>
-						</View>
-						
-						<View style={styles.productOdd}>
-							<Text style={styles.productTitle}>Qora Gorilla</Text>
-							<Text style={styles.productCount}>120 blok</Text>
-						</View>
-						
-						<View style={styles.product}>
-							<Text style={styles.productTitle}>Qora Gorilla</Text>
-							<Text style={styles.productCount}>120 blok</Text>
-						</View>
-						
-						<View style={styles.productOdd}>
-							<Text style={styles.productTitle}>Qora Gorilla</Text>
-							<Text style={styles.productCount}>120 blok</Text>
-						</View>
-						
-						<View style={styles.product}>
-							<Text style={styles.productTitle}>Qora Gorilla</Text>
-							<Text style={styles.productCount}>120 blok</Text>
-						</View>
-						
-						<View style={styles.productOdd}>
-							<Text style={styles.productTitle}>Qora Gorilla</Text>
-							<Text style={styles.productCount}>120 blok</Text>
-						</View>
-						
-						<View style={styles.product}>
-							<Text style={styles.productTitle}>Qora Gorilla</Text>
-							<Text style={styles.productCount}>120 blok</Text>
-						</View>
-						
-						<View style={styles.productOdd}>
-							<Text style={styles.productTitle}>Qora Gorilla</Text>
-							<Text style={styles.productCount}>120 blok</Text>
-						</View>
-					
-					</ScrollView>
+					{/*
+						this.state.profitHistoryDetail = 
+						[{
+							"count": 1, 
+							"count_type": "DONA", 
+							"created_date": "2024-01-28 16:13:46", 
+							"id": 9, 
+							"product_id": 1, 
+							"profit": 500
+						}] 
+					*/}
+					<View>
+						{/* FOR EACH ROW */}
+						{
+							this.state.sellHistoryDetail.map((item, index) => (
+								
+								<View style={styles.profitContainer} key={index}>
+									<Text style={styles.profitTitle}>{item.productName}</Text>
+
+									<View style={styles.profitRow}>
+										<Text style={styles.profitText}>Soni</Text>
+										<Text style={styles.profitPrice}>{item.count} {item.count_type}</Text>
+									</View>
+
+									<View style={styles.profitRow}>
+										<Text style={styles.profitText}>Qolgan foyda</Text>
+										<Text style={styles.profitPrice}>{(item.selling_price).toLocaleString()} so’m</Text>
+									</View>
+								</View>
+							))
+						}
+					</View>
 				</View>
+			
 			</ScrollView>
 		);
 	}
 }
 
-const styles = StyleSheet.create({
-	body: {
-		backgroundColor: "#FFF"
-	},
-	
-	container: {
-		marginTop: 52,
-		width: screenWidth - 32,
-		marginLeft: 'auto',
-		marginRight: 'auto',
-		flex: 1,
-		alignItems: 'center'
-	},
-	
-	header: {
-		width: screenWidth - 34,
-		flexDirection: 'row',
-		alignItems: 'center',
-		marginBottom: 16,
-	},
-	
-	backButton: {
-		backgroundColor: '#F5F5F7',
-		paddingVertical: 16,
-		paddingHorizontal: 19,
-		borderRadius: 8,
-	},
-	
-	title: {
-		width: 299,
-		textAlign: 'center',
-		fontSize: 18,
-		fontFamily: 'Gilroy-SemiBold',
-		fontWeight: '600',
-	},
-	
-	infoBar: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-		width: screenWidth - 32,
-		marginLeft: 'auto',
-		backgroundColor: '#272727',
-		padding: 10,
-	},
-	
-	infoText: {
-		color: "#fff"
-	},
-	
-	infoDivider: {
-		color: "#fff"
-	},
-	
-	productList: {
-		marginTop: 4
-	},
-	
-	product: {
-		display: "flex",
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "center",
-		width: screenWidth - (17 + 17),
-		paddingVertical: 13,
-		paddingHorizontal: 4
-	},
-	
-	productOdd: {
-		display: "flex",
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "center",
-		width: screenWidth - (17 + 17),
-		paddingVertical: 13,
-		paddingHorizontal: 4,
-		backgroundColor: "#F1F1F1"
-	},
-	
-	productTitle: {
-		fontSize: 16,
-		fontFamily: "Gilroy-Medium",
-		fontWeight: "500"
-	},
-	
-	productCount: {
-		fontFamily: "Gilroy-Medium",
-		fontSize: 16,
-		lineHeight: 24,
-		fontWeight: "500"
+const styles = StyleSheet.create(
+	{
+		body: {
+			backgroundColor: "#FFF"
+		},
+		
+		container: {
+			marginTop: 52,
+			width: screenWidth - 32,
+			marginLeft: "auto",
+			marginRight: "auto",
+			flex: 1,
+			alignItems: "center"
+		},
+		
+		header: {
+			width: screenWidth - 34,
+			flexDirection: "row",
+			alignItems: "center",
+			marginBottom: 16,
+		},
+		
+		backButton: {
+			backgroundColor: "#F5F5F7",
+			paddingVertical: 16,
+			paddingHorizontal: 19,
+			borderRadius: 8,
+		},
+		
+		title: {
+			width: 299,
+			textAlign: "center",
+			fontSize: 18,
+			fontFamily: "Gilroy-SemiBold",
+			fontWeight: "600",
+		},
+		
+		infoBar: {
+			flexDirection: "row",
+			alignItems: "center",
+			justifyContent: "space-between",
+			width: screenWidth - 32,
+			marginLeft: "auto",
+			backgroundColor: "#272727",
+			padding: 10,
+		},
+		
+		infoText: {
+			color: "#FFF",
+		},
+		
+		infoDivider: {
+			color: "#FFF",
+		},
+		
+		profitContainer: {
+			marginTop: 8,
+			width: screenWidth - 32,
+			borderWidth: 1,
+			backgroundColor: "#fff",
+			borderColor: "#F1F1F1",
+			borderRadius: 8,
+			elevation: 5,
+			shadowColor: "rgba(0, 0, 0, 0.07)",
+			shadowOffset: {width: 5, height: 5},
+			shadowOpacity: 1,
+			shadowRadius: 15,
+			paddingHorizontal: 12,
+			paddingVertical: 16,
+		},
+		
+		profitTitle: {
+			fontFamily: "Gilroy-SemiBold",
+			fontWeight: "600",
+			fontSize: 16,
+			marginBottom: 12,
+		},
+		
+		profitRow: {
+			flexDirection: "row",
+			justifyContent: "space-between",
+			marginBottom: 12,
+		},
+		
+		profitText: {
+			color: "#777",
+			fontSize: 16,
+			fontFamily: "Gilroy-Medium",
+			fontWeight: "500",
+			lineHeight: 24,
+		},
+		
+		profitPrice: {
+			color: "#9A50AD",
+			fontSize: 16,
+			fontFamily: "Gilroy-Medium",
+			fontWeight: "500",
+			lineHeight: 24,
+		},
 	}
-});
+);
 
 export default ShoppingDetail;

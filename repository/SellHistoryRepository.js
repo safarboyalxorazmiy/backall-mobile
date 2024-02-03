@@ -1,50 +1,44 @@
 import DatabaseRepository from "./DatabaseRepository";
+import ProductRepository from "./ProductRepository";
 
 class SellHistoryRepository {
   constructor() {
     this.db = new DatabaseRepository().getDatabase();
+
+    this.productRepository = new ProductRepository();
   }
 
   async createSellHistoryGroup(amount) {
     try {
-      const createdDate = new Date().toISOString(); // Example: Get current timestamp
       const query = `
         INSERT INTO sell_group (created_date, amount)
-        VALUES (?, ?);`;
+        VALUES (CURRENT_DATE, ?);
+      `;
 
       // Execute the query
       await this.db.transaction(async (tx) => {
-        await tx.executeSql(query, [createdDate, amount]);
+        await tx.executeSql(query, [amount]);
       });
 
-      console.log('Sell group created successfully.');
+      console.log("Sell group created successfully.");
+
+      console.log(this.getAll());
+
+      let lastSellHistoryGroup = await this.getLastSellHistoryGroupId();
+      console.log(lastSellHistoryGroup);
+      console.log(lastSellHistoryGroup.id);
+      console.log("&&&&&&&&&&&&&&");
+      return lastSellHistoryGroup.id;
     } catch (error) {
       console.error("Error creating sell group:", error);
       throw error;
     }
   }
 
-  async createSellHistory(product_id, count, count_type, selling_price, created_date) {
+  async getLastSellHistoryGroupId() {
     try {
       const query = `
-        INSERT INTO sell_history (product_id, count, count_type, selling_price, created_date)
-        VALUES (?, ?, ?, ?);`;
-
-      await this.db.transaction(async (tx) => {
-        await tx.executeSql(query, [product_id, count, count_type, selling_price, created_date.toISOString()]);
-      });
-
-      console.log('Sell group created successfully.');
-    } catch (error) {
-      console.error("Error creating sell group:", error);
-      throw error;
-    }
-  }
-
-  async getAll() {
-    try {
-      const query = `
-        SELECT * FROM sell_history;
+        SELECT * FROM sell_group ORDER BY ID DESC LIMIT 1;
       `;
 
       const result = await new Promise((resolve, reject) => {
@@ -63,6 +57,150 @@ class SellHistoryRepository {
         throw new Error("Unexpected result structure");
       }
   
+      console.log("*****************");
+      console.log(result.rows._array);
+      console.log("*****************");
+      const rows = result.rows._array[0];
+  
+      return rows;
+    } catch (error) {
+      console.error("Error retrieving sell history:", error);
+      throw error;
+    }
+  }
+
+  async createSellHistory(
+    product_id, 
+    count, 
+    count_type, 
+    selling_price, 
+    created_date
+  ) {
+    try {
+      const query = `
+        INSERT INTO sell_history (
+          product_id, 
+          count, 
+          count_type, 
+          selling_price, 
+          created_date
+        )
+        VALUES (?, ?, ?, ?, CURRENT_DATE);
+      `;
+
+      await this.db.transaction(async (tx) => {
+        await tx.executeSql(query, [
+            product_id, 
+            count, 
+            count_type, 
+            selling_price
+          ]);
+      });
+
+      // TODO BIRLASHTIRISH
+      
+      console.log('Sell group created successfully.');
+      console.log("=================");
+      console.log(await this.getAll());
+      console.log("=================");
+
+      let lastIdOfSellHistory = await this.getLastIdOfSellHistory();
+      console.log(lastIdOfSellHistory);
+      return lastIdOfSellHistory.id;
+    } catch (error) {
+      console.error("Error creating sell group:", error);
+      throw error;
+    }
+  }
+
+  async createSellHistoryAndLinkWithGroup(
+    product_id, 
+    count, 
+    count_type, 
+    selling_price, 
+    created_date, 
+    group_id
+  ) {
+    let historyId = await this.createSellHistory(
+      product_id, 
+      count, 
+      count_type, 
+      selling_price, 
+      created_date
+    );
+
+    const insert = `
+      INSERT INTO sell_history_group(
+        group_id, 
+        history_id
+      ) 
+      VALUES (?, ?);
+    `;
+
+    await this.db.transaction(async (tx) => {
+      await tx.executeSql(
+        insert,
+        [group_id, historyId]
+      );
+    });
+
+    console.log("SELL HISTORY LINKED");
+    console.log("History Id: " + historyId + " Group Id: " + group_id);
+  }
+
+  async getLastIdOfSellHistory() {
+    try {
+      const query = `
+        SELECT * FROM sell_history ORDER BY ID DESC LIMIT 1;
+      `;
+
+      const result = await new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+          tx.executeSql(
+            query,
+            [],
+            (_, resultSet) => resolve(resultSet),
+            (_, error) => reject(error)
+          );
+        });
+      });
+  
+      if (!result || !result.rows || !result.rows._array) {
+        console.error("Unexpected result structure:", result);
+        throw new Error("Unexpected result structure");
+      }
+  
+
+      const rows = result.rows._array[0];
+      return rows;
+    } catch (error) {
+      console.error("Error retrieving sell history:", error);
+      throw error;
+    }
+  }
+
+  async getAll() {
+    try {
+      const query = `
+        SELECT * FROM sell_history_group;
+      `;
+
+      const result = await new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+          tx.executeSql(
+            query,
+            [],
+            (_, resultSet) => resolve(resultSet),
+            (_, error) => reject(error)
+          );
+        });
+      });
+
+      if (!result || !result.rows || !result.rows._array) {
+        console.error("Unexpected result structure:", result);
+        throw new Error("Unexpected result structure");
+      }
+
       const rows = result.rows._array;
   
       console.log('Sell history retrieved successfully:', rows);
@@ -101,6 +239,137 @@ class SellHistoryRepository {
       throw error;
     }
   }
+
+  // {peoduct_name, count, count_type}
+  async getSellHistoryDetailByGroupId(group_id) {
+    try {
+      console.log("group_id ", group_id);
+      if (group_id === null) {
+        console.log('group_id is null. Skipping query.');
+        return [];
+      }
+
+      const query = `
+        SELECT * 
+        FROM sell_history_group
+        WHERE group_id = ?;
+      `;
+
+
+      console.log("===============")
+      console.log("ALL INFO sell_history_group")
+      console.log(await this.getAll());
+      console.log("===============")
+
+      const result = await new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+          tx.executeSql(
+            query,
+            [group_id],
+            (_, resultSet) => resolve(resultSet),
+            (_, error) => reject(error)
+          );
+        });
+      });
+
+      if (!result || !result.rows || !result.rows._array) {
+        throw new Error("Unexpected result structure");
+      } 
+
+      console.log("res: ", result.rows._array);
+      const historyGroupLinkedArray = result.rows._array;
+
+      let historyInfo = [];
+
+      for (const historyGroupLinked of historyGroupLinkedArray) {
+        let profitHistoryInfo = await this.getSellHistoryInfoById(historyGroupLinked.history_id);
+
+        console.log("SELL HISTORY INFO INSIDE OF FOR EACH ", profitHistoryInfo[0]);
+        let currentProfitHistoryInfo = profitHistoryInfo[0];
+        let product = await this.productRepository.getProductNameAndBrandById(currentProfitHistoryInfo.product_id);
+
+        currentProfitHistoryInfo.productName = product.brand_name + " " + product.name;
+
+        historyInfo = [...historyInfo, currentProfitHistoryInfo];
+        console.log("SELL ARRAY: ", historyInfo);
+      }
+
+      console.log("SELL INFO: ", historyInfo);
+      return historyInfo;
+    } catch (error) {
+      console.error("Error retrieving profit history details:", error);
+      throw error;
+    }
+  }
+
+  async getSellHistoryInfoById(history_id) {
+    try {
+      const query = `
+        SELECT * FROM sell_history WHERE id = ?;
+      `;
+
+      const result = await new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+          tx.executeSql(
+            query,
+            [history_id],
+            (_, resultSet) => resolve(resultSet),
+            (_, error) => reject(error)
+          );
+        });
+      });
+  
+      if (!result || !result.rows || !result.rows._array) {
+        console.error("Unexpected result structure:", result);
+        throw new Error("Unexpected result structure");
+      }
+  
+      const rows = result.rows._array;
+  
+      console.log("===============;");
+      console.log("sell_history WHERE id: " + history_id);
+      console.log(rows);
+      console.log("===============;");
+
+      return rows;
+    } catch (error) {
+      console.error("Error retrieving sell history:", error);
+      throw error;
+    }
+  }
+
+  // GURUHNI MA'LUMOTLARINI ID ORQALI OLISH.
+  async getSellGroupInfoById (group_id) {
+    try {
+      const query = `
+        SELECT * FROM sell_group WHERE id = ?;
+      `;
+
+      const result = await new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+          tx.executeSql(
+            query,
+            [group_id],
+            (_, resultSet) => resolve(resultSet),
+            (_, error) => reject(error)
+          );
+        });
+      });
+  
+      if (!result || !result.rows || !result.rows._array) {
+        console.error("Unexpected result structure:", result);
+        throw new Error("Unexpected result structure");
+      }
+  
+      console.log("ins res: ", result.rows._array);
+      return result.rows._array;
+    } catch (error) {
+      console.error("Error retrieving sell history:", error);
+      throw error;
+    }
+  }
+
+
 }
 
 export default SellHistoryRepository;

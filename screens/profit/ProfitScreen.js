@@ -205,8 +205,8 @@ class Profit extends Component {
 											}}
 										>
 											<View style={styles.historyProfitWrapper}>
-												<ProfitIcon />
-												<Text style={styles.historyProfit}>{`${history.profit} so’m`}</Text>
+												<ProfitIcon style={{marginLeft: -4}} />
+												<Text style={styles.historyProfit}>{`${history.profit.toLocaleString()} so’m`}</Text>
 											</View>
 
 											<Text style={styles.historyTime}>{this.getFormattedTime(history.created_date)}</Text>
@@ -371,7 +371,8 @@ const styles = StyleSheet.create({
 	historyTime: {
 		fontFamily: "Gilroy-Medium",
 		fontWeight: "500",
-		fontSize: 14
+		fontSize: 14,
+		marginRight: -4
 	},
 
 	historyTitleWrapper: {
