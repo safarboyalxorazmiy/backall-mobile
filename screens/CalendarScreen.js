@@ -39,9 +39,7 @@ class CalendarPage extends Component {
 	
 	render() {
 		const {navigation} = this.props;
-		
-		const {isModalVisible, selectedDate} = this.state;
-		
+				
 		return (
 			<View style={styles.container}>
 				<View style={styles.header}>
@@ -132,7 +130,7 @@ class CalendarPage extends Component {
 					<CalendarIcon onPress={this.toggleModal}/>
 				</View>
 				
-				<Modal visible={isModalVisible} animationType="slide" transparent={true}>
+				<Modal visible={this.state.isModalVisible} animationType="slide" transparent={true}>
 					<View style={{
 						position: "absolute",
 						width: screenWidth,
@@ -179,7 +177,7 @@ class CalendarPage extends Component {
 								<Calendar
 									onDayPress={this.onDayPress}
 									markedDates={{
-										[selectedDate]: {selected: true, selectedColor: 'blue'},
+										[this.state.selectedDate]: {selected: true, selectedColor: 'blue'},
 									}}
 								/>
 								
@@ -192,12 +190,23 @@ class CalendarPage extends Component {
 									justifyContent: "flex-end",
 									gap: 8
 								}}>
-									<TouchableOpacity style={{paddingHorizontal: 14, paddingVertical: 10}}>
-										<Text style={{color: "#6750A4", fontWeight: "500", fontSize: 14}}>Bekor
-											qilish</Text>
+									<TouchableOpacity onPress={() => {
+										this.setState({
+											isModalVisible: false
+										})
+									}}
+									 style={{paddingHorizontal: 14, paddingVertical: 10}}>
+										<Text style={{color: "#6750A4", fontWeight: "500", fontSize: 14}}>Bekor qilish</Text>
 									</TouchableOpacity>
 									
-									<TouchableOpacity style={{paddingHorizontal: 14, paddingVertical: 10}}>
+									<TouchableOpacity 
+										onPress={() => {
+											this.setState({
+												isModalVisible: false
+											})
+										}}
+										style={{paddingHorizontal: 14, paddingVertical: 10}}
+									>
 										<Text style={{
 											color: "#6750A4",
 											fontWeight: "500",
