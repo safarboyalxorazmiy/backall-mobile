@@ -22,26 +22,61 @@ class CalendarPage extends Component {
 		super(props);
 		this.state = {
 			isModalVisible: false,
-			fromDate: "",
-			toDate: "",
+			fromDate: this.getCurrentDateString(),
+			toDate: this.getCurrentDateString(),
 			dateType: "Bugun", // Bugun, Hafta, Oy
 			selectingDateType: "", // FROM, TO
 			
-			fromDayInputValue: "05",
-			fromMonthInputValue: "fevral",
-			fromYearInputValue: "2024",
+			fromDayInputValue: this.getCurrentDay(),
+			fromMonthInputValue: this.getCurrentMonth(),
+			fromYearInputValue: this.getCurrentYear(),
 
-			toDayInputValue: "05",
-			toMonthInputValue: "fevral",
-			toYearInputValue: "2024",
+			toDayInputValue: this.getCurrentDay(),
+			toMonthInputValue: this.getCurrentMonth(),
+			toYearInputValue: this.getCurrentYear(),
 		};
 	}
 
-	toggleModal = () => {
-		
-	};
+	getCurrentDateString() {
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const day = String(currentDate.getDate()).padStart(2, '0');
+    
+    return `${year}-${month}-${day}`;
+	}
+
+	getCurrentMonth() {
+    const date = new Date();
+    const options = { month: 'long' };
+    const formattedDate = date.toLocaleDateString('uz-UZ', options);
+
+		const [month] = formattedDate.split(' ');
+    const lowerCaseMonth = month.charAt(0).toLowerCase() + month.slice(1);
+    return lowerCaseMonth;
+	}
+
+	getCurrentDay() {
+    const date = new Date();
+    const options = { day: 'numeric' };
+    const formattedDate = date.toLocaleDateString('uz-UZ', options);
+
+    const [day] = formattedDate.split(' ');
+    const paddedDay = String(day).padStart(2, '0');
+    return paddedDay;
+	}
+
+	getCurrentYear() {
+    const date = new Date();
+    const options = { year: 'numeric' };
+    const formattedDate = date.toLocaleDateString('uz-UZ', options);
+
+    const [year] = formattedDate.split(' ');
+    return year;
+	}
+
 	
-	onDayPress = (date) => {
+	onDayPress(date) {
 		// date: {"dateString": "2024-02-19", "day": 19, "month": 2, "timestamp": 1708300800000, "year": 2024};
 		this.setState({calendarSelectedDate: date.dateString});
 		console.log(date);
