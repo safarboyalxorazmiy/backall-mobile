@@ -12,6 +12,7 @@ import DeleteIcon from '../assets/delete-icon.svg'
 import CalendarIcon from '../assets/blue-calendar-icon.svg';
 import {TextInput} from 'react-native-gesture-handler';
 import {Calendar} from 'react-native-calendars';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -21,10 +22,12 @@ class CalendarPage extends Component {
 		super(props);
 		this.state = {
 			isModalVisible: false,
-			selectedDate: ''
+			calendarSelectedDate: '',
+			dateType: "Bugun",
+			selectedDate: {day: 1, month: 1, year: 2022}
 		};
 	}
-	
+
 	toggleModal = () => {
 		this.setState((prevState) => ({
 			isModalVisible: !prevState.isModalVisible,
@@ -32,7 +35,7 @@ class CalendarPage extends Component {
 	};
 	
 	onDayPress = (day) => {
-		this.setState({selectedDate: day.dateString});
+		this.setState({calendarSelectedDate: day.dateString});
 		
 		console.log(day)
 	};
@@ -67,44 +70,78 @@ class CalendarPage extends Component {
 					flexDirection: "row",
 					marginTop: 24
 				}}>
-					<TouchableOpacity style={{
-						width: (screenWidth / 3) - (16 * 2),
-						backgroundColor: "#272727",
-						padding: 10,
-						borderRadius: 8
-					}}>
-						<Text style={{
-							color: "white",
-							textAlign: "center",
-							fontFamily: "Gilroy-Medium",
-							fontWeight: "500"
-						}}>Bugun</Text>
+					<TouchableOpacity
+						style={{
+							width: (screenWidth / 3) - (16 * 2),
+							padding: 10,
+							borderRadius: 8,
+							backgroundColor: this.state.dateType == "Bugun" ? "#272727" : "#EEEEEE",
+						}}
+						onPress={() => {
+							this.setState({dateType: "Bugun"});
+						}}
+					>
+						<Text
+							style={{
+								color: "white",
+								textAlign: "center",
+								fontFamily: "Gilroy-Medium",
+								fontWeight: "500",
+								color: this.state.dateType == "Bugun" ? "#FFF" : "#000"
+							}}
+						>
+							Bugun
+						</Text>
 					</TouchableOpacity>
-					<TouchableOpacity style={{
-						width: (screenWidth / 3) - (16 * 2),
-						backgroundColor: "#EEEEEE",
-						padding: 10,
-						borderRadius: 8
-					}}>
-						<Text style={{
-							color: "black",
-							textAlign: "center",
-							fontFamily: "Gilroy-Medium",
-							fontWeight: "500"
-						}}>Hafta</Text>
+
+					<TouchableOpacity
+						style={{
+							width: (screenWidth / 3) - (16 * 2),
+							padding: 10,
+							borderRadius: 8,
+							backgroundColor: this.state.dateType == "Hafta" ? "#272727" : "#EEEEEE",
+						}}
+						onPress={() => {
+							this.setState({dateType: "Hafta"});
+							console.log(this.state.dateType);
+						}}
+					>
+						<Text
+							style={{
+								color: "white",
+								textAlign: "center",
+								fontFamily: "Gilroy-Medium",
+								fontWeight: "500",
+								color: this.state.dateType == "Hafta" ? "#FFF" : "#000"
+							}}
+						>
+							Hafta
+						</Text>
 					</TouchableOpacity>
-					<TouchableOpacity style={{
-						width: (screenWidth / 3) - (16 * 2),
-						backgroundColor: "#EEEEEE",
-						padding: 10,
-						borderRadius: 8
-					}}>
-						<Text style={{
-							color: "black",
-							textAlign: "center",
-							fontFamily: "Gilroy-Medium",
-							fontWeight: "500"
-						}}>Oy</Text>
+
+					<TouchableOpacity
+						style={{
+							width: (screenWidth / 3) - (16 * 2),
+							padding: 10,
+							borderRadius: 8,
+							backgroundColor: this.state.dateType == "Oy" ? "#272727" : "#EEEEEE",
+						}}
+						onPress={() => {
+							this.setState({dateType: "Oy"});
+							console.log(this.state.dateType)
+						}}
+					>
+						<Text
+							style={{
+								color: "white",
+								textAlign: "center",
+								fontFamily: "Gilroy-Medium",
+								fontWeight: "500",
+								color: this.state.dateType == "Oy" ? "#FFF" : "#000"
+							}}
+						>
+							Oy
+						</Text>
 					</TouchableOpacity>
 				</View>
 				
@@ -177,7 +214,7 @@ class CalendarPage extends Component {
 								<Calendar
 									onDayPress={this.onDayPress}
 									markedDates={{
-										[this.state.selectedDate]: {selected: true, selectedColor: 'blue'},
+										[this.state.calendarSelectedDate]: {selected: true, selectedColor: 'blue'},
 									}}
 								/>
 								
@@ -207,11 +244,13 @@ class CalendarPage extends Component {
 										}}
 										style={{paddingHorizontal: 14, paddingVertical: 10}}
 									>
-										<Text style={{
-											color: "#6750A4",
-											fontWeight: "500",
-											fontSize: 14
-										}}>Tasdiqlash</Text>
+										<Text 
+											style={{
+												color: "#6750A4",
+												fontWeight: "500",
+												fontSize: 14
+											}}
+										>Tasdiqlash</Text>
 									</TouchableOpacity>
 								</View>
 							</View>
@@ -234,17 +273,23 @@ class CalendarPage extends Component {
 						<TextInput placeholder='2022' style={styles.input}/>
 					</View>
 					
-					<CalendarIcon/>
+					<CalendarIcon />
 				</View>
 				
-				<TouchableOpacity style={{
-					width: screenWidth - (16 * 2),
-					backgroundColor: "#222222",
-					marginTop: "auto",
-					marginBottom: 44,
-					paddingVertical: 14,
-					borderRadius: 8
-				}}>
+				<TouchableOpacity 
+					style={{
+						width: screenWidth - (16 * 2),
+						backgroundColor: "#222222",
+						marginTop: "auto",
+						marginBottom: 44,
+						paddingVertical: 14,
+						borderRadius: 8
+					}}
+					onPress={() => {
+						AsyncStorage.setItem("dan", "01-01-2024");
+						AsyncStorage.setItem("gacha", "01-01-2024");
+					}}
+				>
 					<Text style={{
 						color: "#fff",
 						textAlign: "center",
