@@ -445,9 +445,11 @@ class CalendarPage extends Component {
 						paddingVertical: 14,
 						borderRadius: 8
 					}}
-					onPress={() => {
-						AsyncStorage.setItem("dan", "01-01-2024");
-						AsyncStorage.setItem("gacha", "01-01-2024");
+					onPress={async () => {
+						await AsyncStorage.setItem(this.state.calendarFromPage + "FromDate", this.state.fromDate);
+						await AsyncStorage.setItem(this.state.calendarFromPage + "ToDate", this.state.toDate);
+
+						navigation.navigate(this.state.calendarFromPage);
 					}}
 				>
 					<Text style={{

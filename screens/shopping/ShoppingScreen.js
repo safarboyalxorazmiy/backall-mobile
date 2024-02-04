@@ -36,6 +36,9 @@ class Shopping extends Component {
 		
 		navigation.addListener("focus", async () => {
 			this.getSellingHistory();
+
+			console.log(await AsyncStorage.getItem("ShoppingFromDate"));
+			console.log(await AsyncStorage.getItem("ShoppingToDate"));
 		});
 	}
 
@@ -119,7 +122,7 @@ class Shopping extends Component {
 							<TouchableOpacity 
 								onPress={async () => {
 									await AsyncStorage.setItem("calendarFromPage", "Shopping");
-									navigation.navigate("Calendar")
+									navigation.navigate("Calendar");
 								}}
 								style={styles.calendarInput}>
 								<Text style={styles.calendarInputPlaceholder}>--/--/----</Text>

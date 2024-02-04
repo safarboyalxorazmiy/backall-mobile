@@ -28,6 +28,9 @@ class Profit extends Component {
 		
 		navigation.addListener("focus", async () => {
 			this.getProfitHistory();
+
+			console.log(await AsyncStorage.getItem("ProfitFromDate"));
+			console.log(await AsyncStorage.getItem("ProfitToDate"));
 		});
 	}
 
