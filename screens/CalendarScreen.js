@@ -1,4 +1,4 @@
-import React, {Component, useState} from 'react';
+import React, {Component, useState} from "react";
 import {
 	StyleSheet,
 	Text,
@@ -6,38 +6,45 @@ import {
 	Dimensions,
 	TouchableOpacity,
 	Modal
-} from 'react-native';
-import BackIcon from '../assets/arrow-left-icon.svg'
-import DeleteIcon from '../assets/delete-icon.svg'
-import CalendarIcon from '../assets/blue-calendar-icon.svg';
-import {TextInput} from 'react-native-gesture-handler';
-import {Calendar} from 'react-native-calendars';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+} from "react-native";
+import BackIcon from "../assets/arrow-left-icon.svg"
+import DeleteIcon from "../assets/delete-icon.svg"
+import CalendarIcon from "../assets/blue-calendar-icon.svg";
+import {TextInput} from "react-native-gesture-handler";
+import {Calendar} from "react-native-calendars";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const screenWidth = Dimensions.get('window').width;
-const screenHeight = Dimensions.get('window').height;
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 
 class CalendarPage extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			isModalVisible: false,
-			calendarSelectedDate: '',
-			dateType: "Bugun",
-			selectedDate: {day: 1, month: 1, year: 2022}
+			fromDate: "",
+			toDate: "",
+			dateType: "Bugun", // Bugun, Hafta, Oy
+			selectingDateType: "", // FROM, TO
+			
+			fromDayInputValue: "05",
+			fromMonthInputValue: "fevral",
+			fromYearInputValue: "2024",
+
+			toDayInputValue: "05",
+			toMonthInputValue: "fevral",
+			toYearInputValue: "2024",
 		};
 	}
 
 	toggleModal = () => {
-		this.setState((prevState) => ({
-			isModalVisible: !prevState.isModalVisible,
-		}));
+		
 	};
 	
-	onDayPress = (day) => {
-		this.setState({calendarSelectedDate: day.dateString});
-		
-		console.log(day)
+	onDayPress = (date) => {
+		// date: {"dateString": "2024-02-19", "day": 19, "month": 2, "timestamp": 1708300800000, "year": 2024};
+		this.setState({calendarSelectedDate: date.dateString});
+		console.log(date);
 	};
 	
 	render() {
@@ -47,16 +54,15 @@ class CalendarPage extends Component {
 			<View style={styles.container}>
 				<View style={styles.header}>
 					<TouchableOpacity
-						onPress={() => navigation.navigate('Shopping')}
-						style={styles.backButton}
-					>
+						onPress={() => navigation.navigate("Shopping")}
+						style={styles.backButton}>
 						<BackIcon/>
 					</TouchableOpacity>
 					
 					<Text style={styles.title}>Sotilgan mahsulotlar</Text>
 					
 					<TouchableOpacity
-						onPress={() => navigation.navigate('Shopping')}
+						onPress={() => navigation.navigate("Shopping")}
 						style={styles.deleteIcon}
 					>
 						<DeleteIcon/>
@@ -159,22 +165,65 @@ class CalendarPage extends Component {
 					<Text style={styles.label}>dan</Text>
 					
 					<View style={{display: "flex", flexDirection: "row", gap: 12}}>
-						<TextInput placeholder='04' style={styles.input}/>
-						<TextInput placeholder='dekabr' style={[styles.input, {width: 66}]}/>
-						<TextInput placeholder='2022' style={styles.input}/>
+						<TextInput 
+							placeholder="kun" 
+							value={this.state.fromDayInputValue}
+							cursorColor={"black"}
+							style={styles.input}
+							onChangeText={(value) => {
+								this.setState({fromDayInputValue: value});
+							}}/>
+
+						<TextInput 
+							placeholder="oy" 
+							value={this.state.fromMonthInputValue}
+							cursorColor={"black"}
+							style={[styles.input, {width: 66}]}
+							onChangeText={(value) => {
+								this.setState({fromMonthInputValue: value});
+							}}/>
+
+						<TextInput 
+							placeholder="yil" 
+							value={this.state.fromYearInputValue}
+							cursorColor={"black"}
+							style={styles.input}
+							onChangeText={(value) => {
+								this.setState({fromYearInputValue: value});
+							}}/>
 					</View>
 					
-					<CalendarIcon onPress={this.toggleModal}/>
+					<TouchableOpacity 
+						style={{
+							width: 60, 
+							height: 40, 
+							display: "flex",
+							justifyContent: "center", 
+							alignItems: "center"
+						}}
+						onPress={() => {
+							this.setState((prevState) => ({
+								isModalVisible: !prevState.isModalVisible,
+								selectingDateType: "FROM"
+							}));
+						}}>
+						<CalendarIcon />
+					</TouchableOpacity>
 				</View>
 				
-				<Modal visible={this.state.isModalVisible} animationType="slide" transparent={true}>
+				<Modal 
+					visible={this.state.isModalVisible} 
+					animationType="slide" 
+					transparent={true}
+					animationIn={"slideInUp"}
+					animationOut={"slideOutDown"}
+					animationInTiming={100}>
 					<View style={{
 						position: "absolute",
 						width: screenWidth,
 						height: screenHeight,
 						flex: 1,
-						backgroundColor: "#00000099",
-						
+						backgroundColor: "#00000099"
 					}}></View>
 					
 					<View style={{
@@ -214,7 +263,7 @@ class CalendarPage extends Component {
 								<Calendar
 									onDayPress={this.onDayPress}
 									markedDates={{
-										[this.state.calendarSelectedDate]: {selected: true, selectedColor: 'blue'},
+										[this.state.calendarSelectedDate]: {selected: true, selectedColor: "blue"},
 									}}
 								/>
 								
@@ -242,8 +291,7 @@ class CalendarPage extends Component {
 												isModalVisible: false
 											})
 										}}
-										style={{paddingHorizontal: 14, paddingVertical: 10}}
-									>
+										style={{paddingHorizontal: 14, paddingVertical: 10}}>
 										<Text 
 											style={{
 												color: "#6750A4",
@@ -268,12 +316,50 @@ class CalendarPage extends Component {
 					<Text style={styles.label}>gacha</Text>
 					
 					<View style={{display: "flex", flexDirection: "row", gap: 12}}>
-						<TextInput placeholder='04' style={styles.input}/>
-						<TextInput placeholder='dekabr' style={[styles.input, {width: 66}]}/>
-						<TextInput placeholder='2022' style={styles.input}/>
+						<TextInput 
+							placeholder="04" 
+							value={this.state.toDayInputValue} 
+							cursorColor={"black"}
+							style={styles.input}
+							onChangeText={(value) => {
+								this.setState({toDayInputValue: value});
+							}}/>
+
+						<TextInput 
+							placeholder="dekabr" 
+							value={this.state.toMonthInputValue} 
+							cursorColor={"black"}
+							style={[styles.input, {width: 66}]}
+							onChangeText={(value) => {
+								this.setState({toMonthInputValue: value});
+							}}/>
+						
+						<TextInput 
+							placeholder="2022" 
+							value={this.state.toYearInputValue} 
+							cursorColor={"black"}
+							style={styles.input}
+							onChangeText={(value) => {
+								this.setState({toYearInputValue: value});
+							}}/>
 					</View>
 					
-					<CalendarIcon />
+					<TouchableOpacity 
+						style={{
+							width: 60, 
+							height: 40, 
+							display: "flex",
+							justifyContent: "center", 
+							alignItems: "center",
+						}}
+						onPress={() => {
+							this.setState((prevState) => ({
+								isModalVisible: !prevState.isModalVisible,
+								selectingDateType: "TO"
+							}));
+						}}>
+						<CalendarIcon />
+					</TouchableOpacity>
 				</View>
 				
 				<TouchableOpacity 
@@ -316,28 +402,28 @@ const styles = StyleSheet.create({
 	header: {
 		display: "flex",
 		width: screenWidth - (16 * 2),
-		flexDirection: 'row',
+		flexDirection: "row",
 		justifyContent: "space-between",
-		alignItems: 'center',
+		alignItems: "center",
 		marginBottom: 16,
 	},
 	
 	backButton: {
-		backgroundColor: '#F5F5F7',
+		backgroundColor: "#F5F5F7",
 		paddingVertical: 16,
 		paddingHorizontal: 19,
 		borderRadius: 8,
 	},
 	
 	title: {
-		textAlign: 'center',
+		textAlign: "center",
 		fontSize: 18,
-		fontFamily: 'Gilroy-SemiBold',
-		fontWeight: '600',
+		fontFamily: "Gilroy-SemiBold",
+		fontWeight: "600",
 	},
 	
 	deleteIcon: {
-		backgroundColor: '#F5F5F7',
+		backgroundColor: "#F5F5F7",
 		paddingVertical: 10,
 		paddingHorizontal: 10,
 		borderRadius: 8,
