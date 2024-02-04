@@ -75,11 +75,35 @@ class CalendarPage extends Component {
     return year;
 	}
 
-	
-	onDayPress(date) {
+	getMonth(dateString) {
+		const dateObj = new Date(dateString);
+    const options = { month: 'long' };
+    const formattedDate = dateObj.toLocaleDateString('uz-UZ', options);
+
+		const [month] = formattedDate.split(' ');
+    const lowerCaseMonth = month.charAt(0).toLowerCase() + month.slice(1);
+
+		return lowerCaseMonth;
+	}
+
+	onDayPress = (date) => {
 		// date: {"dateString": "2024-02-19", "day": 19, "month": 2, "timestamp": 1708300800000, "year": 2024};
-		this.setState({calendarSelectedDate: date.dateString});
-		console.log(date);
+
+		if (this.state.selectingDateType === "FROM") {
+			this.setState({
+				fromMonthInputValue: this.getMonth(date.dateString),
+				fromDayInputValue: date.dateString.substring(8),
+				fromYearInputValue: date.dateString.substring(0, 4),
+				fromDate: date.dateString
+			});
+		} else {
+			this.setState({
+				toMonthInputValue: this.getMonth(date.dateString),
+				toDayInputValue: date.dateString.substring(8),
+				toYearInputValue: date.dateString.substring(0, 4),
+				toDate: date.dateString
+			});
+		}
 	};
 	
 	render() {
@@ -298,9 +322,13 @@ class CalendarPage extends Component {
 								<Calendar
 									onDayPress={this.onDayPress}
 									markedDates={{
-										[this.state.calendarSelectedDate]: {selected: true, selectedColor: "blue"},
+										[this.state.selectingDateType === 'FROM' ? this.state.fromDate : this.state.toDate]: {
+											selected: true,
+											selectedColor: "blue"
+										},
 									}}
 								/>
+
 								
 								<View style={{
 									paddingHorizontal: 12,
