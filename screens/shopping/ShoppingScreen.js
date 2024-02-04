@@ -116,8 +116,12 @@ class Shopping extends Component {
 						</Text>
 
 						<View>
-							<TouchableOpacity onPress={() => navigation.navigate("Calendar")}
-							                  style={styles.calendarInput}>
+							<TouchableOpacity 
+								onPress={async () => {
+									await AsyncStorage.setItem("calendarFromPage", "Shopping");
+									navigation.navigate("Calendar")
+								}}
+								style={styles.calendarInput}>
 								<Text style={styles.calendarInputPlaceholder}>--/--/----</Text>
 							</TouchableOpacity>
 

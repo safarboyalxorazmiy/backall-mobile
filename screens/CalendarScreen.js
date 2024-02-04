@@ -25,7 +25,8 @@ class CalendarPage extends Component {
 			fromDate: this.getCurrentDateString(),
 			toDate: this.getCurrentDateString(),
 			dateType: "Bugun", // Bugun, Hafta, Oy
-			selectingDateType: "", // FROM, TO
+			selectingDateType: "", // "FROM", "TO"
+			calendarFromPage: "", // "Profit", "Shopping"
 			
 			fromDayInputValue: this.getCurrentDay(),
 			fromMonthInputValue: this.getCurrentMonth(),
@@ -35,6 +36,16 @@ class CalendarPage extends Component {
 			toMonthInputValue: this.getCurrentMonth(),
 			toYearInputValue: this.getCurrentYear(),
 		};
+	}
+
+	// "calendarFromPage": "Profit",
+	// "calendarFromPage": "Shopping"
+	async componentDidMount() {
+		const {navigation} = this.props;
+		
+		navigation.addListener("focus", async () => {
+			this.setState({calendarFromPage: await AsyncStorage.getItem("calendarFromPage")});
+		});
 	}
 
 	getCurrentDateString() {
@@ -113,7 +124,7 @@ class CalendarPage extends Component {
 			<View style={styles.container}>
 				<View style={styles.header}>
 					<TouchableOpacity
-						onPress={() => navigation.navigate("Shopping")}
+						onPress={() => navigation.navigate(this.state.calendarFromPage)}
 						style={styles.backButton}>
 						<BackIcon/>
 					</TouchableOpacity>
@@ -121,7 +132,7 @@ class CalendarPage extends Component {
 					<Text style={styles.title}>Sotilgan mahsulotlar</Text>
 					
 					<TouchableOpacity
-						onPress={() => navigation.navigate("Shopping")}
+						onPress={() => navigation.navigate(this.state.calendarFromPage)}
 						style={styles.deleteIcon}
 					>
 						<DeleteIcon/>
