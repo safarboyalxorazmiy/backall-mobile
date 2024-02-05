@@ -97,6 +97,23 @@ class CalendarPage extends Component {
 		return lowerCaseMonth;
 	}
 
+	getMonthIndexWithName(name) {
+		name = name.toLowerCase();
+    const monthNamesUzbek = [
+        'yanvar', 'fevral', 'mart', 'aprel', 'may', 'iyun',
+        'iyul', 'avgust', 'sentabr', 'oktyabr', 'noyabr', 'dekabr'
+    ];
+
+    const monthIndex = monthNamesUzbek.indexOf(name);
+    
+    if (monthIndex !== -1) {
+        // Add 1 to the index, and use String to ensure it's a string
+        return String(monthIndex + 1).padStart(2, '0');
+    } else {
+        return '-1'; // or any other indicator for not found
+    }
+	}
+
 	onDayPress = (date) => {
 		// date: {"dateString": "2024-02-19", "day": 19, "month": 2, "timestamp": 1708300800000, "year": 2024};
 
@@ -155,8 +172,17 @@ class CalendarPage extends Component {
 						}}
 						onPress={() => {
 							this.setState({dateType: "Bugun"});
-						}}
-					>
+
+							this.setState({
+								fromDayInputValue: this.getCurrentDay(),
+								fromMonthInputValue: this.getCurrentMonth(),
+								fromYearInputValue: this.getCurrentYear(),
+
+								toDayInputValue: this.getCurrentDay(),
+								toMonthInputValue: this.getCurrentMonth(),
+								toYearInputValue: this.getCurrentYear()
+							})
+						}}>
 						<Text
 							style={{
 								color: "white",
@@ -164,8 +190,7 @@ class CalendarPage extends Component {
 								fontFamily: "Gilroy-Medium",
 								fontWeight: "500",
 								color: this.state.dateType == "Bugun" ? "#FFF" : "#000"
-							}}
-						>
+							}}>
 							Bugun
 						</Text>
 					</TouchableOpacity>
@@ -180,8 +205,7 @@ class CalendarPage extends Component {
 						onPress={() => {
 							this.setState({dateType: "Hafta"});
 							console.log(this.state.dateType);
-						}}
-					>
+						}}>
 						<Text
 							style={{
 								color: "white",
@@ -189,8 +213,7 @@ class CalendarPage extends Component {
 								fontFamily: "Gilroy-Medium",
 								fontWeight: "500",
 								color: this.state.dateType == "Hafta" ? "#FFF" : "#000"
-							}}
-						>
+							}}>
 							Hafta
 						</Text>
 					</TouchableOpacity>
@@ -205,8 +228,7 @@ class CalendarPage extends Component {
 						onPress={() => {
 							this.setState({dateType: "Oy"});
 							console.log(this.state.dateType)
-						}}
-					>
+						}}>
 						<Text
 							style={{
 								color: "white",
@@ -214,8 +236,7 @@ class CalendarPage extends Component {
 								fontFamily: "Gilroy-Medium",
 								fontWeight: "500",
 								color: this.state.dateType == "Oy" ? "#FFF" : "#000"
-							}}
-						>
+							}}>
 							Oy
 						</Text>
 					</TouchableOpacity>
@@ -241,7 +262,11 @@ class CalendarPage extends Component {
 							cursorColor={"black"}
 							style={styles.input}
 							onChangeText={(value) => {
-								this.setState({fromDayInputValue: value});
+								this.setState({fromDayInputValue: value}, () => {
+									const yearMonth = this.state.toDate.substring(0, 7);
+									const newToDate = `${yearMonth}-${value}`;
+									this.setState({ toDate: newToDate });
+								});
 							}}/>
 
 						<TextInput 
@@ -250,8 +275,15 @@ class CalendarPage extends Component {
 							cursorColor={"black"}
 							style={[styles.input, {width: 66}]}
 							onChangeText={(value) => {
-								this.setState({fromMonthInputValue: value});
+								this.setState({ fromMonthInputValue: value }, () => {
+									let monthIndex = this.getMonthIndexWithName(value);
+									if (monthIndex !== -1) {
+										const newToDate = `${this.state.fromDate.substring(0, 5)}${monthIndex}${this.state.fromDate.substring(7)}`;
+										this.setState({ toDate: newToDate });
+									}
+								});
 							}}/>
+
 
 						<TextInput 
 							placeholder="yil" 
@@ -259,7 +291,13 @@ class CalendarPage extends Component {
 							cursorColor={"black"}
 							style={styles.input}
 							onChangeText={(value) => {
-								this.setState({fromYearInputValue: value});
+								this.setState({fromYearInputValue: value}, () => {
+									const monthDay = this.state.fromDate.substring(5);
+									const newToDate = `${value}-${monthDay}`;
+									this.setState({toDate: newToDate});
+
+									console.log(newToDate);
+								});
 							}}/>
 					</View>
 					
@@ -391,30 +429,45 @@ class CalendarPage extends Component {
 					
 					<View style={{display: "flex", flexDirection: "row", gap: 12}}>
 						<TextInput 
-							placeholder="04" 
+							placeholder="kun" 
 							value={this.state.toDayInputValue} 
 							cursorColor={"black"}
 							style={styles.input}
 							onChangeText={(value) => {
-								this.setState({toDayInputValue: value});
-							}}/>
+								this.setState({toDayInputValue: value }, () => {
+									const yearMonth = this.state.toDate.substring(0, 7);
+									const newToDate = `${yearMonth}-${value}`;
+									this.setState({toDate: newToDate});
+								});
+							}}
+							/>
 
-						<TextInput 
-							placeholder="dekabr" 
-							value={this.state.toMonthInputValue} 
+						<TextInput
+							placeholder="oy" 
+							value={this.state.toMonthInputValue}
 							cursorColor={"black"}
 							style={[styles.input, {width: 66}]}
 							onChangeText={(value) => {
-								this.setState({toMonthInputValue: value});
+								this.setState({toMonthInputValue: value}, () => {
+									let monthIndex = this.getMonthIndexWithName(value);
+									if (monthIndex != -1) {
+										const newToDate = `${this.state.toDate.substring(0, 5)}${monthIndex}${this.state.toDate.substring(7)}`;
+										this.setState({ toDate: newToDate });
+									}
+								});
 							}}/>
 						
 						<TextInput 
-							placeholder="2022" 
+							placeholder="yil" 
 							value={this.state.toYearInputValue} 
 							cursorColor={"black"}
 							style={styles.input}
 							onChangeText={(value) => {
-								this.setState({toYearInputValue: value});
+								this.setState({toYearInputValue: value}, () => {
+									const monthDay = this.state.fromDate.substring(5);
+									const newToDate = `${value}-${monthDay}`;
+									this.setState({toDate: newToDate});
+								});
 							}}/>
 					</View>
 					
@@ -449,9 +502,16 @@ class CalendarPage extends Component {
 						await AsyncStorage.setItem(this.state.calendarFromPage + "FromDate", this.state.fromDate);
 						await AsyncStorage.setItem(this.state.calendarFromPage + "ToDate", this.state.toDate);
 
-						navigation.navigate(this.state.calendarFromPage);
-					}}
-				>
+						console.log(
+							this.state.calendarFromPage + "FromDate", this.state.fromDate
+						);
+
+						console.log(
+							this.state.calendarFromPage + "ToDate", this.state.toDate
+						)
+
+						// navigation.navigate(this.state.calendarFromPage);
+					}}>
 					<Text style={{
 						color: "#fff",
 						textAlign: "center",
