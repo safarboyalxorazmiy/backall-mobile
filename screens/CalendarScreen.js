@@ -165,7 +165,40 @@ class CalendarPage extends Component {
 	};
 
 	setForWeek() {
+		let currentDate = new Date();
+		const thisMonthName = this.getMonth(currentDate.toDateString());
+		const thisMonthIndex = String(currentDate.getMonth() + 1).padStart(2, '0');
+		const thisDay = String(currentDate.getDate()).padStart(2, '0');
+		const thisYear = currentDate.getFullYear();
 
+		currentDate.setDate(currentDate.getDate() - 7); 
+
+		const lastMonthName = this.getMonth(currentDate.toDateString());
+		const lastMonthIndex = String(currentDate.getMonth() + 1).padStart(2, '0');
+		const lastDay = String(currentDate.getDate()).padStart(2, '0');
+		const lastYear = currentDate.getFullYear();
+
+		let fromDateString = `${thisYear}-${thisMonthIndex}-${thisDay}`;
+		let toDateString = `${lastYear}-${lastMonthIndex}-${lastDay}`;
+
+		this.setState({
+			fromMonthInputValue: thisMonthName,
+			toMonthInputValue: lastMonthName,
+			
+			fromDayInputValue: thisDay + "",
+			toDayInputValue: lastDay + "",
+
+			fromYearInputValue: thisYear + "",
+			toYearInputValue: lastYear + "",
+
+			fromDate: fromDateString,
+			toDate: toDateString
+		});
+
+		console.log({
+			fromDate: fromDateString,
+			toDate: toDateString
+		})
 	};
 	
 	render() {
@@ -239,6 +272,8 @@ class CalendarPage extends Component {
 						onPress={() => {
 							this.setState({dateType: "Hafta"});
 							console.log(this.state.dateType);
+
+							this.setForWeek();
 						}}>
 						<Text
 							style={{
