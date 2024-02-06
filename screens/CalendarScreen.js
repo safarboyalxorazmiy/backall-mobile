@@ -133,6 +133,40 @@ class CalendarPage extends Component {
 			});
 		}
 	};
+
+	setForMonth() {
+		let currentDate = new Date();
+		const thisMonthName = this.getMonth(currentDate.toDateString());
+		const thisMonthIndex = String(currentDate.getMonth() + 1).padStart(2, '0');
+
+		currentDate.setMonth(currentDate.getMonth() - 1);
+
+		if (currentDate.getMonth() === 11) {
+				currentDate.setFullYear(currentDate.getFullYear() - 1);
+		}
+
+		const lastMonthName = this.getMonth(currentDate.toDateString());
+		const lastMonthIndex = String(currentDate.getMonth() + 1).padStart(2, '0');
+
+		let fromDateString = `${currentDate.getFullYear()}-${thisMonthIndex}-${String(currentDate.getDate()).padStart(2, '0')}`;
+		let toDateString = `${currentDate.getFullYear()}-${lastMonthIndex}-${String(currentDate.getDate()).padStart(2, '0')}`;
+
+		this.setState({
+			fromMonthInputValue: thisMonthName,
+			toMonthInputValue: lastMonthName,
+			fromDate: fromDateString,
+			toDate: toDateString
+		});
+
+		console.log({
+			fromDate: fromDateString,
+			toDate: toDateString
+		})
+	};
+
+	setForWeek() {
+
+	};
 	
 	render() {
 		const {navigation} = this.props;
@@ -227,7 +261,7 @@ class CalendarPage extends Component {
 						}}
 						onPress={() => {
 							this.setState({dateType: "Oy"});
-							console.log(this.state.dateType)
+							this.setForMonth();
 						}}>
 						<Text
 							style={{
