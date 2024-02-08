@@ -57,9 +57,6 @@ class SellHistoryRepository {
         throw new Error("Unexpected result structure");
       }
   
-      console.log("*****************");
-      console.log(result.rows._array);
-      console.log("*****************");
       const rows = result.rows._array[0];
   
       return rows;
@@ -211,10 +208,10 @@ class SellHistoryRepository {
     }
   }
 
-  async getAllSellGroup() {
+  async getAllSellGroup(lastHistoryId) {
     try {
       const query = `
-        SELECT * FROM sell_group ORDER BY created_date DESC;
+        SELECT * FROM sell_group where id < ${lastHistoryId} ORDER BY id DESC limit 10;
       `;
 
       const result = await new Promise((resolve, reject) => {

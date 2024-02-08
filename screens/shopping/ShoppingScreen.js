@@ -24,28 +24,46 @@ class Shopping extends Component {
 			sellingHistory: [],
 			groupedHistories: [],
 			lastDate: new Date(),
-			currentMonthTotal: 0
+			currentMonthTotal: 0,
+
+			lastGroupId: 0
 		};
 
 		this.sellHistoryRepository = new SellHistoryRepository()
-		this.getSellingHistory()
+
+		this.initSellingHistoryGroup();
 	}
 
 	async componentDidMount() {
 		const {navigation} = this.props;
 		
 		navigation.addListener("focus", async () => {
-			this.getSellingHistory();
+			await this.initSellingHistoryGroup();
 
 			console.log(await AsyncStorage.getItem("ShoppingFromDate"));
 			console.log(await AsyncStorage.getItem("ShoppingToDate"));
 		});
 	}
 
-	async getSellingHistory () {
-		sellingHistory = await this.sellHistoryRepository.getAllSellGroup();
+	async initSellingHistoryGroup() {
+		let lastSellHistoryGroup = await this.sellHistoryRepository.getLastSellHistoryGroupId();
+		sellingHistory = await this.sellHistoryRepository.getAllSellGroup(lastSellHistoryGroup.id);
+		
+		this.setState({lastGroupId: lastSellHistoryGroup.id});
 		this.setState({sellingHistory: sellingHistory});
-		this.setState({groupedHistories: this.groupByDate(sellingHistory)})
+		this.setState({groupedHistories: this.groupByDate(sellingHistory)});
+	}
+
+	async getNextSellHistoryGroup() {
+		let nextSellHistories = await this.sellHistoryRepository.getAllSellGroup(this.state.lastGroupId - 10);
+		let allSellHistories = this.state.sellingHistory.concat(nextSellHistories);
+
+		console.log(this.state.sellingHistory);
+		console.log(allSellHistories);
+
+		this.setState({sellingHistory: allSellHistories});
+		this.setState({groupedHistories: this.groupByDate(allSellHistories)});
+		this.setState({lastGroupId: this.state.lastGroupId - 10});
 	}
 
 	getFormattedTime = (created_date) => {
@@ -108,7 +126,12 @@ class Shopping extends Component {
 		
 		return (
 			<View style={[styles.container, Platform.OS === 'web' && {width: "100%"}]}>
-				<ScrollView style={{width: "100%"}}>
+				<ScrollView onScrollBeginDrag={async (event) => {
+					// Store last  id..
+					
+					console.log("Scrolling ", event.nativeEvent.contentOffset);
+					await this.getNextSellHistoryGroup();
+				}} style={{width: "100%"}}>
 					<View style={styles.pageTitle}>
 						<Text style={styles.pageTitleText}>Sotuv tarixi</Text>
 					</View>
