@@ -10,6 +10,8 @@ import {
 } from "react-native";
 
 import CalendarIcon from "../../assets/calendar-icon.svg";
+import CrossIcon from "../../assets/cross-icon-light.svg";
+
 import SellIcon from "../../assets/sell-icon.svg";
 import SellHistoryRepository from "../../repository/SellHistoryRepository";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -26,12 +28,17 @@ class Shopping extends Component {
 			lastDate: new Date(),
 			currentMonthTotal: 0,
 			lastGroupId: 0,
-			isCollecting: false
+			isCollecting: false,
+
+			calendarInputContent: "--/--/----",
+			fromDate: null,
+			toDate: null
 		};
 
 		this.sellHistoryRepository = new SellHistoryRepository()
 
 		this.initSellingHistoryGroup();
+		this.getDateInfo();
 	}
 
 	async componentDidMount() {
@@ -39,10 +46,23 @@ class Shopping extends Component {
 		
 		navigation.addListener("focus", async () => {
 			await this.initSellingHistoryGroup();
-
-			console.log(await AsyncStorage.getItem("ShoppingFromDate"));
-			console.log(await AsyncStorage.getItem("ShoppingToDate"));
+			await this.getDateInfo();
 		});
+	}
+
+	async getDateInfo() {
+		this.setState({
+			fromDate: await AsyncStorage.getItem("ShoppingFromDate"),
+			toDate: await AsyncStorage.getItem("ShoppingToDate")
+		});
+
+		if (this.state.fromDate != null && this.state.toDate != null) {
+			let fromDate = this.state.fromDate.replace(/-/g, "/");
+			let toDate = this.state.toDate.replace(/-/g, "/");
+
+			console.log(fromDate + " - " + toDate);
+			this.setState({calendarInputContent: fromDate + " - " + toDate});
+		}
 	}
 
 	async initSellingHistoryGroup() {
@@ -72,9 +92,6 @@ class Shopping extends Component {
 
 		let nextSellHistories = await this.sellHistoryRepository.getAllSellGroup(this.state.lastGroupId - 10);
 		let allSellHistories = this.state.sellingHistory.concat(nextSellHistories);
-
-		console.log(this.state.sellingHistory);
-		console.log(allSellHistories);
 
 		this.setState({
 			sellingHistory: allSellHistories,
@@ -165,19 +182,24 @@ class Shopping extends Component {
 									await AsyncStorage.setItem("calendarFromPage", "Shopping");
 									navigation.navigate("Calendar");
 								}}
-								style={styles.calendarInput}>
-								<Text style={styles.calendarInputPlaceholder}>--/--/----</Text>
+								style={[
+									this.state.calendarInputContent === "--/--/----" ? styles.calendarInput : styles.calendarInputActive
+								]}>
+								<Text 
+									style={[
+										this.state.calendarInputContent === "--/--/----" ? styles.calendarInputPlaceholder : styles.calendarInputPlaceholderActive
+									]}>{this.state.calendarInputContent}</Text>
 							</TouchableOpacity>
 
-							{Platform.OS === 'android' || Platform.OS === 'ios' ? (
+							{this.state.calendarInputContent === "--/--/----" ? (
 									<CalendarIcon
 										style={styles.calendarIcon}
 										resizeMode="cover"/>
 								)
 								: (
-									<CalendarIcon
+									<CrossIcon
 										style={styles.calendarIcon}
-									/>
+										resizeMode="cover"/>
 								)}
 						</View>
 					</View>
@@ -419,6 +441,25 @@ const styles = StyleSheet.create({
 		borderColor: "#AFAFAF",
 		borderWidth: 1,
 		borderRadius: 8
+	},
+
+	calendarInputActive: {
+		width: screenWidth - (16 * 2),
+		position: "relative",
+		paddingHorizontal: 16,
+		paddingVertical: 14,
+		borderColor: "#AFAFAF",
+		backgroundColor: "#272727",
+		borderWidth: 1,
+		borderRadius: 8
+	},
+
+	calendarInputPlaceholderActive: {
+		fontSize: 16,
+		lineHeight: 24,
+		fontFamily: "Gilroy-Medium",
+		fontWeight: "500",
+		color: "#FFFFFF"
 	},
 	
 	calendarInputPlaceholder: {
