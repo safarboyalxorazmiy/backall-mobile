@@ -103,7 +103,7 @@ class ProfitHistoryRepository {
   async getAll() {
     try {
       const query = `
-        SELECT * FROM profit_history_group;
+        SELECT * FROM profit_group;
       `;
 
       const result = await new Promise((resolve, reject) => {
@@ -163,6 +163,42 @@ class ProfitHistoryRepository {
     }
   }
 
+  async getLastOfProfitHistoryByDate(fromDate, toDate) {
+    try {
+        const query = `
+            SELECT * FROM profit_history 
+            WHERE created_date BETWEEN ? AND ?
+            ORDER BY id DESC
+            LIMIT 1;
+        `;
+
+        const result = await new Promise((resolve, reject) => {
+            this.db.transaction((tx) => {
+                tx.executeSql(
+                    query,
+                    [toDate, fromDate], // Corrected the order of fromDate and toDate
+                    (_, resultSet) => resolve(resultSet),
+                    (_, error) => reject(error)
+                );
+            });
+        });
+
+        if (!result || !result.rows || !result.rows._array || result.rows._array.length === 0) {
+            console.log("No profit history found for the specified date range.");
+            return null; // Return null or handle the case when no records are found
+        }
+
+        const row = result.rows._array[0];
+
+        return row;
+    } catch (error) {
+        console.error("Error retrieving profit history:", error);
+        throw error;
+    }
+}
+
+
+
   async getTop10ProfitGroupByStartId(startId) {
     try {
       const query = `
@@ -191,6 +227,42 @@ class ProfitHistoryRepository {
       throw error;
     }
   }
+
+  async getTop10ProfitGroupByStartIdAndDate(startId, fromDate, toDate) {
+    console.log(await this.getAll())
+    try {
+        const query = `
+            SELECT * FROM profit_group 
+            WHERE id <= ? AND created_date BETWEEN ? AND ?
+            ORDER BY id DESC
+            LIMIT 10;
+        `;
+
+        const result = await new Promise((resolve, reject) => {
+            this.db.transaction((tx) => {
+                tx.executeSql(
+                    query,
+                    [startId, toDate, fromDate],
+                    (_, resultSet) => resolve(resultSet),
+                    (_, error) => reject(error)
+                );
+            });
+        });
+
+        if (!result || !result.rows || !result.rows._array) {
+            throw new Error("Unexpected result structure");
+        }
+
+        const rows = result.rows._array;
+
+        console.log(result)
+        return rows;
+    } catch (error) {
+        console.error("Error retrieving profit history:", error);
+        throw error;
+    }
+  }
+
 
   async getProfitHistoryDetailByGroupId(group_id) {
     try {

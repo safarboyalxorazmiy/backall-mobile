@@ -589,7 +589,7 @@ class CalendarPage extends Component {
 							this.state.calendarFromPage + "ToDate", this.state.toDate
 						)
 
-						// navigation.navigate(this.state.calendarFromPage);
+						navigation.navigate(this.state.calendarFromPage);
 					}}>
 					<Text style={{
 						color: "#fff",

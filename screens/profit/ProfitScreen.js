@@ -25,7 +25,6 @@ class Profit extends Component {
 
 		this.profitHistoryRepository = new ProfitHistoryRepository();
 		this.initProfitHistoryGroup();
-		this.getDateInfo();
 	}
 
 	async getDateInfo() {
@@ -48,13 +47,56 @@ class Profit extends Component {
 		
 		navigation.addListener("focus", async () => {
 			await this.initProfitHistoryGroup();
+
+			console.log(this.state.fromDate)
+			console.log(this.state.toDate)
+			
+			console.log(this.state.profitHistories);
 		});
 	}
 
 	async initProfitHistoryGroup() {
+		await this.getDateInfo();
+
+		if (this.state.fromDate != null && this.state.toDate != null) {
+			let lastProfitGroup = await this.profitHistoryRepository.getLastOfProfitHistoryByDate(
+				this.state.fromDate,
+				this.state.toDate
+			);
+
+			if (lastProfitGroup != null) {
+				profitHistories = await this.profitHistoryRepository.getTop10ProfitGroupByStartIdAndDate(
+					lastProfitGroup.id,
+					this.state.fromDate,
+					this.state.toDate
+				);
+	
+				console.log({
+					profitHistories: profitHistories,
+					groupedHistories: this.groupByDate(profitHistories),
+					lastGroupId: lastProfitGroup.id
+				})
+				this.setState({
+					profitHistories: profitHistories,
+					groupedHistories: this.groupByDate(profitHistories),
+					lastGroupId: lastProfitGroup.id
+				});	
+			}
+
+			return;
+		}
+
 		let lastProfitGroup = await this.profitHistoryRepository.getLastIdOfProfitHistory();
 		profitHistories = await this.profitHistoryRepository.getTop10ProfitGroupByStartId(lastProfitGroup.id);
 
+		console.log("WITHOUT DATE")
+		console.log(
+			{
+				profitHistories: profitHistories,
+				groupedHistories: this.groupByDate(profitHistories),
+				lastGroupId: lastProfitGroup.id
+			}
+		)
 		this.setState({
 			profitHistories: profitHistories,
 			groupedHistories: this.groupByDate(profitHistories),
@@ -63,6 +105,28 @@ class Profit extends Component {
 	}
 
 	async getNextProfitHistoryGroup() {
+		if (this.state.fromDate != null && this.state.toDate != null) {
+			this.setState({isCollecting: true});	
+			let nextProfitHistories = await this.profitHistoryRepository.getTop10ProfitGroupByStartIdAndDate(
+				this.state.lastGroupId - 10,
+				this.state.fromDate,
+				this.state.toDate
+			);
+			let allProfitHistories = this.state.profitHistories.concat(nextProfitHistories);
+	
+			console.log(this.state.profitHistories);
+			console.log(allProfitHistories);
+	
+			this.setState({
+				profitHistories: allProfitHistories,
+				groupedHistories: this.groupByDate(allProfitHistories),
+				lastGroupId: this.state.lastGroupId - 10,
+				isCollecting: false
+			});
+	
+			return;
+		}
+
 		this.setState({isCollecting: true});
 
 		console.log("####### LAST ID ########")

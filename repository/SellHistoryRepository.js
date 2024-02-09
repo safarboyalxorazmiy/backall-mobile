@@ -277,7 +277,7 @@ class SellHistoryRepository {
         const query = `
             SELECT * FROM sell_group 
             WHERE id <= ? AND created_date BETWEEN ? AND ?
-            ORDER BY created_date DESC
+            ORDER BY id DESC
             LIMIT 10;
         `;
 
@@ -297,6 +297,8 @@ class SellHistoryRepository {
         }
 
         const rows = result.rows._array;
+
+        console.log(rows)
         return rows;
     } catch (error) {
         console.error("Error retrieving sell history:", error);
