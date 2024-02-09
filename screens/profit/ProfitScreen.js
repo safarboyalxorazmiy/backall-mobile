@@ -64,24 +64,26 @@ class Profit extends Component {
 				this.state.toDate
 			);
 
-			if (lastProfitGroup != null) {
-				profitHistories = await this.profitHistoryRepository.getTop10ProfitGroupByStartIdAndDate(
-					lastProfitGroup.id,
-					this.state.fromDate,
-					this.state.toDate
-				);
-	
-				console.log({
-					profitHistories: profitHistories,
-					groupedHistories: this.groupByDate(profitHistories),
-					lastGroupId: lastProfitGroup.id
-				})
-				this.setState({
-					profitHistories: profitHistories,
-					groupedHistories: this.groupByDate(profitHistories),
-					lastGroupId: lastProfitGroup.id
-				});	
+			if (lastProfitGroup == null) {
+				return;
 			}
+
+			profitHistories = await this.profitHistoryRepository.getTop10ProfitGroupByStartIdAndDate(
+				lastProfitGroup.id,
+				this.state.fromDate,
+				this.state.toDate
+			);
+
+			console.log({
+				profitHistories: profitHistories,
+				groupedHistories: this.groupByDate(profitHistories),
+				lastGroupId: lastProfitGroup.id
+			})
+			this.setState({
+				profitHistories: profitHistories,
+				groupedHistories: this.groupByDate(profitHistories),
+				lastGroupId: lastProfitGroup.id
+			});	
 
 			return;
 		}

@@ -38,7 +38,6 @@ class Shopping extends Component {
 		this.sellHistoryRepository = new SellHistoryRepository()
 
 		this.initSellingHistoryGroup();
-		this.getDateInfo();
 	}
 
 	async componentDidMount() {
@@ -46,7 +45,6 @@ class Shopping extends Component {
 		
 		navigation.addListener("focus", async () => {
 			await this.initSellingHistoryGroup();
-			await this.getDateInfo();
 		});
 	}
 
@@ -66,13 +64,18 @@ class Shopping extends Component {
 	}
 
 	async initSellingHistoryGroup() {
-
+		this.getDateInfo();
 		if (this.state.fromDate != null && this.state.toDate != null) {
 			let lastSellHistoryGroup = 
 				await this.sellHistoryRepository.getLastSellHistoryGroupByDate(
 					this.state.fromDate, 
 					this.state.toDate
 				);
+
+				if (lastSellHistoryGroup != null) {
+					return;
+				}
+				
 			sellingHistory = 
 				await this.sellHistoryRepository.getTop10SellGroupByDate(
 					lastSellHistoryGroup.id, 

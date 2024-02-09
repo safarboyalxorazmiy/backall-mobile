@@ -195,9 +195,7 @@ class ProfitHistoryRepository {
         console.error("Error retrieving profit history:", error);
         throw error;
     }
-}
-
-
+  }
 
   async getTop10ProfitGroupByStartId(startId) {
     try {

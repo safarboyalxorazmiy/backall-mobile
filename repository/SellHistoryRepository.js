@@ -79,7 +79,7 @@ class SellHistoryRepository {
             this.db.transaction((tx) => {
                 tx.executeSql(
                     query,
-                    [fromDate, toDate],
+                    [toDate, fromDate],
                     (_, resultSet) => resolve(resultSet),
                     (_, error) => reject(error)
                 );
