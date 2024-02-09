@@ -66,15 +66,55 @@ class Shopping extends Component {
 	}
 
 	async initSellingHistoryGroup() {
+
+		if (this.state.fromDate != null && this.state.toDate != null) {
+			let lastSellHistoryGroup = 
+				await this.sellHistoryRepository.getLastSellHistoryGroupByDate(
+					this.state.fromDate, 
+					this.state.toDate
+				);
+			sellingHistory = 
+				await this.sellHistoryRepository.getTop10SellGroupByDate(
+					lastSellHistoryGroup.id, 
+					this.state.fromDate, 
+					this.state.toDate
+				);
+
+			this.setState({lastGroupId: lastSellHistoryGroup.id});
+			this.setState({sellingHistory: sellingHistory});
+			this.setState({groupedHistories: this.groupByDate(sellingHistory)});
+
+			return;
+		}
+
 		let lastSellHistoryGroup = await this.sellHistoryRepository.getLastSellHistoryGroupId();
 		sellingHistory = await this.sellHistoryRepository.getAllSellGroup(lastSellHistoryGroup.id);
-		
+
 		this.setState({lastGroupId: lastSellHistoryGroup.id});
 		this.setState({sellingHistory: sellingHistory});
 		this.setState({groupedHistories: this.groupByDate(sellingHistory)});
 	}
 
 	async getNextSellHistoryGroup() {
+		if (this.state.fromDate != null && this.state.toDate) {
+			this.setState({isCollecting: true});
+
+			let nextSellHistories = await this.sellHistoryRepository.getTop10SellGroupByDate(
+				this.state.lastGroupId - 10, 
+				this.state.fromDate, 
+				this.state.toDate
+			);
+			let allSellHistories = this.state.sellingHistory.concat(nextSellHistories);
+			
+			this.setState({
+				sellingHistory: allSellHistories,
+				groupedHistories: this.groupByDate(allSellHistories),
+				lastGroupId: this.state.lastGroupId - 10,
+				isCollecting: false
+			});
+
+			return;
+		}
 
 		// PROBLEM:
 		// 	Bu yerda oxirgi da qolib ketgan 10 dan keyingi 5-4 larini 
@@ -215,7 +255,7 @@ class Shopping extends Component {
 						paddingHorizontal: 16,
 						paddingVertical: 14,
 						backgroundColor: "#4F579F",
-						borderRadius: 8
+						borderRadius: 8	
 					}}>
 						<Text style={{
 							fontFamily: "Gilroy-Medium",

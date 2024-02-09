@@ -66,6 +66,41 @@ class SellHistoryRepository {
     }
   }
 
+  async getLastSellHistoryGroupByDate(fromDate, toDate) {
+    try {
+        const query = `
+            SELECT * FROM sell_group 
+            WHERE created_date BETWEEN ? AND ?
+            ORDER BY id DESC
+            LIMIT 1;
+        `;
+
+        const result = await new Promise((resolve, reject) => {
+            this.db.transaction((tx) => {
+                tx.executeSql(
+                    query,
+                    [fromDate, toDate],
+                    (_, resultSet) => resolve(resultSet),
+                    (_, error) => reject(error)
+                );
+            });
+        });
+
+        if (!result || !result.rows || !result.rows._array || result.rows._array.length === 0) {
+            console.error("No sell history found for the specified date range.");
+            return null; // Return null or handle the case when no records are found
+        }
+
+        const row = result.rows._array[0];
+
+        return row;
+    } catch (error) {
+        console.error("Error retrieving sell history:", error);
+        throw error;
+    }
+}
+
+
   async createSellHistory(
     product_id, 
     count, 
@@ -236,6 +271,38 @@ class SellHistoryRepository {
       throw error;
     }
   }
+
+  async getTop10SellGroupByDate(lastHistoryId, fromDate, toDate) {
+    try {
+        const query = `
+            SELECT * FROM sell_group 
+            WHERE id <= ? AND created_date BETWEEN ? AND ?
+            ORDER BY created_date DESC
+            LIMIT 10;
+        `;
+
+        const result = await new Promise((resolve, reject) => {
+            this.db.transaction((tx) => {
+                tx.executeSql(
+                    query,
+                    [lastHistoryId, fromDate, toDate],
+                    (_, resultSet) => resolve(resultSet),
+                    (_, error) => reject(error)
+                );
+            });
+        });
+
+        if (!result || !result.rows || !result.rows._array) {
+            throw new Error("Unexpected result structure");
+        }
+
+        const rows = result.rows._array;
+        return rows;
+    } catch (error) {
+        console.error("Error retrieving sell history:", error);
+        throw error;
+    }
+}
 
   // {peoduct_name, count, count_type}
   async getSellHistoryDetailByGroupId(group_id) {
