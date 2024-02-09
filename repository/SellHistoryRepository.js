@@ -211,7 +211,7 @@ class SellHistoryRepository {
   async getAllSellGroup(lastHistoryId) {
     try {
       const query = `
-        SELECT * FROM sell_group where id < ${lastHistoryId} ORDER BY id DESC limit 10;
+        SELECT * FROM sell_group where id <= ${lastHistoryId} ORDER BY id DESC limit 10;
       `;
 
       const result = await new Promise((resolve, reject) => {

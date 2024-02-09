@@ -25,8 +25,8 @@ class Shopping extends Component {
 			groupedHistories: [],
 			lastDate: new Date(),
 			currentMonthTotal: 0,
-
-			lastGroupId: 0
+			lastGroupId: 0,
+			isCollecting: false
 		};
 
 		this.sellHistoryRepository = new SellHistoryRepository()
@@ -55,16 +55,34 @@ class Shopping extends Component {
 	}
 
 	async getNextSellHistoryGroup() {
+
+		// PROBLEM:
+		// 	Bu yerda oxirgi da qolib ketgan 10 dan keyingi 5-4 larini 
+		// 	ola olmay qolishi mumkin...
+		// 	tekshirib agar muammo bo'lsa hal qilish kerak
+		
+		this.setState({isCollecting: true});
+
+		console.log("####### LAST ID ########")
+		console.log(this.state.lastGroupId)
+		if ((this.state.lastGroupId - 10) < 0) {
+			this.setState({isCollecting: false});
+			return;
+		}
+
 		let nextSellHistories = await this.sellHistoryRepository.getAllSellGroup(this.state.lastGroupId - 10);
 		let allSellHistories = this.state.sellingHistory.concat(nextSellHistories);
 
 		console.log(this.state.sellingHistory);
 		console.log(allSellHistories);
 
-		this.setState({sellingHistory: allSellHistories});
-		this.setState({groupedHistories: this.groupByDate(allSellHistories)});
-		this.setState({lastGroupId: this.state.lastGroupId - 10});
-	}
+		this.setState({
+			sellingHistory: allSellHistories,
+			groupedHistories: this.groupByDate(allSellHistories),
+			lastGroupId: this.state.lastGroupId - 10,
+			isCollecting: false
+		});
+	};
 
 	getFormattedTime = (created_date) => {
 		let date = new Date(created_date);
@@ -127,10 +145,10 @@ class Shopping extends Component {
 		return (
 			<View style={[styles.container, Platform.OS === 'web' && {width: "100%"}]}>
 				<ScrollView onScrollBeginDrag={async (event) => {
-					// Store last  id..
-					
-					console.log("Scrolling ", event.nativeEvent.contentOffset);
-					await this.getNextSellHistoryGroup();
+					if (!this.state.isCollecting) {
+						console.log("Scrolling ", event.nativeEvent.contentOffset);
+						await this.getNextSellHistoryGroup();
+					}
 				}} style={{width: "100%"}}>
 					<View style={styles.pageTitle}>
 						<Text style={styles.pageTitleText}>Sotuv tarixi</Text>
