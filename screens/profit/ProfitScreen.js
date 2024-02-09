@@ -14,33 +14,62 @@ class Profit extends Component {
 		super(props);
 
 		this.state = {
-			profitHistory: [],
+			profitHistories: [],
 			groupedHistories: [],
-			currentMonthTotal: 0
+			currentMonthTotal: 0,
+			lastGroupId: 0,
+			isCollecting: false
 		}
 
 		this.profitHistoryRepository = new ProfitHistoryRepository();
-		this.getProfitHistory();
+		this.initProfitHistoryGroup();
 	}
 
 	async componentDidMount() {
 		const {navigation} = this.props;
 		
 		navigation.addListener("focus", async () => {
-			this.getProfitHistory();
+			await this.initProfitHistoryGroup();
 
 			console.log(await AsyncStorage.getItem("ProfitFromDate"));
 			console.log(await AsyncStorage.getItem("ProfitToDate"));
 		});
 	}
 
-	async getProfitHistory() {
-		profitHistory = await this.profitHistoryRepository.getAllProfitGroup();
-		this.setState({profitHistory: profitHistory});
-		this.setState({groupedHistories: this.groupByDate(profitHistory)})
-		
-		console.log(this.state.groupedHistories)
+	async initProfitHistoryGroup() {
+		let lastProfitGroup = await this.profitHistoryRepository.getLastIdOfProfitHistory();
+		profitHistories = await this.profitHistoryRepository.getTop10ProfitGroupByStartId(lastProfitGroup.id);
+
+		this.setState({
+			profitHistories: profitHistories,
+			groupedHistories: this.groupByDate(profitHistories),
+			lastGroupId: lastProfitGroup.id
+		});
 	}
+
+	async getNextProfitHistoryGroup() {
+		this.setState({isCollecting: true});
+
+		console.log("####### LAST ID ########")
+		console.log(this.state.lastGroupId)
+		if ((this.state.lastGroupId - 10) < 0) {
+			this.setState({isCollecting: false});
+			return;
+		}
+
+		let nextProfitHistories = await this.profitHistoryRepository.getTop10ProfitGroupByStartId(this.state.lastGroupId - 10);
+		let allProfitHistories = this.state.profitHistories.concat(nextProfitHistories);
+
+		console.log(this.state.profitHistories);
+		console.log(allProfitHistories);
+
+		this.setState({
+			profitHistories: allProfitHistories,
+			groupedHistories: this.groupByDate(allProfitHistories),
+			lastGroupId: this.state.lastGroupId - 10,
+			isCollecting: false
+		});
+	};
 
 	groupByDate = (histories) => {
     const grouped = {};
@@ -74,7 +103,7 @@ class Profit extends Component {
     const currentMonth = currentDate.getMonth() + 1; // Months are zero-based in JavaScript (January is 0)
     let currentMonthTotal = 0;
 
-    this.state.profitHistory.forEach((history) => {
+    this.state.profitHistories.forEach((history) => {
       const historyDate = new Date(history.created_date);
       const historyMonth = historyDate.getMonth() + 1;
 
@@ -105,7 +134,13 @@ class Profit extends Component {
 		return (
 			<>
 				<View style={styles.container}>
-					<ScrollView style={{width: "100%"}}>
+					<ScrollView
+						onScrollBeginDrag={async (event) => {
+							if (!this.state.isCollecting) {
+								console.log("Scrolling ", event.nativeEvent.contentOffset);
+								await this.getNextProfitHistoryGroup();
+							}
+						}} style={{width: "100%"}}>
 						<View style={{
 							borderBottomColor: "#AFAFAF",
 							borderBottomWidth: 1,

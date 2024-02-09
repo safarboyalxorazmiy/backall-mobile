@@ -163,10 +163,10 @@ class ProfitHistoryRepository {
     }
   }
 
-  async getAllProfitGroup() {
+  async getTop10ProfitGroupByStartId(startId) {
     try {
       const query = `
-        SELECT * FROM profit_group ORDER BY created_date DESC;
+        SELECT * FROM profit_group where id <= ${startId} ORDER BY id DESC limit 10;
       `;
 
       const result = await new Promise((resolve, reject) => {
