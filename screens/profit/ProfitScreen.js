@@ -3,6 +3,7 @@ import {StatusBar} from 'expo-status-bar';
 import {StyleSheet, Text, TextInput, View, Dimensions, Image, TouchableOpacity, ScrollView} from 'react-native';
 
 import CalendarIcon from "../../assets/calendar-icon.svg";
+import CrossIcon from "../../assets/cross-icon-light.svg";
 import ProfitIcon from "../../assets/profit-icon.svg";
 import ProfitHistoryRepository from '../../repository/ProfitHistoryRepository';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -18,21 +19,35 @@ class Profit extends Component {
 			groupedHistories: [],
 			currentMonthTotal: 0,
 			lastGroupId: 0,
-			isCollecting: false
+			isCollecting: false,
+			calendarInputContent: "--/--/----",
 		}
 
 		this.profitHistoryRepository = new ProfitHistoryRepository();
 		this.initProfitHistoryGroup();
+		this.getDateInfo();
 	}
 
+	async getDateInfo() {
+		this.setState({
+			fromDate: await AsyncStorage.getItem("ProfitFromDate"),
+			toDate: await AsyncStorage.getItem("ProfitToDate")
+		});
+
+		if (this.state.fromDate != null && this.state.toDate != null) {
+			let fromDate = this.state.fromDate.replace(/-/g, "/");
+			let toDate = this.state.toDate.replace(/-/g, "/");
+
+			console.log(fromDate + " - " + toDate);
+			this.setState({calendarInputContent: fromDate + " - " + toDate});
+		}
+	}
+	
 	async componentDidMount() {
 		const {navigation} = this.props;
 		
 		navigation.addListener("focus", async () => {
 			await this.initProfitHistoryGroup();
-
-			console.log(await AsyncStorage.getItem("ProfitFromDate"));
-			console.log(await AsyncStorage.getItem("ProfitToDate"));
 		});
 	}
 
@@ -177,13 +192,25 @@ class Profit extends Component {
 										await AsyncStorage.setItem("calendarFromPage", "Profit");
 										navigation.navigate("Calendar")}
 									}
-									style={styles.calendarInput}>
-									<Text style={styles.calendarInputPlaceholder}>--/--/----</Text>
-								</TouchableOpacity>
+									style={[
+										this.state.calendarInputContent === "--/--/----" ? styles.calendarInput : styles.calendarInputActive
+									]}>
+									<Text 
+										style={[
+											this.state.calendarInputContent === "--/--/----" ? styles.calendarInputPlaceholder : styles.calendarInputPlaceholderActive
+										]}>{this.state.calendarInputContent}</Text>
+								</TouchableOpacity>	
 
-								<CalendarIcon
-									style={{position: "absolute", right: 16, top: 14}}
-									resizeMode="cover"/>
+								{this.state.calendarInputContent === "--/--/----" ? (
+									<CalendarIcon
+										style={styles.calendarIcon}
+										resizeMode="cover"/>
+								)
+								: (
+									<CrossIcon
+										style={styles.calendarIcon}
+										resizeMode="cover"/>
+								)}
 							</View>
 						</View>
 						
@@ -460,6 +487,25 @@ const styles = StyleSheet.create({
 		borderRadius: 8
 	},
 
+	calendarInputActive: {
+		width: screenWidth - (16 * 2),
+		position: "relative",
+		paddingHorizontal: 16,
+		paddingVertical: 14,
+		borderColor: "#AFAFAF",
+		backgroundColor: "#272727",
+		borderWidth: 1,
+		borderRadius: 8
+	},
+
+	calendarInputPlaceholderActive: {
+		fontSize: 16,
+		lineHeight: 24,
+		fontFamily: "Gilroy-Medium",
+		fontWeight: "500",
+		color: "#FFFFFF"
+	},
+	
 	calendarInputPlaceholder: {
 		fontSize: 16,
 		lineHeight: 24,
