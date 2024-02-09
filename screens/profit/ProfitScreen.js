@@ -39,6 +39,8 @@ class Profit extends Component {
 
 			console.log(fromDate + " - " + toDate);
 			this.setState({calendarInputContent: fromDate + " - " + toDate});
+		} else {
+			this.setState({calendarInputContent: "--/--/----"});
 		}
 	}
 	

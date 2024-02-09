@@ -226,7 +226,12 @@ class CalendarPage extends Component {
 					<Text style={styles.title}>Sotilgan mahsulotlar</Text>
 					
 					<TouchableOpacity
-						onPress={() => navigation.navigate(this.state.calendarFromPage)}
+						onPress={async () => {
+							await AsyncStorage.removeItem(this.state.calendarFromPage + "FromDate");
+							await AsyncStorage.removeItem(this.state.calendarFromPage + "ToDate");
+
+							navigation.navigate(this.state.calendarFromPage);
+						}}
 						style={styles.deleteIcon}
 					>
 						<DeleteIcon/>
