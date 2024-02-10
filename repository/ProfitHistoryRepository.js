@@ -59,10 +59,43 @@ class ProfitHistoryRepository {
     }
   }
 
+  async getLastProfitHistoryGroupIdByDate(fromDate, toDate) {
+    try {
+        const query = `
+            SELECT * FROM profit_group 
+            WHERE created_date BETWEEN ? AND ?
+            ORDER BY id DESC
+            LIMIT 1;
+        `;
+
+        const result = await new Promise((resolve, reject) => {
+            this.db.transaction((tx) => {
+                tx.executeSql(
+                    query,
+                    [toDate, fromDate],
+                    (_, resultSet) => resolve(resultSet),
+                    (_, error) => reject(error)
+                );
+            });
+        });
+
+        if (!result || !result.rows || !result.rows.length) {
+            console.error("No profit history group found for the specified date range.");
+            return null; // Return null or handle the case when no records are found
+        }
+
+        const row = result.rows.item(0);
+
+        return row;
+    } catch (error) {
+        console.error("Error retrieving profit history group:", error);
+        throw error;
+    }
+}
+
+
   async createProfitHistory(product_id, count, count_type, profit, created_date, group_id) {
     try {
-      console.log(await this.getAll());
-
       const insertProfitHistoryQuery = `
         INSERT INTO profit_history (product_id, count, count_type, profit, created_date)
         VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP);
@@ -86,24 +119,33 @@ class ProfitHistoryRepository {
   async createProfitHistoryAndLinkWithGroup(product_id, count, count_type, profit, group_id) {
     let historyId = await this.createProfitHistory(product_id, count, count_type, profit);
 
+			console.log("PROFIT GROUP INSIDE METHOD:::", group_id)
+
     const insert = `
-      INSERT INTO profit_history_group(group_id, history_id) VALUES (?, ?);
+      INSERT INTO profit_history_group(history_id, group_id) VALUES (?, ?);
     `;
 
     await this.db.transaction(async (tx) => {
       await tx.executeSql(
         insert,
-        [group_id, historyId]
+        [historyId, group_id]
       );
     });
 
     console.log("History Id: " + historyId + " Group Id: " + group_id)
+
+
+    console.log("############ALL FUCKING GROUPS#############")
+
+    console.log(await this.getAll());
+
+    console.log("############CREATED INFO ENDED#############")
   }
   
   async getAll() {
     try {
       const query = `
-        SELECT * FROM profit_group;
+        SELECT * FROM profit_group ORDER BY ID DESC;
       `;
 
       const result = await new Promise((resolve, reject) => {
@@ -227,7 +269,6 @@ class ProfitHistoryRepository {
   }
 
   async getTop10ProfitGroupByStartIdAndDate(startId, fromDate, toDate) {
-    console.log(await this.getAll())
     try {
         const query = `
             SELECT * FROM profit_group 
@@ -298,6 +339,7 @@ class ProfitHistoryRepository {
   
       for (const historyGroupLinked of historyGroupLinkedArray) {
         let profitHistoryInfo = await this.getProfitHistoryInfoById(historyGroupLinked.history_id);
+        console.log(historyGroupLinked.history_id)
         console.log("PROFIT HISTORY INFO INSIDE OF FOR EACH ", profitHistoryInfo[0]);
         let currentProfitHistoryInfo = profitHistoryInfo[0];
         let product = await this.productRepository.getProductNameAndBrandById(currentProfitHistoryInfo.product_id);
@@ -308,6 +350,8 @@ class ProfitHistoryRepository {
         console.log("PROFIT ARRAY: ", historyInfo);
       }
   
+      console.log(await this.getAll());
+
       console.log("HISTORY INFO: ", historyInfo);
       return historyInfo;
     } catch (error) {

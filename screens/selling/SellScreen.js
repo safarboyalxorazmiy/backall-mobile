@@ -302,7 +302,7 @@ class Sell extends Component {
 
 		console.log("PROFIT ", this.state.profit);
 
-		this.state.sellingProducts.forEach(
+		await this.state.sellingProducts.forEach(
 			async (sellingProduct) => {
 				await this.sellHistoryRepository.createSellHistoryAndLinkWithGroup(
 					sellingProduct.product_id, 
@@ -315,7 +315,9 @@ class Sell extends Component {
 			});
 
 
-		this.state.sellingProducts.forEach(
+			console.log("PROFIT GROUP:::", profitGroupId)
+
+		await this.state.sellingProducts.forEach(
 			async (sellingProduct) => {
 				await this.profitHistoryRepository.createProfitHistoryAndLinkWithGroup(
 					sellingProduct.product_id, 

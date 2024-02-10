@@ -61,7 +61,7 @@ class Profit extends Component {
 		await this.getDateInfo();
 
 		if (this.state.fromDate != null && this.state.toDate != null) {
-			let lastProfitGroup = await this.profitHistoryRepository.getLastOfProfitHistoryByDate(
+			let lastProfitGroup = await this.profitHistoryRepository.getLastProfitHistoryGroupIdByDate(
 				this.state.fromDate,
 				this.state.toDate
 			);
@@ -90,7 +90,7 @@ class Profit extends Component {
 			return;
 		}
 
-		let lastProfitGroup = await this.profitHistoryRepository.getLastIdOfProfitHistory();
+		let lastProfitGroup = await this.profitHistoryRepository.getLastProfitHistoryGroupId();
 		profitHistories = await this.profitHistoryRepository.getTop10ProfitGroupByStartId(lastProfitGroup.id);
 
 		console.log("WITHOUT DATE")
