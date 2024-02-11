@@ -98,17 +98,17 @@ class SellHistoryRepository {
         console.error("Error retrieving sell history:", error);
         throw error;
     }
-}
-
+  }
 
   async createSellHistory(
     product_id, 
     count, 
     count_type, 
-    selling_price, 
-    created_date
+    selling_price
   ) {
     try {
+      let created_date = new Date();
+
       const query = `
         INSERT INTO sell_history (
           product_id, 
@@ -117,7 +117,7 @@ class SellHistoryRepository {
           selling_price, 
           created_date
         )
-        VALUES (?, ?, ?, ?, CURRENT_DATE);
+        VALUES (?, ?, ?, ?, ?);
       `;
 
       await this.db.transaction(async (tx) => {
@@ -125,7 +125,8 @@ class SellHistoryRepository {
             product_id, 
             count, 
             count_type, 
-            selling_price
+            selling_price,
+            created_date.toISOString()
           ]);
       });
 
@@ -136,7 +137,7 @@ class SellHistoryRepository {
       console.log(await this.getAll());
       console.log("=================");
 
-      let lastIdOfSellHistory = await this.getLastIdOfSellHistory();
+      let lastIdOfSellHistory = await this.getLastIdOfSellHistory(product_id, created_date.toISOString());
       console.log(lastIdOfSellHistory);
       return lastIdOfSellHistory.id;
     } catch (error) {
@@ -150,15 +151,13 @@ class SellHistoryRepository {
     count, 
     count_type, 
     selling_price, 
-    created_date, 
     group_id
   ) {
     let historyId = await this.createSellHistory(
       product_id, 
       count, 
       count_type, 
-      selling_price, 
-      created_date
+      selling_price
     );
 
     const insert = `
@@ -180,17 +179,17 @@ class SellHistoryRepository {
     console.log("History Id: " + historyId + " Group Id: " + group_id);
   }
 
-  async getLastIdOfSellHistory() {
+  async getLastIdOfSellHistory(product_id, created_date) {
     try {
       const query = `
-        SELECT * FROM sell_history ORDER BY ID DESC LIMIT 1;
+        SELECT * FROM sell_history where product_id = ? AND created_date = ? ORDER BY ID DESC LIMIT 1;
       `;
 
       const result = await new Promise((resolve, reject) => {
         this.db.transaction((tx) => {
           tx.executeSql(
             query,
-            [],
+            [product_id, created_date],
             (_, resultSet) => resolve(resultSet),
             (_, error) => reject(error)
           );

@@ -194,7 +194,7 @@ class Sell extends Component {
 							style={styles.footerTitle}
 						>
 							<Text style={styles.priceTitle}>Buyurtma narxi</Text>
-							<Text style={styles.price}>{this.state.amount} so"m</Text>
+							<Text style={styles.price}>{this.state.amount} so'm</Text>
 						</View>
 						
 						<TouchableOpacity 
@@ -302,14 +302,13 @@ class Sell extends Component {
 
 		console.log("PROFIT ", this.state.profit);
 
-		await this.state.sellingProducts.forEach(
+		this.state.sellingProducts.forEach(
 			async (sellingProduct) => {
 				await this.sellHistoryRepository.createSellHistoryAndLinkWithGroup(
 					sellingProduct.product_id, 
 					sellingProduct.count, 
 					sellingProduct.count_type,
 					sellingProduct.selling_price,
-					currentDate,
 					sellGroupId
 				)
 			});
@@ -317,7 +316,7 @@ class Sell extends Component {
 
 			console.log("PROFIT GROUP:::", profitGroupId)
 
-		await this.state.sellingProducts.forEach(
+		this.state.sellingProducts.forEach(
 			async (sellingProduct) => {
 				await this.profitHistoryRepository.createProfitHistoryAndLinkWithGroup(
 					sellingProduct.product_id, 

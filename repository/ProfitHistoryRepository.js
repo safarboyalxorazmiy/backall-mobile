@@ -91,24 +91,30 @@ class ProfitHistoryRepository {
         console.error("Error retrieving profit history group:", error);
         throw error;
     }
-}
+  }
 
-
-  async createProfitHistory(product_id, count, count_type, profit, created_date, group_id) {
+  async createProfitHistory(product_id, count, count_type, profit) {
+    let created_date = new Date();
+    
     try {
       const insertProfitHistoryQuery = `
         INSERT INTO profit_history (product_id, count, count_type, profit, created_date)
-        VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP);
+        VALUES (?, ?, ?, ?, ?);
       `;
+
+      console.log(insertProfitHistoryQuery)
       
       await this.db.transaction(async (tx) => {
         await tx.executeSql(
           insertProfitHistoryQuery,
-          [product_id, count, count_type, profit]
+          [product_id, count, count_type, profit, created_date.toISOString()]
         );
       });
 
-      let lastIdOfProfitHistory = await this.getLastIdOfProfitHistory();
+      console.log([product_id, count, count_type, profit]);
+      console.log("CREATED: ", product_id);
+
+      let lastIdOfProfitHistory = await this.getLastIdOfProfitHistory(product_id, created_date.toISOString());
       console.log(lastIdOfProfitHistory);
       return lastIdOfProfitHistory.id;
     } catch (error) {
@@ -119,7 +125,7 @@ class ProfitHistoryRepository {
   async createProfitHistoryAndLinkWithGroup(product_id, count, count_type, profit, group_id) {
     let historyId = await this.createProfitHistory(product_id, count, count_type, profit);
 
-			console.log("PROFIT GROUP INSIDE METHOD:::", group_id)
+    console.log("PROFIT GROUP INSIDE METHOD:::", group_id)
 
     const insert = `
       INSERT INTO profit_history_group(history_id, group_id) VALUES (?, ?);
@@ -174,17 +180,17 @@ class ProfitHistoryRepository {
     }
   }
 
-  async getLastIdOfProfitHistory() {
+  async getLastIdOfProfitHistory(product_id, created_date) {
     try {
       const query = `
-        SELECT * FROM profit_history ORDER BY ID DESC LIMIT 1;
+        SELECT * FROM profit_history WHERE product_id = ? AND created_date = ? ORDER BY ID DESC LIMIT 1;
       `;
 
       const result = await new Promise((resolve, reject) => {
         this.db.transaction((tx) => {
           tx.executeSql(
             query,
-            [],
+            [product_id, created_date],
             (_, resultSet) => resolve(resultSet),
             (_, error) => reject(error)
           );
