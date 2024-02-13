@@ -52,10 +52,8 @@ class ProfitDetail extends Component {
 	}
 
 	getDay(isoString) {
-		// Parse the ISO string into a Date object
 		var parsedDate = new Date(isoString);
 	
-		// Array of month names (customize as needed)
 		var monthNames = [
 			"yanvar",
 			"fevral",
@@ -71,12 +69,10 @@ class ProfitDetail extends Component {
 			"dekabr"
 		];
 	
-		// Get day and month
 		var day = parsedDate.getDate();
 		var monthIndex = parsedDate.getMonth();
 		var monthName = monthNames[monthIndex];
 	
-		// Format the result
 		var formattedResult = day + "-" + monthName;
 	
 		return formattedResult;
@@ -90,16 +86,16 @@ class ProfitDetail extends Component {
 				<View style={styles.container}>
 					<View style={styles.header}>
 						<TouchableOpacity
-							onPress={() => navigation.navigate("Profit")}
-							style={styles.backButton}
-						>
+							onPress={() => {
+								navigation.navigate("Profit")
+							}}
+							style={styles.backButton}>
 							<BackIcon/>
 						</TouchableOpacity>
 						
 						<Text style={styles.title}>Mahsulotdan qolgan foyda</Text>
 					</View>
 
-					
 					<View style={styles.infoBar}>
 						<Text style={styles.infoText}>{ this.state.groupDetail.profit } so’m</Text>
 						<Text style={styles.infoDivider}>//</Text>
@@ -123,7 +119,9 @@ class ProfitDetail extends Component {
 						{/* FOR EACH ROW */}
 						{
 							this.state.profitHistoryDetail.map((item, index) => (
-								<View style={styles.profitContainer} key={index}>
+								<View 
+                                    style={styles.profitContainer} 
+                                    key={index}>
 									<Text style={styles.profitTitle}>{item.productName}</Text>
 
 									<View style={styles.profitRow}>
@@ -140,7 +138,6 @@ class ProfitDetail extends Component {
 						}
 					</View>
 				</View>
-			
 			</ScrollView>
 		);
 	}

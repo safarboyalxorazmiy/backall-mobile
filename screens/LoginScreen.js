@@ -120,14 +120,21 @@ const Login = ({navigation}) => {
 	return (
 		<ScrollView contentContainerStyle={styles.container}>
 			{Platform.OS === 'android' || Platform.OS === 'ios' ? (
-				<Logo style={styles.logo} resizeMode="cover"/>
+				<Logo 
+					style={styles.logo} 
+					resizeMode="cover"/>
 			) : (
-				<Logo style={styles.logo}/>
+				<Logo 
+					style={styles.logo}/>
 			)}
 			
-			<LoginForm onSubmit={login}/>
+			<LoginForm 
+				onSubmit={login}/>
 			
-			<ForgotPasswordLink onPress={() => navigation.navigate('Home')}/>
+			<ForgotPasswordLink 
+				onPress={() => {
+					navigation.navigate('Home')
+				}}/>
 			
 			<StatusBar style="auto"/>
 		</ScrollView>

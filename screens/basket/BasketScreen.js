@@ -133,7 +133,9 @@ class Basket extends Component {
 				{/* Add Button */}
 				<TouchableOpacity
 					style={this.state.addButtonStyle}
-					onPress={() => navigation.navigate("ProductAdd")}>
+					onPress={() => {
+						navigation.navigate("ProductAdd");
+					}}>
 					<PlusIcon/>
 				</TouchableOpacity>
 

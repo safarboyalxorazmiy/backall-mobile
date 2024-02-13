@@ -327,10 +327,22 @@ class ProductAdd extends Component {
 		};
 		
 		return (
-			<View style={{backgroundColor: "white"}}>
-				<View style={[styles.pageTitle, {paddingTop: 52, borderBottomWidth: 1, borderColor: "#F1F1F1"}]}>
+			<View style={{
+				backgroundColor: "white"
+			}}>
+				<View 
+					style={[
+						styles.pageTitle, 
+						{
+							paddingTop: 52, 
+							borderBottomWidth: 1, 
+							borderColor: "#F1F1F1"
+						}
+					]}>
 					<TouchableOpacity
-						onPress={() => navigation.navigate("Basket")}
+						onPress={() => {
+							navigation.navigate("Basket")
+						}}
 						style={styles.backIcon}>
 						
 						<BackIcon/>
@@ -341,9 +353,16 @@ class ProductAdd extends Component {
 					</Text>
 				</View>
 				
-				<ScrollView contentContainerStyle={[styles.container]} ref={myScrollViewRef}>
-					<View style={[styles.inputWrapper, {marginTop: 10}]}>
-						<Text style={styles.label}>Mahsulot seriyasi</Text>
+				<ScrollView 
+					contentContainerStyle={[styles.container]} 
+					ref={myScrollViewRef}>
+					<View style={[
+						styles.inputWrapper, 
+						{
+							marginTop: 10
+						}]}>
+						<Text 
+							style={styles.label}>Mahsulot seriyasi</Text>
 							<TextInput
 								cursorColor="#222222"
 								style={this.state.serialInputStyle}
@@ -433,7 +452,8 @@ class ProductAdd extends Component {
 							onEndEditing={this.onEndEditingProductInput}
 						/>
 						
-						{this.state.productNameErr === true ? <Animatable.View animation="shake" duration={500}>
+						{this.state.productNameErr === true ? 
+						<Animatable.View animation="shake" duration={500}>
 							<Text style={styles.errorMsg}>Mahsulot nomi xato kiritildi.</Text>
 						</Animatable.View> : null}
 					</View>
@@ -510,9 +530,12 @@ class ProductAdd extends Component {
 							</View>
 						</View>
 						
-						{this.state.amountErr === true ? <Animatable.View animation="shake" duration={500}>
-							<Text style={styles.errorMsg}>Mahsulot miqdori xato kiritildi.</Text>
-						</Animatable.View> : null}
+						{
+							this.state.amountErr === true ? 
+							<Animatable.View animation="shake" duration={500}>
+								<Text style={styles.errorMsg}>Mahsulot miqdori xato kiritildi.</Text>
+							</Animatable.View> : null
+						}
 					</View>
 					
 					<View style={styles.inputWrapper}>
@@ -534,9 +557,12 @@ class ProductAdd extends Component {
 							}}
 						/>
 						
-						{this.state.priceInputErr === true ? <Animatable.View animation="shake" duration={500}>
-							<Text style={styles.errorMsg}>Tan narxi xato kiritildi.</Text>
-						</Animatable.View> : null}
+						{
+							this.state.priceInputErr === true ? 
+							<Animatable.View animation="shake" duration={500}>
+								<Text style={styles.errorMsg}>Tan narxi xato kiritildi.</Text>
+							</Animatable.View> : null
+						}
 					</View>
 					
 					<View style={styles.inputWrapper}>
@@ -628,7 +654,10 @@ class ProductAdd extends Component {
 							onPressOut={() => {
 								this.ndsPressOut();
 							}}>
-							<Text style={{fontSize: 16, fontFamily: "Gilroy-Medium"}}>NDS soliq</Text>
+							<Text style={{
+								fontSize: 16,
+								fontFamily: "Gilroy-Medium"
+							}}>NDS soliq</Text>
 							
 							<ToggleSwitch
 								onColor="#65C466"
@@ -647,14 +676,23 @@ class ProductAdd extends Component {
 					</View>
 					
 					
-					<View style={{height: 250}}>
-						<TouchableOpacity style={[{display: "block"}, styles.buttonDark]}
-						                  onPress={this.createProduct}>
+					<View style={{
+						height: 250
+					}}>
+						<TouchableOpacity 
+							style={[
+								{display: "block"}, 
+								styles.buttonDark
+							]}
+							onPress={this.createProduct}>
 							<Text style={styles.buttonDarkText}>Mahsulotni qo’shish</Text>
 						</TouchableOpacity>
 						
 						<TouchableOpacity
-							style={[{display: "block"}, styles.buttonLight]}
+							style={[
+								{display: "block"}, 
+								styles.buttonLight
+							]}
 							onPress={() => {
 								this.setState({
 									selectedItem: null,
@@ -833,7 +871,6 @@ class ProductAdd extends Component {
 		}
 	};
 }
-
 
 const styles = StyleSheet.create({
 	container: {

@@ -70,10 +70,8 @@ class ShoppingDetail extends Component {
 	}
 
 	getDay(isoString) {
-		// Parse the ISO string into a Date object
 		var parsedDate = new Date(isoString);
 	
-		// Array of month names (customize as needed)
 		var monthNames = [
 			"yanvar",
 			"fevral",
@@ -89,12 +87,10 @@ class ShoppingDetail extends Component {
 			"dekabr"
 		];
 	
-		// Get day and month
 		var day = parsedDate.getDate();
 		var monthIndex = parsedDate.getMonth();
 		var monthName = monthNames[monthIndex];
 	
-		// Format the result
 		var formattedResult = day + "-" + monthName;
 	
 		return formattedResult;

@@ -82,7 +82,7 @@ class Sell extends Component {
 
 	handleBlur = () => {
 		this.inputRef.current.focus();
-  };
+	};
 
 	onChangeTextSerialInput = async (seriya) => {
 		this.setState({seria: seriya});
@@ -125,12 +125,12 @@ class Sell extends Component {
 			}
 	
 			this.setState(
-				{ 
-					sellingProducts: newSellingProducts,
-					seria: ""
-				});				
-				Keyboard.dismiss();
-			}
+			{ 
+				sellingProducts: newSellingProducts,
+				seria: ""
+			});				
+			Keyboard.dismiss();
+		}
 	};
 
 	render() {

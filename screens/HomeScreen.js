@@ -69,10 +69,13 @@ class Home extends Component {
 									)}
 								</View>
 
-								<Text style={styles.cardTitle}>Bugungi kirim</Text>
-								<Text style={styles.cardDescription}>
+								<Text 
+									style={styles.cardTitle}>Bugungi kirim</Text>
+								<Text 
+									style={styles.cardDescription}>
 									3.000.000
-									<Text style={styles.currency}>UZS</Text>
+									<Text 
+										style={styles.currency}>UZS</Text>
 								</Text>
 							</LinearGradient>
 						</TouchableOpacity>
@@ -85,7 +88,9 @@ class Home extends Component {
 							onPressOut={() => {
 								this.setState({profitCardColors: ["#2C8134", "#1DCB00"]})
 							}}
-							onPress={() => navigation.navigate("Profit")}>
+							onPress={() => {
+								navigation.navigate("Profit")
+							}}>
 							<LinearGradient
 								style={styles.card}
 								colors={this.state.profitCardColors}
@@ -101,10 +106,13 @@ class Home extends Component {
 											style={styles.benefitIcon}/>
 									)}
 								</View>
-								<Text style={styles.cardTitle}>Bugungi foyda</Text>
-								<Text style={styles.cardDescription}>
+								<Text 
+									style={styles.cardTitle}>Bugungi foyda</Text>
+								<Text 
+									style={styles.cardDescription}>
 									500.000
-									<Text style={styles.currency}>UZS</Text>
+									<Text 
+										style={styles.currency}>UZS</Text>
 								</Text>
 							</LinearGradient>
 						</TouchableOpacity>

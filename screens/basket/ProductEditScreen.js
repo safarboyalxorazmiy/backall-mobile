@@ -57,7 +57,10 @@ class ProductEdit extends Component {
 		const {open, value, items} = this.state;
 
 		return (
-			<View style={{backgroundColor: "white", paddingTop: 200}}>
+			<View style={{
+				backgroundColor: "white", 
+				paddingTop: 200
+			}}>
 				<View style={styles.inputWrapper}>
 					<Text style={styles.label}>Sotilish narxi</Text>
 					<View style={styles.inputGroup}>
@@ -74,7 +77,10 @@ class ProductEdit extends Component {
 								setSelected={(val) => {
 									this.setState({selected: val});
 								}}
-								defaultOption={{key: "2", value: "SUM"}}
+								defaultOption={{
+									key: "2", 
+									value: "SUM"
+								}}
 								data={this.state.data}
 								save="value"
 								search={false}
@@ -99,7 +105,9 @@ class ProductEdit extends Component {
 									justifyContent: "center",
 									gap: 20
 								}}
-								inputStyles={{color: "white"}}
+								inputStyles={{
+									color: "white"
+								}}
 								dropdownStyles={{
 									position: "absolute",
 									top: 42,
@@ -108,8 +116,12 @@ class ProductEdit extends Component {
 									borderTopLeftRadius: 0,
 									zIndex: 10
 								}}
-								dropdownItemStyles={{paddingVertical: 14}}
-								arrowicon={<FontAwesome name="chevron-down" size={14} color={'white'}/>}
+								dropdownItemStyles={{
+									paddingVertical: 14
+								}}
+								arrowicon={
+									<FontAwesome name="chevron-down" size={14} color={'white'}/>
+								}
 							/>
 						</View>
 					</View>

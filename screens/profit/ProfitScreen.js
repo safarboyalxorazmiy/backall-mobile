@@ -311,7 +311,11 @@ class Profit extends Component {
 							}}>5.000.000 so’m</Text>
 						</View>
 						
-						<View style={{width: "100%", paddingLeft: 16, paddingRight: 16}}>
+						<View style={{
+							width: "100%", 
+							paddingLeft: 16, 
+							paddingRight: 16
+						}}>
 							{this.state.groupedHistories.map((group) => (
 								<View key={group.date}>
 									{(
@@ -351,8 +355,6 @@ class Profit extends Component {
 									))}
 								</View>
 							))}
-						<View>
-							</View>
 						</View>
 					</ScrollView>
 					

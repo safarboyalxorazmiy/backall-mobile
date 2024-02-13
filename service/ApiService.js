@@ -1,6 +1,5 @@
 class ApiService {
-	constructor() {
-	}
+	constructor() {}
 	
 	async login(email, password) {
 		const response = await fetch('http://backall.uz/api/v1/auth/authenticate', {

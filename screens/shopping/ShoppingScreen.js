@@ -185,7 +185,7 @@ class Shopping extends Component {
 	
 	calculateCurrentMonthTotal = () => {
     const currentDate = new Date();
-    const currentMonth = currentDate.getMonth() + 1; // Months are zero-based in JavaScript (January is 0)
+    const currentMonth = currentDate.getMonth() + 1;
     let currentMonthTotal = 0;
 
     this.state.sellingHistory.forEach((history) => {

@@ -238,13 +238,14 @@ class CalendarPage extends Component {
 					</TouchableOpacity>
 				</View>
 				
-				<View style={{
-					width: screenWidth - (16 * 2),
-					display: "flex",
-					justifyContent: "space-between",
-					flexDirection: "row",
-					marginTop: 24
-				}}>
+				<View 
+                    style={{
+                        width: screenWidth - (16 * 2),
+                        display: "flex",
+                        justifyContent: "space-between",
+                        flexDirection: "row",
+                        marginTop: 24
+                    }}>
 					<TouchableOpacity
 						style={{
 							width: (screenWidth / 3) - (16 * 2),
@@ -326,8 +327,16 @@ class CalendarPage extends Component {
 					</TouchableOpacity>
 				</View>
 				
-				<View style={{width: screenWidth - (16 * 2), marginTop: 24}}>
-					<Text style={{fontFamily: "Gilroy-SemiBold", fontWeight: "600"}}>Davrni tanlang</Text>
+				<View 
+                    style={{
+                        width: screenWidth - (16 * 2), 
+                        marginTop: 24
+                    }}>
+					<Text 
+                        style={{
+                            fontFamily: "Gilroy-SemiBold", 
+                            fontWeight: "600"
+                        }}>Davrni tanlang</Text>
 				</View>
 				
 				<View style={{
@@ -418,37 +427,54 @@ class CalendarPage extends Component {
 						backgroundColor: "#00000099"
 					}}></View>
 					
-					<View style={{
-						height: screenHeight,
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center"
-					}}>
-						<View style={{
-							width: screenWidth - (16 * 2),
-							maxWidth: 343,
-							marginLeft: "auto",
-							marginRight: "auto",
-							flex: 1,
-							alignItems: "center",
-							justifyContent: "center"
-						}}>
-							<View style={{
-								width: "100%",
-								borderRadius: 12,
-								backgroundColor: "#fff",
-							}}>
-								<View style={{borderBottomColor: "#CAC4D0", borderBottomWidth: 1}}>
+					<View 
+                        style={{
+                            height: screenHeight,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center"
+	    				}}>
+						<View 
+                            style={{
+                                width: screenWidth - (16 * 2),
+                                maxWidth: 343,
+                                marginLeft: "auto",
+                                marginRight: "auto",
+                                flex: 1,
+                                alignItems: "center",
+                                justifyContent: "center"
+                            }}>
+							<View 
+                                style={{
+								    width: "100%",
+								    borderRadius: 12,
+								    backgroundColor: "#fff",
+                                }}>
+								<View 
+                                    style={{
+                                        borderBottomColor: "#CAC4D0", 
+                                        borderBottomWidth: 1
+                                    }}>
 									<View
-										style={{paddingTop: 16, paddingLeft: 24, paddingBottom: 12, paddingRight: 12}}>
-										<Text style={{
-											fontFamily: "Gilroy-Medium",
-											fontSize: 14,
-											fontWeight: "500",
-											marginBottom: 12
-										}}>2023</Text>
-										<Text style={{fontFamily: "Gilroy-Medium", fontSize: 24, fontWeight: "500"}}>Juma,
-											17-sen</Text>
+										style={{
+                                            paddingTop: 16, 
+                                            paddingLeft: 24, 
+                                            paddingBottom: 12, 
+                                            paddingRight: 12
+                                        }}>
+										<Text 
+                                            style={{
+                                                fontFamily: "Gilroy-Medium",
+                                                fontSize: 14,
+                                                fontWeight: "500",
+                                                marginBottom: 12
+                                            }}>2023</Text>
+										<Text 
+                                            style={{
+                                                fontFamily: "Gilroy-Medium",
+                                                fontSize: 24, 
+                                                fontWeight: "500"
+                                                }}>Juma, 17-sen</Text>
 									</View>
 								</View>
 								
@@ -461,24 +487,33 @@ class CalendarPage extends Component {
 										},
 									}}
 								/>
-
 								
-								<View style={{
-									paddingHorizontal: 12,
-									paddingTop: 8,
-									paddingBottom: 12,
-									display: "flex",
-									flexDirection: "row",
-									justifyContent: "flex-end",
-									gap: 8
-								}}>
-									<TouchableOpacity onPress={() => {
-										this.setState({
-											isModalVisible: false
-										})
-									}}
-									 style={{paddingHorizontal: 14, paddingVertical: 10}}>
-										<Text style={{color: "#6750A4", fontWeight: "500", fontSize: 14}}>Bekor qilish</Text>
+								<View 
+                                    style={{
+                                        paddingHorizontal: 12,
+                                        paddingTop: 8,
+                                        paddingBottom: 12,
+                                        display: "flex",
+                                        flexDirection: "row",
+                                        justifyContent: "flex-end",
+                                        gap: 8
+                                    }}>
+									<TouchableOpacity 
+                                        onPress={() => {
+                                            this.setState({
+                                                isModalVisible: false
+                                            })
+                                        }}
+                                        style={{
+                                            paddingHorizontal: 14, 
+                                            paddingVertical: 10
+                                        }}>
+										<Text 
+                                            style={{
+                                                color: "#6750A4", 
+                                                fontWeight: "500", 
+                                                fontSize: 14
+                                            }}>Bekor qilish</Text>
 									</TouchableOpacity>
 									
 									<TouchableOpacity 
@@ -487,7 +522,10 @@ class CalendarPage extends Component {
 												isModalVisible: false
 											})
 										}}
-										style={{paddingHorizontal: 14, paddingVertical: 10}}>
+										style={{
+                                            paddingHorizontal: 14, 
+                                            paddingVertical: 10
+                                        }}>
 										<Text 
 											style={{
 												color: "#6750A4",
@@ -511,7 +549,11 @@ class CalendarPage extends Component {
 				}}>
 					<Text style={styles.label}>gacha</Text>
 					
-					<View style={{display: "flex", flexDirection: "row", gap: 12}}>
+					<View style={{
+                        display: "flex", 
+                        flexDirection: "row", 
+                        gap: 12
+                    }}>
 						<TextInput 
 							placeholder="kun" 
 							value={this.state.toDayInputValue} 
@@ -530,7 +572,10 @@ class CalendarPage extends Component {
 							placeholder="oy" 
 							value={this.state.toMonthInputValue}
 							cursorColor={"black"}
-							style={[styles.input, {width: 66}]}
+							style={[
+                                styles.input, 
+                                {width: 66}
+                            ]}
 							onChangeText={(value) => {
 								this.setState({toMonthInputValue: value}, () => {
 									let monthIndex = this.getMonthIndexWithName(value);
