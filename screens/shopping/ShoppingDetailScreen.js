@@ -11,6 +11,7 @@ import {ScrollView} from 'react-native-gesture-handler';
 import BackIcon from '../../assets/arrow-left-icon.svg'
 import SellHistoryRepository from '../../repository/SellHistoryRepository';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { isLoaded } from 'expo-font';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -21,40 +22,98 @@ class ShoppingDetail extends Component {
 		this.state = {
 			sellGroupId: null,
 			sellHistoryDetail: [],
-			sellGroupDetail: {}
+			sellHistoryDetailLastId: 0,
+			sellGroupDetail: {},
+			lastId: 0,
+			lastYPos: 0,
+			isLoaded: false
 		}
 
 		this.sellHistoryRepository = new SellHistoryRepository();
+		this.getDetails();
 	}
 
 	async componentDidMount() {
 		const {navigation} = this.props;
 
 		navigation.addListener("focus", async () => {
-			let sellGroupId = await AsyncStorage.getItem("sell_history_id");
+			this.setState({
+				sellGroupId: null,
+				sellHistoryDetail: [],
+				sellHistoryDetailLastId: 0,
+				sellGroupDetail: {},
+				lastId: 0,
+				lastYPos: 0,
+				isLoaded: false
+			})
+			await this.getDetails();
+		});
+	}
 
-			await this.setState(
-				{ sellGroupId: parseInt(sellGroupId) }
-			);
+	async getDetails() {
+		let sellGroupId = await AsyncStorage.getItem("sell_history_id");
 
-			await this.setState(
-				{ 
-					sellHistoryDetail: 
-					await this.sellHistoryRepository.getSellHistoryDetailByGroupId(this.state.sellGroupId) 
-				}
-			);
+		await this.setState(
+			{ sellGroupId: parseInt(sellGroupId) }
+		);
 
-			let sellHistoryDetail = await this.sellHistoryRepository.getSellHistoryDetailByGroupId(this.state.sellGroupId);
-			this.setState({ 
+		let sellHistoryDetail = await this.sellHistoryRepository.getSellHistoryDetailByGroupIdTop6(this.state.sellGroupId, this.state.lastId);
+
+		await this.setState(
+			{
 				sellHistoryDetail: sellHistoryDetail
-			});
+			}
+		);
 
-			console.log("HISTORY DETAIL: " , this.state.sellHistoryDetail);
+		let last = sellHistoryDetail[sellHistoryDetail.length - 1];
+		if (last) {
+			this.setState({
+				lastId: last.id
+			})
+		}
 
-			let groupDetail = await this.sellHistoryRepository.getSellGroupInfoById(this.state.sellGroupId);
-			this.setState({ sellGroupDetail: groupDetail[0] });
+		let sellHistoryDetailLastId = await this.sellHistoryRepository.getLastSellHistoryDetailByGroupId(this.state.sellGroupId);
+		sellHistoryDetailLastId = sellHistoryDetailLastId[0];
+		this.setState({
+			sellHistoryDetailLastId: sellHistoryDetailLastId.id
+		})
 
-			console.log("GROUP DETAIL: ", this.state.sellGroupDetail);
+		console.log("last")
+		console.log(this.state.sellHistoryDetailLastId)
+
+		// GROUP INFO..
+		let groupDetail = 
+			await this.sellHistoryRepository.getSellGroupInfoById(
+				this.state.sellGroupId
+			);
+		this.setState({ sellGroupDetail: groupDetail[0] });
+
+		console.log("GROUP DETAIL: ", this.state.sellGroupDetail);
+	}
+
+	async getNextDetails() {
+		if (this.state.isLoaded) {
+			return;
+		}
+
+		let nextSellHistoryDetail = 
+			await this.sellHistoryRepository.getSellHistoryDetailByGroupIdTop6(
+				this.state.sellGroupId, this.state.lastId
+			);
+
+		let last = nextSellHistoryDetail[nextSellHistoryDetail.length - 1]
+		if (last.id == this.state.sellHistoryDetailLastId) {
+			this.setState({
+				isLoaded: true
+			});;
+		}
+
+		let allSellHistoryDetail = this.state.sellHistoryDetail.concat(nextSellHistoryDetail);
+
+		console.log("LAST ID::", last.id)
+		await this.setState({
+			sellHistoryDetail: allSellHistoryDetail,
+			lastId: last.id
 		});
 	}
 
@@ -101,7 +160,21 @@ class ShoppingDetail extends Component {
 		const {navigation} = this.props;
 
 		return (
-			<ScrollView style={styles.body}>
+			<ScrollView 
+				onScroll={async (event) => {
+					const currentYPos = event.nativeEvent.contentOffset.y;
+					console.log("Current Y position:", currentYPos);
+
+					// 138
+
+					if ((currentYPos - this.state.lastYPos) > 138) {
+						console.log("God help!");
+						this.setState({lastYPos: currentYPos});;
+						await this.getNextDetails();
+					}
+
+				}}
+				style={styles.body}>
 				<View style={styles.container}>
 					<View style={styles.header}>
 						<TouchableOpacity

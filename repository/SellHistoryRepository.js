@@ -303,9 +303,153 @@ class SellHistoryRepository {
         console.error("Error retrieving sell history:", error);
         throw error;
     }
-}
+  }
 
   // {peoduct_name, count, count_type}
+  async getSellHistoryDetailByGroupIdTop6(groupId, lastId) {
+    try {
+      console.log("group_id ", groupId);
+      if (groupId === null) {
+        console.log('group_id is null. Skipping query.');
+        return [];
+      }
+
+      let result;
+      if (lastId == 0) {
+        const query = `
+          SELECT * 
+          FROM sell_history_group
+          WHERE group_id = ?
+          ORDER BY id
+          LIMIT 6;
+        `;
+        result = await new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+          tx.executeSql(
+            query,
+            [groupId],
+            (_, resultSet) => resolve(resultSet),
+            (_, error) => reject(error)
+          );
+        });
+        });
+      } else {
+        query = `
+          SELECT * 
+          FROM sell_history_group
+          WHERE group_id = ? and id > ?
+          ORDER BY id
+          LIMIT 2;
+        `;
+        
+        result = await new Promise((resolve, reject) => {
+          this.db.transaction((tx) => {
+            tx.executeSql(
+              query,
+              [groupId, lastId],
+              (_, resultSet) => resolve(resultSet),
+              (_, error) => reject(error)
+            );
+          });
+        });
+      }
+
+      if (!result || !result.rows || !result.rows._array) {
+        throw new Error("Unexpected result structure");
+      } 
+
+      console.log("res: ", result.rows._array);
+      const historyGroupLinkedArray = result.rows._array;
+
+      let historyInfo = [];
+
+      for (const historyGroupLinked of historyGroupLinkedArray) {
+        let profitHistoryInfo = await this.getSellHistoryInfoById(historyGroupLinked.history_id);
+
+        console.log("SELL HISTORY INFO INSIDE OF FOR EACH ", profitHistoryInfo[0]);
+        let currentProfitHistoryInfo = profitHistoryInfo[0];
+        let product = await this.productRepository.getProductNameAndBrandById(currentProfitHistoryInfo.product_id);
+
+        currentProfitHistoryInfo.productName = product.brand_name + " " + product.name;
+
+        historyInfo = [...historyInfo, currentProfitHistoryInfo];
+        console.log("SELL ARRAY: ", historyInfo);
+      }
+
+      console.log("SELL INFO: ", historyInfo);
+      return historyInfo;
+    } catch (error) {
+      console.error("Error retrieving profit history details:", error);
+      throw error;
+    }
+  }
+
+  async getLastSellHistoryDetailByGroupId(groupId) {
+    try {
+      console.log("group_id ", groupId);
+  
+      if (!groupId) {
+        console.log('groupId is null or undefined. Skipping query.');
+        return [];
+      }
+  
+      const query = `
+        SELECT * 
+        FROM sell_history_group
+        WHERE group_id = ?
+        ORDER BY ID DESC
+        LIMIT 1;
+      `;
+  
+      const result = await new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+          tx.executeSql(
+            query,
+            [groupId],
+            (_, resultSet) => resolve(resultSet),
+            (_, error) => reject(error)
+          );
+        });
+      });
+  
+      if (!result || !result.rows || result.rows.length === 0) {
+        console.log('No sell history found for groupId:', groupId);
+        return [];
+      }
+  
+      const historyGroupLinkedArray = result.rows._array;
+  
+      let historyInfo = [];
+  
+      for (const historyGroupLinked of historyGroupLinkedArray) {
+        let profitHistoryInfo = await this.getSellHistoryInfoById(historyGroupLinked.history_id);
+        
+        if (!profitHistoryInfo || profitHistoryInfo.length === 0) {
+          console.log('No profit history info found for history ID:', historyGroupLinked.history_id);
+          continue;
+        }
+  
+        let currentProfitHistoryInfo = profitHistoryInfo[0];
+        let product = await this.productRepository.getProductNameAndBrandById(currentProfitHistoryInfo.product_id);
+  
+        if (!product) {
+          console.log('No product found for product ID:', currentProfitHistoryInfo.product_id);
+          continue;
+        }
+  
+        currentProfitHistoryInfo.productName = product.brand_name + " " + product.name;
+        historyInfo.push(currentProfitHistoryInfo);
+      }
+  
+      console.log("SELL INFO: ", historyInfo);
+      return historyInfo;
+    } catch (error) {
+      console.error("Error retrieving profit history details:", error);
+      throw error;
+    }
+  }
+  
+
   async getSellHistoryDetailByGroupId(group_id) {
     try {
       console.log("group_id ", group_id);
