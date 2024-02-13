@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {StatusBar} from 'expo-status-bar';
-import {StyleSheet, Text, TextInput, View, Dimensions, Image, TouchableOpacity, ScrollView} from 'react-native';
+import {StyleSheet, Text, View, Dimensions, Image, TouchableOpacity, ScrollView} from 'react-native';
 
 import CalendarIcon from "../../assets/calendar-icon.svg";
 import CrossIcon from "../../assets/cross-icon-light.svg";

@@ -2,8 +2,6 @@ import React, {Component} from "react";
 import DropDownPicker from 'react-native-dropdown-picker';
 import {Dimensions, StyleSheet, Text, TextInput, View} from "react-native";
 import {SelectList} from 'react-native-dropdown-select-list'
-import {Dropdown} from "react-native-element-dropdown";
-import {DropdownIcon} from "../../assets/dropdown-icon.svg";
 import {FontAwesome} from "@expo/vector-icons";
 
 const screenWidth = Dimensions.get("window").width;

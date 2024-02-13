@@ -78,7 +78,7 @@ class Sell extends Component {
 	handleFocus = () => {
     this.setState({isFocused: true});
 		this.inputRef.current.focus();
-  };
+    };
 
 	handleBlur = () => {
 		this.inputRef.current.focus();
