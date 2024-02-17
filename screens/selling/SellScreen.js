@@ -315,6 +315,32 @@ class Sell extends Component {
 
 
 			console.log("PROFIT GROUP:::", profitGroupId)
+			// SMALL TASKS
+			/*
+				* Find selling price and actual price then profit.
+			*/
+
+
+			/* 
+			[
+				{
+					"brand_name": "123", 
+					"count": 1, 
+					"count_type": "DONA", 
+					"id": 9, 
+					"name": "123", 
+					"nds": 1, 
+					"percentage": 20,
+					"price": 123000, 
+					"product_id": 9, 
+					"selling_price": 147600, 
+					"serial_number": "123"
+				}
+			]
+			*/
+
+
+			// price and selling_price
 
 		this.state.sellingProducts.forEach(
 			async (sellingProduct) => {
@@ -322,7 +348,7 @@ class Sell extends Component {
 					sellingProduct.product_id, 
 					sellingProduct.count, 
 					sellingProduct.count_type,
-					this.state.profit,
+					sellingProduct.selling_price - sellingProduct.price,
 					profitGroupId
 				)
 			});
