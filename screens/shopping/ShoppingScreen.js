@@ -35,7 +35,7 @@ class Shopping extends Component {
 			toDate: null
 		};
 
-		this.sellHistoryRepository = new SellHistoryRepository()
+		this.sellHistoryRepository = new SellHistoryRepository();
 
 		this.initSellingHistoryGroup();
 	}
@@ -85,9 +85,9 @@ class Shopping extends Component {
 					this.state.toDate
 				);
 
-			this.setState({lastGroupId: lastSellHistoryGroup.id});
-			this.setState({sellingHistory: sellingHistory});
-			this.setState({groupedHistories: this.groupByDate(sellingHistory)});
+			this.setState({ lastGroupId: lastSellHistoryGroup.id });
+			this.setState({ sellingHistory: sellingHistory });
+			this.setState({ groupedHistories: this.groupByDate(sellingHistory) });
 
 			return;
 		}
@@ -95,9 +95,9 @@ class Shopping extends Component {
 		let lastSellHistoryGroup = await this.sellHistoryRepository.getLastSellHistoryGroupId();
 		sellingHistory = await this.sellHistoryRepository.getAllSellGroup(lastSellHistoryGroup.id);
 
-		this.setState({lastGroupId: lastSellHistoryGroup.id});
-		this.setState({sellingHistory: sellingHistory});
-		this.setState({groupedHistories: this.groupByDate(sellingHistory)});
+		this.setState({ lastGroupId: lastSellHistoryGroup.id });
+		this.setState({ sellingHistory: sellingHistory });
+		this.setState({ groupedHistories: this.groupByDate(sellingHistory) });
 	}
 
 	async getNextSellHistoryGroup() {
@@ -128,8 +128,8 @@ class Shopping extends Component {
 		
 		this.setState({isCollecting: true});
 
-		console.log("####### LAST ID ########")
-		console.log(this.state.lastGroupId)
+		console.log("####### LAST ID ########");
+		console.log(this.state.lastGroupId);
 		if ((this.state.lastGroupId - 10) < 0) {
 			this.setState({isCollecting: false});
 			return;
@@ -309,8 +309,7 @@ class Shopping extends Component {
 											} catch (error) {}
 
 											navigation.navigate("ShoppingDetail", { history })										
-										}}
-									>
+										}}>
 										<View style={styles.historyAmountWrapper}>
 											<SellIcon />
 											<Text style={styles.historyAmount}>{`${history.amount.toLocaleString()} so’m`}</Text>

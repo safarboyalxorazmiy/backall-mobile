@@ -20,7 +20,6 @@ class ProfitHistoryRepository {
       });
 
       let lastProfitHistoryGroup = await this.getLastProfitHistoryGroupId();
-      console.log(lastProfitHistoryGroup);
       return lastProfitHistoryGroup.id;
     } catch (error) {
       console.error("Error creating profit group:", error);
@@ -101,8 +100,6 @@ class ProfitHistoryRepository {
         INSERT INTO profit_history (product_id, count, count_type, profit, created_date)
         VALUES (?, ?, ?, ?, ?);
       `;
-
-      console.log(insertProfitHistoryQuery)
       
       await this.db.transaction(async (tx) => {
         await tx.executeSql(
@@ -111,11 +108,7 @@ class ProfitHistoryRepository {
         );
       });
 
-      console.log([product_id, count, count_type, profit]);
-      console.log("CREATED: ", product_id);
-
       let lastIdOfProfitHistory = await this.getLastIdOfProfitHistory(product_id, created_date.toISOString());
-      console.log(lastIdOfProfitHistory);
       return lastIdOfProfitHistory.id;
     } catch (error) {
       throw error;
@@ -124,8 +117,6 @@ class ProfitHistoryRepository {
 
   async createProfitHistoryAndLinkWithGroup(product_id, count, count_type, profit, group_id) {
     let historyId = await this.createProfitHistory(product_id, count, count_type, profit);
-
-    console.log("PROFIT GROUP INSIDE METHOD:::", group_id)
 
     const insert = `
       INSERT INTO profit_history_group(history_id, group_id) VALUES (?, ?);
@@ -137,28 +128,19 @@ class ProfitHistoryRepository {
         [historyId, group_id]
       );
     });
-
-    console.log("History Id: " + historyId + " Group Id: " + group_id)
-
-
-    console.log("############ALL FUCKING GROUPS#############")
-
-    console.log(await this.getAll());
-
-    console.log("############CREATED INFO ENDED#############")
   }
   
-  async getAll() {
+  async getAll(group_id) {
     try {
       const query = `
-        SELECT * FROM profit_group ORDER BY ID DESC;
+        SELECT * FROM profit_history_group WHERE group_id = ?;
       `;
 
       const result = await new Promise((resolve, reject) => {
         this.db.transaction((tx) => {
           tx.executeSql(
             query,
-            [],
+            [group_id],
             (_, resultSet) => resolve(resultSet),
             (_, error) => reject(error)
           );
@@ -171,8 +153,6 @@ class ProfitHistoryRepository {
       }
   
       const rows = result.rows._array;
-  
-      console.log(rows);
       return rows;
     } catch (error) {
       console.error("Error retrieving sell history:", error);
@@ -299,8 +279,6 @@ class ProfitHistoryRepository {
         }
 
         const rows = result.rows._array;
-
-        console.log(result)
         return rows;
     } catch (error) {
         console.error("Error retrieving profit history:", error);
@@ -308,10 +286,8 @@ class ProfitHistoryRepository {
     }
   }
 
-
   async getProfitHistoryDetailByGroupId(group_id) {
     try {
-      console.log("group_id ", group_id);
       if (group_id === null) {
         console.log('group_id is null. Skipping query.');
         return [];
@@ -338,27 +314,97 @@ class ProfitHistoryRepository {
         throw new Error("Unexpected result structure");
       }
   
-      console.log("res: ", result.rows._array);
       const historyGroupLinkedArray = result.rows._array;
   
       let historyInfo = [];
   
       for (const historyGroupLinked of historyGroupLinkedArray) {
         let profitHistoryInfo = await this.getProfitHistoryInfoById(historyGroupLinked.history_id);
-        console.log(historyGroupLinked.history_id)
-        console.log("PROFIT HISTORY INFO INSIDE OF FOR EACH ", profitHistoryInfo[0]);
         let currentProfitHistoryInfo = profitHistoryInfo[0];
         let product = await this.productRepository.getProductNameAndBrandById(currentProfitHistoryInfo.product_id);
 
         currentProfitHistoryInfo.productName = product.brand_name + " " + product.name;
 
         historyInfo = [...historyInfo, currentProfitHistoryInfo];
-        console.log("PROFIT ARRAY: ", historyInfo);
       }
   
-      console.log(await this.getAll());
+      return historyInfo;
+    } catch (error) {
+      console.error("Error retrieving profit history details:", error);
+      throw error;
+    }
+  }
 
-      console.log("HISTORY INFO: ", historyInfo);
+  async getProfitHistoryDetailByGroupIdTop6(groupId, lastId) {
+    try {
+      if (!groupId) {
+        console.log('groupId is null or undefined. Skipping query.');
+        return [];
+      }
+
+      let result;
+      if (lastId === 0) {
+        let query = `
+          SELECT * 
+          FROM profit_history_group
+          WHERE group_id = ?
+          ORDER BY id
+          LIMIT 6;
+        `;
+        result = await new Promise((resolve, reject) => {
+          this.db.transaction((tx) => {
+            tx.executeSql(
+              query,
+              [groupId],
+              (_, resultSet) => resolve(resultSet),
+              (_, error) => reject(error)
+            );
+          });
+        });
+      } else {
+        let query = `
+          SELECT * 
+          FROM profit_history_group
+          WHERE group_id = ? AND id > ?
+          ORDER BY id
+          LIMIT 2;
+        `;
+        
+        result = await new Promise((resolve, reject) => {
+          this.db.transaction((tx) => {
+            tx.executeSql(
+              query,
+              [groupId, lastId],
+              (_, resultSet) => resolve(resultSet),
+              (_, error) => reject(error)
+            );
+          });
+        });
+      }
+  
+      if (!result || !result.rows || !result.rows._array) {
+        console.log("No profit history found for groupId:", groupId);
+        return [];
+      }
+  
+      const historyGroupLinkedArray = result.rows._array;
+  
+      let historyInfo = [];
+  
+      for (const historyGroupLinked of historyGroupLinkedArray) {
+        let profitHistoryInfo = await this.getProfitHistoryInfoById(historyGroupLinked.history_id);
+        let currentProfitHistoryInfo = profitHistoryInfo[0];
+        let product = await this.productRepository.getProductNameAndBrandById(currentProfitHistoryInfo.product_id);
+  
+        if (!product) {
+          continue;
+        }
+  
+        currentProfitHistoryInfo.productName = product.brand_name + " " + product.name;
+  
+        historyInfo = [...historyInfo, currentProfitHistoryInfo]
+      }
+  
       return historyInfo;
     } catch (error) {
       console.error("Error retrieving profit history details:", error);
@@ -366,6 +412,68 @@ class ProfitHistoryRepository {
     }
   }
   
+
+  async getLastProfitHistoryDetailByGroupId(groupId) {
+    try {
+      if (!groupId) {
+        console.log('groupId is null or undefined. Skipping query.');
+        return [];
+      }
+  
+      const query = `
+        SELECT * 
+        FROM profit_history_group
+        WHERE group_id = ?
+        ORDER BY ID DESC
+        LIMIT 1;
+      `;
+  
+      const result = await new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+          tx.executeSql(
+            query,
+            [groupId],
+            (_, resultSet) => resolve(resultSet),
+            (_, error) => reject(error)
+          );
+        });
+      });
+  
+      if (!result || !result.rows || result.rows.length === 0) {
+        console.log('No sell history found for groupId:', groupId);
+        return [];
+      }
+  
+      const historyGroupLinkedArray = result.rows._array;
+  
+      let historyInfo = [];
+  
+      for (const historyGroupLinked of historyGroupLinkedArray) {
+        let profitHistoryInfo = await this.getProfitHistoryInfoById(historyGroupLinked.history_id);
+        
+        if (!profitHistoryInfo || profitHistoryInfo.length === 0) {
+          console.log('No profit history info found for history ID:', historyGroupLinked.history_id);
+          continue;
+        }
+  
+        let currentProfitHistoryInfo = profitHistoryInfo[0];
+        let product = await this.productRepository.getProductNameAndBrandById(currentProfitHistoryInfo.product_id);
+  
+        if (!product) {
+          console.log('No product found for product ID:', currentProfitHistoryInfo.product_id);
+          continue;
+        }
+  
+        currentProfitHistoryInfo.productName = product.brand_name + " " + product.name;
+        historyInfo.push(currentProfitHistoryInfo);
+      }
+  
+      return historyInfo;
+    } catch (error) {
+      console.error("Error retrieving profit history details:", error);
+      throw error;
+    }
+  }
 
   // TODO =>
 
@@ -392,7 +500,6 @@ class ProfitHistoryRepository {
         throw new Error("Unexpected result structure");
       }
   
-      console.log("ins res: ", result.rows._array);
       return result.rows._array;
     } catch (error) {
       console.error("Error retrieving sell history:", error);
@@ -424,9 +531,6 @@ class ProfitHistoryRepository {
       }
   
       const rows = result.rows._array;
-  
-      console.log(result)
-      console.log(rows);
       return rows;
     } catch (error) {
       console.error("Error retrieving sell history:", error);

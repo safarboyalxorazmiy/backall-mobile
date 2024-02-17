@@ -16,29 +16,85 @@ class ProfitDetail extends Component {
 		this.state = {
 			groupId: null,
 			profitHistoryDetail: [],
-			groupDetail: []
+			profitHistoryDetailLastId: 0,
+			groupDetail: [],
+			lastId: 0,
+			lastYPos: 0,
+			isLoaded: false
 		}
+
+		this.getDetails();
 	}
 
 	async componentDidMount() {
 		const {navigation} = this.props;
 		
 		navigation.addListener("focus", async () => {
-			console.log(await AsyncStorage.getItem("profit_history_id"));
-			await this.setState(
-				{ groupId: parseInt(await AsyncStorage.getItem("profit_history_id")) }
-			);
-
-			await this.setState(
-				{ profitHistoryDetail: await this.profitHistoryRepository.getProfitHistoryDetailByGroupId(this.state.groupId) }
-			);
-
-			let groupDetail = await this.profitHistoryRepository.getProfitGroupInfoById(this.state.groupId);
-
-			this.setState({ groupDetail: groupDetail[0] });
-
-			console.log("HISTORY DETAIL: " + this.state.profitHistoryDetail);
+			this.setState({
+				groupId: null,
+				profitHistoryDetail: [],
+				profitHistoryDetailLastId: 0,
+				groupDetail: [],
+				lastId: 0,
+				lastYPos: 0,
+				isLoaded: false
+			})
+			await this.getDetails();
 		});
+	}
+
+	async getDetails() {
+		await this.setState(
+			{ groupId: parseInt(await AsyncStorage.getItem("profit_history_id")) }
+		);
+
+		let profitHistoryDetail = await this.profitHistoryRepository.getProfitHistoryDetailByGroupIdTop6(this.state.groupId, parseInt(this.state.lastId));
+		let last = profitHistoryDetail[profitHistoryDetail.length - 1];
+
+		await this.setState(
+			{ 
+				profitHistoryDetail:  profitHistoryDetail,
+				lastId: last.id
+			}
+		);
+
+		let profitHistoryDetailLastId = await this.profitHistoryRepository.getLastProfitHistoryDetailByGroupId(this.state.groupId);
+		profitHistoryDetailLastId = profitHistoryDetailLastId[0];
+		this.setState({
+			profitHistoryDetailLastId: profitHistoryDetailLastId.id
+		})
+
+		// GROUP.. 
+		let groupDetail = 
+			await this.profitHistoryRepository.getProfitGroupInfoById(this.state.groupId);
+		this.setState({ groupDetail: groupDetail[0] });
+	}
+
+	async getNextDetails() {
+		if (this.state.isLoaded) {
+			return;
+		}
+
+		let nextProfitHistoryDetail = 
+			await this.profitHistoryRepository.getProfitHistoryDetailByGroupIdTop6(
+				this.state.groupId, this.state.lastId
+			);
+
+		let last = nextProfitHistoryDetail[nextProfitHistoryDetail.length - 1]
+		if (last != undefined) {
+			if (last.id == this.state.profitHistoryDetailLastId) {
+				this.setState({
+					isLoaded: true
+				});
+			}
+
+			let allProfitHistoryDetail = 
+				this.state.profitHistoryDetail.concat(nextProfitHistoryDetail);
+			await this.setState({
+				profitHistoryDetail: allProfitHistoryDetail,
+				lastId: last.id
+			});
+		}
 	}
 
 	getTime(isoString) {
@@ -82,7 +138,17 @@ class ProfitDetail extends Component {
 		const {navigation} = this.props;
 		
 		return (
-			<ScrollView style={styles.body}>
+			<ScrollView
+				onScrollBeginDrag={async (event) => {
+					const currentYPos = event.nativeEvent.contentOffset.y;
+
+					if ((currentYPos - this.state.lastYPos) > 138) {
+						this.setState({lastYPos: currentYPos});;
+						await this.getNextDetails();
+					}
+				}}
+
+				style={styles.body}>
 				<View style={styles.container}>
 					<View style={styles.header}>
 						<TouchableOpacity

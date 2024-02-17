@@ -8,10 +8,9 @@ import {
 } from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 
-import BackIcon from '../../assets/arrow-left-icon.svg'
-import SellHistoryRepository from '../../repository/SellHistoryRepository';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { isLoaded } from 'expo-font';
+import BackIcon from "../../assets/arrow-left-icon.svg";
+import SellHistoryRepository from "../../repository/SellHistoryRepository";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -72,7 +71,8 @@ class ShoppingDetail extends Component {
 			})
 		}
 
-		let sellHistoryDetailLastId = await this.sellHistoryRepository.getLastSellHistoryDetailByGroupId(this.state.sellGroupId);
+		let sellHistoryDetailLastId = 
+			await this.sellHistoryRepository.getLastSellHistoryDetailByGroupId(this.state.sellGroupId);
 		sellHistoryDetailLastId = sellHistoryDetailLastId[0];
 		this.setState({
 			sellHistoryDetailLastId: sellHistoryDetailLastId.id
@@ -161,18 +161,15 @@ class ShoppingDetail extends Component {
 
 		return (
 			<ScrollView 
-				onScroll={async (event) => {
+				onScrollBeginDrag={async (event) => {
 					const currentYPos = event.nativeEvent.contentOffset.y;
 					console.log("Current Y position:", currentYPos);
-
-					// 138
 
 					if ((currentYPos - this.state.lastYPos) > 138) {
 						console.log("God help!");
 						this.setState({lastYPos: currentYPos});;
 						await this.getNextDetails();
 					}
-
 				}}
 				style={styles.body}>
 				<View style={styles.container}>
