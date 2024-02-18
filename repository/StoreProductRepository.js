@@ -30,6 +30,63 @@ class StoreProductRepository {
     }
   }
 
+  async updateCount(productId, count) {
+    try {
+      await new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+          tx.executeSql(
+            `SELECT count FROM store_product WHERE product_id = ?`,
+            [productId],
+            (_, results) => {
+                if (results.rows.length > 0) {
+                    let currentCount = results.rows.item(0).count;
+                    let newCount = currentCount - count;
+                    if (newCount <= 0) {
+                        // If new count is zero or negative, delete the product
+                        tx.executeSql(
+                            `DELETE FROM store_product WHERE product_id = ?`,
+                            [productId],
+                            (_, results) => {
+                                resolve(true);
+                            },
+                            (_, error) => {
+                                console.error("Error deleting store product:", error);
+                                reject(false);
+                            }
+                        );
+                    } else {
+                        // Otherwise, update the count
+                        tx.executeSql(
+                            `UPDATE store_product SET count = ? WHERE product_id = ?`,
+                            [newCount, productId],
+                            (_, results) => {
+                                resolve(true);
+                            },
+                            (_, error) => {
+                                console.error("Error updating store product count:", error);
+                                reject(false);
+                            }
+                        );
+                    }
+                } else {
+                    console.error("Product not found in the store");
+                    reject(false);
+                }
+            },
+            (_, error) => {
+                console.error("Error fetching store product count:", error);
+                reject(false);
+            }
+          );
+        });
+      });
+    } catch (error) {
+      console.error(`Error updating store product count: ${error}`);
+      throw error;
+    }
+}
+
+
   async getStoreProductsInfo() {
     return new Promise((resolve, reject) => {
       this.db.transaction((tx) => {
@@ -98,7 +155,6 @@ class StoreProductRepository {
       });
     });
   }
-
 
   async searchProductsInfo(query) {
     return new Promise((resolve, reject) => {

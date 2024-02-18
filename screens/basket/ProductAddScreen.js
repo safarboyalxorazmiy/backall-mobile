@@ -361,6 +361,18 @@ class ProductAdd extends Component {
 						{
 							marginTop: 10
 						}]}>
+
+						{/* CODE FOR INIT RANDOM PRODUCTS WHEN IT'S EMPTY.. */}
+						{/* <View style={{padding: 20}}>
+							<TouchableOpacity 
+								onPress={async () => {
+									await this.init();
+								}}
+							 	style={{backgroundColor: "#000", padding: 10}}>
+								<Text style={{color: "#FFF"}}>INIT FUCKING PRODUCTS ... </Text>
+							</TouchableOpacity>
+						</View> */}
+
 						<Text 
 							style={styles.label}>Mahsulot seriyasi</Text>
 							<TextInput
@@ -870,6 +882,26 @@ class ProductAdd extends Component {
 			}).stop();
 		}
 	};
+
+	init = async () => {
+		for (let i = 0; i < 100; i++) {
+			let productId = await this.productRepository.createAndGetProductId(
+					(123 + i).toString(),
+					(123 + i).toString(),
+					(123 + i).toString()
+			);
+
+			await this.storeProductRepository.create(
+					productId,
+					this.state.nds,
+					Math.floor(Math.random() * 100000), // Random price between 0 and 100000
+					Math.floor(Math.random() * 100000), // Random cost between 0 and 100000
+					Math.floor(Math.random() * 100), // Random quantity between 0 and 100
+					Math.floor(Math.random() * 100), // Random stock between 0 and 100
+					"SO'M"
+			);
+		}
+	}
 }
 
 const styles = StyleSheet.create({

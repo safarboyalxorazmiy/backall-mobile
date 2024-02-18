@@ -350,7 +350,13 @@ class Sell extends Component {
 					sellingProduct.count_type,
 					sellingProduct.selling_price - sellingProduct.price,
 					profitGroupId
-				)
+				);
+
+
+				this.storeProductRepository.updateCount(
+					sellingProduct.product_id, 
+					sellingProduct.count
+				);
 			});
 
 		// Navigate screen
