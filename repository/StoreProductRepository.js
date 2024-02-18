@@ -51,7 +51,7 @@ class StoreProductRepository {
     });
   }
 
-  async findTop6StoreProductsInfo(lastId) {
+  async findTopStoreProductsInfo(lastId) {
     if (lastId === 0) {
       return new Promise((resolve, reject) => {
         this.db.transaction((tx) => {

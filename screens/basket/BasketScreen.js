@@ -75,7 +75,7 @@ class Basket extends Component {
 			);
 
 			await this.getCreated();
-			let storeProducts = await this.storeProductRepository.findTop6StoreProductsInfo(this.state.lastId);
+			let storeProducts = await this.storeProductRepository.findTopStoreProductsInfo(this.state.lastId);
 			let last = storeProducts[storeProducts.length - 1];
 			if (last != undefined) {
 				this.setState({
@@ -93,7 +93,7 @@ class Basket extends Component {
 	}
 
 	async loadData() {
-    const newStoreProducts = await this.storeProductRepository.findTop6StoreProductsInfo(this.state.lastId);
+    const newStoreProducts = await this.storeProductRepository.findTopStoreProductsInfo(this.state.lastId);
 		let last = newStoreProducts[newStoreProducts.length - 1];
 		if (last != undefined) {
 			this.setState({
