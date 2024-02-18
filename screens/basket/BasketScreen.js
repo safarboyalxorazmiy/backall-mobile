@@ -32,7 +32,9 @@ class Basket extends Component {
 			isCreated: "false",
 			storeProducts: [],
 			addButtonStyle: styles.addButton,
-			searchInputValue: ""
+			searchInputValue: "",
+			lastId: 0,
+			lastYPos: 0
 		}
 		this.storeProductRepository = new StoreProductRepository();
 
@@ -55,23 +57,59 @@ class Basket extends Component {
   keyboardDidHide = () => {
     this.setState({ addButtonStyle: styles.addButton });
   };
-
-	async loadData() {
-    const storeProducts = await this.storeProductRepository.getStoreProductsInfo();
-    this.setState({ storeProducts });
-    console.log(storeProducts);
-  }
 	
 	async componentDidMount() {
 		await this.getCreated();
 		const {navigation} = this.props;
 		
 		navigation.addListener("focus", async () => {
+			this.setState(
+				{
+					isCreated: "false",
+					storeProducts: [],
+					addButtonStyle: styles.addButton,
+					searchInputValue: "",
+					lastId: 0,
+					lastYPos: 0
+				}
+			);
+
 			await this.getCreated();
-			let storeProducts = await this.storeProductRepository.getStoreProductsInfo();
-			this.setState({storeProducts: storeProducts})
-			console.log(storeProducts);
-			this.setState({searchInputValue: ""});
+			let storeProducts = await this.storeProductRepository.findTop6StoreProductsInfo(this.state.lastId);
+			let last = storeProducts[storeProducts.length - 1];
+			if (last != undefined) {
+				this.setState({
+					lastId: last.id
+				})
+
+				console.log("LAST ID::", last.id)
+			};
+
+			this.setState({
+				storeProducts: storeProducts,
+				searchInputValue: ""
+			});
+		});
+	}
+
+	async loadData() {
+    const newStoreProducts = await this.storeProductRepository.findTop6StoreProductsInfo(this.state.lastId);
+		let last = newStoreProducts[newStoreProducts.length - 1];
+		if (last != undefined) {
+			this.setState({
+				lastId: last.id
+			});
+
+			console.log("LAST ID::", last.id)
+		}
+
+		console.log(newStoreProducts);
+
+		let allProducts = this.state.storeProducts.concat(newStoreProducts);
+
+		this.setState({
+			storeProducts: allProducts,
+			searchInputValue: ""
 		});
 	}
 	
@@ -121,7 +159,17 @@ class Basket extends Component {
 				</TouchableOpacity>
 				
 				{/* Store products */}
-				<ScrollView style={styles.productList}>
+				<ScrollView style={styles.productList}
+					onScrollBeginDrag={async (event) => {
+						const currentYPos = event.nativeEvent.contentOffset.y;
+						console.log("Current Y position:", currentYPos);
+
+						if ((currentYPos - this.state.lastYPos) > 30) {
+							this.setState({lastYPos: currentYPos});;
+							await this.loadData();
+						}
+					}}
+				>
 					{this.state.storeProducts.map((product, index) => (
 						<View key={index} style={index % 2 === 0 ? styles.product : styles.productOdd}>
 							<Text style={styles.productTitle}>{product.brand_name} {product.name}</Text>

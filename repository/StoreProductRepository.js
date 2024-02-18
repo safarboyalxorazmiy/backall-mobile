@@ -36,7 +36,7 @@ class StoreProductRepository {
         tx.executeSql(
           `SELECT sp.id, p.brand_name, p.name, sp.count, sp.count_type
            FROM store_product sp
-           JOIN product p ON sp.product_id = p.id`,
+           JOIN product p ON sp.product_id = p.id;`,
           [],
           (_, { rows }) => {
             const storeProductsInfo = rows._array; // Get raw result array
@@ -50,6 +50,55 @@ class StoreProductRepository {
       });
     });
   }
+
+  async findTop6StoreProductsInfo(lastId) {
+    if (lastId === 0) {
+      return new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+            tx.executeSql(
+                `SELECT sp.id, p.brand_name, p.name, sp.count, sp.count_type
+                FROM store_product sp
+                JOIN product p ON sp.product_id = p.id
+                WHERE sp.id > ?
+                ORDER BY sp.id
+                LIMIT 13;`,
+                [lastId],
+                (_, { rows }) => {
+                    const storeProductsInfo = rows._array; // Get raw result array
+                    resolve(storeProductsInfo);
+                },
+                (_, error) => {
+                    console.error("Error retrieving store products info:", error);
+                    reject(error);
+                }
+            );
+        });
+      });
+    }
+
+    return new Promise((resolve, reject) => {
+      this.db.transaction((tx) => {
+          tx.executeSql(
+              `SELECT sp.id, p.brand_name, p.name, sp.count, sp.count_type
+              FROM store_product sp
+              JOIN product p ON sp.product_id = p.id
+              WHERE sp.id > ?
+              ORDER BY sp.id
+              LIMIT 1;`,
+              [lastId],
+              (_, { rows }) => {
+                  const storeProductsInfo = rows._array; // Get raw result array
+                  resolve(storeProductsInfo);
+              },
+              (_, error) => {
+                  console.error("Error retrieving store products info:", error);
+                  reject(error);
+              }
+          );
+      });
+    });
+  }
+
 
   async searchProductsInfo(query) {
     return new Promise((resolve, reject) => {
