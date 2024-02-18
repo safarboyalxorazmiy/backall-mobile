@@ -14,6 +14,7 @@ import ShoppingIcon from "../assets/home/shopping-icon.svg";
 import BenefitIcon from "../assets/home/benefit-icon.svg";
 import TokenService from '../service/TokenService';
 import DatabaseService from '../service/DatabaseService';
+import AmountDateRepository from "../repository/AmountDateRepository";
 
 const screenWidth = Dimensions.get("window").width;
 const tokenService = new TokenService();
@@ -25,8 +26,49 @@ class Home extends Component {
 
 		this.state = {
 			shoppingCardColors: ["#E59C0D", "#FDD958"],
-			profitCardColors: ["#2C8134", "#1DCB00"]
+			profitCardColors: ["#2C8134", "#1DCB00"],
+			profitAmount: 0,
+			sellAmount: 0
 		}
+
+		this.amountDateRepository = new AmountDateRepository();
+
+		this.getAmountInfo();
+	}
+	
+	async componentDidMount() {
+		const {navigation} = this.props;
+		
+		navigation.addListener("focus", async () => {
+			await this.getAmountInfo();
+		});
+	}
+
+	async getAmountInfo() {
+		// HOW TO GET yyyy-mm-dd from new Date()
+
+			// Get the current date
+			const currentDate = new Date();
+
+			// Extract year, month, and day
+			const year = currentDate.getFullYear();
+			const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed, so add 1
+			const day = String(currentDate.getDate()).padStart(2, '0');
+
+			// Format the date as yyyy-mm-dd
+			const formattedDate = `${year}-${month}-${day}`;
+
+			
+			let profitAmountInfo = await this.amountDateRepository.getProfitAmountInfoByDate(formattedDate);
+			let sellAmountInfo = await this.amountDateRepository.getSellAmountInfoByDate(formattedDate);
+
+			console.log("PROFIT AMOUNT INFO:: ", profitAmountInfo);
+			console.log("SELL AMOUNT INFO:: ", sellAmountInfo);
+			
+			this.setState({
+				profitAmount: profitAmountInfo,
+				sellAmount: sellAmountInfo
+			})
 	}
 
 	async get() {
@@ -73,8 +115,8 @@ class Home extends Component {
 									style={styles.cardTitle}>Bugungi kirim</Text>
 								<Text 
 									style={styles.cardDescription}>
-									3.000.000
-									<Text 
+									{this.state.sellAmount}
+									<Text
 										style={styles.currency}>UZS</Text>
 								</Text>
 							</LinearGradient>
@@ -110,7 +152,7 @@ class Home extends Component {
 									style={styles.cardTitle}>Bugungi foyda</Text>
 								<Text 
 									style={styles.cardDescription}>
-									500.000
+									{this.state.profitAmount}
 									<Text 
 										style={styles.currency}>UZS</Text>
 								</Text>

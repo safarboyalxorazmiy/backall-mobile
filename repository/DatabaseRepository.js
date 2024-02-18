@@ -83,7 +83,34 @@ class DatabaseRepository {
               history_id INTEGER NOT NULL, 
               FOREIGN KEY (group_id) REFERENCES profit_group(id), 
               FOREIGN KEY (history_id) REFERENCES profit_history(id)
-            );`
+            );`,
+
+            `CREATE TABLE IF NOT EXISTS profit_amount_date (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              date TEXT NOT NULL,
+              amount DOUBLE NOT NULL
+            );`,
+
+            `CREATE TABLE IF NOT EXISTS sell_amount_date (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              date TEXT NOT NULL,
+              amount DOUBLE NOT NULL
+            );`,
+
+            // `DROP TABLE profit_amount_date;`,
+            // `DROP TABLE sell_amount_date;`
+            // `DELETE FROM sell_history_group;`,
+            // `DELETE FROM sell_history;`,
+            // `DELETE FROM sell_group;`,
+
+            // `DELETE FROM profit_history_group;`,
+            // `DELETE FROM profit_history;`,
+            // `DELETE FROM profit_group;`,
+
+            // `DELETE FROM store_product;`,
+            // // `DELETE FROM product;`,
+	          // `DROP TABLE profit_amount_date;`,
+	          // `DELETE FROM sell_amount_date;`,
           ];
 
           console.log(queries)

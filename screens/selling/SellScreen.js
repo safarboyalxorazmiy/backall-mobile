@@ -17,6 +17,7 @@ import CrossIcon from "../../assets/cross-icon.svg";
 import StoreProductRepository from "../../repository/StoreProductRepository";
 import SellHistoryRepository from "../../repository/SellHistoryRepository";
 import ProfitHistoryRepository from "../../repository/ProfitHistoryRepository";
+import AmountDateRepository from "../../repository/AmountDateRepository";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -67,6 +68,7 @@ class Sell extends Component {
 		this.storeProductRepository = new StoreProductRepository();
 		this.sellHistoryRepository = new SellHistoryRepository();
 		this.profitHistoryRepository = new ProfitHistoryRepository();
+		this.amountDateRepository = new AmountDateRepository();
 	}
 	
 	toggleModal = () => {
@@ -290,8 +292,6 @@ class Sell extends Component {
 	}
 
 	sellProducts = async () => {
-		let currentDate = new Date();
-
 		console.log(
 			this.state.sellingProducts
 		);
@@ -311,36 +311,36 @@ class Sell extends Component {
 					sellingProduct.selling_price,
 					sellGroupId
 				)
-			});
+		});
 
 
-			console.log("PROFIT GROUP:::", profitGroupId)
-			// SMALL TASKS
-			/*
-				* Find selling price and actual price then profit.
-			*/
+		console.log("PROFIT GROUP:::", profitGroupId)
+		// SMALL TASKS
+		/*
+			* Find selling price and actual price then profit.
+		*/
 
 
-			/* 
-			[
-				{
-					"brand_name": "123", 
-					"count": 1, 
-					"count_type": "DONA", 
-					"id": 9, 
-					"name": "123", 
-					"nds": 1, 
-					"percentage": 20,
-					"price": 123000, 
-					"product_id": 9, 
-					"selling_price": 147600, 
-					"serial_number": "123"
-				}
-			]
-			*/
+		/* 
+		[
+			{
+				"brand_name": "123", 
+				"count": 1, 
+				"count_type": "DONA", 
+				"id": 9, 
+				"name": "123", 
+				"nds": 1, 
+				"percentage": 20,
+				"price": 123000, 
+				"product_id": 9, 
+				"selling_price": 147600, 
+				"serial_number": "123"
+			}
+		]
+		*/
 
 
-			// price and selling_price
+		// price and selling_price
 
 		this.state.sellingProducts.forEach(
 			async (sellingProduct) => {
@@ -359,9 +359,30 @@ class Sell extends Component {
 				);
 			});
 
-		// Navigate screen
-		const {navigation} = this.props;
-		navigation.navigate("Shopping");
+			// HOW TO GET yyyy-mm-dd from new Date()
+
+			// Get the current date
+			const currentDate = new Date();
+
+			// Extract year, month, and day
+			const year = currentDate.getFullYear();
+			const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed, so add 1
+			const day = String(currentDate.getDate()).padStart(2, '0');
+
+			// Format the date as yyyy-mm-dd
+			const formattedDate = `${year}-${month}-${day}`;
+
+			// UPDATE CURRENT DAY AMOUNTS..
+			await this.amountDateRepository.setProfitAmount(
+				this.state.profit, formattedDate
+			);
+			await this.amountDateRepository.setSellAmount(
+				this.state.amount, formattedDate
+			);
+
+			// Navigate screen
+			const {navigation} = this.props;
+			navigation.navigate("Shopping");
 	}
 }
 
