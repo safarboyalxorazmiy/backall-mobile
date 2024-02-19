@@ -70,7 +70,7 @@ const Login = ({navigation}) => {
 	const [loading, setLoading] = useState(false);
 	
 	const login = async (email, password) => {
-		navigation.navigate("Home");
+		navigation.navigate("Verification");
 
 		/*try {
 			setLoading(true);

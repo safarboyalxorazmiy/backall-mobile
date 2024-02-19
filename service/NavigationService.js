@@ -24,11 +24,13 @@ import ShoppingIconActive from "../assets/navbar/shopping-icon-active.svg";
 import WalletIcon from "../assets/navbar/wallet-icon.svg";
 import WalletIconActive from "../assets/navbar/wallet-icon-active.svg";
 import ProductEdit from "../screens/basket/ProductEditScreen";
+import VerificationScreen from "../screens/login/VerificationScreen";
 
 const Tab = createBottomTabNavigator();
 const routesWithoutNavbar = [
 	"ProfitDetail",
 	"Login",
+	"Verification",
 	"ProductAdd",
 	"ShoppingDetail",
 	"ProfitDetail",
@@ -190,6 +192,15 @@ function MainTabNavigator() {
 				<Tab.Screen
 					name="Login"
 					component={Login}
+					options={({navigation}) => ({
+						title: "",
+						headerShown: false
+					})}
+				/>
+
+				<Tab.Screen
+					name="Verification"
+					component={VerificationScreen}
 					options={({navigation}) => ({
 						title: "",
 						headerShown: false
