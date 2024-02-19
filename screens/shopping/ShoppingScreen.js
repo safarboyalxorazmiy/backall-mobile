@@ -1,13 +1,6 @@
 import React, {Component} from "react";
 import {StatusBar} from "expo-status-bar";
-import {
-	StyleSheet,
-	Text,
-	View,
-	Dimensions,
-	TouchableOpacity,
-	ScrollView
-} from "react-native";
+import {Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 
 import CalendarIcon from "../../assets/calendar-icon.svg";
 import CrossIcon from "../../assets/cross-icon-light.svg";
@@ -15,6 +8,7 @@ import CrossIcon from "../../assets/cross-icon-light.svg";
 import SellIcon from "../../assets/sell-icon.svg";
 import SellHistoryRepository from "../../repository/SellHistoryRepository";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import AmountDateRepository from "../../repository/AmountDateRepository";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -37,6 +31,7 @@ class Shopping extends Component {
 		};
 		
 		this.sellHistoryRepository = new SellHistoryRepository();
+		this.amountDateRepository = new AmountDateRepository();
 		
 		this.initSellingHistoryGroup();
 	}
@@ -89,7 +84,7 @@ class Shopping extends Component {
 				return;
 			}
 			
-			sellingHistory =
+			let sellingHistory =
 				await this.sellHistoryRepository.getTop10SellGroupByDate(
 					lastSellHistoryGroup.id,
 					this.state.fromDate,
@@ -98,17 +93,17 @@ class Shopping extends Component {
 			
 			this.setState({lastGroupId: lastSellHistoryGroup.id});
 			this.setState({sellingHistory: sellingHistory});
-			this.setState({groupedHistories: this.groupByDate(sellingHistory)});
+			this.setState({groupedHistories: await this.groupByDate(sellingHistory)});
 			
 			return;
 		}
 		
 		let lastSellHistoryGroup = await this.sellHistoryRepository.getLastSellHistoryGroupId();
-		sellingHistory = await this.sellHistoryRepository.getAllSellGroup(lastSellHistoryGroup.id);
+		let sellingHistory = await this.sellHistoryRepository.getAllSellGroup(lastSellHistoryGroup.id);
 		
 		this.setState({lastGroupId: lastSellHistoryGroup.id});
 		this.setState({sellingHistory: sellingHistory});
-		this.setState({groupedHistories: this.groupByDate(sellingHistory)});
+		this.setState({groupedHistories: await this.groupByDate(sellingHistory)});
 	}
 	
 	async getNextSellHistoryGroup() {
@@ -124,7 +119,7 @@ class Shopping extends Component {
 			
 			this.setState({
 				sellingHistory: allSellHistories,
-				groupedHistories: this.groupByDate(allSellHistories),
+				groupedHistories: await this.groupByDate(allSellHistories),
 				lastGroupId: this.state.lastGroupId - 10,
 				isCollecting: false
 			});
@@ -151,7 +146,7 @@ class Shopping extends Component {
 		
 		this.setState({
 			sellingHistory: allSellHistories,
-			groupedHistories: this.groupByDate(allSellHistories),
+			groupedHistories: await this.groupByDate(allSellHistories),
 			lastGroupId: this.state.lastGroupId - 10,
 			isCollecting: false
 		});
@@ -163,23 +158,33 @@ class Shopping extends Component {
 		let minutes = date.getMinutes();
 		
 		minutes = minutes + "";
-		if (minutes.length != 2) {
+		if (minutes.length !== 2) {
 			minutes = "0" + minutes;
 		}
 		return `${hours}:${minutes}`;
 	};
 	
-	groupByDate = (histories) => {
+	groupByDate = async (histories) => {
 		const grouped = {};
-		histories.forEach((history) => {
+		for (const history of histories) {
 			const date = history.created_date.split('T')[0];
 			const formattedDate = this.formatDate(date);
 			if (!grouped[date]) {
-				grouped[date] = {date, dateInfo: formattedDate, histories: [], totalAmount: 0};
+				grouped[date] = { date, dateInfo: formattedDate, histories: [], totalAmount: 0 };
 			}
 			grouped[date].histories.push(history);
-			grouped[date].totalAmount += history.amount;
-		});
+			
+			let currentDate = new Date(date);
+			const year = currentDate.getFullYear();
+			const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed, so add 1
+			const day = String(currentDate.getDate()).padStart(2, '0');
+			
+			// Format the date as yyyy-mm-dd
+			const currentFormattedDate = `${year}-${month}-${day}`;
+			grouped[date].totalAmount = await this.amountDateRepository.getSellAmountInfoByDate(currentFormattedDate);
+		}
+		
+		console.log(grouped);
 		return Object.values(grouped);
 	};
 	

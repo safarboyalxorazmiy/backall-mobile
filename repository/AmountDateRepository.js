@@ -119,7 +119,7 @@ class AmountDateRepository {
 		});
 	}
 	
-	getProfitAmountInfoByDate(date) {
+	async getProfitAmountInfoByDate(date) {
 		return new Promise((resolve, reject) => {
 			const selectQuery = `SELECT amount
                            FROM profit_amount_date
@@ -139,7 +139,7 @@ class AmountDateRepository {
 		});
 	}
 	
-	getSellAmountInfoByDate(date) {
+	async getSellAmountInfoByDate(date) {
 		return new Promise((resolve, reject) => {
 			const selectQuery =
 				`SELECT amount
