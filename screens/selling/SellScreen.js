@@ -65,43 +65,43 @@ class Sell extends Component {
 			amount: 0,
 			profit: 0
 		};
-		
+
 		this.storeProductRepository = new StoreProductRepository();
 		this.sellHistoryRepository = new SellHistoryRepository();
 		this.profitHistoryRepository = new ProfitHistoryRepository();
 		this.amountDateRepository = new AmountDateRepository();
 	}
-	
+
 	toggleModal = () => {
 		this.setState((prevState) => ({
 			isModalVisible: !prevState.isModalVisible,
 		}));
 	};
-	
+
 	handleFocus = () => {
 		this.setState({isFocused: true});
 		this.inputRef.current.focus();
 	};
-	
+
 	handleBlur = () => {
 		this.inputRef.current.focus();
 	};
-	
+
 	onChangeTextSerialInput = async (seriya) => {
 		this.setState({seria: seriya});
 		let storeProduct = await this.storeProductRepository.getProductInfoBySerialNumber(seriya);
-		
+
 		if (storeProduct[0]) {
 			let newSellingProducts = [...this.state.sellingProducts];
-			
+
 			let existingProductIndex =
 				newSellingProducts.findIndex(
 					element => element.id === storeProduct[0].id
 				);
-			
+
 			if (existingProductIndex !== -1) {
 				newSellingProducts[existingProductIndex].count += 1;
-				
+
 				this.setState({
 					amount: this.state.amount + newSellingProducts[existingProductIndex].selling_price
 				});
@@ -115,7 +115,7 @@ class Sell extends Component {
 				let newSellingProduct = storeProduct[0];
 				newSellingProduct.count = 1;
 				newSellingProducts.push(newSellingProduct);
-				
+
 				this.setState({
 					amount: this.state.amount + newSellingProduct.selling_price
 				});
@@ -126,7 +126,7 @@ class Sell extends Component {
 					)
 				})
 			}
-			
+
 			this.setState(
 				{
 					sellingProducts: newSellingProducts,
@@ -135,27 +135,37 @@ class Sell extends Component {
 			Keyboard.dismiss();
 		}
 	};
-	
+
 	render() {
 		const {navigation} = this.props;
 		const {isModalVisible} = this.state;
-		
+
 		return (
 			<>
 				<View style={styles.container}>
 					<View style={styles.pageTitle}>
 						<TouchableOpacity
-							onPress={() => navigation.navigate("Basket")}
+							onPress={() => {
+								this.setState({
+									isModalVisible: false,
+									isFocused: true,
+									sellingProducts: [],
+									seria: "",
+									amount: 0,
+									profit: 0
+								})
+								navigation.navigate("Basket")
+							}}
 							style={styles.backIconWrapper}
 						>
 							<BackIcon/>
 						</TouchableOpacity>
-						
+
 						<Text style={styles.pageTitleText}>
 							Sotiladigan mahsulotlar
 						</Text>
 					</View>
-					
+
 					<TextInput
 						ref={this.inputRef}
 						style={{
@@ -177,21 +187,21 @@ class Sell extends Component {
 						onChangeText={this.onChangeTextSerialInput}
 						value={this.state.seria}
 					/>
-					
+
 					<SwipeableFlatList
 						data={this.state.sellingProducts}
 						renderItem={renderItem}
 						renderQuickActions={renderQuickActions}
 						keyExtractor={keyExtractor}
 					/>
-					
+
 					<TouchableOpacity
 						style={styles.productAddButton}
 						onPress={this.toggleModal}
 					>
 						<Text style={styles.productAddButtonText}>Mahsulotni qo’lda kiritish</Text>
 					</TouchableOpacity>
-					
+
 					<View style={styles.footer}>
 						<View
 							style={styles.footerTitle}
@@ -199,7 +209,7 @@ class Sell extends Component {
 							<Text style={styles.priceTitle}>Buyurtma narxi</Text>
 							<Text style={styles.price}>{this.state.amount} so'm</Text>
 						</View>
-						
+
 						<TouchableOpacity
 							style={styles.button}
 							onPress={this.sellProducts}
@@ -207,9 +217,9 @@ class Sell extends Component {
 							<Text style={styles.buttonText}>Sotuvni amalga oshirish</Text>
 						</TouchableOpacity>
 					</View>
-					
+
 					<StatusBar style="auto"/>
-					
+
 					<Modal
 						visible={isModalVisible}
 						animationType="none"
@@ -224,11 +234,11 @@ class Sell extends Component {
 								height: screenHeight,
 								flex: 1,
 								backgroundColor: "#00000099",
-								
+
 							}}></View>
 						</TouchableOpacity>
-						
-						
+
+
 						<View style={{
 							height: screenHeight,
 							display: "flex",
@@ -255,19 +265,19 @@ class Sell extends Component {
 											<CrossIcon/>
 										</TouchableOpacity>
 									</View>
-									
+
 									<View>
 										<Text style={styles.modalLabel}>Mahsulot nomi</Text>
 										<TextInput style={styles.modalInput} placeholder="Nomini kiriting"
 										           placeholderTextColor="#AAAAAA"/>
 									</View>
-									
+
 									<View style={styles.inputBlock}>
 										<Text style={styles.modalLabel}>Qiymati</Text>
 										<TextInput style={styles.modalInput} placeholder="Sonini kiriting"
 										           placeholderTextColor="#AAAAAA"/>
 									</View>
-									
+
 									<View style={styles.inputBlock}>
 										<Text style={styles.modalLabel}>Sotuvdagi narxi (1 kg/dona)</Text>
 										<TextInput
@@ -276,7 +286,7 @@ class Sell extends Component {
 											placeholderTextColor="#AAAAAA"
 										/>
 									</View>
-									
+
 									<TouchableOpacity
 										style={styles.modalButton}
 										onPress={this.toggleModal}>
@@ -291,18 +301,18 @@ class Sell extends Component {
 			</>
 		);
 	}
-	
+
 	sellProducts = async () => {
 		console.log(
 			this.state.sellingProducts
 		);
-		
+
 		let sellGroupId = await this.sellHistoryRepository.createSellHistoryGroup(this.state.amount);
 		let profitGroupId = await this.profitHistoryRepository.createProfitHistoryGroup(this.state.profit);
-		
-		
+
+
 		console.log("PROFIT ", this.state.profit);
-		
+
 		this.state.sellingProducts.forEach(
 			async (sellingProduct) => {
 				await this.sellHistoryRepository.createSellHistoryAndLinkWithGroup(
@@ -313,15 +323,15 @@ class Sell extends Component {
 					sellGroupId
 				)
 			});
-		
-		
+
+
 		console.log("PROFIT GROUP:::", profitGroupId)
 		// SMALL TASKS
 		/*
 			* Find selling price and actual price then profit.
 		*/
-		
-		
+
+
 		/* 
 		[
 			{
@@ -339,10 +349,10 @@ class Sell extends Component {
 			}
 		]
 		*/
-		
-		
+
+
 		// price and selling_price
-		
+
 		this.state.sellingProducts.forEach(
 			async (sellingProduct) => {
 				await this.profitHistoryRepository.createProfitHistoryAndLinkWithGroup(
@@ -352,32 +362,32 @@ class Sell extends Component {
 					sellingProduct.selling_price - sellingProduct.price,
 					profitGroupId
 				);
-				
-				
+
+
 				this.storeProductRepository.updateCount(
 					sellingProduct.product_id,
 					sellingProduct.count
 				);
 			});
-		
-		
+
+
 		// oylik foyda bilan kirimni localStorageda saqlash.
 		// + bugungi oyni sonini ham
-		
-		
+
+
 		// HOW TO GET yyyy-mm-dd from new Date()
-		
+
 		// Get the current date
 		const currentDate = new Date();
-		
+
 		// Extract year, month, and day
 		const year = currentDate.getFullYear();
 		const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed, so add 1
 		const day = String(currentDate.getDate()).padStart(2, '0');
-		
+
 		// Format the date as yyyy-mm-dd
 		const formattedDate = `${year}-${month}-${day}`;
-		
+
 		// UPDATE CURRENT DAY AMOUNTS..
 		await this.amountDateRepository.setProfitAmount(
 			this.state.profit, formattedDate
@@ -385,14 +395,14 @@ class Sell extends Component {
 		await this.amountDateRepository.setSellAmount(
 			this.state.amount, formattedDate
 		);
-		
+
 		// STORING CURRENT MONTHLY AMOUNTS
 		const currentMonth = currentDate.getMonth();
 		await AsyncStorage.setItem("month", currentMonth + "");
-		
+
 		let lastSellAmount = await AsyncStorage.getItem("month_sell_amount")
 		let lastProfitAmount = await AsyncStorage.getItem("month_profit_amount")
-		
+
 		if (lastSellAmount) {
 			await AsyncStorage.setItem("month_sell_amount", this.state.amount + "");
 		} else {
@@ -402,7 +412,7 @@ class Sell extends Component {
 				calc + ""
 			);
 		}
-		
+
 		if (lastProfitAmount) {
 			await AsyncStorage.setItem("month_profit_amount", this.state.profit + "");
 		} else {
@@ -412,7 +422,15 @@ class Sell extends Component {
 				calc + ""
 			);
 		}
-		
+
+		this.setState({
+			isModalVisible: false,
+			isFocused: true,
+			sellingProducts: [],
+			seria: "",
+			amount: 0,
+			profit: 0
+		});
 		// Navigate screen
 		const {navigation} = this.props;
 		navigation.navigate("Shopping");
@@ -441,7 +459,7 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		paddingTop: 52
 	},
-	
+
 	pageTitle: {
 		width: screenWidth - (16 + 16),
 		display: "flex",
@@ -449,7 +467,7 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		marginBottom: 10,
 	},
-	
+
 	pageTitleText: {
 		width: 299,
 		textAlign: "center",
@@ -457,16 +475,16 @@ const styles = StyleSheet.create({
 		fontFamily: "Gilroy-SemiBold",
 		fontWeight: "600",
 	},
-	
+
 	backIconWrapper: {
 		backgroundColor: "#F5F5F7",
 		paddingVertical: 16,
 		paddingHorizontal: 19,
 		borderRadius: 8,
 	},
-	
+
 	productList: {},
-	
+
 	product: {
 		display: "flex",
 		flexDirection: "row",
@@ -477,7 +495,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 4,
 		backgroundColor: "white"
 	},
-	
+
 	productOdd: {
 		display: "flex",
 		flexDirection: "row",
@@ -488,20 +506,20 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 4,
 		backgroundColor: "#F1F1F1"
 	},
-	
+
 	productTitle: {
 		fontSize: 16,
 		fontFamily: "Gilroy-Medium",
 		fontWeight: "500"
 	},
-	
+
 	productCount: {
 		fontFamily: "Gilroy-Medium",
 		fontSize: 16,
 		lineHeight: 24,
 		fontWeight: "500"
 	},
-	
+
 	scan: {
 		width: 71,
 		height: 71,
@@ -514,20 +532,20 @@ const styles = StyleSheet.create({
 		right: 20,
 		bottom: 172
 	},
-	
+
 	priceTitle: {
 		fontFamily: "Gilroy-Regular",
 		fontWeight: "400",
 		fontSize: 16,
 		lineHeight: 24
 	},
-	
+
 	price: {
 		fontSize: 18,
 		fontWeight: "600",
 		fontFamily: "Gilroy-SemiBold",
 	},
-	
+
 	button: {
 		paddingVertical: 14,
 		backgroundColor: "#222",
@@ -540,14 +558,14 @@ const styles = StyleSheet.create({
 		borderRadius: 10,
 		marginBottom: 12
 	},
-	
+
 	buttonText: {
 		color: "#fff",
 		fontSize: 16,
 		fontFamily: "Gilroy-Medium",
 		lineHeight: 24
 	},
-	
+
 	productAddButton: {
 		width: screenWidth - (17 + 17),
 		paddingVertical: 14,
@@ -556,11 +574,11 @@ const styles = StyleSheet.create({
 		borderRadius: 8,
 		marginTop: 16
 	},
-	
+
 	productAddButtonText: {
 		textAlign: "center"
 	},
-	
+
 	crossIconWrapper: {
 		height: 24,
 		width: "100%",
@@ -570,18 +588,18 @@ const styles = StyleSheet.create({
 		marginBottom: 24,
 		marginTop: 10
 	},
-	
+
 	crossIcon: {
 		backgroundColor: "blue",
 		width: 24,
 		height: 24
 	},
-	
+
 	footer: {
 		backgroundColor: "#fff",
 		width: "100%",
 	},
-	
+
 	footerTitle: {
 		paddingBottom: 22,
 		paddingTop: 16,
@@ -591,45 +609,45 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		alignItems: "flex-end",
 		flexDirection: "row",
-		
+
 		shadowColor: "rgba(0, 0, 0, 0.1)",
 		shadowOffset: {width: 0, height: -10},
 		shadowOpacity: 1,
 		shadowRadius: 30,
 	},
-	
+
 	modalInput: {
 		paddingHorizontal: 16,
 		paddingVertical: 14,
 		borderWidth: 1,
 		borderColor: "#AFAFAF",
 		borderRadius: 8,
-		
+
 		fontFamily: "Gilroy-Medium",
 		fontWeight: "500",
 		fontSize: 16,
 		lineHeight: 24,
 		marginTop: 4
 	},
-	
+
 	modalLabel: {
 		fontFamily: "Gilroy-Medium",
 		fontWeight: "500",
 		fontSize: 16,
 		lineHeight: 24
 	},
-	
+
 	inputBlock: {
 		marginTop: 16
 	},
-	
+
 	modalButton: {
 		marginTop: 24,
 		backgroundColor: "#222222",
 		paddingVertical: 14,
 		borderRadius: 8
 	},
-	
+
 	modalButtonText: {
 		color: "#fff",
 		fontFamily: "Gilroy-Medium",
@@ -637,7 +655,7 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		textAlign: "center"
 	}
-	
+
 });
 
 export default Sell;
