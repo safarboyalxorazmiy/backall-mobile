@@ -16,6 +16,11 @@ class VerificationScreen extends Component {
 		this.setState(prevState => ({
 			verificationCode: prevState.verificationCode + key
 		}));
+
+		if (this.state.verificationCode === "0000") {
+			const {navigation} = this.props;
+			navigation.navigate("Home");
+		}
 	}
 
 	handleDelete = () => {
