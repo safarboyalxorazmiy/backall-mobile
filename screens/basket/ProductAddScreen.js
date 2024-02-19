@@ -738,7 +738,10 @@ class ProductAdd extends Component {
 									priceInput: styles.priceInput,
 									
 									checkmarkScale: new Animated.Value(0),
-									isCreated: false
+									isCreated: false,
+
+									profitCalculation: "",
+									profitCalculationIsVisible: false,
 								});
 								
 								navigation.navigate("Basket");
@@ -871,7 +874,9 @@ class ProductAdd extends Component {
 				amountInputValue: "",
 				priceInputValue: "",
 				sellingPriceInputValue: "",
-				nds: false
+				nds: false,
+				profitCalculation: "",
+				profitCalculationIsVisible: false,
 			});
 			
 			const {navigation} = this.props;
