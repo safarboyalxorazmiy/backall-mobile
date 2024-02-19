@@ -11,10 +11,10 @@ import {
 	Platform,
 } from 'react-native';
 
-import Logo from '../assets/logo.svg';
-import TokenService from '../service/TokenService';
-import DatabaseService from '../service/DatabaseService';
-import ApiService from "../service/ApiService";
+import Logo from '../../assets/logo.svg';
+import TokenService from '../../service/TokenService';
+import DatabaseService from '../../service/DatabaseService';
+import ApiService from "../../service/ApiService";
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
