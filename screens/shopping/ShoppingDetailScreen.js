@@ -17,7 +17,7 @@ const screenWidth = Dimensions.get('window').width;
 class ShoppingDetail extends Component {
 	constructor(props) {
 		super(props);
-
+		
 		this.state = {
 			sellGroupId: null,
 			sellHistoryDetail: [],
@@ -25,16 +25,16 @@ class ShoppingDetail extends Component {
 			sellGroupDetail: {},
 			lastId: 0,
 			lastYPos: 0,
-			isLoaded: false
+			isLoaded: false,
 		}
-
+		
 		this.sellHistoryRepository = new SellHistoryRepository();
 		this.getDetails();
 	}
-
+	
 	async componentDidMount() {
 		const {navigation} = this.props;
-
+		
 		navigation.addListener("focus", async () => {
 			this.setState({
 				sellGroupId: null,
@@ -45,92 +45,93 @@ class ShoppingDetail extends Component {
 				lastYPos: 0,
 				isLoaded: false
 			})
+			
 			await this.getDetails();
 		});
 	}
-
+	
 	async getDetails() {
 		let sellGroupId = await AsyncStorage.getItem("sell_history_id");
-
+		
 		await this.setState(
-			{ sellGroupId: parseInt(sellGroupId) }
+			{sellGroupId: parseInt(sellGroupId)}
 		);
-
+		
 		let sellHistoryDetail = await this.sellHistoryRepository.getSellHistoryDetailByGroupIdTop6(this.state.sellGroupId, this.state.lastId);
-
+		
 		await this.setState(
 			{
 				sellHistoryDetail: sellHistoryDetail
 			}
 		);
-
+		
 		let last = sellHistoryDetail[sellHistoryDetail.length - 1];
 		if (last) {
 			this.setState({
 				lastId: last.id
 			})
 		}
-
-		let sellHistoryDetailLastId = 
+		
+		let sellHistoryDetailLastId =
 			await this.sellHistoryRepository.getLastSellHistoryDetailByGroupId(this.state.sellGroupId);
 		sellHistoryDetailLastId = sellHistoryDetailLastId[0];
 		this.setState({
 			sellHistoryDetailLastId: sellHistoryDetailLastId.id
 		})
-
+		
 		console.log("last")
 		console.log(this.state.sellHistoryDetailLastId)
-
+		
 		// GROUP INFO..
-		let groupDetail = 
+		let groupDetail =
 			await this.sellHistoryRepository.getSellGroupInfoById(
 				this.state.sellGroupId
 			);
-		this.setState({ sellGroupDetail: groupDetail[0] });
-
+		this.setState({sellGroupDetail: groupDetail[0]});
+		
 		console.log("GROUP DETAIL: ", this.state.sellGroupDetail);
 	}
-
+	
 	async getNextDetails() {
 		if (this.state.isLoaded) {
 			return;
 		}
-
-		let nextSellHistoryDetail = 
+		
+		let nextSellHistoryDetail =
 			await this.sellHistoryRepository.getSellHistoryDetailByGroupIdTop6(
 				this.state.sellGroupId, this.state.lastId
 			);
-
+		
 		let last = nextSellHistoryDetail[nextSellHistoryDetail.length - 1]
 		if (last.id == this.state.sellHistoryDetailLastId) {
 			this.setState({
 				isLoaded: true
-			});;
+			});
 		}
-
+		
 		let allSellHistoryDetail = this.state.sellHistoryDetail.concat(nextSellHistoryDetail);
-
+		
 		console.log("LAST ID::", last.id)
 		await this.setState({
 			sellHistoryDetail: allSellHistoryDetail,
 			lastId: last.id
 		});
 	}
-
+	
 	
 	getTime(isoString) {
 		var parsedDate = new Date(isoString);
-
+		
 		let hours = parsedDate.getHours();
 		let minutes = parsedDate.getMinutes();
 		let formattedTime = (hours < 10 ? '0' : '') + hours + ':' + (minutes < 10 ? '0' : '') + minutes;
-	
+		
 		return formattedTime;
 	}
-
+	
 	getDay(isoString) {
 		var parsedDate = new Date(isoString);
-	
+		
 		var monthNames = [
 			"yanvar",
 			"fevral",
@@ -145,29 +146,29 @@ class ShoppingDetail extends Component {
 			"noyabr",
 			"dekabr"
 		];
-	
+		
 		var day = parsedDate.getDate();
 		var monthIndex = parsedDate.getMonth();
 		var monthName = monthNames[monthIndex];
-	
+		
 		var formattedResult = day + "-" + monthName;
-	
+		
 		return formattedResult;
 	}
-
-
+	
+	
 	render() {
 		const {navigation} = this.props;
-
+		
 		return (
-			<ScrollView 
+			<ScrollView
 				onScrollBeginDrag={async (event) => {
 					const currentYPos = event.nativeEvent.contentOffset.y;
 					console.log("Current Y position:", currentYPos);
-
+					
 					if ((currentYPos - this.state.lastYPos) > 138) {
 						console.log("God help!");
-						this.setState({lastYPos: currentYPos});;
+						this.setState({lastYPos: currentYPos});
 						await this.getNextDetails();
 					}
 				}}
@@ -183,14 +184,14 @@ class ShoppingDetail extends Component {
 						
 						<Text style={styles.title}>Mahsulotdan qolgan foyda</Text>
 					</View>
-
+					
 					
 					<View style={styles.infoBar}>
-						<Text style={styles.infoText}>{ this.state.sellGroupDetail.amount } so’m</Text>
+						<Text style={styles.infoText}>{this.state.sellGroupDetail.amount} so’m</Text>
 						<Text style={styles.infoDivider}>//</Text>
-						<Text style={styles.infoText}>{ this.getTime(this.state.sellGroupDetail.created_date) }</Text>
+						<Text style={styles.infoText}>{this.getTime(this.state.sellGroupDetail.created_date)}</Text>
 						<Text style={styles.infoDivider}>//</Text>
-						<Text style={styles.infoText}>{ this.getDay(this.state.sellGroupDetail.created_date) }</Text>
+						<Text style={styles.infoText}>{this.getDay(this.state.sellGroupDetail.created_date)}</Text>
 					</View>
 					
 					{/*
@@ -211,12 +212,12 @@ class ShoppingDetail extends Component {
 								
 								<View style={styles.profitContainer} key={index}>
 									<Text style={styles.profitTitle}>{item.productName}</Text>
-
+									
 									<View style={styles.profitRow}>
 										<Text style={styles.profitText}>Soni</Text>
 										<Text style={styles.profitPrice}>{item.count} {item.count_type}</Text>
 									</View>
-
+									
 									<View style={styles.profitRow}>
 										<Text style={styles.profitText}>Qolgan foyda</Text>
 										<Text style={styles.profitPrice}>{(item.selling_price).toLocaleString()} so’m</Text>

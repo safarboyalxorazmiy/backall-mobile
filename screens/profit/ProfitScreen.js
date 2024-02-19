@@ -21,6 +21,7 @@ class Profit extends Component {
 			lastGroupId: 0,
 			isCollecting: false,
 			calendarInputContent: "--/--/----",
+			thisMonthProfitAmount: 0.00
 		}
 
 		this.profitHistoryRepository = new ProfitHistoryRepository();
@@ -54,6 +55,16 @@ class Profit extends Component {
 			console.log(this.state.toDate)
 			
 			console.log(this.state.profitHistories);
+			
+			let thisMonthProfitAmount = parseInt(await AsyncStorage.getItem("month_profit_amount"));
+			
+			let currentDate = new Date();
+			let currentMonth = currentDate.getMonth();
+			let lastStoredMonth = parseInt(await AsyncStorage.getItem("month"));
+			
+			if (currentMonth === lastStoredMonth) {
+				this.setState({thisMonthProfitAmount: thisMonthProfitAmount});
+			}
 		});
 	}
 
@@ -91,7 +102,7 @@ class Profit extends Component {
 		}
 
 		let lastProfitGroup = await this.profitHistoryRepository.getLastProfitHistoryGroupId();
-		profitHistories = await this.profitHistoryRepository.getTop10ProfitGroupByStartId(lastProfitGroup.id);
+		let profitHistories = await this.profitHistoryRepository.getTop10ProfitGroupByStartId(lastProfitGroup.id);
 
 		console.log("WITHOUT DATE")
 		console.log(
@@ -308,7 +319,7 @@ class Profit extends Component {
 								fontSize: 16,
 								lineHeight: 24,
 								color: "#FFF"
-							}}>5.000.000 so’m</Text>
+							}}>{this.state.thisMonthProfitAmount} so’m</Text>
 						</View>
 						
 						<View style={{

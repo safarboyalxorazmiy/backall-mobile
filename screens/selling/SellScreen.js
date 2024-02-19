@@ -18,6 +18,7 @@ import StoreProductRepository from "../../repository/StoreProductRepository";
 import SellHistoryRepository from "../../repository/SellHistoryRepository";
 import ProfitHistoryRepository from "../../repository/ProfitHistoryRepository";
 import AmountDateRepository from "../../repository/AmountDateRepository";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -38,13 +39,13 @@ const renderItem = ({item}) => {
 
 const renderQuickActions = () => (
 	<View style={{
-		flex: 1, 
-		backgroundColor: "red", 
-		justifyContent: "center", 
+		flex: 1,
+		backgroundColor: "red",
+		justifyContent: "center",
 		alignItems: "flex-end"
 	}}>
 		<Text style={{
-			color: "white", 
+			color: "white",
 			padding: 10
 		}}>Delete</Text>
 	</View>
@@ -64,7 +65,7 @@ class Sell extends Component {
 			amount: 0,
 			profit: 0
 		};
-
+		
 		this.storeProductRepository = new StoreProductRepository();
 		this.sellHistoryRepository = new SellHistoryRepository();
 		this.profitHistoryRepository = new ProfitHistoryRepository();
@@ -78,35 +79,35 @@ class Sell extends Component {
 	};
 	
 	handleFocus = () => {
-    this.setState({isFocused: true});
+		this.setState({isFocused: true});
 		this.inputRef.current.focus();
-    };
-
+	};
+	
 	handleBlur = () => {
 		this.inputRef.current.focus();
 	};
-
+	
 	onChangeTextSerialInput = async (seriya) => {
 		this.setState({seria: seriya});
 		let storeProduct = await this.storeProductRepository.getProductInfoBySerialNumber(seriya);
-	
+		
 		if (storeProduct[0]) {
-			let newSellingProducts = [...this.state.sellingProducts]; 
-	
-			let existingProductIndex = 
-			newSellingProducts.findIndex(
-				element => element.id === storeProduct[0].id
-			);
-	
+			let newSellingProducts = [...this.state.sellingProducts];
+			
+			let existingProductIndex =
+				newSellingProducts.findIndex(
+					element => element.id === storeProduct[0].id
+				);
+			
 			if (existingProductIndex !== -1) {
 				newSellingProducts[existingProductIndex].count += 1;
-
+				
 				this.setState({
 					amount: this.state.amount + newSellingProducts[existingProductIndex].selling_price
 				});
 				this.setState({
 					profit: this.state.profit + (
-						newSellingProducts[existingProductIndex].selling_price - 
+						newSellingProducts[existingProductIndex].selling_price -
 						newSellingProducts[existingProductIndex].price
 					)
 				});
@@ -114,27 +115,27 @@ class Sell extends Component {
 				let newSellingProduct = storeProduct[0];
 				newSellingProduct.count = 1;
 				newSellingProducts.push(newSellingProduct);
-
+				
 				this.setState({
 					amount: this.state.amount + newSellingProduct.selling_price
 				});
 				this.setState({
 					profit: this.state.profit + (
-						newSellingProduct.selling_price - 
+						newSellingProduct.selling_price -
 						newSellingProduct.price
 					)
 				})
 			}
-	
+			
 			this.setState(
-			{ 
-				sellingProducts: newSellingProducts,
-				seria: ""
-			});				
+				{
+					sellingProducts: newSellingProducts,
+					seria: ""
+				});
 			Keyboard.dismiss();
 		}
 	};
-
+	
 	render() {
 		const {navigation} = this.props;
 		const {isModalVisible} = this.state;
@@ -154,29 +155,29 @@ class Sell extends Component {
 							Sotiladigan mahsulotlar
 						</Text>
 					</View>
-
+					
 					<TextInput
-							ref={this.inputRef}
-							style={{
-								backgroundColor: "white", 
-								width: screenWidth - (16 + 16),
-								marginBottom: 10,
-								padding: 15,
-								borderRadius: 8,
-								fontFamily: "Gilroy-Medium",
-								fontSize: 16,
-								borderColor: "#222",
-								borderWidth: 1
-							}} 
-							onFocus={this.handleFocus} 
-							onBlur={this.handleBlur} 
-							autoFocus={true}
-							editable={true}
-							cursorColor={"#222"}
-							onChangeText={this.onChangeTextSerialInput}
-							value={this.state.seria}
-						/>
-
+						ref={this.inputRef}
+						style={{
+							backgroundColor: "white",
+							width: screenWidth - (16 + 16),
+							marginBottom: 10,
+							padding: 15,
+							borderRadius: 8,
+							fontFamily: "Gilroy-Medium",
+							fontSize: 16,
+							borderColor: "#222",
+							borderWidth: 1
+						}}
+						onFocus={this.handleFocus}
+						onBlur={this.handleBlur}
+						autoFocus={true}
+						editable={true}
+						cursorColor={"#222"}
+						onChangeText={this.onChangeTextSerialInput}
+						value={this.state.seria}
+					/>
+					
 					<SwipeableFlatList
 						data={this.state.sellingProducts}
 						renderItem={renderItem}
@@ -199,8 +200,8 @@ class Sell extends Component {
 							<Text style={styles.price}>{this.state.amount} so'm</Text>
 						</View>
 						
-						<TouchableOpacity 
-							style={styles.button} 
+						<TouchableOpacity
+							style={styles.button}
 							onPress={this.sellProducts}
 						>
 							<Text style={styles.buttonText}>Sotuvni amalga oshirish</Text>
@@ -209,13 +210,13 @@ class Sell extends Component {
 					
 					<StatusBar style="auto"/>
 					
-					<Modal 
-						visible={isModalVisible} 
-						animationType="none" 
-						style={{}} 
+					<Modal
+						visible={isModalVisible}
+						animationType="none"
+						style={{}}
 						transparent={true}>
-						<TouchableOpacity 
-							activeOpacity={1} 
+						<TouchableOpacity
+							activeOpacity={1}
 							onPress={this.toggleModal}>
 							<View style={{
 								position: "absolute",
@@ -276,10 +277,10 @@ class Sell extends Component {
 										/>
 									</View>
 									
-									<TouchableOpacity 
+									<TouchableOpacity
 										style={styles.modalButton}
 										onPress={this.toggleModal}>
-										<Text 
+										<Text
 											style={styles.modalButtonText}>Savatga qo’shish</Text>
 									</TouchableOpacity>
 								</View>
@@ -290,37 +291,37 @@ class Sell extends Component {
 			</>
 		);
 	}
-
+	
 	sellProducts = async () => {
 		console.log(
 			this.state.sellingProducts
 		);
-
+		
 		let sellGroupId = await this.sellHistoryRepository.createSellHistoryGroup(this.state.amount);
 		let profitGroupId = await this.profitHistoryRepository.createProfitHistoryGroup(this.state.profit);
-
-
+		
+		
 		console.log("PROFIT ", this.state.profit);
-
+		
 		this.state.sellingProducts.forEach(
 			async (sellingProduct) => {
 				await this.sellHistoryRepository.createSellHistoryAndLinkWithGroup(
-					sellingProduct.product_id, 
-					sellingProduct.count, 
+					sellingProduct.product_id,
+					sellingProduct.count,
 					sellingProduct.count_type,
 					sellingProduct.selling_price,
 					sellGroupId
 				)
-		});
-
-
+			});
+		
+		
 		console.log("PROFIT GROUP:::", profitGroupId)
 		// SMALL TASKS
 		/*
 			* Find selling price and actual price then profit.
 		*/
-
-
+		
+		
 		/* 
 		[
 			{
@@ -338,51 +339,83 @@ class Sell extends Component {
 			}
 		]
 		*/
-
-
+		
+		
 		// price and selling_price
-
+		
 		this.state.sellingProducts.forEach(
 			async (sellingProduct) => {
 				await this.profitHistoryRepository.createProfitHistoryAndLinkWithGroup(
-					sellingProduct.product_id, 
-					sellingProduct.count, 
+					sellingProduct.product_id,
+					sellingProduct.count,
 					sellingProduct.count_type,
 					sellingProduct.selling_price - sellingProduct.price,
 					profitGroupId
 				);
-
-
+				
+				
 				this.storeProductRepository.updateCount(
-					sellingProduct.product_id, 
+					sellingProduct.product_id,
 					sellingProduct.count
 				);
 			});
-
-			// HOW TO GET yyyy-mm-dd from new Date()
-
-			// Get the current date
-			const currentDate = new Date();
-
-			// Extract year, month, and day
-			const year = currentDate.getFullYear();
-			const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed, so add 1
-			const day = String(currentDate.getDate()).padStart(2, '0');
-
-			// Format the date as yyyy-mm-dd
-			const formattedDate = `${year}-${month}-${day}`;
-
-			// UPDATE CURRENT DAY AMOUNTS..
-			await this.amountDateRepository.setProfitAmount(
-				this.state.profit, formattedDate
+		
+		
+		// oylik foyda bilan kirimni localStorageda saqlash.
+		// + bugungi oyni sonini ham
+		
+		
+		// HOW TO GET yyyy-mm-dd from new Date()
+		
+		// Get the current date
+		const currentDate = new Date();
+		
+		// Extract year, month, and day
+		const year = currentDate.getFullYear();
+		const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed, so add 1
+		const day = String(currentDate.getDate()).padStart(2, '0');
+		
+		// Format the date as yyyy-mm-dd
+		const formattedDate = `${year}-${month}-${day}`;
+		
+		// UPDATE CURRENT DAY AMOUNTS..
+		await this.amountDateRepository.setProfitAmount(
+			this.state.profit, formattedDate
+		);
+		await this.amountDateRepository.setSellAmount(
+			this.state.amount, formattedDate
+		);
+		
+		// STORING CURRENT MONTHLY AMOUNTS
+		const currentMonth = currentDate.getMonth();
+		await AsyncStorage.setItem("month", currentMonth + "");
+		
+		let lastSellAmount = await AsyncStorage.getItem("month_sell_amount")
+		let lastProfitAmount = await AsyncStorage.getItem("month_profit_amount")
+		
+		if (lastSellAmount) {
+			await AsyncStorage.setItem("month_sell_amount", this.state.amount + "");
+		} else {
+			let calc = parseInt(lastSellAmount) + this.state.amount;
+			await AsyncStorage.setItem(
+				"month_sell_amount",
+				calc + ""
 			);
-			await this.amountDateRepository.setSellAmount(
-				this.state.amount, formattedDate
+		}
+		
+		if (lastProfitAmount) {
+			await AsyncStorage.setItem("month_profit_amount", this.state.profit + "");
+		} else {
+			let calc = parseInt(lastProfitAmount) + this.state.profit;
+			await AsyncStorage.setItem(
+				"month_profit_amount",
+				calc + ""
 			);
-
-			// Navigate screen
-			const {navigation} = this.props;
-			navigation.navigate("Shopping");
+		}
+		
+		// Navigate screen
+		const {navigation} = this.props;
+		navigation.navigate("Shopping");
 	}
 }
 

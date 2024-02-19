@@ -23,16 +23,16 @@ const databaseService = new DatabaseService();
 class Home extends Component {
 	constructor(state) {
 		super(state);
-
+		
 		this.state = {
 			shoppingCardColors: ["#E59C0D", "#FDD958"],
 			profitCardColors: ["#2C8134", "#1DCB00"],
 			profitAmount: 0,
 			sellAmount: 0
 		}
-
+		
 		this.amountDateRepository = new AmountDateRepository();
-
+		
 		this.getAmountInfo();
 	}
 	
@@ -43,48 +43,48 @@ class Home extends Component {
 			await this.getAmountInfo();
 		});
 	}
-
+	
 	async getAmountInfo() {
 		// HOW TO GET yyyy-mm-dd from new Date()
-
-			// Get the current date
-			const currentDate = new Date();
-
-			// Extract year, month, and day
-			const year = currentDate.getFullYear();
-			const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed, so add 1
-			const day = String(currentDate.getDate()).padStart(2, '0');
-
-			// Format the date as yyyy-mm-dd
-			const formattedDate = `${year}-${month}-${day}`;
-
-			
-			let profitAmountInfo = await this.amountDateRepository.getProfitAmountInfoByDate(formattedDate);
-			let sellAmountInfo = await this.amountDateRepository.getSellAmountInfoByDate(formattedDate);
-
-			console.log("PROFIT AMOUNT INFO:: ", profitAmountInfo);
-			console.log("SELL AMOUNT INFO:: ", sellAmountInfo);
-			
-			this.setState({
-				profitAmount: profitAmountInfo,
-				sellAmount: sellAmountInfo
-			})
+		
+		// Get the current date
+		const currentDate = new Date();
+		
+		// Extract year, month, and day
+		const year = currentDate.getFullYear();
+		const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed, so add 1
+		const day = String(currentDate.getDate()).padStart(2, '0');
+		
+		// Format the date as yyyy-mm-dd
+		const formattedDate = `${year}-${month}-${day}`;
+		
+		
+		let profitAmountInfo = await this.amountDateRepository.getProfitAmountInfoByDate(formattedDate);
+		let sellAmountInfo = await this.amountDateRepository.getSellAmountInfoByDate(formattedDate);
+		
+		console.log("PROFIT AMOUNT INFO:: ", profitAmountInfo);
+		console.log("SELL AMOUNT INFO:: ", sellAmountInfo);
+		
+		this.setState({
+			profitAmount: profitAmountInfo,
+			sellAmount: sellAmountInfo
+		})
 	}
-
+	
 	async get() {
 		console.log(await databaseService.getAllProducts())
 	}
-
+	
 	render() {
 		const {navigation} = this.props;
 		tokenService.checkTokens(navigation);
 		this.get();
-
+		
 		return (
 			<>
 				<View style={styles.container}>
 					<Text style={styles.pageTitle}>Bosh sahifa</Text>
-
+					
 					<View style={styles.cards}>
 						<TouchableOpacity
 							activeOpacity={1}
@@ -99,7 +99,7 @@ class Home extends Component {
 								colors={this.state.shoppingCardColors}
 								start={{x: 0, y: 0.5}}
 								style={styles.card}>
-
+								
 								<View style={styles.shoppingIconWrapper}>
 									{Platform.OS === 'android' || Platform.OS === 'ios' ? (
 										<ShoppingIcon
@@ -110,10 +110,10 @@ class Home extends Component {
 											style={styles.shoppingIcon}/>
 									)}
 								</View>
-
-								<Text 
+								
+								<Text
 									style={styles.cardTitle}>Bugungi kirim</Text>
-								<Text 
+								<Text
 									style={styles.cardDescription}>
 									{this.state.sellAmount}
 									<Text
@@ -121,7 +121,7 @@ class Home extends Component {
 								</Text>
 							</LinearGradient>
 						</TouchableOpacity>
-
+						
 						<TouchableOpacity
 							activeOpacity={1}
 							onPressIn={() => {
@@ -148,17 +148,17 @@ class Home extends Component {
 											style={styles.benefitIcon}/>
 									)}
 								</View>
-								<Text 
+								<Text
 									style={styles.cardTitle}>Bugungi foyda</Text>
-								<Text 
+								<Text
 									style={styles.cardDescription}>
 									{this.state.profitAmount}
-									<Text 
+									<Text
 										style={styles.currency}>UZS</Text>
 								</Text>
 							</LinearGradient>
 						</TouchableOpacity>
-
+					
 					</View>
 					<StatusBar style="auto"/>
 				</View>
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		paddingTop: 52
 	},
-
+	
 	pageTitle: {
 		fontSize: 18,
 		fontFamily: "Gilroy-SemiBold",
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
 		textAlign: "center",
 		marginBottom: 24
 	},
-
+	
 	shoppingIconWrapper: {
 		width: 141,
 		height: 141,
@@ -203,13 +203,13 @@ const styles = StyleSheet.create({
 		shadowRadius: 20,
 		elevation: 5
 	},
-
+	
 	shoppingIcon: {
 		position: "absolute",
 		bottom: 28,
 		left: 25
 	},
-
+	
 	benefitIconWrapper: {
 		width: 141,
 		height: 141,
@@ -226,18 +226,18 @@ const styles = StyleSheet.create({
 		},
 		shadowRadius: 20
 	},
-
+	
 	benefitIcon: {
 		position: "absolute",
 		bottom: 28,
 		left: 25,
 		zIndex: 1
 	},
-
+	
 	cards: {
 		width: screenWidth - (24 + 24)
 	},
-
+	
 	card: {
 		paddingTop: 24,
 		paddingLeft: 24,
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
 		position: "relative",
 		overflow: "hidden"
 	},
-
+	
 	cardTitle: {
 		color: "white",
 		fontSize: 16,
@@ -256,14 +256,14 @@ const styles = StyleSheet.create({
 		marginBottom: 10,
 		textTransform: "uppercase"
 	},
-
+	
 	cardDescription: {
 		color: "white",
 		fontSize: 24,
 		fontFamily: "Gilroy-SemiBold",
 		fontWeight: "600"
 	},
-
+	
 	currency: {
 		fontSize: 16,
 		fontFamily: "Gilroy-Medium",

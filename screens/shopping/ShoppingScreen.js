@@ -29,84 +29,95 @@ class Shopping extends Component {
 			currentMonthTotal: 0,
 			lastGroupId: 0,
 			isCollecting: false,
-
+			
 			calendarInputContent: "--/--/----",
 			fromDate: null,
-			toDate: null
+			toDate: null,
+			thisMonthSellAmount: 0.00
 		};
-
+		
 		this.sellHistoryRepository = new SellHistoryRepository();
-
+		
 		this.initSellingHistoryGroup();
 	}
-
+	
 	async componentDidMount() {
 		const {navigation} = this.props;
 		
 		navigation.addListener("focus", async () => {
+			let thisMonthSellAmount = parseInt(await AsyncStorage.getItem("month_sell_amount"));
+			
+			let currentDate = new Date();
+			let currentMonth = currentDate.getMonth();
+			let lastStoredMonth = parseInt(await AsyncStorage.getItem("month"));
+			
+			if (currentMonth === lastStoredMonth) {
+				this.setState({thisMonthSellAmount: thisMonthSellAmount});
+			}
+			
 			await this.initSellingHistoryGroup();
 		});
 	}
-
+	
 	async getDateInfo() {
 		this.setState({
 			fromDate: await AsyncStorage.getItem("ShoppingFromDate"),
 			toDate: await AsyncStorage.getItem("ShoppingToDate")
 		});
-
+		
 		if (this.state.fromDate != null && this.state.toDate != null) {
 			let fromDate = this.state.fromDate.replace(/-/g, "/");
 			let toDate = this.state.toDate.replace(/-/g, "/");
-
+			
 			console.log(fromDate + " - " + toDate);
 			this.setState({calendarInputContent: fromDate + " - " + toDate});
 		} else {
 			this.setState({calendarInputContent: "--/--/----"});
 		}
 	}
-
+	
 	async initSellingHistoryGroup() {
 		this.getDateInfo();
 		if (this.state.fromDate != null && this.state.toDate != null) {
-			let lastSellHistoryGroup = 
+			let lastSellHistoryGroup =
 				await this.sellHistoryRepository.getLastSellHistoryGroupByDate(
-					this.state.fromDate, 
+					this.state.fromDate,
 					this.state.toDate
 				);
-
-				if (lastSellHistoryGroup != null) {
-					return;
-				}
-				
-			sellingHistory = 
+			
+			if (lastSellHistoryGroup != null) {
+				return;
+			}
+			
+			sellingHistory =
 				await this.sellHistoryRepository.getTop10SellGroupByDate(
-					lastSellHistoryGroup.id, 
-					this.state.fromDate, 
+					lastSellHistoryGroup.id,
+					this.state.fromDate,
 					this.state.toDate
 				);
-
-			this.setState({ lastGroupId: lastSellHistoryGroup.id });
-			this.setState({ sellingHistory: sellingHistory });
-			this.setState({ groupedHistories: this.groupByDate(sellingHistory) });
-
+			
+			this.setState({lastGroupId: lastSellHistoryGroup.id});
+			this.setState({sellingHistory: sellingHistory});
+			this.setState({groupedHistories: this.groupByDate(sellingHistory)});
+			
 			return;
 		}
-
+		
 		let lastSellHistoryGroup = await this.sellHistoryRepository.getLastSellHistoryGroupId();
 		sellingHistory = await this.sellHistoryRepository.getAllSellGroup(lastSellHistoryGroup.id);
-
-		this.setState({ lastGroupId: lastSellHistoryGroup.id });
-		this.setState({ sellingHistory: sellingHistory });
-		this.setState({ groupedHistories: this.groupByDate(sellingHistory) });
+		
+		this.setState({lastGroupId: lastSellHistoryGroup.id});
+		this.setState({sellingHistory: sellingHistory});
+		this.setState({groupedHistories: this.groupByDate(sellingHistory)});
 	}
-
+	
 	async getNextSellHistoryGroup() {
 		if (this.state.fromDate != null && this.state.toDate) {
 			this.setState({isCollecting: true});
-
+			
 			let nextSellHistories = await this.sellHistoryRepository.getTop10SellGroupByDate(
-				this.state.lastGroupId - 10, 
-				this.state.fromDate, 
+				this.state.lastGroupId - 10,
+				this.state.fromDate,
 				this.state.toDate
 			);
 			let allSellHistories = this.state.sellingHistory.concat(nextSellHistories);
@@ -117,27 +128,27 @@ class Shopping extends Component {
 				lastGroupId: this.state.lastGroupId - 10,
 				isCollecting: false
 			});
-
+			
 			return;
 		}
-
+		
 		// PROBLEM:
 		// 	Bu yerda oxirgi da qolib ketgan 10 dan keyingi 5-4 larini 
 		// 	ola olmay qolishi mumkin...
 		// 	tekshirib agar muammo bo'lsa hal qilish kerak
 		
 		this.setState({isCollecting: true});
-
+		
 		console.log("####### LAST ID ########");
 		console.log(this.state.lastGroupId);
 		if ((this.state.lastGroupId - 10) < 0) {
 			this.setState({isCollecting: false});
 			return;
 		}
-
+		
 		let nextSellHistories = await this.sellHistoryRepository.getAllSellGroup(this.state.lastGroupId - 10);
 		let allSellHistories = this.state.sellingHistory.concat(nextSellHistories);
-
+		
 		this.setState({
 			sellingHistory: allSellHistories,
 			groupedHistories: this.groupByDate(allSellHistories),
@@ -145,7 +156,7 @@ class Shopping extends Component {
 			isCollecting: false
 		});
 	};
-
+	
 	getFormattedTime = (created_date) => {
 		let date = new Date(created_date);
 		let hours = date.getHours();
@@ -157,50 +168,50 @@ class Shopping extends Component {
 		}
 		return `${hours}:${minutes}`;
 	};
-
+	
 	groupByDate = (histories) => {
-    const grouped = {};
-    histories.forEach((history) => {
-      const date = history.created_date.split('T')[0];
-      const formattedDate = this.formatDate(date);
-      if (!grouped[date]) {
-        grouped[date] = { date, dateInfo: formattedDate, histories: [], totalAmount: 0 };
-      }
-      grouped[date].histories.push(history);
-      grouped[date].totalAmount += history.amount;
-    });
-    return Object.values(grouped);
-  };
-
-  formatDate = (dateString) => {
+		const grouped = {};
+		histories.forEach((history) => {
+			const date = history.created_date.split('T')[0];
+			const formattedDate = this.formatDate(date);
+			if (!grouped[date]) {
+				grouped[date] = {date, dateInfo: formattedDate, histories: [], totalAmount: 0};
+			}
+			grouped[date].histories.push(history);
+			grouped[date].totalAmount += history.amount;
+		});
+		return Object.values(grouped);
+	};
+	
+	formatDate = (dateString) => {
 		const date = new Date(dateString);
-		const options = { day: 'numeric', month: 'long', weekday: 'long' };
+		const options = {day: 'numeric', month: 'long', weekday: 'long'};
 		const formattedDate = date.toLocaleDateString('uz', options);
-	
+		
 		let [weekday, day] = formattedDate.split(', ');
-	
+		
 		weekday = weekday.charAt(0).toUpperCase() + weekday.slice(1);
 		return `${day}, ${weekday}`;
 	};
 	
 	calculateCurrentMonthTotal = () => {
-    const currentDate = new Date();
-    const currentMonth = currentDate.getMonth() + 1;
-    let currentMonthTotal = 0;
-
-    this.state.sellingHistory.forEach((history) => {
-      const historyDate = new Date(history.created_date);
-      const historyMonth = historyDate.getMonth() + 1;
-
-      if (historyMonth === currentMonth) {
-        currentMonthTotal += history.amount;
-      }
-    });
-
+		const currentDate = new Date();
+		const currentMonth = currentDate.getMonth() + 1;
+		let currentMonthTotal = 0;
+		
+		this.state.sellingHistory.forEach((history) => {
+			const historyDate = new Date(history.created_date);
+			const historyMonth = historyDate.getMonth() + 1;
+			
+			if (historyMonth === currentMonth) {
+				currentMonthTotal += history.amount;
+			}
+		});
+		
 		this.setState({currentMonthTotal: currentMonthTotal});
-    return currentMonthTotal;
-  };
-
+		return currentMonthTotal;
+	};
+	
 	render() {
 		const {navigation} = this.props;
 		
@@ -215,14 +226,14 @@ class Shopping extends Component {
 					<View style={styles.pageTitle}>
 						<Text style={styles.pageTitleText}>Sotuv tarixi</Text>
 					</View>
-
+					
 					<View style={styles.calendarWrapper}>
 						<Text style={styles.calendarLabel}>
 							Muddatni tanlang
 						</Text>
-
+						
 						<View>
-							<TouchableOpacity 
+							<TouchableOpacity
 								onPress={async () => {
 									await AsyncStorage.setItem("calendarFromPage", "Shopping");
 									navigation.navigate("Calendar");
@@ -230,12 +241,12 @@ class Shopping extends Component {
 								style={[
 									this.state.calendarInputContent === "--/--/----" ? styles.calendarInput : styles.calendarInputActive
 								]}>
-								<Text 
+								<Text
 									style={[
 										this.state.calendarInputContent === "--/--/----" ? styles.calendarInputPlaceholder : styles.calendarInputPlaceholderActive
 									]}>{this.state.calendarInputContent}</Text>
 							</TouchableOpacity>
-
+							
 							{this.state.calendarInputContent === "--/--/----" ? (
 									<CalendarIcon
 										style={styles.calendarIcon}
@@ -248,7 +259,7 @@ class Shopping extends Component {
 								)}
 						</View>
 					</View>
-
+					
 					<View style={{
 						marginTop: 12,
 						width: screenWidth - (16 * 2),
@@ -260,7 +271,7 @@ class Shopping extends Component {
 						paddingHorizontal: 16,
 						paddingVertical: 14,
 						backgroundColor: "#4F579F",
-						borderRadius: 8	
+						borderRadius: 8
 					}}>
 						<Text style={{
 							fontFamily: "Gilroy-Medium",
@@ -276,11 +287,11 @@ class Shopping extends Component {
 								fontSize: 16,
 								lineHeight: 24,
 								color: "#FFF"
-							}}>{`${this.state.currentMonthTotal} so’m`}</Text>
-					)}
-						
+							}}>{`${this.state.thisMonthSellAmount} so’m`}</Text>
+						)}
+					
 					</View>
-
+					
 					<View>
 						{this.state.groupedHistories.map((group) => (
 							<View key={group.date}>
@@ -288,33 +299,34 @@ class Shopping extends Component {
 								{group.totalAmount && (
 									<View style={styles.historyTitleWrapper}>
 										<Text style={styles.historyTitleText}>{group.dateInfo}</Text>
-
+										
 										<Text style={styles.historyTitleText}>//</Text>
-
+										
 										<Text style={styles.historyTitleText}>{`${group.totalAmount} so’m`}</Text>
 									</View>
 								)}
-
+								
 								{group.histories.map((history) => (
 									<TouchableOpacity
 										key={history.id}
 										style={styles.history}
 										onPress={async () => {
-
+											
 											let historyId = history.id + "";
-
+											
 											console.log(historyId);
 											try {
 												await AsyncStorage.setItem("sell_history_id", historyId);
-											} catch (error) {}
-
-											navigation.navigate("ShoppingDetail", { history })										
+											} catch (error) {
+											}
+											
+											navigation.navigate("ShoppingDetail", {history})
 										}}>
 										<View style={styles.historyAmountWrapper}>
-											<SellIcon />
+											<SellIcon/>
 											<Text style={styles.historyAmount}>{`${history.amount.toLocaleString()} so’m`}</Text>
 										</View>
-
+										
 										<Text style={styles.historyTime}>{this.getFormattedTime(history.created_date)}</Text>
 									</TouchableOpacity>
 								))}
@@ -322,7 +334,7 @@ class Shopping extends Component {
 						))}
 					</View>
 				</ScrollView>
-
+				
 				<StatusBar style="auto"/>
 			</View>
 		);
@@ -337,7 +349,7 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		paddingTop: 50
 	},
-
+	
 	pageTitle: {
 		borderBottomColor: "#AFAFAF",
 		borderBottomWidth: 1,
@@ -486,7 +498,7 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		borderRadius: 8
 	},
-
+	
 	calendarInputActive: {
 		width: screenWidth - (16 * 2),
 		position: "relative",
@@ -497,7 +509,7 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		borderRadius: 8
 	},
-
+	
 	calendarInputPlaceholderActive: {
 		fontSize: 16,
 		lineHeight: 24,
@@ -520,7 +532,7 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		marginBottom: 4
 	},
-
+	
 	historyTitleWrapper: {
 		marginTop: 12,
 		display: "flex",
@@ -536,14 +548,14 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 10,
 		paddingVertical: 10
 	},
-
+	
 	historyTitleText: {
-		fontFamily: "Gilroy-Medium", 
-		fontWeight: "500", 
-		fontSize: 14, 
+		fontFamily: "Gilroy-Medium",
+		fontWeight: "500",
+		fontSize: 14,
 		lineHeight: 22
 	},
-
+	
 	history: {
 		display: "flex",
 		flexDirection: "row",
@@ -555,23 +567,23 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 16,
 		paddingVertical: 6
 	},
-
+	
 	historyAmountWrapper: {
-		display: "flex", 
-		flexDirection: "row", 
+		display: "flex",
+		flexDirection: "row",
 		alignItems: "center"
 	},
-
+	
 	historyAmount: {
 		marginLeft: 10,
 		fontFamily: "Gilroy-Medium",
 		fontWeight: "500",
 		fontSize: 16
 	},
-
+	
 	historyTime: {
-		fontFamily: "Gilroy-Medium", 
-		fontWeight: "500", 
+		fontFamily: "Gilroy-Medium",
+		fontWeight: "500",
 		fontSize: 14
 	}
 });
