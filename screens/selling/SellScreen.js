@@ -52,8 +52,6 @@ const renderQuickActions = () => (
 	</View>
 );
 
-
-
 const keyExtractor = (item) => item.id;
 
 class Sell extends Component {
@@ -68,7 +66,10 @@ class Sell extends Component {
 			amount: 0,
 			profit: 0,
 			isKeybardOn: false,
-			animation: new Animated.Value(0)
+			animation: new Animated.Value(0),
+			isProductNameInputFocused: false,
+			isQuantityInputFocused: false,
+			isPriceInputFocused: false
 		};
 
 		this.keyboardDidShowListener = Keyboard.addListener(
@@ -309,9 +310,34 @@ class Sell extends Component {
 										<Text style={styles.modalLabel}>Mahsulot nomi</Text>
 										<TextInput
 											onChangeText={() => {
-												// TODO FIND BY NAME
+												// TODO FIND BY NAME;
 											}}
-											style={styles.modalInput}
+
+											onFocus={() => {
+												this.setState({
+													isProductNameInputFocused: true
+												});
+											}}
+
+											onEndEditing={() => {
+												this.setState({
+													isProductNameInputFocused: false
+												});
+											}}
+											style={{
+												paddingHorizontal: 16,
+												paddingVertical: 14,
+												borderWidth: 1,
+												borderColor: (this.state.isProductNameInputFocused ? "#222" : "#AFAFAF"),
+												borderRadius: 8,
+
+												fontFamily: "Gilroy-Medium",
+												fontWeight: "500",
+												fontSize: 16,
+												lineHeight: 24,
+												marginTop: 4
+											}}
+											cursorColor={"#222"}
 											placeholder="Nomini kiriting"
 											placeholderTextColor="#AAAAAA"/>
 									</View>
@@ -319,17 +345,65 @@ class Sell extends Component {
 									<View style={styles.inputBlock}>
 										<Text style={styles.modalLabel}>Qiymati</Text>
 										<TextInput
-											style={styles.modalInput}
+											onFocus={() => {
+												this.setState({isQuantityInputFocused: true})
+											}}
+
+											onEndEditing={() => {
+												this.setState({isQuantityInputFocused: false})
+											}}
+
+											style={{
+												paddingHorizontal: 16,
+												paddingVertical: 14,
+												borderWidth: 1,
+												borderColor: (this.state.isQuantityInputFocused ? "#222" : "#AFAFAF"),
+												borderRadius: 8,
+
+												fontFamily: "Gilroy-Medium",
+												fontWeight: "500",
+												fontSize: 16,
+												lineHeight: 24,
+												marginTop: 4
+											}}
+
+											cursorColor={"#222"}
+
 											placeholder="Sonini kiriting"
+
 											placeholderTextColor="#AAAAAA"/>
 									</View>
 
 									<View style={styles.inputBlock}>
 										<Text style={styles.modalLabel}>Sotuvdagi narxi (1 kg/dona)</Text>
 										<TextInput
-											style={styles.modalInput}
+											onFocus={() => {
+												this.setState({isPriceInputFocused: true});
+											}}
+
+											onEndEditing={() => {
+												this.setState({isPriceInputFocused: false});
+											}}
+
+											style={{
+												paddingHorizontal: 16,
+												paddingVertical: 14,
+												borderWidth: 1,
+												borderColor: (this.state.isPriceInputFocused ? "#222" : "#AFAFAF"),
+												borderRadius: 8,
+
+												fontFamily: "Gilroy-Medium",
+												fontWeight: "500",
+												fontSize: 16,
+												lineHeight: 24,
+												marginTop: 4
+											}}
+
 											placeholder="1 kg/dona narxini kiriting"
+
 											placeholderTextColor="#AAAAAA"
+
+											cursorColor={"#222"}
 										/>
 									</View>
 
@@ -481,6 +555,8 @@ class Sell extends Component {
 		const {navigation} = this.props;
 		navigation.navigate("Shopping");
 	}
+
+
 }
 
 /*
@@ -496,6 +572,7 @@ console.log(hourAndMinute);
 console.log(currentDay + "-" + currentMonth);
 console.log(currentWeekDayName);
 */
+
 
 const styles = StyleSheet.create({
 	container: {
@@ -662,20 +739,6 @@ const styles = StyleSheet.create({
 		shadowRadius: 30,
 	},
 
-	modalInput: {
-		paddingHorizontal: 16,
-		paddingVertical: 14,
-		borderWidth: 1,
-		borderColor: "#AFAFAF",
-		borderRadius: 8,
-
-		fontFamily: "Gilroy-Medium",
-		fontWeight: "500",
-		fontSize: 16,
-		lineHeight: 24,
-		marginTop: 4
-	},
-
 	modalLabel: {
 		fontFamily: "Gilroy-Medium",
 		fontWeight: "500",
@@ -703,5 +766,6 @@ const styles = StyleSheet.create({
 	}
 
 });
+
 
 export default Sell;
