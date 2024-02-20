@@ -20,11 +20,11 @@ import ProductRepository from "../../repository/ProductRepository";
 import StoreProductRepository from "../../repository/StoreProductRepository";
 
 const amountData = [
-		{label: "DONA"},
-		{label: "KG"},
-		{label: "GR"},
-		{label: "LITR"}
-	];
+	{label: "DONA"},
+	{label: "KG"},
+	{label: "GR"},
+	{label: "LITR"}
+];
 
 const priceData = [
 	{label: "%"},
@@ -37,45 +37,45 @@ const myScrollViewRef = React.createRef();
 class ProductAdd extends Component {
 	constructor(props) {
 		super(props);
-		
+
 		this.state = {
 			selectedItem: null,
-			
+
 			brandInputValue: "",
 			brandInputStyle: styles.input,
 			brandErr: false,
-			
+
 			productInputValue: "",
 			productInputStyle: styles.input,
 			productNameErr: false,
-			
+
 			amountInputValue: "",
 			amountInputStyle: styles.amountInput,
 			amountErr: false,
-			
+
 			priceInputValue: "",
 			priceInputStyle: styles.input,
 			priceInputErr: false,
-			
+
 			sellingPriceInputValue: "",
 			products: [],
 			nds: false,
-			
+
 			seriyaInputValue: "",
 			seriyaError: false,
 			serialInputStyle: styles.serialInput,
 			serialInputContentStyle: {display: "none"},
 			isSerialInputActive: false,
 			focusedContentIndex: null,
-			
+
 			sellingPriceError: false,
 			priceInput: styles.priceInput,
-			
+
 			checkmarkScale: new Animated.Value(0),
 			isCreated: false,
-			
+
 			ndsWrapperStyle: styles.ndsWrapper,
-			
+
 			scaleValue: new Animated.Value(1),
 
 			amountType: "DONA",
@@ -88,28 +88,28 @@ class ProductAdd extends Component {
 			percentageOfPrice: null
 		};
 
-    this.productRepository = new ProductRepository();
+		this.productRepository = new ProductRepository();
 		this.storeProductRepository = new StoreProductRepository();
 	}
-	
+
 	handlePressIn = () => {
 		Animated.spring(this.state.scaleValue, {
 			toValue: 0.9,
 			useNativeDriver: true,
 		}).start();
 	};
-	
+
 	handlePressOut = () => {
 		Animated.spring(this.state.scaleValue, {
 			toValue: 1,
 			useNativeDriver: true,
 		}).start();
 	};
-	
+
 	setCheckmarkScale(checkmarkScale) {
 		this.setState({checkmarkScale: checkmarkScale});
 	}
-	
+
 	handleAmountTypeSelect = (value) => {
 		this.setState({amountType: value.label});
 	};
@@ -117,61 +117,61 @@ class ProductAdd extends Component {
 	handleSellingPriceTypeSelect = (value) => {
 		this.setState({sellingPriceType: value.label});
 	}
-	
+
 	defineInputContentStyle = (hide) => {
 		if (hide) {
 			this.setState({serialInputContentStyle: {display: "none"}});
 			this.setState({serialInputStyle: styles.input});
 			return;
 		}
-		
+
 		if (this.state.products.length === 0) {
 			this.setState({serialInputContentStyle: {display: "none"}});
-			this.setState({serialInputStyle: styles.serialInputClicked});	
-    } else {
+			this.setState({serialInputStyle: styles.serialInputClicked});
+		} else {
 			this.setState({serialInputStyle: styles.serialInputClicked})
 			this.setState({serialInputContentStyle: styles.serialContent});
 		}
 	}
-	
+
 	serialInputPressOut = () => {
 		this.setState({serialInputStyle: styles.input})
-		
+
 		this.defineInputContentStyle(false);
 	}
-	
+
 	setSerialInputNotActive = () => {
 		this.setState({serialInputStyle: styles.serialInput})
 	}
-	
-	selectProduct = (product) => {		
+
+	selectProduct = (product) => {
 		this.setState({seriyaInputValue: product.serial_number})
 		this.setState({brandInputValue: product.brand_name})
 		this.setState({productInputValue: product.name})
-		
+
 		this.defineInputContentStyle(true);
 	}
-	
+
 	scrollVertically = (y) => {
 		myScrollViewRef.current?.scrollTo({x: 0, y: y, animated: true});
 	};
-	
+
 	ndsPressIn = () => {
 		this.setState({ndsWrapperStyle: styles.ndsWrapperActive})
 	}
-	
+
 	ndsPressOut = () => {
 		this.setState({ndsWrapperStyle: styles.ndsWrapper})
 	}
-	
+
 	// SERIAL INPUT FUNCTIONS
 	onChangeSerialInput = async (seria) => {
 		this.setState({seriyaInputValue: seria});
 		this.setState({products: await this.productRepository.findProductsBySerialNumber(seria)});
-		
+
 		this.defineInputContentStyle(false);
 		this.setState({
-			seriyaError: false, 
+			seriyaError: false,
 			serialInputStyle: styles.serialInputClicked
 		})
 	}
@@ -186,11 +186,11 @@ class ProductAdd extends Component {
 	onEndSerialEditing = (e) => {
 		this.setSerialInputNotActive();
 	}
-	
+
 	// BRAND INPUT FUNCTIONS
 	onChangeBrandInput = (text) => {
 		this.setState({brandInputValue: text})
-		
+
 		if (text.length < 3) {
 			this.setState({
 				brandInputStyle: styles.inputActive, brandErr: false,
@@ -200,14 +200,14 @@ class ProductAdd extends Component {
 
 	onFocusBrandInput = () => {
 		this.defineInputContentStyle(true);
-		
+
 		this.setState({brandInputStyle: styles.inputActive});
 	}
 
 	onEndEditingBrandInput = () => {
 		this.setState({brandInputStyle: styles.input});
 	}
-	
+
 	// PRODUCT NAME INPUT FUNCTIONS
 	onChangeProductInput = (text) => {
 		this.setState({
@@ -217,7 +217,7 @@ class ProductAdd extends Component {
 
 	onFocusProductInput = () => {
 		this.defineInputContentStyle(true);
-		
+
 		this.setState({
 			productInputStyle: styles.inputActive
 		})
@@ -228,7 +228,7 @@ class ProductAdd extends Component {
 			productInputStyle: styles.input
 		})
 	}
-	
+
 	// AMOUNT INPUT FUNCTIONS
 	onChangeAmountInput = (text) => {
 		this.setState({amountInputValue: text});
@@ -236,14 +236,14 @@ class ProductAdd extends Component {
 
 	onFocusAmountInput = () => {
 		this.defineInputContentStyle(true);
-		
+
 		this.setState({amountInputStyle: styles.amountInputActive});
 	}
 
 	onEndEditingAmountInput = () => {
 		this.setState({amountInputStyle: styles.amountInput});
 	}
-	
+
 	// PRICE INPUT FUNCTIONS
 	onChangePriceInput = (text) => {
 		this.setState({priceInputValue: text})
@@ -251,14 +251,14 @@ class ProductAdd extends Component {
 
 	onFocusPriceInput = () => {
 		this.defineInputContentStyle(true);
-		
+
 		this.setState({priceInputStyle: styles.inputActive})
 	}
 
 	onEndEditingPriceInput = () => {
 		this.setState({priceInputStyle: styles.input})
 	}
-	
+
 	// SELLING PRICE INPUT FUNCTIONS
 	onChangeSellingPriceInput = (text) => {
 		this.setState({sellingPriceInputValue: text});
@@ -266,35 +266,35 @@ class ProductAdd extends Component {
 
 	onFocusSellingPriceInput = () => {
 		this.defineInputContentStyle(true);
-		
+
 		this.setState({
 			priceInput: styles.priceInputActive
 		})
 	}
-  
+
 	onEndEditingSellingPriceInput = () => {
 		if (this.state.sellingPriceType === "SO'M") {
 			if (
-				this.state.priceInputValue == "" || 
+				this.state.priceInputValue == "" ||
 				this.state.priceInputValue > this.state.sellingPriceInputValue
 			) {
 				this.setState({
-					priceInputValue: "", 
-					priceInputStyle: styles.inputErr, 
+					priceInputValue: "",
+					priceInputStyle: styles.inputErr,
 					priceInputErr: true,
 				})
 
 				return;
 			} else {
 				this.setState({
-					priceInputStyle: styles.input, 
+					priceInputStyle: styles.input,
 					priceInputErr: false,
 				})
 			}
 
 			const percentage = ((this.state.sellingPriceInputValue - this.state.priceInputValue) / this.state.priceInputValue) * 100;
 			this.setState({
-				profitCalculation: percentage + "%", 
+				profitCalculation: percentage + "%",
 				profitCalculationIsVisible: true,
 
 				sellingPrice: this.state.sellingPriceInputValue,
@@ -312,11 +312,11 @@ class ProductAdd extends Component {
 			});
 		}
 	}
-	
+
 	handleInputBlur = () => {
 		Keyboard.dismiss();
 	};
-	
+
 	render() {
 		const {navigation} = this.props;
 		const animatedStyle = {
@@ -325,17 +325,17 @@ class ProductAdd extends Component {
 				outputRange: ['green', 'blue'],
 			}),
 		};
-		
+
 		return (
 			<View style={{
 				backgroundColor: "white"
 			}}>
-				<View 
+				<View
 					style={[
-						styles.pageTitle, 
+						styles.pageTitle,
 						{
-							paddingTop: 52, 
-							borderBottomWidth: 1, 
+							paddingTop: 52,
+							borderBottomWidth: 1,
 							borderColor: "#F1F1F1"
 						}
 					]}>
@@ -344,20 +344,20 @@ class ProductAdd extends Component {
 							navigation.navigate("Basket")
 						}}
 						style={styles.backIcon}>
-						
+
 						<BackIcon/>
 					</TouchableOpacity>
-					
+
 					<Text style={styles.pageTitleText}>
 						Mahsulot qo’shish
 					</Text>
 				</View>
-				
-				<ScrollView 
-					contentContainerStyle={[styles.container]} 
+
+				<ScrollView
+					contentContainerStyle={[styles.container]}
 					ref={myScrollViewRef}>
 					<View style={[
-						styles.inputWrapper, 
+						styles.inputWrapper,
 						{
 							marginTop: 10
 						}]}>
@@ -373,64 +373,71 @@ class ProductAdd extends Component {
 							</TouchableOpacity>
 						</View> */}
 
-						<Text 
+						<Text
 							style={styles.label}>Mahsulot seriyasi</Text>
-							<TextInput
-								cursorColor="#222222"
-								style={this.state.serialInputStyle}
-								placeholder="Seriyasini kiriting"
-								placeholderTextColor="#AAAAAA"
-								value={this.state.seriyaInputValue}
-								
-								onChangeText={this.onChangeSerialInput}
-								onFocus={this.onFocusSerialInput}
-								onEndEditing={this.onEndSerialEditing}
-								
-								onPressIn={() => {
-									this.scrollVertically(0);
-								}}
-								
-								onBlur={this.handleInputBlur}
-							/>
-							
-							<View style={{position: "relative", marginTop: 2}}>
-								<View style={this.state.serialInputContentStyle}>
-									{
-										this.state.products.map(
-											(item, index) =>
-												(
-													<Pressable
-														onPress={() => {
-															this.selectProduct(item);
-														}}
-														
-														onPressIn={this.handlePressIn}
-														onPressOut={this.handlePressOut}
-														
-														style=
-															{({pressed}) => [
-																styles.serialInputSuggestion,
-																animatedStyle,
-																{
-																	backgroundColor: pressed ? '#CCCCCC' : '#FBFBFB',
-																},
-															]}
-														key={index}
-													>
-														
-														<Text>{item.brand_name}</Text>
-													</Pressable>
-												)
-										)
-									}
-								</View>
+						<TextInput
+							cursorColor="#222222"
+							style={this.state.serialInputStyle}
+							placeholder="Seriyasini kiriting"
+							placeholderTextColor="#AAAAAA"
+							value={this.state.seriyaInputValue}
+
+							onChangeText={this.onChangeSerialInput}
+							onFocus={this.onFocusSerialInput}
+							onEndEditing={this.onEndSerialEditing}
+
+							onPressIn={() => {
+								this.scrollVertically(0);
+							}}
+
+							onBlur={this.handleInputBlur}
+						/>
+
+						<View style={{position: "relative", marginTop: 2}}>
+							<View style={this.state.serialInputContentStyle}>
+								{
+									this.state.products.map(
+										(item, index) =>
+											(
+												<Pressable
+													onPress={() => {
+														this.selectProduct(item);
+													}}
+
+													onPressIn={() => {
+														Animated.spring(this.state.scaleValue, {
+															toValue: 0.9,
+															useNativeDriver: true,
+														}).start();
+													}}
+													onPressOut={() => {
+														Animated.spring(this.state.scaleValue, {
+															toValue: 1,
+															useNativeDriver: true,
+														}).start();
+													}}
+
+													style={({pressed}) => [
+														styles.serialInputSuggestion,
+														animatedStyle,
+														{
+															backgroundColor: pressed ? '#CCCCCC' : '#FBFBFB',
+														},
+													]} key={index}>
+
+													<Text>{item.brand_name}</Text>
+												</Pressable>
+											)
+									)
+								}
 							</View>
-							
-							{this.state.seriyaError === true ? <Animatable.View animation="shake" duration={500}>
-								<Text style={styles.errorMsg}>Seriya xato kiritildi.</Text>
-							</Animatable.View> : null}
+						</View>
+
+						{this.state.seriyaError === true ? <Animatable.View animation="shake" duration={500}>
+							<Text style={styles.errorMsg}>Seriya xato kiritildi.</Text>
+						</Animatable.View> : null}
 					</View>
-					
+
 					<View style={styles.inputWrapper}>
 						<Text style={styles.label}>Brand nomi</Text>
 						<TextInput
@@ -439,17 +446,17 @@ class ProductAdd extends Component {
 							value={this.state.brandInputValue}
 							placeholder="Brand nomini kiriting"
 							placeholderTextColor="#AAAAAA"
-							
+
 							onChangeText={this.onChangeBrandInput}
 							onFocus={this.onFocusBrandInput}
 							onEndEditing={this.onEndEditingBrandInput}
 						/>
-						
+
 						{this.state.brandErr === true ? <Animatable.View animation="shake" duration={500}>
 							<Text style={styles.errorMsg}>Brand xato kiritildi.</Text>
 						</Animatable.View> : null}
 					</View>
-					
+
 					<View style={styles.inputWrapper}>
 						<Text style={styles.label}>Mahsulot nomi</Text>
 						<TextInput
@@ -458,18 +465,18 @@ class ProductAdd extends Component {
 							placeholder="Nomini kiriting"
 							placeholderTextColor="#AAAAAA"
 							value={this.state.productInputValue}
-							
+
 							onChangeText={this.onChangeProductInput}
 							onFocus={this.onFocusProductInput}
 							onEndEditing={this.onEndEditingProductInput}
 						/>
-						
-						{this.state.productNameErr === true ? 
-						<Animatable.View animation="shake" duration={500}>
-							<Text style={styles.errorMsg}>Mahsulot nomi xato kiritildi.</Text>
-						</Animatable.View> : null}
+
+						{this.state.productNameErr === true ?
+							<Animatable.View animation="shake" duration={500}>
+								<Text style={styles.errorMsg}>Mahsulot nomi xato kiritildi.</Text>
+							</Animatable.View> : null}
 					</View>
-					
+
 					<View style={styles.inputWrapper}>
 						<Text style={styles.label}>Mahsulot miqdori</Text>
 						<View style={styles.amountGroup}>
@@ -480,12 +487,12 @@ class ProductAdd extends Component {
 								placeholder="Miqdorini kiriting"
 								placeholderTextColor="#AAAAAA"
 								value={this.state.amountInputValue}
-								
+
 								onChangeText={this.onChangeAmountInput}
 								onFocus={this.onFocusAmountInput}
 								onEndEditing={this.onEndEditingAmountInput}
 							/>
-							
+
 							<View style={styles.amountType}>
 								<Dropdown
 									data={amountData}
@@ -493,14 +500,14 @@ class ProductAdd extends Component {
 									valueField="label"
 									value={this.state.amountType}
 									onChange={this.handleAmountTypeSelect}
-									
+
 									style={[
-										styles.dropdown, 
+										styles.dropdown,
 										{borderRadius: 8}
 									]}
-									
+
 									baseColor="white"
-									
+
 									selectedTextProps={{
 										style: {
 											fontSize: 16,
@@ -509,15 +516,15 @@ class ProductAdd extends Component {
 											fontWeight: "500",
 										},
 									}}
-									
+
 									activeColor="black"
 									selectedTextStyle={{
-										fontSize: 16, 
+										fontSize: 16,
 										color: "white"
 									}}
-									
+
 									fontFamily="Gilroy-Medium"
-									
+
 									containerStyle={{
 										backgroundColor: "#444444",
 										borderTopRightRadius: 8,
@@ -528,28 +535,28 @@ class ProductAdd extends Component {
 									itemContainerStyle={{
 										backgroundColor: "#444444"
 									}}
-									
+
 									itemTextStyle={{
 										color: "white"
 									}}
-									
+
 									iconStyle={{
-										tintColor: "white", 
-										width: 24, 
+										tintColor: "white",
+										width: 24,
 										height: 24
 									}}
 								/>
 							</View>
 						</View>
-						
+
 						{
-							this.state.amountErr === true ? 
-							<Animatable.View animation="shake" duration={500}>
-								<Text style={styles.errorMsg}>Mahsulot miqdori xato kiritildi.</Text>
-							</Animatable.View> : null
+							this.state.amountErr === true ?
+								<Animatable.View animation="shake" duration={500}>
+									<Text style={styles.errorMsg}>Mahsulot miqdori xato kiritildi.</Text>
+								</Animatable.View> : null
 						}
 					</View>
-					
+
 					<View style={styles.inputWrapper}>
 						<Text style={styles.label}>Tan narxi (so’mda)</Text>
 						<TextInput
@@ -559,24 +566,24 @@ class ProductAdd extends Component {
 							placeholder="Narxini kiriting"
 							placeholderTextColor="#AAAAAA"
 							value={this.state.priceInputValue}
-							
+
 							onChangeText={this.onChangePriceInput}
 							onFocus={this.onFocusPriceInput}
 							onEndEditing={this.onEndEditingPriceInput}
-							
+
 							onPressIn={() => {
 								this.scrollVertically(200)
 							}}
 						/>
-						
+
 						{
-							this.state.priceInputErr === true ? 
-							<Animatable.View animation="shake" duration={500}>
-								<Text style={styles.errorMsg}>Tan narxi xato kiritildi.</Text>
-							</Animatable.View> : null
+							this.state.priceInputErr === true ?
+								<Animatable.View animation="shake" duration={500}>
+									<Text style={styles.errorMsg}>Tan narxi xato kiritildi.</Text>
+								</Animatable.View> : null
 						}
 					</View>
-					
+
 					<View style={styles.inputWrapper}>
 						<Text style={styles.label}>Sotilish narxi</Text>
 						<View style={styles.inputGroup}>
@@ -590,12 +597,12 @@ class ProductAdd extends Component {
 								onChangeText={this.onChangeSellingPriceInput}
 								onEndEditing={this.onEndEditingSellingPriceInput}
 								onFocus={this.onFocusSellingPriceInput}
-								
+
 								onPressIn={() => {
 									this.scrollVertically(200)
 								}}
 							/>
-							
+
 							<View style={styles.priceType}>
 								<Dropdown
 									data={priceData}
@@ -603,11 +610,11 @@ class ProductAdd extends Component {
 									valueField="label"
 									value={this.state.sellingPriceType}
 									onChange={this.handleSellingPriceTypeSelect}
-									
+
 									style={[styles.dropdown, {borderRadius: 8}]}
-									
+
 									baseColor="white"
-									
+
 									selectedTextProps={{
 										style: {
 											fontSize: 16,
@@ -616,14 +623,14 @@ class ProductAdd extends Component {
 											fontWeight: "500",
 										},
 									}}
-									
+
 									activeColor="black"
 									selectedTextStyle={{
 										fontSize: 16, color: "white"
 									}}
-									
+
 									fontFamily="Gilroy-Medium"
-									
+
 									containerStyle={{
 										backgroundColor: "#444444",
 										borderTopRightRadius: 8,
@@ -631,29 +638,29 @@ class ProductAdd extends Component {
 										overflow: "hidden"
 									}}
 									itemContainerStyle={{backgroundColor: "#444444"}}
-									
+
 									itemTextStyle={{color: "white"}}
-									
+
 									iconStyle={{tintColor: "white", width: 24, height: 24}}
 								/>
 							</View>
 						</View>
-						
+
 						{this.state.sellingPriceError === true ? <Animatable.View animation="shake" duration={500}>
 							<Text style={styles.errorMsg}>Sotilish narxi xato kiritildi.</Text>
 						</Animatable.View> : null}
 
 						<View style={{marginTop: 16}}>
-							{this.state.profitCalculationIsVisible === true ? 
+							{this.state.profitCalculationIsVisible === true ?
 								<Animatable.View animation="slideInUp" duration={500}>
 									<Text style={{fontFamily: "Gilroy-Bold", fontSize: 16, fontWeight: "bold", color: "#65C466"}}>
 										{this.state.profitCalculation}
 									</Text>
-								</Animatable.View> 
-							: null}
+								</Animatable.View>
+								: null}
 						</View>
 					</View>
-					
+
 					<View>
 						<TouchableWithoutFeedback
 							style={this.state.ndsWrapperStyle}
@@ -670,80 +677,81 @@ class ProductAdd extends Component {
 								fontSize: 16,
 								fontFamily: "Gilroy-Medium"
 							}}>NDS soliq</Text>
-							
+
 							<ToggleSwitch
 								onColor="#65C466"
 								offColor="gray"
 								labelStyle={{color: "black", fontWeight: "900"}}
 								size="large"
 
-								onToggle={() => {}}
-								
+								onToggle={() => {
+								}}
+
 								isOn={this.state.nds}
-								
+
 								animationSpeed={150}
 							/>
-						
+
 						</TouchableWithoutFeedback>
 					</View>
-					
-					
+
+
 					<View style={{
 						height: 250
 					}}>
-						<TouchableOpacity 
+						<TouchableOpacity
 							style={[
-								{display: "block"}, 
+								{display: "block"},
 								styles.buttonDark
 							]}
 							onPress={this.createProduct}>
 							<Text style={styles.buttonDarkText}>Mahsulotni qo’shish</Text>
 						</TouchableOpacity>
-						
+
 						<TouchableOpacity
 							style={[
-								{display: "block"}, 
+								{display: "block"},
 								styles.buttonLight
 							]}
 							onPress={() => {
 								this.setState({
 									selectedItem: null,
-									
+
 									brandInputValue: "",
 									brandInputStyle: styles.input,
 									brandErr: false,
-									
+
 									productInputValue: "",
 									productInputStyle: styles.input,
 									productNameErr: false,
-									
+
 									amountInputValue: "",
 									amountInputStyle: styles.amountInput,
 									amountErr: false,
-									
+
 									priceInputValue: "",
 									priceInputStyle: styles.input,
 									priceInputErr: false,
-									
+
 									sellingPriceInputValue: "",
 									products: [],
 									nds: false,
-									
+
 									seriyaInputValue: "",
 									seriyaError: false,
 									serialInputStyle: styles.serialInput,
 									serialInputContentStyle: {display: "none"},
-									
+
 									sellingPriceError: false,
 									priceInput: styles.priceInput,
-									
+
 									checkmarkScale: new Animated.Value(0),
 									isCreated: false,
 
 									profitCalculation: "",
 									profitCalculationIsVisible: false,
 								});
-								
+
 								navigation.navigate("Basket");
 							}}>
 							<Text style={styles.buttonLightText}>Bekor qilish</Text>
@@ -762,111 +770,111 @@ class ProductAdd extends Component {
 			priceInputValue,
 			sellingPriceInputValue,
 		} = this.state;
-		
+
 		let isValidInputValues = true;
-		
+
 		if (brandInputValue.length < 3) {
 			if (!isValidInputValues) {
 				this.scrollVertically(0);
 			} else {
 				this.scrollVertically(110);
 			}
-			
+
 			this.setState({
-				brandInputValue: "", 
-        brandInputStyle: styles.inputErr, 
-        brandErr: true,
+				brandInputValue: "",
+				brandInputStyle: styles.inputErr,
+				brandErr: true,
 			})
-			
+
 			isValidInputValues = false;
 		} else {
 			this.setState({
-				brandErr: false, 
-        brandInputStyle: styles.input,
+				brandErr: false,
+				brandInputStyle: styles.input,
 			})
 		}
-		
+
 		if (productInputValue.length < 3) {
 			this.setState({
-				productInputValue: "", 
-        productInputStyle: styles.inputErr, 
-        productNameErr: true,
+				productInputValue: "",
+				productInputStyle: styles.inputErr,
+				productNameErr: true,
 			})
-			
+
 			isValidInputValues = false;
 		} else {
 			this.setState({
-				productNameErr: false, 
-        productInputStyle: styles.input,
+				productNameErr: false,
+				productInputStyle: styles.input,
 			})
 		}
-		
+
 		if (amountInputValue <= 0 || amountInputValue.length <= 0) {
 			this.setState({
-				amountInputValue: "", 
-        amountInputStyle: styles.amountInputErr, 
-        amountErr: true,
+				amountInputValue: "",
+				amountInputStyle: styles.amountInputErr,
+				amountErr: true,
 			})
-			
+
 			isValidInputValues = false;
 		} else {
 			this.setState({
-				amountErr: false, 
-        amountInputStyle: styles.amountInput,
+				amountErr: false,
+				amountInputStyle: styles.amountInput,
 			})
 		}
-		
+
 		if (priceInputValue <= 0 || priceInputValue.length <= 0) {
 			this.setState({
-				priceInputValue: "", 
-        priceInputStyle: styles.inputErr, 
-        priceInputErr: true,
+				priceInputValue: "",
+				priceInputStyle: styles.inputErr,
+				priceInputErr: true,
 			})
-			
+
 			isValidInputValues = false;
 		} else {
 			this.setState({
-				priceInputErr: false, 
-        priceInputStyle: styles.input,
+				priceInputErr: false,
+				priceInputStyle: styles.input,
 			})
 		}
-		
+
 		if (sellingPriceInputValue <= 0 || sellingPriceInputValue.length <= 0) {
 			this.setState({
-				sellingPriceError: true, 
-        priceInput: styles.priceInputErr
+				sellingPriceError: true,
+				priceInput: styles.priceInputErr
 			})
-			
+
 			isValidInputValues = false;
 		} else {
 			this.setState({
-				sellingPriceError: false, 
-        priceInput: styles.priceInput
+				sellingPriceError: false,
+				priceInput: styles.priceInput
 			})
 		}
-		
+
 		if (isValidInputValues) {
-				Animated.timing(this.state.checkmarkScale, {
+			Animated.timing(this.state.checkmarkScale, {
 				toValue: 1, duration: 500, useNativeDriver: true,
 			}).start();
 			await AsyncStorage.setItem("isCreated", "true");
 
 			let productId = await this.productRepository.createAndGetProductId(
 				productInputValue,
-				brandInputValue, 
+				brandInputValue,
 				seriyaInputValue,
 			)
 
 			await this.storeProductRepository.create(
-				productId, 
-				this.state.nds, 
+				productId,
+				this.state.nds,
 				this.state.priceInputValue,
 				this.state.sellingPrice,
 				this.state.percentageOfPrice,
 				this.state.amountInputValue,
 				this.state.amountType
 			);
-		
+
 			this.setState({
 				seriyaInputValue: "",
 				brandInputValue: "",
@@ -878,7 +886,7 @@ class ProductAdd extends Component {
 				profitCalculation: "",
 				profitCalculationIsVisible: false,
 			});
-			
+
 			const {navigation} = this.props;
 			navigation.navigate("Basket");
 		} else {
@@ -891,19 +899,19 @@ class ProductAdd extends Component {
 	init = async () => {
 		for (let i = 0; i < 100; i++) {
 			let productId = await this.productRepository.createAndGetProductId(
-					(123 + i).toString(),
-					(123 + i).toString(),
-					(123 + i).toString()
+				(123 + i).toString(),
+				(123 + i).toString(),
+				(123 + i).toString()
 			);
 
 			await this.storeProductRepository.create(
-					productId,
-					this.state.nds,
-					Math.floor(Math.random() * 100000), // Random price between 0 and 100000
-					Math.floor(Math.random() * 100000), // Random cost between 0 and 100000
-					Math.floor(Math.random() * 100), // Random quantity between 0 and 100
-					Math.floor(Math.random() * 100), // Random stock between 0 and 100
-					"SO'M"
+				productId,
+				this.state.nds,
+				Math.floor(Math.random() * 100000), // Random price between 0 and 100000
+				Math.floor(Math.random() * 100000), // Random cost between 0 and 100000
+				Math.floor(Math.random() * 100), // Random quantity between 0 and 100
+				Math.floor(Math.random() * 100), // Random stock between 0 and 100
+				"SO'M"
 			);
 		}
 	}
@@ -912,22 +920,22 @@ class ProductAdd extends Component {
 const styles = StyleSheet.create({
 	container: {
 		backgroundColor: "#fff",
-    alignItems: "center",
-		height: "auto", 
-    gap: 10
+		alignItems: "center",
+		height: "auto",
+		gap: 10
 	},
-	
+
 	label: {
 		fontFamily: "Gilroy-Medium",
 		fontWeight: "500",
 		fontSize: 16,
 		marginBottom: 4
 	},
-	
+
 	inputWrapper: {
 		marginBottom: 16
 	},
-	
+
 	input: {
 		width: screenWidth - (17 + 17),
 		borderWidth: 1,
@@ -938,7 +946,7 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		fontFamily: "Gilroy-Medium"
 	},
-	
+
 	inputErr: {
 		width: screenWidth - (17 + 17),
 		borderWidth: 1,
@@ -949,7 +957,7 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		fontFamily: "Gilroy-Medium"
 	},
-	
+
 	inputActive: {
 		width: screenWidth - (17 + 17),
 		borderWidth: 1,
@@ -960,7 +968,7 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		fontFamily: "Gilroy-Medium"
 	},
-	
+
 	serialInput: {
 		width: screenWidth - (17 + 17),
 		borderWidth: 1,
@@ -971,7 +979,7 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		fontFamily: "Gilroy-Medium",
 	},
-	
+
 	serialInputErr: {
 		width: screenWidth - (17 + 17),
 		borderWidth: 1,
@@ -982,7 +990,7 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		fontFamily: "Gilroy-Medium",
 	},
-	
+
 	serialInputClicked: {
 		width: screenWidth - (17 + 17),
 		borderWidth: 1,
@@ -994,7 +1002,7 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		fontFamily: "Gilroy-Medium",
 	},
-	
+
 	serialInputValued: {
 		width: screenWidth - (17 + 17),
 		borderWidth: 1,
@@ -1005,7 +1013,7 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		fontFamily: "Gilroy-Medium",
 	},
-	
+
 	serialContent: {
 		borderWidth: 1,
 		borderColor: "#F1F1F1",
@@ -1023,21 +1031,21 @@ const styles = StyleSheet.create({
 		shadowOpacity: 1,
 		shadowRadius: 4,
 	},
-	
+
 	serialInputSuggestion: {
 		paddingVertical: 14,
 		paddingHorizontal: 16,
 		borderTopWidth: 1,
 		borderColor: "#F1F1F1"
 	},
-	
+
 	inputGroup: {
 		width: screenWidth - (17 + 17),
 		display: "flex",
 		flexDirection: "row",
 		justifyContent: "space-between"
 	},
-	
+
 	priceInput: {
 		borderWidth: 1,
 		borderColor: "#AFAFAF",
@@ -1049,7 +1057,7 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		fontFamily: "Gilroy-Medium",
 	},
-	
+
 	priceInputActive: {
 		borderWidth: 1,
 		borderColor: "#222",
@@ -1061,7 +1069,7 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		fontFamily: "Gilroy-Medium",
 	},
-	
+
 	priceInputErr: {
 		borderWidth: 1,
 		borderTopLeftRadius: 10,
@@ -1073,7 +1081,7 @@ const styles = StyleSheet.create({
 		fontFamily: "Gilroy-Medium",
 		borderColor: "red"
 	},
-	
+
 	priceType: {
 		display: "flex",
 		flexDirection: "row",
@@ -1085,12 +1093,12 @@ const styles = StyleSheet.create({
 		borderBottomRightRadius: 10,
 		backgroundColor: "#444444"
 	},
-	
+
 	amountGroup: {
 		display: "flex",
 		flexDirection: "row"
 	},
-	
+
 	amountInput: {
 		borderWidth: 1,
 		paddingVertical: 14,
@@ -1103,7 +1111,7 @@ const styles = StyleSheet.create({
 		borderBottomLeftRadius: 10,
 		borderRightWidth: 0
 	},
-	
+
 	amountInputActive: {
 		borderWidth: 1,
 		paddingVertical: 14,
@@ -1116,7 +1124,7 @@ const styles = StyleSheet.create({
 		borderBottomLeftRadius: 10,
 		borderRightWidth: 0
 	},
-	
+
 	amountInputErr: {
 		borderWidth: 1,
 		paddingVertical: 14,
@@ -1129,7 +1137,7 @@ const styles = StyleSheet.create({
 		borderBottomLeftRadius: 10,
 		borderRightWidth: 0
 	},
-	
+
 	amountType: {
 		display: "flex",
 		flexDirection: "row",
@@ -1142,13 +1150,13 @@ const styles = StyleSheet.create({
 		backgroundColor: "#444444",
 		color: "white"
 	},
-	
+
 	dropdown: {
-		width: 122, 
-    paddingHorizontal: 16, 
-    backgroundColor: "#444444"
+		width: 122,
+		paddingHorizontal: 16,
+		backgroundColor: "#444444"
 	},
-	
+
 	buttons: {
 		width: screenWidth - (17 + 17),
 		display: "flex",
@@ -1156,7 +1164,7 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		alignItems: "center",
 	},
-	
+
 	buttonDark: {
 		backgroundColor: "#222222",
 		paddingVertical: 14,
@@ -1165,7 +1173,7 @@ const styles = StyleSheet.create({
 		width: screenWidth - (17 + 17),
 		marginBottom: 16
 	},
-	
+
 	buttonLight: {
 		backgroundColor: "#fff",
 		paddingVertical: 14,
@@ -1176,21 +1184,21 @@ const styles = StyleSheet.create({
 		borderColor: "#222222",
 		marginBottom: 12
 	},
-	
+
 	buttonLightText: {
-		color: "black", 
-    fontFamily: "Gilroy-Medium", 
-    fontSize: 16, 
-    textAlign: "center",
+		color: "black",
+		fontFamily: "Gilroy-Medium",
+		fontSize: 16,
+		textAlign: "center",
 	},
-	
+
 	buttonDarkText: {
-		color: "white", 
-    fontFamily: "Gilroy-Medium", 
-    fontSize: 16, 
-    textAlign: "center"
+		color: "white",
+		fontFamily: "Gilroy-Medium",
+		fontSize: 16,
+		textAlign: "center"
 	},
-	
+
 	pageTitle: {
 		width: screenWidth,
 		display: "flex",
@@ -1201,7 +1209,7 @@ const styles = StyleSheet.create({
 		paddingBottom: 16,
 		paddingHorizontal: 17
 	},
-	
+
 	pageTitleText: {
 		width: 300,
 		textAlign: "center",
@@ -1209,18 +1217,18 @@ const styles = StyleSheet.create({
 		fontFamily: "Gilroy-SemiBold",
 		fontWeight: "600"
 	},
-	
+
 	backIcon: {
-		backgroundColor: "#F5F5F7", 
-    paddingVertical: 16, 
-    paddingHorizontal: 19, 
-    borderRadius: 8
+		backgroundColor: "#F5F5F7",
+		paddingVertical: 16,
+		paddingHorizontal: 19,
+		borderRadius: 8
 	},
-	
+
 	errorMsg: {
 		color: "red"
 	},
-	
+
 	ndsWrapper: {
 		display: "flex",
 		flexDirection: "row",
@@ -1230,7 +1238,7 @@ const styles = StyleSheet.create({
 		paddingVertical: 10,
 		paddingHorizontal: 17
 	},
-	
+
 	ndsWrapperActive: {
 		display: "flex",
 		flexDirection: "row",

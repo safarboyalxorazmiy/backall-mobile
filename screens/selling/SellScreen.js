@@ -9,7 +9,7 @@ import {
 	TouchableOpacity,
 	Modal,
 	Keyboard,
-	Animated
+	Animated, Pressable
 } from "react-native";
 import SwipeableFlatList from "react-native-swipeable-list";
 
@@ -66,24 +66,31 @@ class Sell extends Component {
 			amount: 0,
 			profit: 0,
 			isKeybardOn: false,
-			animation: new Animated.Value(0),
 			isProductNameInputFocused: false,
 			isQuantityInputFocused: false,
-			isPriceInputFocused: false
+			isPriceInputFocused: false,
+			products: [],
+
+			productNameContentStyle: {},
+
+			animation: new Animated.Value(0),
+			checkmarkScale: new Animated.Value(0),
+			scaleValue: new Animated.Value(1),
+			productNameInputValue: ""
 		};
 
 		this.keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
-      () => {
+			'keyboardDidShow',
+			() => {
 				this.setState({isKeybardOn: true});
 			}
-    );
-    this.keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      () => {
-				this.setState({isKeybardOn: false});	
+		);
+		this.keyboardDidHideListener = Keyboard.addListener(
+			'keyboardDidHide',
+			() => {
+				this.setState({isKeybardOn: false});
 			}
-    );
+		);
 
 		this.storeProductRepository = new StoreProductRepository();
 		this.sellHistoryRepository = new SellHistoryRepository();
@@ -91,6 +98,30 @@ class Sell extends Component {
 		this.amountDateRepository = new AmountDateRepository();
 	}
 
+
+	selectProduct = (product) => {
+		console.log(product);
+		
+		this.setState({productNameInputValue: product.brand_name + " " + product.name})
+
+		this.defineInputContentStyle(true);
+	}
+
+	defineInputContentStyle = (hide) => {
+		if (hide) {
+			this.setState({productNameContentStyle: {display: "none"}});
+			// this.setState({serialInputStyle: styles.input});
+			return;
+		}
+
+		if (this.state.products.length === 0) {
+			this.setState({productNameContentStyle: {display: "none"}});
+			// this.setState({serialInputStyle: styles.serialInputClicked});
+		} else {
+			// this.setState({serialInputStyle: styles.serialInputClicked})
+			this.setState({productNameContentStyle: styles.productNameContentStyle});
+		}
+	}
 
 	toggleModal = () => {
 		this.setState((prevState) => ({
@@ -160,14 +191,14 @@ class Sell extends Component {
 	};
 
 	componentDidUpdate(prevProps, prevState) {
-    if (prevState.isKeybardOn !== this.state.isKeybardOn) {
-      Animated.timing(this.state.animation, {
-        toValue: this.state.isKeybardOn ? 1 : 0,
-        duration: 300, // Adjust the duration as needed
-        useNativeDriver: false // Ensure useNativeDriver is set to false for justifyContent animation
-      }).start();
-    }
-  }
+		if (prevState.isKeybardOn !== this.state.isKeybardOn) {
+			Animated.timing(this.state.animation, {
+				toValue: this.state.isKeybardOn ? 1 : 0,
+				duration: 300, // Adjust the duration as needed
+				useNativeDriver: false // Ensure useNativeDriver is set to false for justifyContent animation
+			}).start();
+		}
+	}
 
 	render() {
 		const {navigation} = this.props;
@@ -177,6 +208,13 @@ class Sell extends Component {
 			inputRange: [0, 1],
 			outputRange: [0, -100] // Adjust the value as needed
 		});
+
+		const animatedStyle = {
+			backgroundColor: this.state.scaleValue.interpolate({
+				inputRange: [0.9, 1],
+				outputRange: ['green', 'blue'],
+			}),
+		};
 
 		return (
 			<>
@@ -261,8 +299,7 @@ class Sell extends Component {
 					<Modal
 						visible={isModalVisible}
 						animationType="none"
-						style={{
-						}}
+						style={{}}
 						transparent={true}>
 						<TouchableOpacity
 							activeOpacity={1}
@@ -272,8 +309,7 @@ class Sell extends Component {
 								width: screenWidth,
 								height: screenHeight,
 								flex: 1,
-								backgroundColor: "#00000099",
-								
+								backgroundColor: "#00000099"
 							}}></View>
 						</TouchableOpacity>
 						<View style={{
@@ -289,10 +325,10 @@ class Sell extends Component {
 								marginRight: "auto",
 								flex: 1,
 								alignItems: "center",
-								
+
 								justifyContent: (this.state.isKeybardOn ? "flex-start" : "center"),
 								marginTop: (this.state.isKeybardOn ? 120 : 0),
-								transform: [{ translateY }]
+								transform: [{translateY}]
 							}}>
 								<View style={{
 									width: "100%",
@@ -309,8 +345,15 @@ class Sell extends Component {
 									<View>
 										<Text style={styles.modalLabel}>Mahsulot nomi</Text>
 										<TextInput
-											onChangeText={() => {
-												// TODO FIND BY NAME;
+											onChangeText={async (value) => {
+												this.setState({
+													productNameInputValue: value
+												});
+
+												let storeProducts = await this.storeProductRepository.searchProductsInfo(value + "%");
+												this.setState({
+													products: storeProducts
+												});
 											}}
 
 											onFocus={() => {
@@ -324,6 +367,7 @@ class Sell extends Component {
 													isProductNameInputFocused: false
 												});
 											}}
+
 											style={{
 												paddingHorizontal: 16,
 												paddingVertical: 14,
@@ -337,9 +381,63 @@ class Sell extends Component {
 												lineHeight: 24,
 												marginTop: 4
 											}}
+
 											cursorColor={"#222"}
+
 											placeholder="Nomini kiriting"
-											placeholderTextColor="#AAAAAA"/>
+
+											placeholderTextColor="#AAAAAA"
+
+											value={this.state.productNameInputValue}/>
+
+										<View style={{
+											marginTop: 2
+										}}>
+											<View style={this.state.productNameContentStyle}>
+												{
+													this.state.products.map(
+														(item, index) =>
+															(
+																<Pressable
+																	onPress={() => {
+																		this.selectProduct(item);
+																	}}
+
+																	onPressIn={() => {
+																		Animated.spring(this.state.scaleValue, {
+																			toValue: 0.9,
+																			useNativeDriver: true,
+																		}).start();
+																	}}
+
+																	onPressOut={() => {
+																		Animated.spring(this.state.scaleValue, {
+																			toValue: 1,
+																			useNativeDriver: true,
+																		}).start();
+																	}}
+
+																	style={({pressed}) => [
+																		{
+																			paddingVertical: 14,
+																			paddingHorizontal: 16,
+																			borderTopWidth: 1,
+																			borderColor: "#F1F1F1"
+																		},
+																		animatedStyle,
+																		{
+																			backgroundColor: pressed ? '#CCCCCC' : '#FBFBFB',
+																		},
+																	]}
+																	key={index}>
+
+																	<Text>{item.brand_name}</Text>
+																</Pressable>
+															)
+													)
+												}
+											</View>
+										</View>
 									</View>
 
 									<View style={styles.inputBlock}>
@@ -488,7 +586,7 @@ class Sell extends Component {
 					sellingProduct.product_id,
 					sellingProduct.count
 				);
-			});
+		});
 
 
 		// oylik foyda bilan kirimni localStorageda saqlash.
@@ -572,7 +670,6 @@ console.log(hourAndMinute);
 console.log(currentDay + "-" + currentMonth);
 console.log(currentWeekDayName);
 */
-
 
 const styles = StyleSheet.create({
 	container: {
@@ -763,9 +860,26 @@ const styles = StyleSheet.create({
 		fontWeight: "500",
 		fontSize: 16,
 		textAlign: "center"
+	},
+
+	productNameContentStyle: {
+		borderWidth: 1,
+		borderColor: "#F1F1F1",
+		borderRadius: 10,
+		borderTopWidth: 0,
+		backgroundColor: "#FBFBFB",
+		position: "absolute",
+		top: -1,
+		width: screenWidth - (17 + 17),
+		zIndex: 10,
+		overflow: "hidden",
+		elevation: 4,
+		shadowColor: 'rgba(0, 0, 0, 0.25)',
+		shadowOffset: {width: 2, height: 4},
+		shadowOpacity: 1,
+		shadowRadius: 4,
 	}
 
 });
-
 
 export default Sell;
