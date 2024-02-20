@@ -69,7 +69,7 @@ class Sell extends Component {
 			isProductNameInputFocused: false,
 			isQuantityInputFocused: false,
 			isPriceInputFocused: false,
-			products: [],
+			productsByName: [],
 
 			productNameContentStyle: {},
 
@@ -114,7 +114,7 @@ class Sell extends Component {
 			return;
 		}
 
-		if (this.state.products.length === 0) {
+		if (this.state.productsByName.length === 0) {
 			this.setState({productNameContentStyle: {display: "none"}});
 			// this.setState({serialInputStyle: styles.serialInputClicked});
 		} else {
@@ -350,10 +350,16 @@ class Sell extends Component {
 													productNameInputValue: value
 												});
 
-												let storeProducts = await this.storeProductRepository.searchProductsInfo(value + "%");
-												this.setState({
-													products: storeProducts
-												});
+												if (value != "" || value != " ") {
+													let storeProducts = 
+														await this.storeProductRepository.searchProductsInfo(
+															value + "%"
+														);
+
+													this.setState({
+														productsByName: storeProducts
+													});
+												}
 											}}
 
 											onFocus={() => {
@@ -395,7 +401,7 @@ class Sell extends Component {
 										}}>
 											<View style={this.state.productNameContentStyle}>
 												{
-													this.state.products.map(
+													this.state.productsByName.map(
 														(item, index) =>
 															(
 																<Pressable
