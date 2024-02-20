@@ -8,7 +8,8 @@ import {
 	TextInput,
 	TouchableOpacity,
 	Modal,
-	Keyboard
+	Keyboard,
+	Animated
 } from "react-native";
 import SwipeableFlatList from "react-native-swipeable-list";
 
@@ -51,6 +52,8 @@ const renderQuickActions = () => (
 	</View>
 );
 
+
+
 const keyExtractor = (item) => item.id;
 
 class Sell extends Component {
@@ -63,8 +66,23 @@ class Sell extends Component {
 			sellingProducts: [],
 			seria: "",
 			amount: 0,
-			profit: 0
+			profit: 0,
+			isKeybardOn: false,
+			animation: new Animated.Value(0)
 		};
+
+		this.keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+				this.setState({isKeybardOn: true});
+			}
+    );
+    this.keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+				this.setState({isKeybardOn: false});	
+			}
+    );
 
 		this.storeProductRepository = new StoreProductRepository();
 		this.sellHistoryRepository = new SellHistoryRepository();
@@ -72,10 +90,14 @@ class Sell extends Component {
 		this.amountDateRepository = new AmountDateRepository();
 	}
 
+
 	toggleModal = () => {
 		this.setState((prevState) => ({
 			isModalVisible: !prevState.isModalVisible,
 		}));
+
+
+		//
 	};
 
 	handleFocus = () => {
@@ -136,9 +158,24 @@ class Sell extends Component {
 		}
 	};
 
+	componentDidUpdate(prevProps, prevState) {
+    if (prevState.isKeybardOn !== this.state.isKeybardOn) {
+      Animated.timing(this.state.animation, {
+        toValue: this.state.isKeybardOn ? 1 : 0,
+        duration: 300, // Adjust the duration as needed
+        useNativeDriver: false // Ensure useNativeDriver is set to false for justifyContent animation
+      }).start();
+    }
+  }
+
 	render() {
 		const {navigation} = this.props;
 		const {isModalVisible} = this.state;
+
+		const translateY = this.state.animation.interpolate({
+			inputRange: [0, 1],
+			outputRange: [0, -100] // Adjust the value as needed
+		});
 
 		return (
 			<>
@@ -223,7 +260,8 @@ class Sell extends Component {
 					<Modal
 						visible={isModalVisible}
 						animationType="none"
-						style={{}}
+						style={{
+						}}
 						transparent={true}>
 						<TouchableOpacity
 							activeOpacity={1}
@@ -234,25 +272,26 @@ class Sell extends Component {
 								height: screenHeight,
 								flex: 1,
 								backgroundColor: "#00000099",
-
+								
 							}}></View>
 						</TouchableOpacity>
-
-
 						<View style={{
 							height: screenHeight,
 							display: "flex",
 							alignItems: "center",
 							justifyContent: "center"
 						}}>
-							<View style={{
+							<Animated.View style={{
 								width: screenWidth - (16 * 2),
 								maxWidth: 343,
 								marginLeft: "auto",
 								marginRight: "auto",
 								flex: 1,
 								alignItems: "center",
-								justifyContent: "center"
+								
+								justifyContent: (this.state.isKeybardOn ? "flex-start" : "center"),
+								marginTop: (this.state.isKeybardOn ? 120 : 0),
+								transform: [{ translateY }]
 							}}>
 								<View style={{
 									width: "100%",
@@ -268,14 +307,21 @@ class Sell extends Component {
 
 									<View>
 										<Text style={styles.modalLabel}>Mahsulot nomi</Text>
-										<TextInput style={styles.modalInput} placeholder="Nomini kiriting"
-										           placeholderTextColor="#AAAAAA"/>
+										<TextInput
+											onChangeText={() => {
+												// TODO FIND BY NAME
+											}}
+											style={styles.modalInput}
+											placeholder="Nomini kiriting"
+											placeholderTextColor="#AAAAAA"/>
 									</View>
 
 									<View style={styles.inputBlock}>
 										<Text style={styles.modalLabel}>Qiymati</Text>
-										<TextInput style={styles.modalInput} placeholder="Sonini kiriting"
-										           placeholderTextColor="#AAAAAA"/>
+										<TextInput
+											style={styles.modalInput}
+											placeholder="Sonini kiriting"
+											placeholderTextColor="#AAAAAA"/>
 									</View>
 
 									<View style={styles.inputBlock}>
@@ -294,7 +340,7 @@ class Sell extends Component {
 											style={styles.modalButtonText}>Savatga qo’shish</Text>
 									</TouchableOpacity>
 								</View>
-							</View>
+							</Animated.View>
 						</View>
 					</Modal>
 				</View>
