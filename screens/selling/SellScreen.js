@@ -69,14 +69,18 @@ class Sell extends Component {
 			isProductNameInputFocused: false,
 			isQuantityInputFocused: false,
 			isPriceInputFocused: false,
+
 			productsByName: [],
+			productByName: {},
 
 			productNameContentStyle: {},
 
 			animation: new Animated.Value(0),
 			checkmarkScale: new Animated.Value(0),
 			scaleValue: new Animated.Value(1),
-			productNameInputValue: ""
+			productNameInputValue: "",
+			quantityInputValue: "",
+			priceInputValue: ""
 		};
 
 		this.keyboardDidShowListener = Keyboard.addListener(
@@ -101,8 +105,11 @@ class Sell extends Component {
 
 	selectProduct = (product) => {
 		console.log(product);
-		
-		this.setState({productNameInputValue: product.brand_name + " " + product.name})
+
+		this.setState({
+			productNameInputValue: product.brand_name + " " + product.name,
+			productByName: product
+		})
 
 		this.defineInputContentStyle(true);
 	}
@@ -350,8 +357,8 @@ class Sell extends Component {
 													productNameInputValue: value
 												});
 
-												if (value != "" || value != " ") {
-													let storeProducts = 
+												if (value !== "" || value !== " ") {
+													let storeProducts =
 														await this.storeProductRepository.searchProductsInfo(
 															value + "%"
 														);
@@ -457,6 +464,14 @@ class Sell extends Component {
 												this.setState({isQuantityInputFocused: false})
 											}}
 
+											onChangeText={(value) => {
+												this.setState({quantityInputValue: value});
+												// FIST OF ALL GET CURRENT SELLING PRICE.
+												let sellingPrice = this.state.productByName.selling_price;
+												console.log((parseInt(value) * sellingPrice))
+												this.setState({priceInputValue: (parseInt(value) * sellingPrice) + ""})
+											}}
+
 											style={{
 												paddingHorizontal: 16,
 												paddingVertical: 14,
@@ -475,8 +490,22 @@ class Sell extends Component {
 
 											placeholder="Sonini kiriting"
 
-											placeholderTextColor="#AAAAAA"/>
+											keyboardType="numeric"
+
+											placeholderTextColor="#AAAAAA"
+											value={this.state.quantityInputValue}/>
 									</View>
+
+									{/* 
+										BIZDA IKKITA TEXTINPUT BOR BIRIGA YOZILSA IKKINCHISIGA AVTOMATIK QIYMAT BERILISHI KERAK
+										QUANTITY O'ZGARTIRILSA NARXI NARXI O'ZGARTIRILSA QUANTITY 
+									*/}
+									{/* 
+										* 1. TextInput valuelarini stateda saqlash.
+										* 2. Birinchi textInput onChange bo'lganda ikkinchisini valuesini o'zgartirish.
+										* 3. 
+										* 4. 
+									*/}
 
 									<View style={styles.inputBlock}>
 										<Text style={styles.modalLabel}>Sotuvdagi narxi (1 kg/dona)</Text>
@@ -487,6 +516,17 @@ class Sell extends Component {
 
 											onEndEditing={() => {
 												this.setState({isPriceInputFocused: false});
+											}}
+
+											onChangeText={(value) => {
+												this.setState({priceInputValue: value})
+
+												let productSellingPrice = this.state.productByName.selling_price;
+
+												// Calculate the quantity based on the price input value and actual selling price
+												let quantity = (parseFloat(value) / productSellingPrice).toFixed(2);
+
+												this.setState({quantityInputValue: quantity})
 											}}
 
 											style={{
@@ -508,7 +548,10 @@ class Sell extends Component {
 											placeholderTextColor="#AAAAAA"
 
 											cursorColor={"#222"}
-										/>
+
+											keyboardType="numeric"
+
+											value={this.state.priceInputValue}/>
 									</View>
 
 									<TouchableOpacity
@@ -592,7 +635,7 @@ class Sell extends Component {
 					sellingProduct.product_id,
 					sellingProduct.count
 				);
-		});
+			});
 
 
 		// oylik foyda bilan kirimni localStorageda saqlash.
