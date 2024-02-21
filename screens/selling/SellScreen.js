@@ -9,9 +9,11 @@ import {
 	TouchableOpacity,
 	Modal,
 	Keyboard,
-	Animated, Pressable
+	Animated,
+	Pressable,
+	FlatList
 } from "react-native";
-import SwipeableFlatList from "react-native-swipeable-list";
+import Swipeable from 'react-native-gesture-handler/Swipeable';
 
 import BackIcon from "../../assets/arrow-left-icon.svg";
 import CrossIcon from "../../assets/cross-icon.svg";
@@ -20,6 +22,7 @@ import SellHistoryRepository from "../../repository/SellHistoryRepository";
 import ProfitHistoryRepository from "../../repository/ProfitHistoryRepository";
 import AmountDateRepository from "../../repository/AmountDateRepository";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import TrashIcon from "../../assets/trash-icon.svg"
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -38,21 +41,9 @@ const renderItem = ({item}) => {
 	);
 };
 
-const renderQuickActions = () => (
-	<View style={{
-		flex: 1,
-		backgroundColor: "red",
-		justifyContent: "center",
-		alignItems: "flex-end"
-	}}>
-		<Text style={{
-			color: "white",
-			padding: 10
-		}}>Delete</Text>
-	</View>
-);
 
 const keyExtractor = (item) => item.id;
+
 
 class Sell extends Component {
 	constructor(props) {
@@ -102,6 +93,51 @@ class Sell extends Component {
 		this.amountDateRepository = new AmountDateRepository();
 	}
 
+	renderQuickActions = (item) => (
+		<View>
+			<TouchableOpacity
+				onPress={() => {
+					let sellingProducts = this.state.sellingProducts;
+
+					let index = sellingProducts.indexOf(item);
+
+					if (index !== -1) {
+						sellingProducts.splice(index, 1);
+					}
+
+					console.log(sellingProducts)
+					this.setState(prevState => ({
+						sellingProducts: prevState.sellingProducts.filter(product => product !== item)
+					}));
+
+					console.log(this.state.sellingProducts);
+				}}
+				style={{
+					flex: 1,
+					backgroundColor: "#D53B38",
+					justifyContent: "center",
+					alignItems: "flex-end",
+					paddingLeft: 18,
+					paddingRight: 18,
+					borderTopRightRadius: 8,
+					borderBottomRightRadius: 8,
+					marginLeft: 20
+				}}>
+					<TrashIcon/>
+			</TouchableOpacity>
+		</View>
+	);
+
+	renderItem = ({item}) => {
+		return (
+			<Swipeable renderRightActions={() => this.renderQuickActions(item)}>
+				<View style={item.key % 2 === 1 ? styles.productOdd : styles.product}>
+					<Text style={styles.productTitle}>{item.brand_name} {item.name}</Text>
+					<Text style={styles.productCount}>{item.count} {item.count_type}</Text>
+				</View>
+			</Swipeable>
+		);
+	};
 
 	selectProduct = (product) => {
 		console.log(product);
@@ -274,10 +310,9 @@ class Sell extends Component {
 						value={this.state.seria}
 					/>
 
-					<SwipeableFlatList
+					<FlatList
 						data={this.state.sellingProducts}
-						renderItem={renderItem}
-						renderQuickActions={renderQuickActions}
+						renderItem={this.renderItem}
 						keyExtractor={keyExtractor}
 					/>
 
