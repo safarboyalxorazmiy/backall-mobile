@@ -66,18 +66,18 @@ class Sell extends Component {
 			amount: 0,
 			profit: 0,
 			isKeyboardOn: false,
-			isProductNameInputFocused: false,
-			isQuantityInputFocused: false,
-			isPriceInputFocused: false,
-
-			recommenderProducts: [],
-			selectedProduct: {},
-
-			productNameContentStyle: {},
 
 			animation: new Animated.Value(0),
 			checkmarkScale: new Animated.Value(0),
 			scaleValue: new Animated.Value(1),
+
+			// MODAL VARIABLES
+			isProductNameInputFocused: false,
+			isQuantityInputFocused: false,
+			isPriceInputFocused: false,
+			recommenderProducts: [],
+			selectedProduct: {},
+			productNameContentStyle: {},
 			productNameInputValue: "",
 			quantityInputValue: "",
 			priceInputValue: ""
@@ -185,8 +185,11 @@ class Sell extends Component {
 						newSellingProduct.selling_price -
 						newSellingProduct.price
 					)
-				})
+				});
 			}
+
+			console.log("PRODUCT IS ADDING..");
+			console.log(newSellingProducts);
 
 			this.setState(
 				{
@@ -344,7 +347,21 @@ class Sell extends Component {
 									backgroundColor: "#fff",
 								}}>
 									<View style={styles.crossIconWrapper}>
-										<TouchableOpacity onPress={this.toggleModal}>
+										<TouchableOpacity onPress={() => {
+											this.setState({
+												isProductNameInputFocused: false,
+												isQuantityInputFocused: false,
+												isPriceInputFocused: false,
+												recommenderProducts: [],
+												selectedProduct: {},
+												productNameContentStyle: {},
+												productNameInputValue: "",
+												quantityInputValue: "",
+												priceInputValue: ""
+											});
+
+											this.toggleModal()
+										}}>
 											<CrossIcon/>
 										</TouchableOpacity>
 									</View>
@@ -365,6 +382,15 @@ class Sell extends Component {
 
 													this.setState({
 														recommenderProducts: storeProducts
+													});
+
+													this.setState({
+														isQuantityInputFocused: false,
+														isPriceInputFocused: false,
+														selectedProduct: {},
+														productNameContentStyle: {},
+														quantityInputValue: "",
+														priceInputValue: ""
 													});
 												}
 											}}
@@ -387,7 +413,6 @@ class Sell extends Component {
 												borderWidth: 1,
 												borderColor: (this.state.isProductNameInputFocused ? "#222" : "#AFAFAF"),
 												borderRadius: 8,
-
 												fontFamily: "Gilroy-Medium",
 												fontWeight: "500",
 												fontSize: 16,
@@ -403,9 +428,7 @@ class Sell extends Component {
 
 											value={this.state.productNameInputValue}/>
 
-										<View style={{
-											marginTop: 2
-										}}>
+										<View style={{marginTop: 2}}>
 											<View style={this.state.productNameContentStyle}>
 												{
 													this.state.recommenderProducts.map(
@@ -478,7 +501,6 @@ class Sell extends Component {
 												borderWidth: 1,
 												borderColor: (this.state.isQuantityInputFocused ? "#222" : "#AFAFAF"),
 												borderRadius: 8,
-
 												fontFamily: "Gilroy-Medium",
 												fontWeight: "500",
 												fontSize: 16,
@@ -551,7 +573,45 @@ class Sell extends Component {
 
 									<TouchableOpacity
 										style={styles.modalButton}
-										onPress={this.toggleModal}>
+										onPress={() => {
+											let selectedProduct = this.state.selectedProduct;
+											if (!selectedProduct) {
+												// TODO RED ERROR
+												return;
+											}
+
+											selectedProduct.serial_number = "";
+											selectedProduct.count = parseFloat(this.state.quantityInputValue);
+
+											this.setState({
+												amount: this.state.amount + selectedProduct.selling_price
+											});
+
+											this.setState({
+												profit: this.state.profit + (
+													selectedProduct.selling_price -
+													selectedProduct.price
+												)
+											});
+
+											let allSellingProducts = this.state.sellingProducts.concat(selectedProduct);
+											this.setState({sellingProducts: allSellingProducts});
+
+											// TODO CLEAR STATE:::
+											this.setState({
+												isProductNameInputFocused: false,
+												isQuantityInputFocused: false,
+												isPriceInputFocused: false,
+												recommenderProducts: [],
+												selectedProduct: {},
+												productNameContentStyle: {},
+												productNameInputValue: "",
+												quantityInputValue: "",
+												priceInputValue: ""
+											});
+
+											this.toggleModal();
+										}}>
 										<Text
 											style={styles.modalButtonText}>Savatga qo’shish</Text>
 									</TouchableOpacity>
@@ -697,8 +757,6 @@ class Sell extends Component {
 		const {navigation} = this.props;
 		navigation.navigate("Shopping");
 	}
-
-
 }
 
 /*

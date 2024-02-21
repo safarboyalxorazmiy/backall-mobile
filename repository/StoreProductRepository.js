@@ -177,7 +177,9 @@ class StoreProductRepository {
             sp.price,
             p.brand_name, 
             p.name, 
-            sp.product_id
+            sp.product_id,
+            sp.nds,
+            sp.percentage
           FROM store_product sp
           JOIN product p ON sp.product_id = p.id
           WHERE p.brand_name LIKE ? OR p.name LIKE ?;`,
