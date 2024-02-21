@@ -65,7 +65,7 @@ class Sell extends Component {
 			seria: "",
 			amount: 0,
 			profit: 0,
-			isKeybardOn: false,
+			isKeyboardOn: false,
 			isProductNameInputFocused: false,
 			isQuantityInputFocused: false,
 			isPriceInputFocused: false,
@@ -86,13 +86,13 @@ class Sell extends Component {
 		this.keyboardDidShowListener = Keyboard.addListener(
 			'keyboardDidShow',
 			() => {
-				this.setState({isKeybardOn: true});
+				this.setState({isKeyboardOn: true});
 			}
 		);
 		this.keyboardDidHideListener = Keyboard.addListener(
 			'keyboardDidHide',
 			() => {
-				this.setState({isKeybardOn: false});
+				this.setState({isKeyboardOn: false});
 			}
 		);
 
@@ -198,9 +198,9 @@ class Sell extends Component {
 	};
 
 	componentDidUpdate(prevProps, prevState) {
-		if (prevState.isKeybardOn !== this.state.isKeybardOn) {
+		if (prevState.isKeyboardOn !== this.state.isKeyboardOn) {
 			Animated.timing(this.state.animation, {
-				toValue: this.state.isKeybardOn ? 1 : 0,
+				toValue: this.state.isKeyboardOn ? 1 : 0,
 				duration: 300, // Adjust the duration as needed
 				useNativeDriver: false // Ensure useNativeDriver is set to false for justifyContent animation
 			}).start();
