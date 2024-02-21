@@ -70,8 +70,8 @@ class Sell extends Component {
 			isQuantityInputFocused: false,
 			isPriceInputFocused: false,
 
-			productsByName: [],
-			productByName: {},
+			recommenderProducts: [],
+			selectedProduct: {},
 
 			productNameContentStyle: {},
 
@@ -108,7 +108,7 @@ class Sell extends Component {
 
 		this.setState({
 			productNameInputValue: product.brand_name + " " + product.name,
-			productByName: product
+			selectedProduct: product
 		})
 
 		this.defineInputContentStyle(true);
@@ -121,7 +121,7 @@ class Sell extends Component {
 			return;
 		}
 
-		if (this.state.productsByName.length === 0) {
+		if (this.state.recommenderProducts.length === 0) {
 			this.setState({productNameContentStyle: {display: "none"}});
 			// this.setState({serialInputStyle: styles.serialInputClicked});
 		} else {
@@ -364,7 +364,7 @@ class Sell extends Component {
 														);
 
 													this.setState({
-														productsByName: storeProducts
+														recommenderProducts: storeProducts
 													});
 												}
 											}}
@@ -408,7 +408,7 @@ class Sell extends Component {
 										}}>
 											<View style={this.state.productNameContentStyle}>
 												{
-													this.state.productsByName.map(
+													this.state.recommenderProducts.map(
 														(item, index) =>
 															(
 																<Pressable
@@ -467,7 +467,7 @@ class Sell extends Component {
 											onChangeText={(value) => {
 												this.setState({quantityInputValue: value});
 												// FIST OF ALL GET CURRENT SELLING PRICE.
-												let sellingPrice = this.state.productByName.selling_price;
+												let sellingPrice = this.state.selectedProduct.selling_price;
 												console.log((parseInt(value) * sellingPrice))
 												this.setState({priceInputValue: (parseInt(value) * sellingPrice) + ""})
 											}}
@@ -520,12 +520,8 @@ class Sell extends Component {
 
 											onChangeText={(value) => {
 												this.setState({priceInputValue: value})
-
-												let productSellingPrice = this.state.productByName.selling_price;
-
-												// Calculate the quantity based on the price input value and actual selling price
+												let productSellingPrice = this.state.selectedProduct.selling_price;
 												let quantity = (parseFloat(value) / productSellingPrice).toFixed(2);
-
 												this.setState({quantityInputValue: quantity})
 											}}
 
@@ -535,7 +531,6 @@ class Sell extends Component {
 												borderWidth: 1,
 												borderColor: (this.state.isPriceInputFocused ? "#222" : "#AFAFAF"),
 												borderRadius: 8,
-
 												fontFamily: "Gilroy-Medium",
 												fontWeight: "500",
 												fontSize: 16,
