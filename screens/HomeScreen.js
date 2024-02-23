@@ -5,6 +5,7 @@ import {
 	Text,
 	View,
 	Dimensions,
+	Animated,
 	TouchableOpacity,
 	Platform
 } from "react-native";
@@ -16,10 +17,13 @@ import DatabaseService from '../service/DatabaseService';
 import AmountDateRepository from "../repository/AmountDateRepository";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import TokenService from '../service/TokenService';
+import Modal from "react-native-modal";
 
-const screenWidth = Dimensions.get("window").width;
 const tokenService = new TokenService();
 const databaseService = new DatabaseService();
+
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 
 class Home extends Component {
 	constructor(state) {
@@ -29,7 +33,9 @@ class Home extends Component {
 			shoppingCardColors: ["#E59C0D", "#FDD958"],
 			profitCardColors: ["#2C8134", "#1DCB00"],
 			profitAmount: 0,
-			sellAmount: 0
+			sellAmount: 0,
+			notAllowed: "",
+			animation: new Animated.Value(0),
 		}
 		
 		this.amountDateRepository = new AmountDateRepository();
@@ -40,9 +46,10 @@ class Home extends Component {
 	async componentDidMount() {
 		const {navigation} = this.props;
 		navigation.addListener("focus", async () => {
-			await AsyncStorage.clear();
-
 			await this.getAmountInfo();
+
+			let notAllowed = await AsyncStorage.getItem("not_allowed");
+			this.setState({notAllowed: notAllowed})
 		});
 	}
 	
@@ -81,6 +88,11 @@ class Home extends Component {
 		const {navigation} = this.props;
 		tokenService.checkTokens(navigation);
 		this.get();
+
+		const translateY = this.state.animation.interpolate({
+			inputRange: [0, 1],
+			outputRange: [0, -100] // Adjust the value as needed
+		});
 		
 		return (
 			<>
@@ -164,6 +176,79 @@ class Home extends Component {
 					</View>
 					<StatusBar style="auto"/>
 				</View>
+
+				<Modal
+					visible={this.state.notAllowed === "true"}
+					animationIn={"slideInUp"}
+					animationOut={"slideOutDown"}
+					animationInTiming={200}
+					transparent={true}>
+						<View style={{
+							position: "absolute",
+							width: "150%",
+							height: screenHeight,
+							flex: 1,
+							alignItems: "center",
+							justifyContent: "center",
+							backgroundColor: "#00000099",
+							left: -50,
+							right: -50,
+							top: 0
+						}}></View>
+
+						<View style={{
+							height: screenHeight,
+							display: "flex",
+							alignItems: "center",
+							justifyContent: "center"
+						}}>
+							<Animated.View style={{
+								width: screenWidth - (16 * 2),
+								maxWidth: 343,
+								marginLeft: "auto",
+								marginRight: "auto",
+								flex: 1,
+								alignItems: "center",
+								justifyContent: "flex-end",
+								marginBottom: 120,
+								transform: [{translateY}]
+							}}>
+								<View style={{
+									width: "100%",
+									padding: 20,
+									borderRadius: 12,
+									backgroundColor: "#fff",
+								}}>
+									<Text style={{
+										fontFamily: "Gilroy-Regular",
+										fontSize: 18
+									}}>Siz sotuvchi emassiz..</Text>
+									<TouchableOpacity
+										style={{
+											display: "flex",
+											alignItems: "center",
+											height: 55,
+											justifyContent: "center",
+											backgroundColor: "#222",
+											width: "100%",
+											borderRadius: 12,
+											marginTop: 22
+										}}
+										onPress={async () => {
+											this.setState({notAllowed: "false"});
+											await AsyncStorage.setItem("not_allowed", "false")
+										}}>
+										<Text
+											style={{
+												fontFamily: "Gilroy-Bold",
+												fontSize: 18,
+												color: "#fff",
+											}}>Tushunarli</Text>
+									</TouchableOpacity>
+								</View>
+							</Animated.View>
+						</View>
+				</Modal>
 			</>
 		);
 	}

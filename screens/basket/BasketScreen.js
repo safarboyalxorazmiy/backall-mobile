@@ -13,10 +13,10 @@ import PlusIcon from "../../assets/plus-icon.svg";
 import SearchIcon from "../../assets/search-icon.svg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import BasketIcon from "../../assets/basket-icon-light.svg";
-import Modal from "react-native-modal";
 import Success from "../../assets/success.svg";
 import StoreProductRepository from "../../repository/StoreProductRepository";
 import { Keyboard } from 'react-native';
+import Modal from "react-native-modal";
 
 const Checkmark = Animated.createAnimatedComponent(View);
 const CheckmarkText = Animated.createAnimatedComponent(Text);
@@ -34,7 +34,9 @@ class Basket extends Component {
 			addButtonStyle: styles.addButton,
 			searchInputValue: "",
 			lastId: 0,
-			lastYPos: 0
+			lastYPos: 0,
+			notAllowed: "",
+      animation: new Animated.Value(0)
 		}
 		this.storeProductRepository = new StoreProductRepository();
 
@@ -63,6 +65,10 @@ class Basket extends Component {
 		const {navigation} = this.props;
 		
 		navigation.addListener("focus", async () => {
+			// ROLE ERROR
+			let notAllowed = await AsyncStorage.getItem("not_allowed");
+			this.setState({notAllowed: notAllowed})
+			
 			this.setState(
 				{
 					isCreated: "false",
@@ -132,10 +138,13 @@ class Basket extends Component {
 		}
 	};
 
-	
-	
 	render() {
 		const {navigation} = this.props;
+
+		const translateY = this.state.animation.interpolate({
+			inputRange: [0, 1],
+			outputRange: [0, -100] // Adjust the value as needed
+		});
 
 		return (
 			<View style={styles.container}>
@@ -259,6 +268,80 @@ class Basket extends Component {
 							}}>SAVATGA QAYTISH</Text>
 						</TouchableOpacity>
 					</View>
+				</Modal>
+
+				{/* Role error */}
+				<Modal
+					visible={this.state.notAllowed === "true"}
+					animationIn={"slideInUp"}
+					animationOut={"slideOutDown"}
+					animationInTiming={200}
+					transparent={true}>
+						<View style={{
+							position: "absolute",
+							width: "150%",
+							height: screenHeight,
+							flex: 1,
+							alignItems: "center",
+							justifyContent: "center",
+							backgroundColor: "#00000099",
+							left: -50,
+							right: -50,
+							top: 0
+						}}></View>
+
+						<View style={{
+							height: screenHeight,
+							display: "flex",
+							alignItems: "center",
+							justifyContent: "center"
+						}}>
+							<Animated.View style={{
+								width: screenWidth - (16 * 2),
+								maxWidth: 343,
+								marginLeft: "auto",
+								marginRight: "auto",
+								flex: 1,
+								alignItems: "center",
+								justifyContent: "flex-end",
+								marginBottom: 120,
+								transform: [{translateY}]
+							}}>
+								<View style={{
+									width: "100%",
+									padding: 20,
+									borderRadius: 12,
+									backgroundColor: "#fff",
+								}}>
+									<Text style={{
+										fontFamily: "Gilroy-Regular",
+										fontSize: 18
+									}}>Siz sotuvchi emassiz..</Text>
+									<TouchableOpacity
+										style={{
+											display: "flex",
+											alignItems: "center",
+											height: 55,
+											justifyContent: "center",
+											backgroundColor: "#222",
+											width: "100%",
+											borderRadius: 12,
+											marginTop: 22
+										}}
+										onPress={async () => {
+											this.setState({notAllowed: "false"});
+											await AsyncStorage.setItem("not_allowed", "false")
+										}}>
+										<Text
+											style={{
+												fontFamily: "Gilroy-Bold",
+												fontSize: 18,
+												color: "#fff",
+											}}>Tushunarli</Text>
+									</TouchableOpacity>
+								</View>
+							</Animated.View>
+						</View>
 				</Modal>
 			</View>
 		);

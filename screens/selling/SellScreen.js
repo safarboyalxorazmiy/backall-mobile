@@ -93,6 +93,31 @@ class Sell extends Component {
 		this.amountDateRepository = new AmountDateRepository();
 	}
 
+	async componentDidMount() {
+		const {navigation} = this.props;
+		
+		navigation.addListener("focus", async () => {
+			let role = await AsyncStorage.getItem("role");
+			
+			if (role == "SELLER") {
+				await AsyncStorage.setItem("not_allowed", "true")
+
+				let from = await AsyncStorage.getItem("from");
+				navigation.navigate(from);
+			}
+
+			let currentDate = new Date();
+			let currentMonth = currentDate.getMonth();
+			let lastStoredMonth = parseInt(await AsyncStorage.getItem("month"));
+			
+			if (currentMonth === lastStoredMonth) {
+				this.setState({thisMonthSellAmount: thisMonthSellAmount});
+			}
+			
+			await this.initSellingHistoryGroup();
+		});
+	}
+
 	renderQuickActions = (item) => (
 		<View>
 			<TouchableOpacity

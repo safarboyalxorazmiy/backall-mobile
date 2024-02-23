@@ -25,6 +25,7 @@ import ShoppingIcon from "../assets/navbar/shopping-icon.svg";
 import ShoppingIconActive from "../assets/navbar/shopping-icon-active.svg";
 import WalletIcon from "../assets/navbar/wallet-icon.svg";
 import WalletIconActive from "../assets/navbar/wallet-icon-active.svg";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Tab = createBottomTabNavigator();
 const routesWithoutNavbar = [
@@ -234,7 +235,7 @@ class NavigationService extends Component {
           const { options } = descriptors[route.key];
           const isFocused = state.index === index;
 
-          const onPress = () => {
+          const onPress = async () => {
             const event = navigation.emit({
               type: "tabPress",
               target: route.key,
@@ -242,6 +243,11 @@ class NavigationService extends Component {
             });
 
             if (!isFocused && !event.defaultPrevented) {
+              if (route.name === "Sell") {
+                const currentRouteName = navigation.getState().routes[navigation.getState().index].name;
+                await AsyncStorage.setItem("from", currentRouteName);
+              }
+
               navigation.navigate(route.name);
             }
           };
