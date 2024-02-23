@@ -12,9 +12,10 @@ import {LinearGradient} from "expo-linear-gradient";
 
 import ShoppingIcon from "../assets/home/shopping-icon.svg";
 import BenefitIcon from "../assets/home/benefit-icon.svg";
-import TokenService from '../service/TokenService';
 import DatabaseService from '../service/DatabaseService';
 import AmountDateRepository from "../repository/AmountDateRepository";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import TokenService from '../service/TokenService';
 
 const screenWidth = Dimensions.get("window").width;
 const tokenService = new TokenService();
@@ -38,8 +39,9 @@ class Home extends Component {
 	
 	async componentDidMount() {
 		const {navigation} = this.props;
-		
 		navigation.addListener("focus", async () => {
+			await AsyncStorage.clear();
+
 			await this.getAmountInfo();
 		});
 	}

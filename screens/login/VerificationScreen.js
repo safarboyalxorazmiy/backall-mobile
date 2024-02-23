@@ -1,25 +1,63 @@
 import React, {Component} from "react";
 import {StyleSheet, View, Text, TouchableOpacity, TextInput} from "react-native";
-import GreenCircle from "../../assets/small-green-circle.svg"
+import GreenCircle from "../../assets/small-green-circle.svg";
+import RedCircle from "../../assets/small-red-circle.svg"
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import ApiService from "../../service/ApiService";
+import TokenService from '../../service/TokenService';
 
 class VerificationScreen extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			verificationCode: ""
+			verificationCode: "",
+			error: false
 		};
+
+		this.apiService = new ApiService();
+		this.tokenService = new TokenService();
 	}
 
-	handleKeyPress = (key) => {
+	handleKeyPress = async (key) => {
 		// Update verification code state when a key is pressed
 		this.setState(prevState => ({
 			verificationCode: prevState.verificationCode + key
 		}));
 
-		if (this.state.verificationCode === "0000") {
+		if (this.state.verificationCode.length === 3) {
 			const {navigation} = this.props;
-			navigation.navigate("Home");
+
+			let email = await AsyncStorage.getItem("email");
+			let password = await AsyncStorage.getItem("password");
+
+			let result = await this.apiService.login(
+				email, 
+				password,
+				this.state.verificationCode
+			);
+
+			console.log(
+				email, 
+				password,
+				this.state.verificationCode
+			)
+
+			if (result.access_token && result.refresh_token && result.role) {
+				await this.tokenService.storeAccessToken(result.access_token);
+				await this.tokenService.storeRefreshToken(result.refresh_token);
+				await AsyncStorage.setItem("role", result.role);
+
+				const accessToken = await this.tokenService.retrieveAccessToken();
+				console.log(accessToken);
+				console.log(await this.tokenService.retrieveRefreshToken())
+				navigation.navigate("Home");
+			} else {
+				this.setState({
+					verificationCode: "",
+					error: true
+				});
+			}
 		}
 	}
 
@@ -61,25 +99,27 @@ class VerificationScreen extends Component {
 	}
 
 	renderCircles() {
-		const { verificationCode } = this.state;
-		const circles = [];
+    const { verificationCode, error } = this.state;
+    const circles = [];
 
-		// Iterate through verification code and render green circles or text accordingly
-		for (let i = 0; i < 4; i++) {
-			if (verificationCode.length > i) {
-				// If verification code has more than 4 characters, display first 4 characters
-				circles.push(
-					<View key={i}>
-						<Text style={styles.codeText}>{verificationCode[i]}</Text>
-					</View>
-				);
-			} else {
-				// If verification code has less than 4 characters, display GreenCircle component
-				circles.push(<GreenCircle key={i} />);
-			}
-		}
+    // Iterate through verification code and render green circles or text accordingly
+    for (let i = 0; i < 4; i++) {
+        if (verificationCode.length > i) {
+            // If verification code has more than 4 characters, display first 4 characters
+            circles.push(
+                <View key={i}>
+                    <Text style={styles.codeText}>{verificationCode[i]}</Text>
+                </View>
+            );
+        } else {
+            // Render GreenCircle or RedCircle based on the value of error
+            circles.push(
+                error ? <RedCircle key={i} /> : <GreenCircle key={i} />
+            );
+        }
+    }
 
-		return circles;
+    return circles;
 	}
 
 	render() {

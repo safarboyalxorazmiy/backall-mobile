@@ -1,61 +1,44 @@
 import React, { Component } from 'react';
 import { StatusBar, StyleSheet, Text, View, TextInput, Dimensions, TouchableOpacity, ScrollView, Platform } from 'react-native';
 import Logo from '../../assets/logo.svg';
-import TokenService from '../../service/TokenService';
 import DatabaseService from '../../service/DatabaseService';
 import ApiService from "../../service/ApiService";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
 const databaseService = new DatabaseService();
-const tokenService = new TokenService();
-const apiService = new ApiService();
-
 class Login extends Component {
     constructor(props) {
-			super(props);
-			this.state = {
-					email: '',
-					password: '',
-					loading: false
-			};
+        super(props);
+        this.state = {
+            email: '',
+            password: '',
+            loading: false
+        };
+
+        this.apiService = new ApiService();
     }
 
     login = async () => {
 			const { email, password } = this.state;
 			try {
 				this.setState({ loading: true });
-				const result = await apiService.login(email + "@backall.uz", password);
+				const result = await this.apiService.check(email + "@backall.uz", password);
 				console.log(result);
 
-				if (result.access_token && result.refresh_token) {
-						await tokenService.storeAccessToken(result.access_token);
-						await tokenService.storeRefreshToken(result.refresh_token);
-				}
+				if (result) {
+                    await AsyncStorage.setItem("email", email + "@backall.uz");
+                    await AsyncStorage.setItem("password", password);
 
-				const accessToken = await tokenService.retrieveAccessToken();
-				console.log(accessToken);
-				console.log(await tokenService.retrieveRefreshToken());
-
-				await this.getProducts();
-				this.props.navigation.navigate("Verification");
+                    this.props.navigation.navigate("Verification");
+                }
+                
 			} catch (error) {
 				console.error('Error fetching data:', error);
 			} finally {
 				this.setState({ loading: false });
-			}
-    };
-
-    getProducts = async () => {
-			const accessToken = await tokenService.retrieveAccessToken();
-			try {
-				let result = await apiService.getProducts();
-				if (result) {
-					databaseService.createProducts(result);
-				}
-			} catch (error) {
-				console.log('error', error);
 			}
     };
 
