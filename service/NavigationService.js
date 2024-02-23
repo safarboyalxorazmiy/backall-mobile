@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from "react";
-import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
-import {NavigationContainer} from "@react-navigation/native";
-import {StyleSheet, View, TouchableOpacity, Keyboard} from "react-native";
+import React, { Component } from "react";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { NavigationContainer } from "@react-navigation/native";
+import { StyleSheet, View, TouchableOpacity, Keyboard } from "react-native";
 
 import Home from "../screens/HomeScreen";
 import Basket from "../screens/basket/BasketScreen";
@@ -13,6 +13,8 @@ import ProductAdd from "../screens/basket/ProductAddScreen";
 import ProfitDetail from "../screens/profit/ProfitDetailScreen";
 import CalendarPage from "../screens/CalendarScreen";
 import ShoppingDetail from "../screens/shopping/ShoppingDetailScreen";
+import ProductEdit from "../screens/basket/ProductEditScreen";
+import VerificationScreen from "../screens/login/VerificationScreen";
 
 import DashboardIcon from "../assets/navbar/dashboard-icon.svg";
 import DashboardIconActive from "../assets/navbar/dashboard-icon-active.svg";
@@ -23,231 +25,246 @@ import ShoppingIcon from "../assets/navbar/shopping-icon.svg";
 import ShoppingIconActive from "../assets/navbar/shopping-icon-active.svg";
 import WalletIcon from "../assets/navbar/wallet-icon.svg";
 import WalletIconActive from "../assets/navbar/wallet-icon-active.svg";
-import ProductEdit from "../screens/basket/ProductEditScreen";
-import VerificationScreen from "../screens/login/VerificationScreen";
 
 const Tab = createBottomTabNavigator();
 const routesWithoutNavbar = [
-	"ProfitDetail",
-	"Login",
-	"Verification",
-	"ProductAdd",
-	"ShoppingDetail",
-	"ProfitDetail",
-	"Calendar",
-	"ProductEdit"
+  "ProfitDetail",
+  "Login",
+  "Verification",
+  "ProductAdd",
+  "ShoppingDetail",
+  "ProfitDetail",
+  "Calendar",
+  "ProductEdit",
 ];
 
 const styles = StyleSheet.create({
-	navbar: {
-		width: "100%",
-		borderTopWidth: 1,
-		borderTopColor: "#EFEFEF",
-		paddingHorizontal: 30,
-		backgroundColor: "white",
-		height: 93,
-		display: "flex",
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "flex-start"
-	},
-	
-	navItem: {
-		display: "flex",
-		alignItems: "center",
-		justifyContent: "center"
-	},
-	
-	activeBorder: {
-		marginBottom: 30,
-		width: 47,
-		height: 4,
-		borderBottomLeftRadius: 2,
-		borderBottomRightRadius: 2,
-		backgroundColor: "black"
-	},
-	
-	inactiveBorder: {
-		marginBottom: 30,
-		width: 47,
-		height: 4,
-		borderBottomLeftRadius: 2,
-		borderBottomRightRadius: 2
-	},
-	
-	scan: {
-		backgroundColor: "black",
-		padding: 21,
-		borderRadius: 50,
-		marginTop: 10
-	}
+  navbar: {
+    width: "100%",
+    borderTopWidth: 1,
+    borderTopColor: "#EFEFEF",
+    paddingHorizontal: 30,
+    backgroundColor: "white",
+    height: 93,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  },
+  navItem: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  activeBorder: {
+    marginBottom: 30,
+    width: 47,
+    height: 4,
+    borderBottomLeftRadius: 2,
+    borderBottomRightRadius: 2,
+    backgroundColor: "black",
+  },
+  inactiveBorder: {
+    marginBottom: 30,
+    width: 47,
+    height: 4,
+    borderBottomLeftRadius: 2,
+    borderBottomRightRadius: 2,
+  },
+  scan: {
+    backgroundColor: "black",
+    padding: 21,
+    borderRadius: 50,
+    marginTop: 10,
+  },
 });
 
-const CustomTabBar = ({state, descriptors, navigation}) => {
-	const [navbarStyle, setNavbarStyle] = useState(styles.navbar);
-	
-	useEffect(() => {
-		const keyboardDidShowListener = Keyboard.addListener(
-			"keyboardDidShow",
-			() => {
-				setNavbarStyle({display: "none"});
-			}
-		);
-		const keyboardDidHideListener = Keyboard.addListener(
-			"keyboardDidHide",
-			() => {
-				setNavbarStyle(styles.navbar);
-			}
-		);
-		
-		return () => {
-			keyboardDidShowListener.remove();
-			keyboardDidHideListener.remove();
-		};
-	}, []);
-	
-	const focusedRouteName = state.routes[state.index].name;
-	
-	if (focusedRouteName === "Sell" || routesWithoutNavbar.includes(focusedRouteName)) {
-		return null;
-	}
-	
-	return (
-		<>
-			<View style={navbarStyle}>
-				{state.routes.map((route, index) => {
-					
-					if (routesWithoutNavbar.includes(route.name)) {
-						return;
-					}
-					
-					const {options} = descriptors[route.key];
-					const isFocused = state.index === index;
-					
-					const onPress = () => {
-						const event = navigation.emit({
-							type: "tabPress",
-							target: route.key,
-							canPreventDefault: true,
-						});
-						
-						if (!isFocused && !event.defaultPrevented) {
-							navigation.navigate(route.name);
-						}
-					};
-					
-					return (
-						<TouchableOpacity key={index} style={styles.navItem} onPress={onPress}>
-							{isFocused && route.name !== "Sell" && <View style={styles.activeBorder}></View>}
-							{!isFocused && route.name !== "Sell" && <View style={styles.inactiveBorder}></View>}
-							{route.name === "Home" && (isFocused ? <DashboardIconActive/> : <DashboardIcon/>)}
-							{route.name === "Basket" && (isFocused ? <BasketIconActive/> : <BasketIcon/>)}
-							{route.name === "Sell" &&
-								<View style={{height: 93, display: "flex", justifyContent: "center"}}><ScanIcon/></View>}
-							{route.name === "Shopping" && (isFocused ? <ShoppingIconActive/> : <ShoppingIcon/>)}
-							{route.name === "Profit" && (isFocused ? <WalletIconActive/> : <WalletIcon/>)}
-						</TouchableOpacity>
-					);
-				})}
-			</View>
-		</>
-	);
+class NavigationService extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      navbarStyle: styles.navbar,
+    };
+  }
+
+  componentDidMount() {
+    this.keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      this._keyboardDidShow
+    );
+    this.keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      this._keyboardDidHide
+    );
+  }
+
+  componentWillUnmount() {
+    this.keyboardDidShowListener.remove();
+    this.keyboardDidHideListener.remove();
+  }
+
+  _keyboardDidShow = () => {
+    this.setState({ navbarStyle: { display: "none" } });
+  };
+
+  _keyboardDidHide = () => {
+    this.setState({ navbarStyle: styles.navbar });
+  };
+
+  render() {
+    return (
+      <NavigationContainer>
+        <Tab.Navigator tabBar={(props) => this._renderCustomTabBar(props)}>
+          <Tab.Screen
+            name="Home"
+            component={Home}
+            options={({ navigation }) => ({
+              title: "",
+              headerShown: false,
+            })}
+          />
+          <Tab.Screen
+            name="Basket"
+            component={Basket}
+            options={({ navigation }) => ({
+              title: "",
+              headerShown: false,
+            })}
+          />
+          <Tab.Screen
+            name="Sell"
+            component={Sell}
+            options={({ navigation }) => ({
+              title: "",
+              headerShown: false,
+            })}
+          />
+          <Tab.Screen
+            name="Shopping"
+            component={Shopping}
+            options={({ navigation }) => ({
+              title: "",
+              headerShown: false,
+            })}
+          />
+          <Tab.Screen
+            name="Profit"
+            component={Profit}
+            options={({ navigation }) => ({
+              title: "",
+              headerShown: false,
+            })}
+          />
+          <Tab.Screen
+            name="ProfitDetail"
+            component={ProfitDetail}
+            initialParams={{ hideScreen: true }}
+            options={({ route, navigation }) => ({
+              tabBarVisible: false,
+              headerShown: false,
+            })}
+          />
+          <Tab.Screen
+            name="Login"
+            component={Login}
+            options={({ navigation }) => ({
+              title: "",
+              headerShown: false,
+            })}
+          />
+          <Tab.Screen
+            name="Verification"
+            component={VerificationScreen}
+            options={({ navigation }) => ({
+              title: "",
+              headerShown: false,
+            })}
+          />
+          <Tab.Screen
+            name="ProductAdd"
+            component={ProductAdd}
+            options={({ navigation }) => ({
+              title: "",
+              headerShown: false,
+            })}
+          />
+          <Tab.Screen
+            name="ProductEdit"
+            component={ProductEdit}
+            options={({ navigation }) => ({
+              title: "",
+              headerShown: false,
+            })}
+          />
+          <Tab.Screen
+            name="ShoppingDetail"
+            component={ShoppingDetail}
+            options={({ navigation }) => ({
+              title: "",
+              headerShown: false,
+            })}
+          />
+          <Tab.Screen
+            name="Calendar"
+            component={CalendarPage}
+            options={({ navigation }) => ({
+              title: "",
+              headerShown: false,
+            })}
+          />
+        </Tab.Navigator>
+      </NavigationContainer>
+    );
+  }
+
+  _renderCustomTabBar({ state, descriptors, navigation }) {
+    const focusedRouteName = state.routes[state.index].name;
+
+    if (focusedRouteName === "Sell" || routesWithoutNavbar.includes(focusedRouteName)) {
+      return null;
+    }
+
+    return (
+      <View style={this.state.navbarStyle}>
+        {state.routes.map((route, index) => {
+          if (routesWithoutNavbar.includes(route.name)) {
+            return null;
+          }
+
+          const { options } = descriptors[route.key];
+          const isFocused = state.index === index;
+
+          const onPress = () => {
+            const event = navigation.emit({
+              type: "tabPress",
+              target: route.key,
+              canPreventDefault: true,
+            });
+
+            if (!isFocused && !event.defaultPrevented) {
+              navigation.navigate(route.name);
+            }
+          };
+
+          return (
+            <TouchableOpacity key={index} style={styles.navItem} onPress={onPress}>
+              {isFocused && route.name !== "Sell" && <View style={styles.activeBorder}></View>}
+              {!isFocused && route.name !== "Sell" && <View style={styles.inactiveBorder}></View>}
+              {route.name === "Home" && (isFocused ? <DashboardIconActive /> : <DashboardIcon />)}
+              {route.name === "Basket" && (isFocused ? <BasketIconActive /> : <BasketIcon />)}
+              {route.name === "Sell" && (
+                <View style={{ height: 93, display: "flex", justifyContent: "center" }}>
+                  <ScanIcon />
+                </View>
+              )}
+              {route.name === "Shopping" && (isFocused ? <ShoppingIconActive /> : <ShoppingIcon />)}
+              {route.name === "Profit" && (isFocused ? <WalletIconActive /> : <WalletIcon />)}
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+    );
+  }
 }
 
-function MainTabNavigator() {
-	return (
-		<>
-			<Tab.Navigator tabBar={(props) => <CustomTabBar {...props} />}>
-				<Tab.Screen name="Home" component={Home} options={({navigation}) => ({
-					title: "",
-					headerShown: false
-				})}/>
-				<Tab.Screen name="Basket" component={Basket} options={({navigation}) => ({
-					title: "",
-					headerShown: false
-				})}/>
-				<Tab.Screen name="Sell" component={Sell} options={({navigation}) => ({
-					title: "",
-					headerShown: false
-				})}/>
-				<Tab.Screen name="Shopping" component={Shopping} options={({navigation}) => ({
-					title: "",
-					headerShown: false
-				})}/>
-				<Tab.Screen name="Profit" component={Profit} options={({navigation}) => ({
-					title: "",
-					headerShown: false
-				})}/>
-				
-				<Tab.Screen
-					name="ProfitDetail"
-					component={ProfitDetail}
-					initialParams={{hideScreen: true}}
-					options={({route, navigation}) => ({
-						tabBarVisible: false,
-						headerShown: false,
-					})}
-				/>
-				
-				<Tab.Screen
-					name="Login"
-					component={Login}
-					options={({navigation}) => ({
-						title: "",
-						headerShown: false
-					})}
-				/>
-
-				<Tab.Screen
-					name="Verification"
-					component={VerificationScreen}
-					options={({navigation}) => ({
-						title: "",
-						headerShown: false
-					})}
-				/>
-				
-				<Tab.Screen
-					name="ProductAdd" component={ProductAdd}
-					options={({navigation}) => ({
-						title: "",
-						headerShown: false
-					})}
-				/>
-				
-				<Tab.Screen
-					name="ProductEdit" component={ProductEdit}
-					options={({navigation}) => ({
-						title: "",
-						headerShown: false
-					})}
-				/>
-				
-				<Tab.Screen
-					name="ShoppingDetail" component={ShoppingDetail}
-					options={({navigation}) => ({
-						title: "",
-						headerShown: false
-					})}
-				/>
-				
-				<Tab.Screen
-					name="Calendar" component={CalendarPage}
-					options={({navigation}) => ({
-						title: "",
-						headerShown: false
-					})}
-				/>
-			
-			</Tab.Navigator>
-		</>
-	);
-}
-
-export default function NavigationService() {
-	return (
-		<NavigationContainer>
-			<MainTabNavigator/>
-		</NavigationContainer>
-	);
-}
+export default NavigationService;
