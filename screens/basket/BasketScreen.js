@@ -36,7 +36,8 @@ class Basket extends Component {
 			lastId: 0,
 			lastYPos: 0,
 			notAllowed: "",
-      animation: new Animated.Value(0)
+      animation: new Animated.Value(0),
+			role: ""
 		}
 		this.storeProductRepository = new StoreProductRepository();
 
@@ -68,6 +69,10 @@ class Basket extends Component {
 			// ROLE ERROR
 			let notAllowed = await AsyncStorage.getItem("not_allowed");
 			this.setState({notAllowed: notAllowed})
+
+			this.setState(
+				{role: await AsyncStorage.getItem("role")}
+			);
 			
 			this.setState(
 				{
@@ -186,15 +191,17 @@ class Basket extends Component {
 						</View>
 					))}
 				</ScrollView>
-				
+
 				{/* Add Button */}
-				<TouchableOpacity
-					style={this.state.addButtonStyle}
-					onPress={() => {
-						navigation.navigate("ProductAdd");
-					}}>
-					<PlusIcon/>
-				</TouchableOpacity>
+				{this.state.role === "SELLER" ? (
+					<TouchableOpacity
+						style={this.state.addButtonStyle}
+						onPress={() => {
+							navigation.navigate("ProductAdd");
+						}}>
+						<PlusIcon />
+					</TouchableOpacity>
+				) : null}
 
 				{/* Product successfuly created modal. */}
 				<Modal
