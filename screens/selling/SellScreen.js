@@ -99,7 +99,7 @@ class Sell extends Component {
 		navigation.addListener("focus", async () => {
 			let role = await AsyncStorage.getItem("role");
 			
-			if (role == "SELLER") {
+			if (role !== "SELLER") {
 				await AsyncStorage.setItem("not_allowed", "true")
 
 				let from = await AsyncStorage.getItem("from");
