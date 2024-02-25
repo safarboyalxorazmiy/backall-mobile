@@ -11,12 +11,12 @@ class ProfitHistoryRepository {
     try {
       const createdDate = new Date().toISOString(); // Example: Get current timestamp
       const query = `
-        INSERT INTO profit_group (created_date, profit)
-        VALUES (?, ?);`;
+        INSERT INTO profit_group (created_date, global_id, profit)
+        VALUES (?, ?, ?);`;
 
       // Execute the query
       await this.db.transaction(async (tx) => {
-        await tx.executeSql(query, [createdDate, profit]);
+        await tx.executeSql(query, [createdDate, null, profit]);
       });
 
       let lastProfitHistoryGroup = await this.getLastProfitHistoryGroupId();
@@ -97,14 +97,14 @@ class ProfitHistoryRepository {
     
     try {
       const insertProfitHistoryQuery = `
-        INSERT INTO profit_history (product_id, count, count_type, profit, created_date)
-        VALUES (?, ?, ?, ?, ?);
+        INSERT INTO profit_history (product_id, global_id, count, count_type, profit, created_date)
+        VALUES (?, ?, ?, ?, ?, ?);
       `;
       
       await this.db.transaction(async (tx) => {
         await tx.executeSql(
           insertProfitHistoryQuery,
-          [product_id, count, count_type, profit, created_date.toISOString()]
+          [product_id, null, count, count_type, profit, created_date.toISOString()]
         );
       });
 
@@ -119,13 +119,13 @@ class ProfitHistoryRepository {
     let historyId = await this.createProfitHistory(product_id, count, count_type, profit);
 
     const insert = `
-      INSERT INTO profit_history_group(history_id, group_id) VALUES (?, ?);
+      INSERT INTO profit_history_group(history_id, global_id, group_id) VALUES (?, ?);
     `;
 
     await this.db.transaction(async (tx) => {
       await tx.executeSql(
         insert,
-        [historyId, group_id]
+        [historyId, null, group_id]
       );
     });
   }

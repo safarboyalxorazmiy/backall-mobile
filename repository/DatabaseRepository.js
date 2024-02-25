@@ -18,9 +18,10 @@ class DatabaseRepository {
           const queries = [
             `CREATE TABLE IF NOT EXISTS product(
               id INTEGER PRIMARY KEY, 
+              global_id INTEGER,
               name TEXT NOT NULL, 
               brand_name TEXT NOT NULL, 
-              serial_number TEXT NOT NULL
+              serial_number TEXT NOT NULL,
             );`,
             
             `CREATE TABLE IF NOT EXISTS store_product(
@@ -37,6 +38,7 @@ class DatabaseRepository {
             
             `CREATE TABLE IF NOT EXISTS sell_history (
               id INTEGER PRIMARY KEY AUTOINCREMENT, 
+              global_id INTEGER,
               product_id INTEGER, 
               count DOUBLE, 
               count_type TEXT, 
@@ -47,23 +49,23 @@ class DatabaseRepository {
 
             `CREATE TABLE IF NOT EXISTS sell_group (
               id INTEGER PRIMARY KEY AUTOINCREMENT, 
+              global_id INTEGER,
               created_date TIMESTAMP, 
               amount DOUBLE
             );`,
 
             `CREATE TABLE IF NOT EXISTS sell_history_group (
               id INTEGER PRIMARY KEY AUTOINCREMENT, 
+              global_id INTEGER,
               group_id INTEGER,
               history_id INTEGER, 
               FOREIGN KEY (group_id) REFERENCES sell_group(id), 
               FOREIGN KEY (history_id) REFERENCES sell_history(id)
             );`,
           
-            // `DROP TABLE sell_history; DROP TABLE sell_group; DROP TABLE sell_history_group;`
-            // `DROP TABLE profit_history;`,
-            
             `CREATE TABLE IF NOT EXISTS profit_history (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
+              global_id INTEGER,
               product_id INTEGER NOT NULL, 
               count DOUBLE NOT NULL, 
               count_type TEXT NOT NULL,
@@ -72,13 +74,15 @@ class DatabaseRepository {
             );`,
 
             `CREATE TABLE IF NOT EXISTS profit_group (
-              id INTEGER PRIMARY KEY AUTOINCREMENT, 
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              global_id INTEGER,
               created_date TIMESTAMP,
               profit DOUBLE
             );`,
 
             `CREATE TABLE IF NOT EXISTS profit_history_group (
               id INTEGER PRIMARY KEY AUTOINCREMENT, 
+              global_id INTEGER,
               group_id INTEGER NOT NULL, 
               history_id INTEGER NOT NULL, 
               FOREIGN KEY (group_id) REFERENCES profit_group(id), 
@@ -87,12 +91,14 @@ class DatabaseRepository {
 
             `CREATE TABLE IF NOT EXISTS profit_amount_date (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
+              global_id INTEGER, 
               date TEXT NOT NULL,
               amount DOUBLE NOT NULL
             );`,
 
             `CREATE TABLE IF NOT EXISTS sell_amount_date (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
+              global_id INTEGER,
               date TEXT NOT NULL,
               amount DOUBLE NOT NULL
             );`,
@@ -108,9 +114,12 @@ class DatabaseRepository {
             // `DELETE FROM profit_group;`,
 
             // `DELETE FROM store_product;`,
-            // // `DELETE FROM product;`,
+            // `DELETE FROM product;`,
 	          // `DROP TABLE profit_amount_date;`,
 	          // `DELETE FROM sell_amount_date;`,
+            
+            // `DROP TABLE sell_history; DROP TABLE sell_group; DROP TABLE sell_history_group;`
+            // `DROP TABLE profit_history;`,
           ];
 
           console.log(queries)
