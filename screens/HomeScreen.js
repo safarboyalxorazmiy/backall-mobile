@@ -18,6 +18,7 @@ import AmountDateRepository from "../repository/AmountDateRepository";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import TokenService from '../service/TokenService';
 import Modal from "react-native-modal";
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const tokenService = new TokenService();
 const databaseService = new DatabaseService();
@@ -36,6 +37,7 @@ class Home extends Component {
 			sellAmount: 0,
 			notAllowed: "",
 			animation: new Animated.Value(0),
+      spinner: true,
 		}
 		
 		this.amountDateRepository = new AmountDateRepository();
@@ -83,7 +85,7 @@ class Home extends Component {
 	async get() {
 		console.log(await databaseService.getAllProducts())
 	}
-	
+	// 
 	render() {
 		const {navigation} = this.props;
 		tokenService.checkTokens(navigation);
@@ -96,6 +98,15 @@ class Home extends Component {
 		
 		return (
 			<>
+			<Spinner
+          visible={this.state.spinner}
+          textContent={'Yuklanyapti 10%'}
+          textStyle={{
+						fontFamily: "Gilroy-Bold",
+						color: "#FFF"
+					}}
+        />
+
 				<View style={styles.container}>
 					<Text style={styles.pageTitle}>Bosh sahifa</Text>
 					
