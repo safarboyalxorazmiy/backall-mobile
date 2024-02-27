@@ -22,7 +22,9 @@ class DatabaseRepository {
               name TEXT NOT NULL, 
               brand_name TEXT NOT NULL, 
               serial_number TEXT NOT NULL,
-            );`,
+              type TEXT NOT NULL,
+              saved boolean
+            );`, 
             
             `CREATE TABLE IF NOT EXISTS store_product(
               id INTEGER PRIMARY KEY AUTOINCREMENT, 

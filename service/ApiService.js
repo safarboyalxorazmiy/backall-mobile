@@ -80,7 +80,7 @@ class ApiService {
   }
   }
 
-  async getProducts(page, size) {
+  async getLocalProducts(page, size) {
     const accessToken = await this.tokenService.retrieveAccessToken();
     const storeId = 1;
   
@@ -89,6 +89,29 @@ class ApiService {
     }
   
     const url = `${serverUrl}/api/v1/product/get/local/info?storeId=${storeId}&page=${page}&size=${size}`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`
+      }
+    });
+  
+    if (!response.ok) {
+      return new Error('Network response was not ok');
+    }
+  
+    return response.json();
+  }
+
+  async getGlobalProducts(page, size) {
+    const accessToken = await this.tokenService.retrieveAccessToken();
+    const storeId = 1;
+  
+    if (!storeId) {
+      return new Error('Invalid storeId');
+    }
+  
+    const url = `${serverUrl}/api/v1/product/get/global/info?storeId=${storeId}&page=${page}&size=${size}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {

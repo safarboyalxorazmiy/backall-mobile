@@ -65,13 +65,13 @@ class ProductRepository {
     }
   }
   
-  async createProductWithGlobalId(global_id, name, brand_name, serial_number) {
+  async createProductWithGlobalId(global_id, name, brand_name, serial_number, type, saved) {
     try {
       const result = await new Promise((resolve, reject) => {
         this.db.transaction((tx) => {
           tx.executeSql(
-            "INSERT INTO product (name, global_id, brand_name, serial_number) VALUES (?, ?, ?, ?)",
-            [name, global_id, brand_name, serial_number],
+            "INSERT INTO product (name, global_id, brand_name, serial_number, type, saved) VALUES (?, ?, ?, ?)",
+            [name, global_id, brand_name, serial_number, type, saved ? 1 : 0],
             (_, results) => {
               if (results.insertId) {
                 resolve(results.insertId);
@@ -167,6 +167,51 @@ class ProductRepository {
       throw error;
     }
   }
+
+  async findProductsBySerialNumberAndSavedTrue(serialNumber) {
+    if (serialNumber === "") {
+      return [];
+    }
+  
+    try {
+      const result = await new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+          tx.executeSql(
+            "SELECT * FROM product WHERE serial_number = ? AND saved = 1;",
+            [serialNumber],
+            (_, results) => {
+              console.log('Results:', results.rows);
+  
+              const products = Array.from(results.rows._array).map((row) => {
+                if (row) {
+                  return {
+                    id: row.id,
+                    name: row.name,
+                    brand_name: row.brand_name,
+                    serial_number: row.serial_number,
+                  };
+                } else {
+                  console.warn("Received undefined row in query results.");
+                  return null; // or handle it according to your needs
+                }
+              });
+  
+              resolve(products);
+            },
+            (_, error) => {
+              console.error("Error executing SQL query:", error);
+              reject(error);
+            }
+          );
+        });
+      });
+  
+      return result || []; // Ensure result is an array, return empty array if undefined
+    } catch (error) {
+      console.error(`Error finding products by serial number: ${error}`);
+      return [];
+    }
+  }  
 
   async getProductNameAndBrandById(product_id) {
     try {

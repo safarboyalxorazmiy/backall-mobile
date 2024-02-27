@@ -44,8 +44,10 @@ class Home extends Component {
 			isConnected: null,
 			isLoading: false,
 			isDownloaded: "false",
-			lastPage: 0,
-			lastSize: 10
+			lastLocalProductsPage: 0,
+			lastLocalProductsSize: 10,
+			lastGlobalProductsPage: 0,
+			lastGlobalProductsSize: 10
 		}
 		
 		this.tokenService = new TokenService();
@@ -88,8 +90,8 @@ class Home extends Component {
 							})
 							this.setState({spinner: true});
 							
-							let isDownloaded = await this.getProducts(); // storing products
-									
+							let isDownloaded = await this.getLocalProducts() && await this.getGlobalProducts(); // storing products
+
 							// storing result of product storing
 							await AsyncStorage.setItem("isDownloaded", isDownloaded.toString());
 					
@@ -112,47 +114,99 @@ class Home extends Component {
 		);
 	}
 
-	async getProducts() {
+	async getLocalProducts() {
 		let products = [];
-    let size = this.state.lastSize;
-    let page = this.state.lastPage;
-
-    while (true) {
+		let size = this.state.lastLocalProductsSize;
+		let page = this.state.lastLocalProductsPage;
+	
+		while (true) {
 			let downloadedProducts;
 			try {
-				downloadedProducts = await this.apiService.getProducts(page, size);
-			} catch(e) {
-				console.error(e);
-
-				this.setState({
-					lastSize: size,
-					lastPage: page
-				});
-
-				break;
+				downloadedProducts = await this.apiService.getLocalProducts(page, size);
+			} catch (error) {
+				console.error("Error fetching local products:", error);
+				return false;
 			}
-
-			if (downloadedProducts.content.length === 0 || downloadedProducts == undefined) {
+	
+			if (
+				!downloadedProducts || 
+				!downloadedProducts.content || 
+				downloadedProducts.content.length === 0
+			) {
 				console.log(products);
-				return true;
+				break; 
 			}
 
-			for (const product of downloadedProducts) {
-				await this.productRepository.createProductWithGlobalId(
-					product.id, 
-					product.name, 
-					product.brandName, 
-					product.serialNumber
-				);
+			for (const product of downloadedProducts.content) {
+				try {
+					await this.productRepository.createProductWithGlobalId(
+						product.id,
+						product.name,
+						product.brandName,
+						product.serialNumber,
+						"LOCAL",
+						true
+					);
+				} catch (error) {
+					console.error("Error creating local product:", error);
+				}
 			}
 
 			page++;
 			products.push(downloadedProducts);
-    }
+		}
 
-		return true
+		return true;
 	}
 
+	async getGlobalProducts() {
+		let products = [];
+		let size = this.state.lastGlobalProductsSize;
+		let page = this.state.lastGlobalProductsPage;
+	
+		while (true) {
+			let response;
+			try {
+				response = await this.apiService.getGlobalProducts(page, size);
+			} catch (error) {
+				console.error("Error fetching global products:", error);
+				this.setState({
+					lastSize: size,
+					lastPage: page
+				});
+				
+				return false; // Indicate failure
+			}
+	
+			if (!response || !response.content || response.content.length === 0) {
+				console.log(products);
+				return true; // Indicate success and exit the loop
+			}
+	
+			for (const product of response.content) {
+				try {
+					let bySerialNumber = await this.productRepository.findProductsBySerialNumberAndSavedTrue(product.serialNumber);
+					if (bySerialNumber.length === 0) {
+						await this.productRepository.createProductWithGlobalId(
+							product.id,
+							product.name,
+							product.brandName,
+							product.serialNumber,
+							"GLOBAL",
+							true
+						);
+					}
+				} catch (error) {
+					console.error("Error processing product:", error);
+					// Continue with next product
+					continue;
+				}
+			}
+	
+			page++;
+			products.push(response);
+		}
+	}
 
 	async getAmountInfo() {
 		// HOW TO GET yyyy-mm-dd from new Date()
