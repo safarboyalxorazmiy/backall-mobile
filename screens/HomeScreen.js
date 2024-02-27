@@ -19,6 +19,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import TokenService from '../service/TokenService';
 import Modal from "react-native-modal";
 import Spinner from 'react-native-loading-spinner-overlay';
+import ApiService from "../service/ApiService";
+import ProductRepository from "../repository/ProductRepository";
+import NetInfo from "@react-native-community/netinfo";
 
 const tokenService = new TokenService();
 const databaseService = new DatabaseService();
@@ -37,24 +40,120 @@ class Home extends Component {
 			sellAmount: 0,
 			notAllowed: "",
 			animation: new Animated.Value(0),
-      spinner: true,
+      spinner: false,
+			isConnected: null,
+			isLoading: false,
+			isDownloaded: "false",
+			lastPage: 0,
+			lastSize: 10
 		}
 		
+		this.tokenService = new TokenService();
 		this.amountDateRepository = new AmountDateRepository();
-		
+		this.apiService = new ApiService();
+		this.productRepository = new ProductRepository();
+
 		this.getAmountInfo();
 	}
 	
 	async componentDidMount() {
-		const {navigation} = this.props;
-		navigation.addListener("focus", async () => {
-			await this.getAmountInfo();
-
-			let notAllowed = await AsyncStorage.getItem("not_allowed");
-			this.setState({notAllowed: notAllowed})
+		this.unsubscribe = NetInfo.addEventListener((state) => {
+			this.setState({isConnected: state.isConnected});
 		});
-	}
+
+		const {navigation} = this.props;
+		navigation.addListener("focus", 
+			async () => {
+				// await AsyncStorage.setItem("isDownloaded", "true");
+				let isDownloaded = await AsyncStorage.getItem("isDownloaded");
+				if (isDownloaded != "true") {
+					// LOAD..
+
+					let intervalId = setInterval(async () => {
+						if (this.state.isConnected) { // Has internet connection
+							console.log(this.state.isDownloaded)
+							if (this.state.isDownloaded === "true") {
+								clearInterval(intervalId);
+								console.log("CLEARED");
+								return;
+							}
 	
+							if (this.state.isLoading) { // is loading don't load again
+								return;
+							}
+	
+							console.log("LOADING STARTED")
+							this.setState({ // loading started
+								isLoading: true
+							})
+							this.setState({spinner: true});
+							
+							let isDownloaded = await this.getProducts(); // storing products
+									
+							// storing result of product storing
+							await AsyncStorage.setItem("isDownloaded", isDownloaded.toString());
+					
+							this.setState({ // loading finished
+								isLoading: false,
+								isDownloaded: isDownloaded.toString()
+							});
+							console.log("LOADING FINISHED");
+					
+							this.setState({spinner: false});
+						}
+					}, 5000);
+				}
+
+				await this.getAmountInfo();
+
+				let notAllowed = await AsyncStorage.getItem("not_allowed");
+				this.setState({notAllowed: notAllowed})
+			}
+		);
+	}
+
+	async getProducts() {
+		let products = [];
+    let size = this.state.lastSize;
+    let page = this.state.lastPage;
+
+    while (true) {
+			let downloadedProducts;
+			try {
+				downloadedProducts = await this.apiService.getProducts(page, size);
+			} catch(e) {
+				console.error(e);
+
+				this.setState({
+					lastSize: size,
+					lastPage: page
+				});
+
+				break;
+			}
+
+			if (downloadedProducts.content.length === 0 || downloadedProducts == undefined) {
+				console.log(products);
+				return true;
+			}
+
+			for (const product of downloadedProducts) {
+				await this.productRepository.createProductWithGlobalId(
+					product.id, 
+					product.name, 
+					product.brandName, 
+					product.serialNumber
+				);
+			}
+
+			page++;
+			products.push(downloadedProducts);
+    }
+
+		return true
+	}
+
+
 	async getAmountInfo() {
 		// HOW TO GET yyyy-mm-dd from new Date()
 		
@@ -72,24 +171,16 @@ class Home extends Component {
 		
 		let profitAmountInfo = await this.amountDateRepository.getProfitAmountInfoByDate(formattedDate);
 		let sellAmountInfo = await this.amountDateRepository.getSellAmountInfoByDate(formattedDate);
-		
-		console.log("PROFIT AMOUNT INFO:: ", profitAmountInfo);
-		console.log("SELL AMOUNT INFO:: ", sellAmountInfo);
-		
+				
 		this.setState({
 			profitAmount: profitAmountInfo,
 			sellAmount: sellAmountInfo
 		})
 	}
 	
-	async get() {
-		console.log(await databaseService.getAllProducts())
-	}
-	// 
 	render() {
 		const {navigation} = this.props;
 		tokenService.checkTokens(navigation);
-		this.get();
 
 		const translateY = this.state.animation.interpolate({
 			inputRange: [0, 1],
@@ -98,169 +189,169 @@ class Home extends Component {
 		
 		return (
 			<>
-			<Spinner
-          visible={this.state.spinner}
-          textContent={'Yuklanyapti 10%'}
-          textStyle={{
-						fontFamily: "Gilroy-Bold",
-						color: "#FFF"
-					}}
-        />
+				<Spinner
+						visible={this.state.spinner}
+						textContent={'Yuklanyapti 10%'}
+						textStyle={{
+							fontFamily: "Gilroy-Bold",
+							color: "#FFF"
+						}}
+					/>
 
-				<View style={styles.container}>
-					<Text style={styles.pageTitle}>Bosh sahifa</Text>
-					
-					<View style={styles.cards}>
-						<TouchableOpacity
-							activeOpacity={1}
-							onPressIn={() => {
-								this.setState({shoppingCardColors: ["#E59C0D", "#E59C0D"]})
-							}}
-							onPressOut={() => {
-								this.setState({shoppingCardColors: ["#E59C0D", "#FDD958"]})
-							}}
-							onPress={() => navigation.navigate("Shopping")}>
-							<LinearGradient
-								colors={this.state.shoppingCardColors}
-								start={{x: 0, y: 0.5}}
-								style={styles.card}>
-								
-								<View style={styles.shoppingIconWrapper}>
-									{Platform.OS === 'android' || Platform.OS === 'ios' ? (
-										<ShoppingIcon
-											style={styles.shoppingIcon}
-											resizeMode="cover"/>
-									) : (
-										<ShoppingIcon
-											style={styles.shoppingIcon}/>
-									)}
-								</View>
-								
-								<Text
-									style={styles.cardTitle}>Bugungi kirim</Text>
-								<Text
-									style={styles.cardDescription}>
-									{this.state.sellAmount}
-									<Text
-										style={styles.currency}>UZS</Text>
-								</Text>
-							</LinearGradient>
-						</TouchableOpacity>
+					<View style={styles.container}>
+						<Text style={styles.pageTitle}>Bosh sahifa</Text>
 						
-						<TouchableOpacity
-							activeOpacity={1}
-							onPressIn={() => {
-								this.setState({profitCardColors: ["#1EC703", "#1EC703"]})
-							}}
-							onPressOut={() => {
-								this.setState({profitCardColors: ["#2C8134", "#1DCB00"]})
-							}}
-							onPress={() => {
-								navigation.navigate("Profit")
-							}}>
-							<LinearGradient
-								style={styles.card}
-								colors={this.state.profitCardColors}
-								start={{x: 0, y: 0.5}}
-							>
-								<View style={styles.benefitIconWrapper}>
-									{Platform.OS === 'android' || Platform.OS === 'ios' ? (
-										<BenefitIcon
-											style={styles.benefitIcon}
-											resizeMode="cover"/>
-									) : (
-										<BenefitIcon
-											style={styles.benefitIcon}/>
-									)}
-								</View>
-								<Text
-									style={styles.cardTitle}>Bugungi foyda</Text>
-								<Text
-									style={styles.cardDescription}>
-									{this.state.profitAmount}
+						<View style={styles.cards}>
+							<TouchableOpacity
+								activeOpacity={1}
+								onPressIn={() => {
+									this.setState({shoppingCardColors: ["#E59C0D", "#E59C0D"]})
+								}}
+								onPressOut={() => {
+									this.setState({shoppingCardColors: ["#E59C0D", "#FDD958"]})
+								}}
+								onPress={() => navigation.navigate("Shopping")}>
+								<LinearGradient
+									colors={this.state.shoppingCardColors}
+									start={{x: 0, y: 0.5}}
+									style={styles.card}>
+									
+									<View style={styles.shoppingIconWrapper}>
+										{Platform.OS === 'android' || Platform.OS === 'ios' ? (
+											<ShoppingIcon
+												style={styles.shoppingIcon}
+												resizeMode="cover"/>
+										) : (
+											<ShoppingIcon
+												style={styles.shoppingIcon}/>
+										)}
+									</View>
+									
 									<Text
-										style={styles.currency}>UZS</Text>
-								</Text>
-							</LinearGradient>
-						</TouchableOpacity>
-					
+										style={styles.cardTitle}>Bugungi kirim</Text>
+									<Text
+										style={styles.cardDescription}>
+										{this.state.sellAmount}
+										<Text
+											style={styles.currency}>UZS</Text>
+									</Text>
+								</LinearGradient>
+							</TouchableOpacity>
+							
+							<TouchableOpacity
+								activeOpacity={1}
+								onPressIn={() => {
+									this.setState({profitCardColors: ["#1EC703", "#1EC703"]})
+								}}
+								onPressOut={() => {
+									this.setState({profitCardColors: ["#2C8134", "#1DCB00"]})
+								}}
+								onPress={() => {
+									navigation.navigate("Profit")
+								}}>
+								<LinearGradient
+									style={styles.card}
+									colors={this.state.profitCardColors}
+									start={{x: 0, y: 0.5}}
+								>
+									<View style={styles.benefitIconWrapper}>
+										{Platform.OS === 'android' || Platform.OS === 'ios' ? (
+											<BenefitIcon
+												style={styles.benefitIcon}
+												resizeMode="cover"/>
+										) : (
+											<BenefitIcon
+												style={styles.benefitIcon}/>
+										)}
+									</View>
+									<Text
+										style={styles.cardTitle}>Bugungi foyda</Text>
+									<Text
+										style={styles.cardDescription}>
+										{this.state.profitAmount}
+										<Text
+											style={styles.currency}>UZS</Text>
+									</Text>
+								</LinearGradient>
+							</TouchableOpacity>
+						
+						</View>
+						<StatusBar style="auto"/>
 					</View>
-					<StatusBar style="auto"/>
-				</View>
 
-				<Modal
-					visible={this.state.notAllowed === "true"}
-					animationIn={"slideInUp"}
-					animationOut={"slideOutDown"}
-					animationInTiming={200}
-					transparent={true}>
-						<View style={{
-							position: "absolute",
-							width: "150%",
-							height: screenHeight,
-							flex: 1,
-							alignItems: "center",
-							justifyContent: "center",
-							backgroundColor: "#00000099",
-							left: -50,
-							right: -50,
-							top: 0
-						}}></View>
-
-						<View style={{
-							height: screenHeight,
-							display: "flex",
-							alignItems: "center",
-							justifyContent: "center"
-						}}>
-							<Animated.View style={{
-								width: screenWidth - (16 * 2),
-								maxWidth: 343,
-								marginLeft: "auto",
-								marginRight: "auto",
+					<Modal
+						visible={this.state.notAllowed === "true"}
+						animationIn={"slideInUp"}
+						animationOut={"slideOutDown"}
+						animationInTiming={200}
+						transparent={true}>
+							<View style={{
+								position: "absolute",
+								width: "150%",
+								height: screenHeight,
 								flex: 1,
 								alignItems: "center",
-								justifyContent: "flex-end",
-								marginBottom: 120,
-								transform: [{translateY}]
+								justifyContent: "center",
+								backgroundColor: "#00000099",
+								left: -50,
+								right: -50,
+								top: 0
+							}}></View>
+
+							<View style={{
+								height: screenHeight,
+								display: "flex",
+								alignItems: "center",
+								justifyContent: "center"
 							}}>
-								<View style={{
-									width: "100%",
-									padding: 20,
-									borderRadius: 12,
-									backgroundColor: "#fff",
+								<Animated.View style={{
+									width: screenWidth - (16 * 2),
+									maxWidth: 343,
+									marginLeft: "auto",
+									marginRight: "auto",
+									flex: 1,
+									alignItems: "center",
+									justifyContent: "flex-end",
+									marginBottom: 120,
+									transform: [{translateY}]
 								}}>
-									<Text style={{
-										fontFamily: "Gilroy-Regular",
-										fontSize: 18
-									}}>Siz sotuvchi emassiz..</Text>
-									<TouchableOpacity
-										style={{
-											display: "flex",
-											alignItems: "center",
-											height: 55,
-											justifyContent: "center",
-											backgroundColor: "#222",
-											width: "100%",
-											borderRadius: 12,
-											marginTop: 22
-										}}
-										onPress={async () => {
-											this.setState({notAllowed: "false"});
-											await AsyncStorage.setItem("not_allowed", "false")
-										}}>
-										<Text
+									<View style={{
+										width: "100%",
+										padding: 20,
+										borderRadius: 12,
+										backgroundColor: "#fff",
+									}}>
+										<Text style={{
+											fontFamily: "Gilroy-Regular",
+											fontSize: 18
+										}}>Siz sotuvchi emassiz..</Text>
+										<TouchableOpacity
 											style={{
-												fontFamily: "Gilroy-Bold",
-												fontSize: 18,
-												color: "#fff",
-											}}>Tushunarli</Text>
-									</TouchableOpacity>
-								</View>
-							</Animated.View>
-						</View>
-				</Modal>
-			</>
+												display: "flex",
+												alignItems: "center",
+												height: 55,
+												justifyContent: "center",
+												backgroundColor: "#222",
+												width: "100%",
+												borderRadius: 12,
+												marginTop: 22
+											}}
+											onPress={async () => {
+												this.setState({notAllowed: "false"});
+												await AsyncStorage.setItem("not_allowed", "false")
+											}}>
+											<Text
+												style={{
+													fontFamily: "Gilroy-Bold",
+													fontSize: 18,
+													color: "#fff",
+												}}>Tushunarli</Text>
+										</TouchableOpacity>
+									</View>
+								</Animated.View>
+							</View>
+					</Modal>
+				</>
 		);
 	}
 }

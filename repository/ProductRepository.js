@@ -35,7 +35,7 @@ class ProductRepository {
       throw error;
     }
   }
-  
+
   async createProduct(name, brand_name, serial_number) {
     try {
       const result = await new Promise((resolve, reject) => {
@@ -43,6 +43,35 @@ class ProductRepository {
           tx.executeSql(
             "INSERT INTO product (name, global_id, brand_name, serial_number) VALUES (?, ?, ?, ?)",
             [name, null, brand_name, serial_number],
+            (_, results) => {
+              if (results.insertId) {
+                resolve(results.insertId);
+              } else {
+                reject(new Error("Failed to add product"));
+              }
+            },
+            (_, error) => {
+              reject(error);
+            }
+          );
+        });
+      });
+  
+      console.log(`Product created with ID: ${result}`);
+      return result;
+    } catch (error) {
+      console.error(`Error creating product: ${error}`);
+      throw error;
+    }
+  }
+  
+  async createProductWithGlobalId(global_id, name, brand_name, serial_number) {
+    try {
+      const result = await new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+          tx.executeSql(
+            "INSERT INTO product (name, global_id, brand_name, serial_number) VALUES (?, ?, ?, ?)",
+            [name, global_id, brand_name, serial_number],
             (_, results) => {
               if (results.insertId) {
                 resolve(results.insertId);
@@ -71,7 +100,7 @@ class ProductRepository {
 				const result = await new Promise((resolve, reject) => {
 					db.transaction((tx) => {
 						tx.executeSql(
-							"INSERT INTO product (id, name, brand_name, serial_number) VALUES (?, ?, ?, ?)",
+							"INSERT INTO product (id, name, brand_name, serial_number) VALUES (?, ?, ?, ?);",
 							[currentObject.productId, currentObject.productName, currentObject.brandName, currentObject.serialNumber],
 							(_tx, results) => {
 								if (results.insertId) {
