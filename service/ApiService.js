@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import TokenService from "./TokenService";
 
-const serverUrl = "http://192.168.0.102:8080";
+const serverUrl = "http://192.168.0.105:8080";
 class ApiService {
 	constructor() {
     this.tokenService = new TokenService();
@@ -83,6 +83,13 @@ class ApiService {
   async getLocalProducts(page, size) {
     const accessToken = await this.tokenService.retrieveAccessToken();
     const storeId = 1;
+
+    console.log({
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`
+      }
+    })
   
     if (!storeId) {
       return new Error('Invalid storeId');
@@ -112,6 +119,29 @@ class ApiService {
     }
   
     const url = `${serverUrl}/api/v1/product/get/global/info?storeId=${storeId}&page=${page}&size=${size}`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`
+      }
+    });
+  
+    if (!response.ok) {
+      return new Error('Network response was not ok');
+    }
+  
+    return response.json();
+  }
+
+  async getSellGroups(page, size) {
+    const accessToken = await this.tokenService.retrieveAccessToken();
+    const storeId = 1;
+  
+    if (!storeId) {
+      return new Error('Invalid storeId');
+    }
+  
+    const url = `${serverUrl}/api/v1/store/sell/group/get?storeId=${storeId}&page=${page}&size=${size}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {

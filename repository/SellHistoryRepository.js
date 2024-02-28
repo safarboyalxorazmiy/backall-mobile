@@ -11,13 +11,45 @@ class SellHistoryRepository {
   async createSellHistoryGroup(amount) {
     try {
       const query = `
-        INSERT INTO sell_group (created_date, global_id, amount)
-        VALUES (CURRENT_DATE, ?, ?);
+        INSERT INTO sell_group (created_date, global_id, amount, saved)
+        VALUES (CURRENT_DATE, null, ?, 0);
       `;
 
       // Execute the query
       await this.db.transaction(async (tx) => {
-        await tx.executeSql(query, [null, amount]);
+        await tx.executeSql(query, [amount]);
+      });
+
+      console.log("Sell group created successfully.");
+
+      console.log(this.getAll());
+
+      let lastSellHistoryGroup = await this.getLastSellHistoryGroupId();
+      console.log(lastSellHistoryGroup);
+      console.log(lastSellHistoryGroup.id);
+      console.log("&&&&&&&&&&&&&&");
+      return lastSellHistoryGroup.id;
+    } catch (error) {
+      console.error("Error creating sell group:", error);
+      throw error;
+    }
+  }
+
+  async createSellHistoryGroupWithAllValues(
+    created_date, 
+    amount, 
+    global_id, 
+    saved
+  ) {
+    try {
+      const query = `
+        INSERT INTO sell_group (created_date, global_id, amount, saved)
+        VALUES (?, ?, ?, ?);
+      `;
+
+      // Execute the query
+      await this.db.transaction(async (tx) => {
+        await tx.executeSql(query, [created_date.toISOString(), global_id, amount, saved ? 1 : 0]);
       });
 
       console.log("Sell group created successfully.");

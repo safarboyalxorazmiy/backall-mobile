@@ -22,6 +22,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import ApiService from "../service/ApiService";
 import ProductRepository from "../repository/ProductRepository";
 import NetInfo from "@react-native-community/netinfo";
+import SellHistoryRepository from "../repository/SellHistoryRepository";
 
 const tokenService = new TokenService();
 const databaseService = new DatabaseService();
@@ -47,13 +48,16 @@ class Home extends Component {
 			lastLocalProductsPage: 0,
 			lastLocalProductsSize: 10,
 			lastGlobalProductsPage: 0,
-			lastGlobalProductsSize: 10
+			lastGlobalProductsSize: 10,
+			lastSellGroupsPage: 0,
+			lastSellGroupsSize: 10
 		}
 		
 		this.tokenService = new TokenService();
 		this.amountDateRepository = new AmountDateRepository();
 		this.apiService = new ApiService();
 		this.productRepository = new ProductRepository();
+		this.sellHistoryRepository = new SellHistoryRepository();
 
 		this.getAmountInfo();
 	}
@@ -66,50 +70,52 @@ class Home extends Component {
 		const {navigation} = this.props;
 		navigation.addListener("focus", 
 			async () => {
-				// await AsyncStorage.setItem("isDownloaded", "true");
-				let isDownloaded = await AsyncStorage.getItem("isDownloaded");
-				if (isDownloaded != "true") {
-					// LOAD..
-
-					let intervalId = setInterval(async () => {
-						if (this.state.isConnected) { // Has internet connection
-							console.log(this.state.isDownloaded)
-							if (this.state.isDownloaded === "true") {
-								clearInterval(intervalId);
-								console.log("CLEARED");
-								return;
-							}
+				let isLoggedIn = await tokenService.checkTokens()
+				if (isLoggedIn) {
+					let isDownloaded = await AsyncStorage.getItem("isDownloaded");
+					if (isDownloaded != "true") {
+						// LOAD..
 	
-							if (this.state.isLoading) { // is loading don't load again
-								return;
-							}
+						let intervalId = setInterval(async () => {
+							if (this.state.isConnected) { // Has internet connection
+								console.log(this.state.isDownloaded)
+								if (this.state.isDownloaded === "true") {
+									clearInterval(intervalId);
+									console.log("CLEARED");
+									return;
+								}
+		
+								if (this.state.isLoading) { // is loading don't load again
+									return;
+								}
+		
+								console.log("LOADING STARTED")
+								this.setState({ // loading started
+									isLoading: true
+								})
+								this.setState({spinner: true});
+								
+								let isDownloaded = await this.getLocalProducts() && await this.getGlobalProducts(); // storing products
 	
-							console.log("LOADING STARTED")
-							this.setState({ // loading started
-								isLoading: true
-							})
-							this.setState({spinner: true});
-							
-							let isDownloaded = await this.getLocalProducts() && await this.getGlobalProducts(); // storing products
-
-							// storing result of product storing
-							await AsyncStorage.setItem("isDownloaded", isDownloaded.toString());
-					
-							this.setState({ // loading finished
-								isLoading: false,
-								isDownloaded: isDownloaded.toString()
-							});
-							console.log("LOADING FINISHED");
-					
-							this.setState({spinner: false});
-						}
-					}, 5000);
+								// storing result of product storing
+								await AsyncStorage.setItem("isDownloaded", isDownloaded.toString());
+						
+								this.setState({ // loading finished
+									isLoading: false,
+									isDownloaded: isDownloaded.toString()
+								});
+								console.log("LOADING FINISHED");
+						
+								this.setState({spinner: false});
+							}
+						}, 5000);
+					}
+	
+					await this.getAmountInfo();
+	
+					let notAllowed = await AsyncStorage.getItem("not_allowed");
+					this.setState({notAllowed: notAllowed})
 				}
-
-				await this.getAmountInfo();
-
-				let notAllowed = await AsyncStorage.getItem("not_allowed");
-				this.setState({notAllowed: notAllowed})
 			}
 		);
 	}
@@ -196,6 +202,50 @@ class Home extends Component {
 							true
 						);
 					}
+				} catch (error) {
+					console.error("Error processing product:", error);
+					// Continue with next product
+					continue;
+				}
+			}
+	
+			page++;
+			products.push(response);
+		}
+	}
+
+	async getSellGroups() {
+		let sellGroups = [];
+		let size = this.state.lastSellGroupsSize;
+		let page = this.state.lastSellGroupsPage;
+	
+		while (true) {
+			let response;
+			try {
+				response = await this.apiService.getSellGroups(page, size);
+			} catch (error) {
+				console.error("Error fetching global products:", error);
+				this.setState({
+					lastSize: size,
+					lastPage: page
+				});
+				
+				return false; // Indicate failure
+			}
+	
+			if (!response || !response.content || response.content.length === 0) {
+				console.log(sellGroups);
+				return true; // Indicate success and exit the loop
+			}
+	
+			for (const sellGroup of response.content) {
+				try {
+					await this.sellHistoryRepository.createSellHistoryGroupWithAllValues(
+						sellGroup.createdDate,
+						sellGroup.amount,
+						sellGroup.id,
+						true
+					);
 				} catch (error) {
 					console.error("Error processing product:", error);
 					// Continue with next product

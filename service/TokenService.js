@@ -39,7 +39,7 @@ class TokenService {
 	
 	checkTokens = async (navigation) => {
 		if (this.isLoggedIn) {
-			return;
+			return true;
 		}
 		
 		const access_token = await this.retrieveAccessToken();
@@ -48,10 +48,11 @@ class TokenService {
 		
 		if (access_token == null) {
 			navigation.navigate("Login")
+			return false;
 		}
 		
 		this.isLoggedIn = true;
-		return access_token;
+		return true;
 	}
 	
 	clearAsyncStorage = async () => {

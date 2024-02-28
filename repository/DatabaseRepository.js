@@ -53,7 +53,8 @@ class DatabaseRepository {
               id INTEGER PRIMARY KEY AUTOINCREMENT, 
               global_id INTEGER,
               created_date TIMESTAMP, 
-              amount DOUBLE
+              amount DOUBLE,
+              saved boolean
             );`,
 
             `CREATE TABLE IF NOT EXISTS sell_history_group (
