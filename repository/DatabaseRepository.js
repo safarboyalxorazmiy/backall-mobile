@@ -62,7 +62,8 @@ class DatabaseRepository {
               id INTEGER PRIMARY KEY AUTOINCREMENT, 
               global_id INTEGER,
               group_id INTEGER,
-              history_id INTEGER, 
+              history_id INTEGER,
+              saved boolean, 
               FOREIGN KEY (group_id) REFERENCES sell_group(id), 
               FOREIGN KEY (history_id) REFERENCES sell_history(id)
             );`,
@@ -74,6 +75,7 @@ class DatabaseRepository {
               count DOUBLE NOT NULL, 
               count_type TEXT NOT NULL,
               profit DOUBLE NOT NULL, 
+              saved boolean,
               created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );`,
 
@@ -81,6 +83,7 @@ class DatabaseRepository {
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               global_id INTEGER,
               created_date TIMESTAMP,
+              saved boolean,
               profit DOUBLE
             );`,
 
@@ -88,7 +91,8 @@ class DatabaseRepository {
               id INTEGER PRIMARY KEY AUTOINCREMENT, 
               global_id INTEGER,
               group_id INTEGER NOT NULL, 
-              history_id INTEGER NOT NULL, 
+              history_id INTEGER NOT NULL,
+              saved boolean, 
               FOREIGN KEY (group_id) REFERENCES profit_group(id), 
               FOREIGN KEY (history_id) REFERENCES profit_history(id)
             );`,
@@ -97,13 +101,15 @@ class DatabaseRepository {
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               global_id INTEGER, 
               date TEXT NOT NULL,
+              saved boolean,
               amount DOUBLE NOT NULL
             );`,
 
             `CREATE TABLE IF NOT EXISTS sell_amount_date (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               global_id INTEGER,
-              date TEXT NOT NULL,
+              date TEXT NOT NULL,              
+              saved boolean,
               amount DOUBLE NOT NULL
             );`,
 

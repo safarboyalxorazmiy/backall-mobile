@@ -63,6 +63,8 @@ class Home extends Component {
 			// PROFIT
 			lastProfitGroupsPage: 0,
 			lastProfitGroupsSize: 10,
+			lastProfitHistoriesPage: 0,
+			lastProfitHistoriesSize: 10,
 		}
 		
 		this.tokenService = new TokenService();
@@ -412,6 +414,52 @@ class Home extends Component {
 	
 			page++;
 			profitGroups.push(response);
+		}
+	}
+
+	async getProfitHistories() {
+		let profitHistories = [];
+		let size = this.state.lastProfitHistoriesSize;
+		let page = this.state.lastProfitHistoriesPage;
+	
+		while (true) {
+			let response;
+			try {
+				response = await this.apiService.getProfitHistories(page, size);
+			} catch (error) {
+				console.error("Error fetching global products:", error);
+				this.setState({
+					lastSize: size,
+					lastPage: page
+				});
+				
+				return false; // Indicate failure
+			}
+	
+			if (!response || !response.content || response.content.length === 0) {
+				console.log(profitHistories);
+				return true; // Indicate success and exit the loop
+			}
+	
+			for (const profitHistory of response.content) {
+				try {
+					await this.profitHistoryRepository.createProfitHistoryWithAllValues(
+						profitHistory.productId,
+						profitHistory.id,
+						profitHistory.count,
+						profitHistory.countType,
+						profitHistory.profit,
+						profitHistory.createdDate,
+						true
+					);
+				} catch (error) {
+					console.error("Error processing product:", error);
+					continue;
+				}
+			}
+	
+			page++;
+			profitHistories.push(response);
 		}
 	}
 

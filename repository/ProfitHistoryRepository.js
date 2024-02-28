@@ -139,19 +139,42 @@ class ProfitHistoryRepository {
     }
   }
 
-  async createProfitHistoryWithAllValues(product_id, count, count_type, profit, saved) {
+  async createProfitHistoryWithAllValues(
+    product_id, 
+    global_id, 
+    count, 
+    count_type, 
+    profit, 
+    saved
+  ) {
     let created_date = new Date();
     
     try {
       const insertProfitHistoryQuery = `
-        INSERT INTO profit_history (product_id, global_id, count, count_type, profit, created_date)
-        VALUES (?, ?, ?, ?, ?, ?);
+        INSERT INTO profit_history (
+          product_id, 
+          global_id, 
+          count, 
+          count_type, 
+          profit, 
+          created_date,
+          saved
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?);
       `;
       
       await this.db.transaction(async (tx) => {
         await tx.executeSql(
           insertProfitHistoryQuery,
-          [product_id, null, count, count_type, profit, created_date.toISOString()]
+          [
+            product_id, 
+            global_id, 
+            count, 
+            count_type, 
+            profit, 
+            created_date.toISOString(),
+            saved ? 1 : 0
+          ]
         );
       });
 
