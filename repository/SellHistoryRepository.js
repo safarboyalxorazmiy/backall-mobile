@@ -439,6 +439,48 @@ class SellHistoryRepository {
     }
   }
 
+  async updateSellHistorySavedTrueById(local_id, global_id) {
+    try {
+      await this.db.transaction((tx) => {
+        tx.executeSql(
+          "UPDATE sell_history SET saved = 1, global_id = ? WHERE id = ?",
+          [global_id, local_id]  // Use prepared statement for security
+        );
+      });
+    } catch (error) {
+      console.error(`Error updating product: ${error}`);
+      throw error; // Re-throw to handle the error in the calling code
+    }
+  }
+
+  async updateSellGroupSavedTrueById(local_id, global_id) {
+    try {
+      await this.db.transaction((tx) => {
+        tx.executeSql(
+          "UPDATE sell_group SET saved = 1, global_id = ? WHERE id = ?",
+          [global_id, local_id]  // Use prepared statement for security
+        );
+      });
+    } catch (error) {
+      console.error(`Error updating product: ${error}`);
+      throw error; // Re-throw to handle the error in the calling code
+    }
+  }
+
+  async updateSellHistoryGroupSavedTrueById(local_id, global_id) {
+    try {
+      await this.db.transaction((tx) => {
+        tx.executeSql(
+          "UPDATE sell_history_group SET saved = 1, global_id = ? WHERE id = ?",
+          [global_id, local_id]  // Use prepared statement for security
+        );
+      });
+    } catch (error) {
+      console.error(`Error updating product: ${error}`);
+      throw error; // Re-throw to handle the error in the calling code
+    }
+  }
+
   async getSellHistoryGroupSavedFalse() {
     try {
       const query = `
@@ -703,7 +745,6 @@ class SellHistoryRepository {
       throw error;
     }
   }
-  
 
   async getSellHistoryDetailByGroupId(group_id) {
     try {
@@ -832,8 +873,6 @@ class SellHistoryRepository {
       throw error;
     }
   }
-
-
 }
 
 export default SellHistoryRepository;

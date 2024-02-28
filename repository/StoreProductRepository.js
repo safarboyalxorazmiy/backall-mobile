@@ -140,6 +140,20 @@ class StoreProductRepository {
     }
   }
 
+  async updateSavedTrueById(local_id, global_id) {
+    try {
+      await this.db.transaction((tx) => {
+        tx.executeSql(
+          "UPDATE store_product SET saved = 1, global_id = ? WHERE id = ?",
+          [global_id, local_id]  // Use prepared statement for security
+        );
+      });
+    } catch (error) {
+      console.error(`Error updating product: ${error}`);
+      throw error; // Re-throw to handle the error in the calling code
+    }
+  }
+
   async getStoreProductsInfo() {
     return new Promise((resolve, reject) => {
       this.db.transaction((tx) => {

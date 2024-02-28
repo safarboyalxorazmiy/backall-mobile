@@ -96,7 +96,6 @@ class App extends Component {
 									);
 	
 									await this.productRepository.updateSavedTrueByProductId(product.id, response.id);
-
 								} catch (e) {
 									continue;
 								}
@@ -112,7 +111,7 @@ class App extends Component {
 								try {
 									let products = await this.productRepository.findProductsById(storeProduct.product_id);
 
-									await this.apiService.createStoreProducts(
+									let response = await this.apiService.createStoreProducts(
 										products[0].id,
 										storeProduct.nds,
 										storeProduct.price,
@@ -121,6 +120,8 @@ class App extends Component {
 										storeProduct.count,
 										storeProduct.count_type
 									);
+
+									await this.storeProductRepository.updateSavedTrueById(storeProduct.id, response.id);
 								} catch (e) {
 									continue;
 								}
@@ -133,7 +134,15 @@ class App extends Component {
 							let sellGroups = await this.sellHistoryRepository.getSellGroupSavedFalse();
 							for (const sellGroup of sellGroups) {
 								try {
-									await this.apiService.createSellGroup(sellGroup.created_date, sellGroup.amount);
+									let response = await this.apiService.createSellGroup(
+										sellGroup.created_date, 
+										sellGroup.amount
+									);
+
+									await this.sellHistoryRepository.updateSellGroupSavedTrueById(
+										sellGroup.id, 
+										response.id
+									);
 								} catch (e) {
 									continue;
 								}
@@ -147,12 +156,17 @@ class App extends Component {
 								try {
 									let products = await this.productRepository.findProductsById(sellHistory.product_id);
 
-									await this.apiService.createSellHistory(
+									let response = await this.apiService.createSellHistory(
 										products[0].id,
 										sellHistory.count,
 										sellHistory.count_type,
 										sellHistory.selling_price,
 										sellHistory.created_date
+									);
+
+									await this.sellHistoryRepository.updateSellHistoryGroupSavedTrueById(
+										sellHistory.id, 
+										response.id
 									);
 								} catch (e) {
 									continue;
@@ -173,10 +187,15 @@ class App extends Component {
 										sellHistoryGroup.group_id
 									);
 									
-									await this.apiService.createSellHistoryGroup(
+									let response = await this.apiService.createSellHistoryGroup(
 										sellHistory[0].global_id,
 										sellGroup[0].global_id
 									);
+
+									this.sellHistoryRepository.updateSellHistoryGroupSavedTrueById(
+										sellHistoryGroup.id,
+										response.id
+									)
 								} catch (e) {
 									continue;
 								}
