@@ -36,6 +36,20 @@ class ProductRepository {
     }
   }
 
+  async updateSavedTrueByProductId(local_id, global_id) {
+    try {
+      await this.db.transaction((tx) => {
+        tx.executeSql(
+          "UPDATE product SET saved = 1, global_id = ? WHERE id = ?",
+          [global_id, local_id]  // Use prepared statement for security
+        );
+      });
+    } catch (error) {
+      console.error(`Error updating product: ${error}`);
+      throw error; // Re-throw to handle the error in the calling code
+    }
+  }
+
   async createProduct(name, brand_name, serial_number) {
     try {
       const result = await new Promise((resolve, reject) => {
@@ -212,6 +226,49 @@ class ProductRepository {
       return [];
     }
   }  
+
+  async findProductsBySavedFalse() {
+    try {
+      const result = await new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+          tx.executeSql(
+            "SELECT * FROM product WHERE saved = 0;",
+            [],
+            (_, results) => {
+              console.log('Results:', results.rows);
+  
+              const products = Array.from(results.rows._array).map((row) => {
+                if (row) {
+                  return {
+                    id: row.id,
+                    name: row.name,
+                    brand_name: row.brand_name,
+                    serial_number: row.serial_number,
+                    type: row.type,
+                    global_id: row.global_id
+                  };
+                } else {
+                  console.warn("Received undefined row in query results.");
+                  return null; // or handle it according to your needs
+                }
+              });
+  
+              resolve(products);
+            },
+            (_, error) => {
+              console.error("Error executing SQL query:", error);
+              reject(error);
+            }
+          );
+        });
+      });
+  
+      return result || []; // Ensure result is an array, return empty array if undefined
+    } catch (error) {
+      console.error(`Error finding products by serial number: ${error}`);
+      return [];
+    }
+  }
 
   async getProductNameAndBrandById(product_id) {
     try {

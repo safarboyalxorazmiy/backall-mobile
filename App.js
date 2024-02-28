@@ -9,6 +9,9 @@ import NavigationService from "./service/NavigationService";
 import {GestureHandlerRootView} from "react-native-gesture-handler";
 import TokenService from "./service/TokenService";
 import DatabaseRepository from "./repository/DatabaseRepository";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import ProductRepository from "./repository/ProductRepository";
+import ApiService from "./service/ApiService";
 
 const tokenService = new TokenService();
 
@@ -24,6 +27,9 @@ class App extends Component {
 		
 		const {navigation} = this.props;
 		tokenService.checkTokens(navigation);
+
+		this.productRepository = new ProductRepository();
+		this.apiService = new ApiService();
 	}
 	
 	async loadCustomFonts() {
@@ -59,7 +65,7 @@ class App extends Component {
 				this.setState({isConnected: state.isConnected});
 			});
 			
-			this.logInternetStatusInterval = setInterval(() => {
+			this.logInternetStatusInterval = setInterval(async () => {
 				console.log(
 					"Is connected?", 
 					this.state.isConnected === null ? "Loading..." : 
@@ -68,7 +74,62 @@ class App extends Component {
 
 				if (this.state.isConnected) {
 					// internet exist do something
-					
+					// 
+
+					let isNotSaved = await AsyncStorage.getItem("isNotSaved");
+					if (isNotSaved == true) {
+						// PRODUCT
+						let productNotSaved = await AsyncStorage.getItem("productNotSaved");
+						if (productNotSaved) {
+							let notSavedProducts = 
+								await productRepository.findProductsBySavedFalse();
+							for (const product of notSavedProducts) {
+								try {
+									let response = await this.apiService.createLocalProduct(
+										product.serial_number, 
+										product.name, 
+										product.brand_name
+									);
+	
+									await this.productRepository.updateSavedTrueByProductId(product.id, response.id);
+								} catch (e) {
+									continue;
+								}
+							}
+						}
+
+						// SELL
+						let sellGroupNotSaved = await AsyncStorage.getItem("sellGroupNotSaved");
+						if (sellGroupNotSaved) {
+
+						}
+
+						let sellHistoryNotSaved = await AsyncStorage.getItem("sellHistoryNotSaved");
+						if (sellHistoryNotSaved) {
+
+						}
+
+						let sellHistoryGroupNotSaved = await AsyncStorage.getItem("sellHistoryGroupNotSaved");
+						if (sellHistoryGroupNotSaved) {
+
+						}
+
+						// PROFIT
+						let profitGroupNotSaved = await AsyncStorage.getItem("profitGroupNotSaved");
+						if (profitGroupNotSaved) {
+
+						}
+
+						let profitHistoryNotSaved = await AsyncStorage.getItem("profitHistoryNotSaved");
+						if (profitHistoryNotSaved) {
+
+						}
+
+						let profitHistoryGroupNotSaved = await AsyncStorage.getItem("profitHistoryGroupNotSaved");
+						if (profitHistoryGroupNotSaved) {
+							
+						}
+					}
 				}
 			}, 5000);
 		}
