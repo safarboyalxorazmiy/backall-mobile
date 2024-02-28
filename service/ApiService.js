@@ -99,6 +99,7 @@ class ApiService {
     return response.json();
   }
 
+  // CREATE SELL
   async createSellGroup(
     createdDate,
     amount
@@ -214,6 +215,123 @@ class ApiService {
     return response.json();
   }
 
+  // CREATE PROFIT
+  async createProfitGroup(
+    createdDate,
+    profit
+  ) {
+    const accessToken = await this.tokenService.retrieveAccessToken();
+    const storeId = 1;
+
+    console.log({
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`
+      }
+    })
+  
+    if (!storeId) {
+      return new Error('Invalid storeId');
+    }
+  
+    const url = `${serverUrl}/api/v1/store/profit/group/create`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        createdDate: createdDate,
+        storeId: storeId,
+        profit: profit
+      })
+    });
+  
+    if (!response.ok) {
+      return new Error('Network response was not ok');
+    }
+  
+    return response.json();
+  }
+
+  async createProfitHistory(
+    productId,
+    count,
+    countType,
+    profit,
+    createdDate
+  ) {
+    const accessToken = await this.tokenService.retrieveAccessToken();
+    const storeId = 1;
+
+    if (!storeId) {
+      return new Error('Invalid storeId');
+    }
+  
+    const url = `${serverUrl}/api/v1/store/profit/group/create`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        productId: productId,
+        storeId: storeId,
+        count: count,
+        countType: countType,
+        profit: profit,
+        createdDate: createdDate
+      })
+    });
+  
+    if (!response.ok) {
+      return new Error('Network response was not ok');
+    }
+  
+    return response.json();
+  }
+
+  async createProfitHistoryGroup(
+    profitHistoryId, profitGroupId
+  ) {
+    const accessToken = await this.tokenService.retrieveAccessToken();
+    const storeId = 1;
+
+    console.log({
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`
+      }
+    })
+  
+    if (!storeId) {
+      return new Error('Invalid storeId');
+    }
+  
+    const url = `${serverUrl}/api/v1/store/profit/link/create`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        profitHistoryId: profitHistoryId,
+        profitGroupId: profitGroupId,
+        storeId: storeId
+      })
+    });
+  
+    if (!response.ok) {
+      return new Error('Network response was not ok');
+    }
+  
+    return response.json();
+  }
+
+
   async getStoreId() {
     return await AsyncStorage.getItem("store_id");
   }
@@ -257,36 +375,37 @@ class ApiService {
   }
 
   async login(email, password, pinCode) {
-  try {
-      const response = await fetch(serverUrl + "/api/v1/auth/authenticate", {
-          method: "POST",
-          headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-              email: email,
-              password: password,
-              pinCode: pinCode
-          }),
-      });
+    try {
+        const response = await fetch(serverUrl + "/api/v1/auth/authenticate", {
+            method: "POST",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password,
+                pinCode: pinCode
+            }),
+        });
 
-      // Check if the response is ok
-      if (response.ok) {
-          // Return the parsed JSON response directly
-          return response.json();
-      } else {
-          // Handle non-successful responses
-          console.error('Request failed with status:', response.status);
-          return false; // Return false indicating failure
-      }
-  } catch (error) {
-      // Handle fetch errors
-      console.error('Error:', error);
-      return false; // Return false indicating failure
-  }
+        // Check if the response is ok
+        if (response.ok) {
+            // Return the parsed JSON response directly
+            return response.json();
+        } else {
+            // Handle non-successful responses
+            console.error('Request failed with status:', response.status);
+            return false; // Return false indicating failure
+        }
+    } catch (error) {
+        // Handle fetch errors
+        console.error('Error:', error);
+        return false; // Return false indicating failure
+    }
   }
 
+  // PRODUCTS
   async getLocalProducts(page, size) {
     const accessToken = await this.tokenService.retrieveAccessToken();
     const storeId = 1;
@@ -340,6 +459,30 @@ class ApiService {
     return response.json();
   }
 
+  async getStoreProducts(page, size) {
+    const accessToken = await this.tokenService.retrieveAccessToken();
+    const storeId = 1;
+  
+    if (!storeId) {
+      return new Error('Invalid storeId');
+    }
+  
+    const url = `${serverUrl}/api/v1/store/product/get/info?storeId=${storeId}&page=${page}&size=${size}`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`
+      }
+    });
+  
+    if (!response.ok) {
+      return new Error('Network response was not ok');
+    }
+  
+    return response.json();
+  }
+
+  // GET SELL PAGINATION 
   async getSellGroups(page, size) {
     const accessToken = await this.tokenService.retrieveAccessToken();
     const storeId = 1;
@@ -409,6 +552,7 @@ class ApiService {
     return response.json();
   }
 
+  // GET PROFIT PAGINATION
   async getProfitGroups(page, size) {
     const accessToken = await this.tokenService.retrieveAccessToken();
     const storeId = 1;
@@ -478,28 +622,6 @@ class ApiService {
     return response.json();
   }
 
-  async getStoreProducts(page, size) {
-    const accessToken = await this.tokenService.retrieveAccessToken();
-    const storeId = 1;
-  
-    if (!storeId) {
-      return new Error('Invalid storeId');
-    }
-  
-    const url = `${serverUrl}/api/v1/store/product/get/info?storeId=${storeId}&page=${page}&size=${size}`;
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${accessToken}`
-      }
-    });
-  
-    if (!response.ok) {
-      return new Error('Network response was not ok');
-    }
-  
-    return response.json();
-  }
 }
 
 export default ApiService;

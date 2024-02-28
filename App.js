@@ -14,6 +14,7 @@ import ProductRepository from "./repository/ProductRepository";
 import ApiService from "./service/ApiService";
 import StoreProductRepository from "./repository/StoreProductRepository";
 import SellHistoryRepository from "./repository/SellHistoryRepository";
+import ProfitHistoryRepository from "./repository/ProfitHistoryRepository";
 
 const tokenService = new TokenService();
 
@@ -33,6 +34,7 @@ class App extends Component {
 		this.productRepository = new ProductRepository();
 		this.storeProductRepository = new StoreProductRepository();
 		this.sellHistoryRepository = new SellHistoryRepository();
+		this.profitHistoryRepository = new ProfitHistoryRepository();
 		this.apiService = new ApiService();
 	}
 	
@@ -82,6 +84,7 @@ class App extends Component {
 
 					let isNotSaved = await AsyncStorage.getItem("isNotSaved");
 					if (isNotSaved == true) {
+						
 						// PRODUCT
 						let productNotSaved = await AsyncStorage.getItem("productNotSaved");
 						if (productNotSaved == "true") {
@@ -205,17 +208,81 @@ class App extends Component {
 						// PROFIT
 						let profitGroupNotSaved = await AsyncStorage.getItem("profitGroupNotSaved");
 						if (profitGroupNotSaved == "true") {
+							let profitGroups = await this.profitHistoryRepository.getProfitGroupSavedFalse();
+							for (const profitGroup of profitGroups) {
+								try {
+									let response = await this.apiService.createProfitGroup(
+										profitGroup.created_date, 
+										profitGroup.profit
+									);
 
+									await this.profitHistoryRepository.updateProfitGroupSavedTrueById(
+										profitGroup.id, 
+										response.id
+									);
+								} catch (e) {
+									continue;
+								}
+							}
 						}
 
 						let profitHistoryNotSaved = await AsyncStorage.getItem("profitHistoryNotSaved");
 						if (profitHistoryNotSaved == "true") {
+							let profitHistories = await this.profitHistoryRepository.getProfitHistorySavedFalse();
+							for (const profitHistory of profitHistories) {
+								try {
+									let products = await this.productRepository.findProductsById(
+										profitHistory.product_id
+									);
 
+									let response = await this.apiService.createProfitHistory(
+										products[0].id,
+										profitHistory.count,
+										profitHistory.count_type,
+										profitHistory.profit,
+										profitHistory.created_date
+									);
+
+									await this.profitHistoryRepository.updateProfitHistoryGroupSavedTrueById(
+										profitHistory.id, 
+										response.id
+									);
+								} catch (e) {
+									continue;
+								}
+							}
 						}
 
 						let profitHistoryGroupNotSaved = await AsyncStorage.getItem("profitHistoryGroupNotSaved");
 						if (profitHistoryGroupNotSaved == "true") {
-							
+							let profitHistoryGroups = 
+								await this.profitHistoryRepository.getProfitHistorySavedFalse();
+							for (const profitHistoryGroup of profitHistoryGroups) {
+								try {
+									let profitHistory = 
+										await this.profitHistoryRepository.findProfitHistoryById(
+											profitHistoryGroup.history_id
+										);
+
+									let profitGroup = 
+										await this.profitHistoryRepository.findProfitGroupById(
+											profitHistoryGroup.group_id
+										);
+
+									let response = 
+										await this.apiService.createProfitHistoryGroup(
+											profitHistory[0].global_id,
+											profitGroup[0].global_id
+										);
+
+									this.profitHistoryRepository.updateProfitHistoryGroupSavedTrueById(
+										profitHistoryGroup.id,
+										response.id
+									);
+								} catch (e) {
+									continue;
+								}
+							}
 						}
 					}
 				}

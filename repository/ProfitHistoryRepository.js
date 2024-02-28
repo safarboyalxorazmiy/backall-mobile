@@ -280,6 +280,268 @@ class ProfitHistoryRepository {
     }
   }
 
+  // PROFIT GETTING SAVED FALSE:::
+  async getProfitHistoryGroupSavedFalse() {
+    try {
+      const query = `
+        SELECT * FROM profit_history_group WHERE saved = 0;
+      `;
+
+      const result = await new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+          tx.executeSql(
+            query,
+            [],
+            (_, resultSet) => resolve(resultSet),
+            (_, error) => reject(error)
+          );
+        });
+      });
+  
+      if (!result || !result.rows || !result.rows._array) {
+        console.error("Unexpected result structure:", result);
+        throw new Error("Unexpected result structure");
+      }
+  
+      const rows = result.rows._array;
+      return rows;
+    } catch (error) {
+      console.error("Error retrieving sell history:", error);
+      throw error;
+    }
+  }
+
+  async getProfitGroupSavedFalse() {
+    try {
+      const query = `
+        SELECT * FROM profit_group WHERE saved = 0;
+      `;
+
+      const result = await new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+          tx.executeSql(
+            query,
+            [],
+            (_, resultSet) => resolve(resultSet),
+            (_, error) => reject(error)
+          );
+        });
+      });
+  
+      if (!result || !result.rows || !result.rows._array) {
+        console.error("Unexpected result structure:", result);
+        throw new Error("Unexpected result structure");
+      }
+  
+      const rows = result.rows._array;
+      return rows;
+    } catch (error) {
+      console.error("Error retrieving sell history:", error);
+      throw error;
+    }
+  }
+
+  async getProfitHistorySavedFalse() {
+    try {
+      const query = `
+        SELECT * FROM profit_history WHERE saved = 0;
+      `;
+
+      const result = await new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+          tx.executeSql(
+            query,
+            [],
+            (_, resultSet) => resolve(resultSet),
+            (_, error) => reject(error)
+          );
+        });
+      });
+  
+      if (!result || !result.rows || !result.rows._array) {
+        console.error("Unexpected result structure:", result);
+        throw new Error("Unexpected result structure");
+      }
+  
+      const rows = result.rows._array;
+      return rows;
+    } catch (error) {
+      console.error("Error retrieving sell history:", error);
+      throw error;
+    }
+  }
+  //#############################
+
+
+  // PROFIT UPDATING SAVED TRUE
+  async updateProfitGroupSavedTrueById(local_id, global_id) {
+    try {
+      await this.db.transaction((tx) => {
+        tx.executeSql(
+          "UPDATE profit_group SET saved = 1, global_id = ? WHERE id = ?",
+          [global_id, local_id]  // Use prepared statement for security
+        );
+      });
+    } catch (error) {
+      console.error(`Error updating product: ${error}`);
+      throw error; // Re-throw to handle the error in the calling code
+    }
+  }
+
+  async updateProfitHistorySavedTrueById(local_id, global_id) {
+    try {
+      await this.db.transaction((tx) => {
+        tx.executeSql(
+          "UPDATE profit_history SET saved = 1, global_id = ? WHERE id = ?",
+          [global_id, local_id]  // Use prepared statement for security
+        );
+      });
+    } catch (error) {
+      console.error(`Error updating product: ${error}`);
+      throw error; // Re-throw to handle the error in the calling code
+    }
+  }
+
+  async updateProfitHistoryGroupSavedTrueById(local_id, global_id) {
+    try {
+      await this.db.transaction((tx) => {
+        tx.executeSql(
+          "UPDATE profit_history_group SET saved = 1, global_id = ? WHERE id = ?",
+          [global_id, local_id]  // Use prepared statement for security
+        );
+      });
+    } catch (error) {
+      console.error(`Error updating product: ${error}`);
+      throw error; // Re-throw to handle the error in the calling code
+    }
+  }
+  //#############################
+
+  // PROFIT GETTING SAVED FALSE:::
+  async getProfitHistoryGroupSavedFalse() {
+    try {
+      const query = `
+        SELECT * FROM profit_history_group WHERE saved = 0;
+      `;
+
+      const result = await new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+          tx.executeSql(
+            query,
+            [],
+            (_, resultSet) => resolve(resultSet),
+            (_, error) => reject(error)
+          );
+        });
+      });
+  
+      if (!result || !result.rows || !result.rows._array) {
+        console.error("Unexpected result structure:", result);
+        throw new Error("Unexpected result structure");
+      }
+  
+      const rows = result.rows._array;
+      return rows;
+    } catch (error) {
+      console.error("Error retrieving sell history:", error);
+      throw error;
+    }
+  }
+
+  async getProfitGroupSavedFalse() {
+    try {
+      const query = `
+        SELECT * FROM profit_group WHERE saved = 0;
+      `;
+
+      const result = await new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+          tx.executeSql(
+            query,
+            [],
+            (_, resultSet) => resolve(resultSet),
+            (_, error) => reject(error)
+          );
+        });
+      });
+  
+      if (!result || !result.rows || !result.rows._array) {
+        console.error("Unexpected result structure:", result);
+        throw new Error("Unexpected result structure");
+      }
+  
+      const rows = result.rows._array;
+      return rows;
+    } catch (error) {
+      console.error("Error retrieving sell history:", error);
+      throw error;
+    }
+  }
+  //#############################
+
+  // PROFIT BY ID
+  async findProfitHistoryById(id) {
+    try {
+      const query = `
+        SELECT * FROM profit_history WHERE id = ?;
+      `;
+
+      const result = await new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+          tx.executeSql(
+            query,
+            [id],
+            (_, resultSet) => resolve(resultSet),
+            (_, error) => reject(error)
+          );
+        });
+      });
+  
+      if (!result || !result.rows || !result.rows._array) {
+        console.error("Unexpected result structure:", result);
+        throw new Error("Unexpected result structure");
+      }
+  
+      const rows = result.rows._array;
+      return rows;
+    } catch (error) {
+      console.error("Error retrieving sell history:", error);
+      throw error;
+    }
+  }
+
+  async findProfitGroupById(id) {
+    try {
+      const query = `
+        SELECT * FROM profit_group WHERE id = ?;
+      `;
+
+      const result = await new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+          tx.executeSql(
+            query,
+            [id],
+            (_, resultSet) => resolve(resultSet),
+            (_, error) => reject(error)
+          );
+        });
+      });
+  
+      if (!result || !result.rows || !result.rows._array) {
+        console.error("Unexpected result structure:", result);
+        throw new Error("Unexpected result structure");
+      }
+  
+      const rows = result.rows._array;
+      return rows;
+    } catch (error) {
+      console.error("Error retrieving sell history:", error);
+      throw error;
+    }
+  }
+  //#############################
+
+
   async getLastIdOfProfitHistory(product_id, created_date) {
     try {
       const query = `
