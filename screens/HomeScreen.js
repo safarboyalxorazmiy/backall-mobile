@@ -23,6 +23,7 @@ import ApiService from "../service/ApiService";
 import ProductRepository from "../repository/ProductRepository";
 import NetInfo from "@react-native-community/netinfo";
 import SellHistoryRepository from "../repository/SellHistoryRepository";
+import ProfitHistoryRepository from "../repository/ProfitHistoryRepository";
 
 const tokenService = new TokenService();
 const databaseService = new DatabaseService();
@@ -57,7 +58,11 @@ class Home extends Component {
 			lastSellHistoriesPage: 0,
 			lastSellHistoriesSize: 10,
 			lastSellHistoryGroupPage: 0,
-			lastSellHistoryGroupSize: 10,			
+			lastSellHistoryGroupSize: 10,	
+
+			// PROFIT
+			lastProfitGroupsPage: 0,
+			lastProfitGroupsSize: 10,
 		}
 		
 		this.tokenService = new TokenService();
@@ -65,6 +70,7 @@ class Home extends Component {
 		this.apiService = new ApiService();
 		this.productRepository = new ProductRepository();
 		this.sellHistoryRepository = new SellHistoryRepository();
+		this.profitHistoryRepository = new ProfitHistoryRepository();
 
 		this.getAmountInfo();
 	}
@@ -107,7 +113,8 @@ class Home extends Component {
 									await this.getGlobalProducts() && 
 									await this.getSellGroups() &&
 									await this.getSellHistories() &&
-									await this.getSellHistoryGroup(); // storing products
+									await this.getSellHistoryGroup() &&
+									await this.getProfitGroups(); // storing products
 		
 								// storing result of product storing
 								await AsyncStorage.setItem("isDownloaded", isDownloaded.toString());
@@ -132,6 +139,7 @@ class Home extends Component {
 		);
 	}
 
+	// PRODUCT PAGINATION
 	async getLocalProducts() {
 		let products = [];
 		let size = this.state.lastLocalProductsSize;
@@ -226,6 +234,7 @@ class Home extends Component {
 		}
 	}
 
+	// SELL PAGINATION
 	async getSellGroups() {
 		let sellGroups = [];
 		let size = this.state.lastSellGroupsSize;
@@ -360,6 +369,53 @@ class Home extends Component {
 			sellHistoryGroup.push(response);
 		}
 	}
+
+	// PROFIT
+	async getProfitGroups() {
+		let profitGroups = [];
+		let size = this.state.lastProfitGroupsSize;
+		let page = this.state.lastProfitGroupsPage;
+	
+		while (true) {
+			let response;
+			try {
+				response = await this.apiService.getProfitGroups(page, size);
+			} catch (error) {
+				console.error("Error fetching global products:", error);
+				this.setState({
+					lastSize: size,
+					lastPage: page
+				});
+				
+				return false; // Indicate failure
+			}
+	
+			if (!response || !response.content || response.content.length === 0) {
+				console.log(profitGroups);
+				return true; // Indicate success and exit the loop
+			}
+	
+			for (const profitGroup of response.content) {
+				try {
+					await this.profitHistoryRepository.createProfitHistoryGroupWithAllValues(
+						profitGroup.createdDate,
+						profitGroup.profit,
+						profitGroup.id,
+						true
+					);
+				} catch (error) {
+					console.error("Error processing product:", error);
+					// Continue with next product
+					continue;
+				}
+			}
+	
+			page++;
+			profitGroups.push(response);
+		}
+	}
+
+
 
 	async getAmountInfo() {
 		// HOW TO GET yyyy-mm-dd from new Date()

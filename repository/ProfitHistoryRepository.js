@@ -27,6 +27,30 @@ class ProfitHistoryRepository {
     }
   }
 
+  async createProfitHistoryGroupWithAllValues(created_date, profit, global_id, saved) {
+    try {
+      const query = `
+        INSERT INTO profit_group (created_date, global_id, profit, saved)
+        VALUES (?, ?, ?, ?);`;
+
+      // Execute the query
+      await this.db.transaction(async (tx) => {
+        await tx.executeSql(query, [
+          created_date.toISOString(), 
+          global_id, 
+          profit, 
+          saved ? 1 : 0
+        ]);
+      });
+
+      let lastProfitHistoryGroup = await this.getLastProfitHistoryGroupId();
+      return lastProfitHistoryGroup.id;
+    } catch (error) {
+      console.error("Error creating profit group:", error);
+      throw error;
+    }
+  }
+
   async getLastProfitHistoryGroupId() {
     try {
       const query = `
@@ -93,6 +117,29 @@ class ProfitHistoryRepository {
   }
 
   async createProfitHistory(product_id, count, count_type, profit) {
+    let created_date = new Date();
+    
+    try {
+      const insertProfitHistoryQuery = `
+        INSERT INTO profit_history (product_id, global_id, count, count_type, profit, created_date)
+        VALUES (?, ?, ?, ?, ?, ?);
+      `;
+      
+      await this.db.transaction(async (tx) => {
+        await tx.executeSql(
+          insertProfitHistoryQuery,
+          [product_id, null, count, count_type, profit, created_date.toISOString()]
+        );
+      });
+
+      let lastIdOfProfitHistory = await this.getLastIdOfProfitHistory(product_id, created_date.toISOString());
+      return lastIdOfProfitHistory.id;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async createProfitHistoryWithAllValues(product_id, count, count_type, profit, saved) {
     let created_date = new Date();
     
     try {
