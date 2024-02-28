@@ -178,6 +178,29 @@ class ApiService {
   
     return response.json();
   }
+
+  async getSellHistoryGroup(page, size) {
+    const accessToken = await this.tokenService.retrieveAccessToken();
+    const storeId = 1;
+  
+    if (!storeId) {
+      return new Error('Invalid storeId');
+    }
+  
+    const url = `${serverUrl}/api/v1/store/sell/link/info?storeId=${storeId}&page=${page}&size=${size}`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`
+      }
+    });
+  
+    if (!response.ok) {
+      return new Error('Network response was not ok');
+    }
+  
+    return response.json();
+  }
 }
 
 export default ApiService;

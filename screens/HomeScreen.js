@@ -45,14 +45,19 @@ class Home extends Component {
 			isConnected: null,
 			isLoading: false,
 			isDownloaded: "false",
+			// PRODUCT
 			lastLocalProductsPage: 0,
 			lastLocalProductsSize: 10,
 			lastGlobalProductsPage: 0,
 			lastGlobalProductsSize: 10,
+
+			// SELL
 			lastSellGroupsPage: 0,
 			lastSellGroupsSize: 10,
 			lastSellHistoriesPage: 0,
-			lastSellHistoriesSize: 10
+			lastSellHistoriesSize: 10,
+			lastSellHistoryGroupPage: 0,
+			lastSellHistoryGroupSize: 10,			
 		}
 		
 		this.tokenService = new TokenService();
@@ -101,7 +106,8 @@ class Home extends Component {
 									await this.getLocalProducts() && 
 									await this.getGlobalProducts() && 
 									await this.getSellGroups() &&
-									await this.getSellHistories(); // storing products
+									await this.getSellHistories() &&
+									await this.getSellHistoryGroup(); // storing products
 		
 								// storing result of product storing
 								await AsyncStorage.setItem("isDownloaded", isDownloaded.toString());
@@ -308,6 +314,50 @@ class Home extends Component {
 	
 			page++;
 			sellHistories.push(response);
+		}
+	}
+
+	async getSellHistoryGroup() {
+		let sellHistoryGroup = [];
+		let size = this.state.lastSellHistoryGroupSize;
+		let page = this.state.lastSellHistoryGroupPage;
+	
+		while (true) {
+			let response;
+			try {
+				response = await this.apiService.getSellHistoryGroup(page, size);
+			} catch (error) {
+				console.error("Error fetching global products:", error);
+				this.setState({
+					lastSize: size,
+					lastPage: page
+				});
+				
+				return false; // Indicate failure
+			}
+	
+			if (!response || !response.content || response.content.length === 0) {
+				console.log(sellHistoryGroup);
+				return true; // Indicate success and exit the loop
+			}
+	
+			for (const sellHistoryGroup of response.content) {
+				try {
+					await this.sellHistoryRepository.createSellHistoryGroupWithAllValues(
+						sellHistoryGroup.sellHistoryId,
+						sellHistoryGroup.sellGroupId,
+						sellHistoryGroup.id,
+						true
+					);
+				} catch (error) {
+					console.error("Error processing product:", error);
+					// Continue with next product
+					continue;
+				}
+			}
+	
+			page++;
+			sellHistoryGroup.push(response);
 		}
 	}
 

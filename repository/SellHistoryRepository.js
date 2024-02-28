@@ -49,7 +49,12 @@ class SellHistoryRepository {
 
       // Execute the query
       await this.db.transaction(async (tx) => {
-        await tx.executeSql(query, [created_date.toISOString(), global_id, amount, saved ? 1 : 0]);
+        await tx.executeSql(query, [
+          created_date.toISOString(), 
+          global_id, 
+          amount, 
+          saved ? 1 : 0
+        ]);
       });
 
       console.log("Sell group created successfully.");
@@ -255,6 +260,30 @@ class SellHistoryRepository {
 
     console.log("SELL HISTORY LINKED");
     console.log("History Id: " + historyId + " Group Id: " + group_id);
+  }
+
+  async createSellHistoryGroupWithAllValues( 
+    history_id,
+    group_id,
+    global_id,
+    saved
+  ) {
+    const insert = `
+      INSERT INTO sell_history_group(
+        group_id, 
+        history_id,
+        global_id,
+        saved
+      ) 
+      VALUES (?, ?, ?);
+    `;
+
+    await this.db.transaction(async (tx) => {
+      await tx.executeSql(
+        insert,
+        [group_id, history_id, global_id, saved ? 1 : 0]
+      );
+    });
   }
 
   async getLastIdOfSellHistory(product_id, created_date) {
