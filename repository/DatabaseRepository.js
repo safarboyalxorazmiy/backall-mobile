@@ -18,11 +18,11 @@ class DatabaseRepository {
           const queries = [
             `CREATE TABLE IF NOT EXISTS product(
               id INTEGER PRIMARY KEY, 
-              global_id INTEGER,
               name TEXT NOT NULL, 
               brand_name TEXT NOT NULL, 
               serial_number TEXT NOT NULL,
               type TEXT NOT NULL,
+              global_id INTEGER,
               saved boolean
             );`, 
             
@@ -40,29 +40,29 @@ class DatabaseRepository {
             
             `CREATE TABLE IF NOT EXISTS sell_history (
               id INTEGER PRIMARY KEY AUTOINCREMENT, 
-              global_id INTEGER,
               product_id INTEGER, 
               count DOUBLE, 
               count_type TEXT, 
               selling_price DOUBLE, 
               created_date TIMESTAMP, 
+              global_id INTEGER,
               saved boolean,
               FOREIGN KEY (product_id) REFERENCES product(id)
             );`,
 
             `CREATE TABLE IF NOT EXISTS sell_group (
               id INTEGER PRIMARY KEY AUTOINCREMENT, 
-              global_id INTEGER,
               created_date TIMESTAMP, 
               amount DOUBLE,
+              global_id INTEGER,
               saved boolean
             );`,
 
             `CREATE TABLE IF NOT EXISTS sell_history_group (
               id INTEGER PRIMARY KEY AUTOINCREMENT, 
-              global_id INTEGER,
               group_id INTEGER,
               history_id INTEGER,
+              global_id INTEGER,
               saved boolean, 
               FOREIGN KEY (group_id) REFERENCES sell_group(id), 
               FOREIGN KEY (history_id) REFERENCES sell_history(id)
@@ -70,38 +70,39 @@ class DatabaseRepository {
           
             `CREATE TABLE IF NOT EXISTS profit_history (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
-              global_id INTEGER,
               product_id INTEGER NOT NULL, 
               count DOUBLE NOT NULL, 
               count_type TEXT NOT NULL,
               profit DOUBLE NOT NULL, 
-              saved boolean,
               created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+              global_id INTEGER,
+              saved boolean,
             );`,
 
             `CREATE TABLE IF NOT EXISTS profit_group (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
-              global_id INTEGER,
               created_date TIMESTAMP,
-              saved boolean,
               profit DOUBLE
+              global_id INTEGER,
+              saved boolean,
             );`,
 
             `CREATE TABLE IF NOT EXISTS profit_history_group (
               id INTEGER PRIMARY KEY AUTOINCREMENT, 
               global_id INTEGER,
-              group_id INTEGER NOT NULL, 
               history_id INTEGER NOT NULL,
+              group_id INTEGER NOT NULL, 
               saved boolean, 
               FOREIGN KEY (group_id) REFERENCES profit_group(id), 
               FOREIGN KEY (history_id) REFERENCES profit_history(id)
             );`,
 
+
+            // DATE AMOUNTS.
             `CREATE TABLE IF NOT EXISTS profit_amount_date (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               global_id INTEGER, 
               date TEXT NOT NULL,
-              saved boolean,
               amount DOUBLE NOT NULL
             );`,
 
@@ -109,7 +110,6 @@ class DatabaseRepository {
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               global_id INTEGER,
               date TEXT NOT NULL,              
-              saved boolean,
               amount DOUBLE NOT NULL
             );`,
 

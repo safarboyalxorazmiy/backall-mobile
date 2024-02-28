@@ -149,11 +149,12 @@ class SellHistoryRepository {
       const query = `
         INSERT INTO sell_history (
           product_id, 
-          global_id,
           count, 
           count_type, 
           selling_price, 
-          created_date
+          created_date,
+          global_id,
+          saved
         )
         VALUES (?, ?, ?, ?, ?, ?);
       `;
@@ -161,11 +162,12 @@ class SellHistoryRepository {
       await this.db.transaction(async (tx) => {
         await tx.executeSql(query, [
             product_id, 
-            null,
             count, 
             count_type, 
             selling_price,
-            created_date.toISOString()
+            created_date.toISOString(),
+            null,
+            0
           ]);
       });
 
@@ -198,11 +200,11 @@ class SellHistoryRepository {
       const query = `
         INSERT INTO sell_history (
           product_id, 
-          global_id,
           count, 
           count_type, 
           selling_price, 
           created_date,
+          global_id,
           saved
         )
         VALUES (?, ?, ?, ?, ?, ?, ?);
@@ -211,11 +213,11 @@ class SellHistoryRepository {
       await this.db.transaction(async (tx) => {
         await tx.executeSql(query, [
             product_id, 
-            global_id,
             count, 
             count_type, 
             selling_price,
             created_date.toISOString(),
+            global_id,
             saved ? 1 : 0
           ]);
       });
@@ -245,16 +247,17 @@ class SellHistoryRepository {
     const insert = `
       INSERT INTO sell_history_group(
         group_id, 
+        history_id,
         global_id,
-        history_id
+        saved
       ) 
-      VALUES (?, ?, ?);
+      VALUES (?, ?, ?, ?);
     `;
 
     await this.db.transaction(async (tx) => {
       await tx.executeSql(
         insert,
-        [group_id, null, historyId]
+        [group_id, historyId, null, 0]
       );
     });
 
@@ -275,7 +278,7 @@ class SellHistoryRepository {
         global_id,
         saved
       ) 
-      VALUES (?, ?, ?);
+      VALUES (?, ?, ?, ?);
     `;
 
     await this.db.transaction(async (tx) => {

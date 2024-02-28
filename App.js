@@ -65,6 +65,11 @@ class App extends Component {
 					this.state.isConnected === null ? "Loading..." : 
 					this.state.isConnected ? "Yes" : "No"
 				);
+
+				if (this.state.isConnected) {
+					// internet exist do something
+					
+				}
 			}, 5000);
 		}
 	}
