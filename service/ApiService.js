@@ -8,10 +8,225 @@ class ApiService {
     this.storeId = this.getStoreId();
   }
 
+  /**UTIL FUNCTIONS**/ 
   async getStoreId() {
     return await AsyncStorage.getItem("store_id");
   }
 
+  /* GET */
+
+  // GET PRODUCT PAGINATION
+  async getLocalProducts(page, size) {
+    const accessToken = await this.tokenService.retrieveAccessToken();
+    const storeId = 1;
+
+    console.log({
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`
+      }
+    })
+  
+    if (!this.storeId) {
+      return new Error('Invalid storeId');
+    }
+  
+    const url = `${serverUrl}/api/v1/product/get/local/info?storeId=${this.storeId}&page=${page}&size=${size}`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`
+      }
+    });
+  
+    if (!response.ok) {
+      return new Error('Network response was not ok');
+    }
+  
+    return response.json();
+  }
+
+  async getGlobalProducts(page, size) {
+    const accessToken = await this.tokenService.retrieveAccessToken();
+  
+    if (!this.storeId) {
+      return new Error('Invalid storeId');
+    }
+  
+    const url = `${serverUrl}/api/v1/product/get/global/info?storeId=${this.storeId}&page=${page}&size=${size}`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`
+      }
+    });
+  
+    if (!response.ok) {
+      return new Error('Network response was not ok');
+    }
+  
+    return response.json();
+  }
+
+  async getStoreProducts(page, size) {
+    const accessToken = await this.tokenService.retrieveAccessToken();
+  
+    if (!this.storeId) {
+      return new Error('Invalid storeId');
+    }
+  
+    const url = `${serverUrl}/api/v1/store/product/get/info?storeId=${this.storeId}&page=${page}&size=${size}`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`
+      }
+    });
+  
+    if (!response.ok) {
+      return new Error('Network response was not ok');
+    }
+  
+    return response.json();
+  }
+
+  // GET SELL PAGINATION 
+  async getSellGroups(page, size) {
+    const accessToken = await this.tokenService.retrieveAccessToken();
+  
+    if (!this.storeId) {
+      return new Error('Invalid storeId');
+    }
+  
+    const url = `${serverUrl}/api/v1/store/sell/group/get?storeId=${this.storeId}&page=${page}&size=${size}`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`
+      }
+    });
+  
+    if (!response.ok) {
+      return new Error('Network response was not ok');
+    }
+  
+    return response.json();
+  }
+  
+  async getSellHistories(page, size) {
+    const accessToken = await this.tokenService.retrieveAccessToken();
+  
+    if (!this.storeId) {
+      return new Error('Invalid storeId');
+    }
+  
+    const url = `${serverUrl}/api/v1/store/sell/history/get?storeId=${this.storeId}&page=${page}&size=${size}`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`
+      }
+    });
+  
+    if (!response.ok) {
+      return new Error('Network response was not ok');
+    }
+  
+    return response.json();
+  }
+
+  async getSellHistoryGroup(page, size) {
+    const accessToken = await this.tokenService.retrieveAccessToken();
+  
+    if (!this.storeId) {
+      return new Error('Invalid storeId');
+    }
+  
+    const url = `${serverUrl}/api/v1/store/sell/link/info?storeId=${this.storeId}&page=${page}&size=${size}`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`
+      }
+    });
+  
+    if (!response.ok) {
+      return new Error('Network response was not ok');
+    }
+  
+    return response.json();
+  }
+
+  // GET PROFIT PAGINATION
+  async getProfitGroups(page, size) {
+    const accessToken = await this.tokenService.retrieveAccessToken();
+  
+    if (!this.storeId) {
+      return new Error('Invalid storeId');
+    }
+  
+    const url = `${serverUrl}/api/v1/store/profit/group/get?storeId=${this.storeId}&page=${page}&size=${size}`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`
+      }
+    });
+  
+    if (!response.ok) {
+      return new Error('Network response was not ok');
+    }
+  
+    return response.json();
+  }
+  
+  async getProfitHistories(page, size) {
+    const accessToken = await this.tokenService.retrieveAccessToken();
+  
+    if (!this.storeId) {
+      return new Error('Invalid storeId');
+    }
+  
+    const url = `${serverUrl}/api/v1/store/profit/history/get?storeId=${this.storeId}&page=${page}&size=${size}`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`
+      }
+    });
+  
+    if (!response.ok) {
+      return new Error('Network response was not ok');
+    }
+  
+    return response.json();
+  }
+
+  async getProfitHistoryGroup(page, size) {
+    const accessToken = await this.tokenService.retrieveAccessToken();
+  
+    if (!this.storeId) {
+      return new Error('Invalid storeId');
+    }
+  
+    const url = `${serverUrl}/api/v1/store/profit/link/info?storeId=${this.storeId}&page=${page}&size=${size}`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`
+      }
+    });
+  
+    if (!response.ok) {
+      return new Error('Network response was not ok');
+    }
+  
+    return response.json();
+  }
+
+  /* POST */
+
+  // PRODUCTS
   async createLocalProduct(
     serialNumber, 
     name,
@@ -321,7 +536,8 @@ class ApiService {
   
     return response.json();
   }
-	
+
+  // AUTH
   async check(email, password) {
     console.log(
       JSON.stringify({
@@ -389,215 +605,6 @@ class ApiService {
         console.error('Error:', error);
         return false; // Return false indicating failure
     }
-  }
-
-  // PRODUCTS
-  async getLocalProducts(page, size) {
-    const accessToken = await this.tokenService.retrieveAccessToken();
-    const storeId = 1;
-
-    console.log({
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${accessToken}`
-      }
-    })
-  
-    if (!this.storeId) {
-      return new Error('Invalid storeId');
-    }
-  
-    const url = `${serverUrl}/api/v1/product/get/local/info?storeId=${this.storeId}&page=${page}&size=${size}`;
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${accessToken}`
-      }
-    });
-  
-    if (!response.ok) {
-      return new Error('Network response was not ok');
-    }
-  
-    return response.json();
-  }
-
-  async getGlobalProducts(page, size) {
-    const accessToken = await this.tokenService.retrieveAccessToken();
-  
-    if (!this.storeId) {
-      return new Error('Invalid storeId');
-    }
-  
-    const url = `${serverUrl}/api/v1/product/get/global/info?storeId=${this.storeId}&page=${page}&size=${size}`;
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${accessToken}`
-      }
-    });
-  
-    if (!response.ok) {
-      return new Error('Network response was not ok');
-    }
-  
-    return response.json();
-  }
-
-  async getStoreProducts(page, size) {
-    const accessToken = await this.tokenService.retrieveAccessToken();
-  
-    if (!this.storeId) {
-      return new Error('Invalid storeId');
-    }
-  
-    const url = `${serverUrl}/api/v1/store/product/get/info?storeId=${this.storeId}&page=${page}&size=${size}`;
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${accessToken}`
-      }
-    });
-  
-    if (!response.ok) {
-      return new Error('Network response was not ok');
-    }
-  
-    return response.json();
-  }
-
-  // GET SELL PAGINATION 
-  async getSellGroups(page, size) {
-    const accessToken = await this.tokenService.retrieveAccessToken();
-  
-    if (!this.storeId) {
-      return new Error('Invalid storeId');
-    }
-  
-    const url = `${serverUrl}/api/v1/store/sell/group/get?storeId=${this.storeId}&page=${page}&size=${size}`;
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${accessToken}`
-      }
-    });
-  
-    if (!response.ok) {
-      return new Error('Network response was not ok');
-    }
-  
-    return response.json();
-  }
-  
-  async getSellHistories(page, size) {
-    const accessToken = await this.tokenService.retrieveAccessToken();
-  
-    if (!this.storeId) {
-      return new Error('Invalid storeId');
-    }
-  
-    const url = `${serverUrl}/api/v1/store/sell/history/get?storeId=${this.storeId}&page=${page}&size=${size}`;
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${accessToken}`
-      }
-    });
-  
-    if (!response.ok) {
-      return new Error('Network response was not ok');
-    }
-  
-    return response.json();
-  }
-
-  async getSellHistoryGroup(page, size) {
-    const accessToken = await this.tokenService.retrieveAccessToken();
-  
-    if (!this.storeId) {
-      return new Error('Invalid storeId');
-    }
-  
-    const url = `${serverUrl}/api/v1/store/sell/link/info?storeId=${this.storeId}&page=${page}&size=${size}`;
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${accessToken}`
-      }
-    });
-  
-    if (!response.ok) {
-      return new Error('Network response was not ok');
-    }
-  
-    return response.json();
-  }
-
-  // GET PROFIT PAGINATION
-  async getProfitGroups(page, size) {
-    const accessToken = await this.tokenService.retrieveAccessToken();
-  
-    if (!this.storeId) {
-      return new Error('Invalid storeId');
-    }
-  
-    const url = `${serverUrl}/api/v1/store/profit/group/get?storeId=${this.storeId}&page=${page}&size=${size}`;
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${accessToken}`
-      }
-    });
-  
-    if (!response.ok) {
-      return new Error('Network response was not ok');
-    }
-  
-    return response.json();
-  }
-  
-  async getProfitHistories(page, size) {
-    const accessToken = await this.tokenService.retrieveAccessToken();
-  
-    if (!this.storeId) {
-      return new Error('Invalid storeId');
-    }
-  
-    const url = `${serverUrl}/api/v1/store/profit/history/get?storeId=${this.storeId}&page=${page}&size=${size}`;
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${accessToken}`
-      }
-    });
-  
-    if (!response.ok) {
-      return new Error('Network response was not ok');
-    }
-  
-    return response.json();
-  }
-
-  async getProfitHistoryGroup(page, size) {
-    const accessToken = await this.tokenService.retrieveAccessToken();
-  
-    if (!this.storeId) {
-      return new Error('Invalid storeId');
-    }
-  
-    const url = `${serverUrl}/api/v1/store/profit/link/info?storeId=${this.storeId}&page=${page}&size=${size}`;
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${accessToken}`
-      }
-    });
-  
-    if (!response.ok) {
-      return new Error('Network response was not ok');
-    }
-  
-    return response.json();
   }
 
 }
