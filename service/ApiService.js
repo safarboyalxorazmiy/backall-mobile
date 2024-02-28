@@ -50,6 +50,55 @@ class ApiService {
     return response.json();
   }
 
+  async createStoreProducts(
+    productId,
+    nds,
+    price,
+    sellingPrice,
+    percentage,
+    count,
+    countType
+  ) {
+    const accessToken = await this.tokenService.retrieveAccessToken();
+    const storeId = 1;
+
+    console.log({
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`
+      }
+    })
+  
+    if (!storeId) {
+      return new Error('Invalid storeId');
+    }
+  
+    const url = `${serverUrl}/api/v1/store/product/create`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        storeId: storeId,
+        productId: productId,
+        nds: nds,
+        price: price,
+        sellingPrice: sellingPrice,
+        percentage: percentage,
+        count: count,
+        countType: countType
+      })
+    });
+  
+    if (!response.ok) {
+      return new Error('Network response was not ok');
+    }
+  
+    return response.json();
+  }
+
   async getStoreId() {
     return await AsyncStorage.getItem("store_id");
   }

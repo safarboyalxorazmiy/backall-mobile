@@ -271,12 +271,9 @@ class Home extends Component {
 	
 			for (const storeProduct of response.content) {
 				try {
-
-					let product = await this.productRepository.findProductsByGlobalId(storeProduct.productId)
-
-
+					let products = await this.productRepository.findProductsByGlobalId(storeProduct.productId)
 					await this.storeProductRepository.createStoreProductWithAllValues(
-						product.id, 
+						products[0].id, 
 						storeProduct.nds,
 						storeProduct.price,
 						storeProduct.sellingPrice,

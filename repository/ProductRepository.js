@@ -311,6 +311,47 @@ class ProductRepository {
     }
   }
 
+  async findProductsById(id) {
+    try {
+      const result = await new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+          tx.executeSql(
+            "SELECT * FROM product WHERE id = ?;",
+            [global_id],
+            (_, results) => {
+              console.log('Results:', results.rows);
+  
+              const products = Array.from(results.rows._array).map((row) => {
+                if (row) {
+                  return {
+                    id: row.id,
+                    name: row.name,
+                    brand_name: row.brand_name,
+                    serial_number: row.serial_number,
+                  };
+                } else {
+                  console.warn("Received undefined row in query results.");
+                  return null; // or handle it according to your needs
+                }
+              });
+  
+              resolve(products);
+            },
+            (_, error) => {
+              console.error("Error executing SQL query:", error);
+              reject(error);
+            }
+          );
+        });
+      });
+  
+      return result;
+    } catch (error) {
+      console.error(`Error finding products by serial number: ${error}`);
+      throw error;
+    }
+  }
+
   async getProductNameAndBrandById(product_id) {
     try {
       const result = await new Promise((resolve, reject) => {

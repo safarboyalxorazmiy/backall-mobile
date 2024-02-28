@@ -170,6 +170,25 @@ class StoreProductRepository {
     });
   }
 
+  async findByWhereSavedFalse() {
+    return new Promise((resolve, reject) => {
+      this.db.transaction((tx) => {
+        tx.executeSql(
+          `SELECT * FROM store_product sp WHERE sp.saved = 0;`,
+          [],
+          (_, { rows }) => {
+            const storeProductsInfo = rows._array; // Get raw result array
+            resolve(storeProductsInfo);
+          },
+          (_, error) => {
+            console.error("Error retrieving store products info:", error);
+            reject(error);
+          }
+        );
+      });
+    });
+  }
+
   async findTopStoreProductsInfo(lastId) {
     if (lastId === 0) {
       return new Promise((resolve, reject) => {

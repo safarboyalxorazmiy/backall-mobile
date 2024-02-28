@@ -12,6 +12,7 @@ import DatabaseRepository from "./repository/DatabaseRepository";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ProductRepository from "./repository/ProductRepository";
 import ApiService from "./service/ApiService";
+import StoreProductRepository from "./repository/StoreProductRepository";
 
 const tokenService = new TokenService();
 
@@ -29,6 +30,7 @@ class App extends Component {
 		tokenService.checkTokens(navigation);
 
 		this.productRepository = new ProductRepository();
+		this.storeProductRepository = new StoreProductRepository();
 		this.apiService = new ApiService();
 	}
 	
@@ -103,7 +105,25 @@ class App extends Component {
 
 						let storeProductNotSaved = await Async.getItem("storeProductNotSaved");
 						if (storeProductNotSaved == "true") {
+							let storeProducts = await this.storeProductRepository.findByWhereSavedFalse();
+							for (const storeProduct of storeProducts) {
+								try {
 
+									let products = await this.productRepository.findProductsById(storeProduct.product_id);
+
+									await this.apiService.createStoreProducts(
+										products[0].id,
+										storeProduct.nds,
+										storeProduct.price,
+										storeProduct.selling_price,
+										storeProduct.percentage,
+										storeProduct.count,
+										storeProduct.count_type
+									);
+								} catch (e) {
+									continue;
+								}
+							}
 						}
 
 						// SELL
