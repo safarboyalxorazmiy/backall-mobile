@@ -24,6 +24,7 @@ import ProductRepository from "../repository/ProductRepository";
 import NetInfo from "@react-native-community/netinfo";
 import SellHistoryRepository from "../repository/SellHistoryRepository";
 import ProfitHistoryRepository from "../repository/ProfitHistoryRepository";
+import StoreProductRepository from "../repository/StoreProductRepository";
 
 const tokenService = new TokenService();
 const databaseService = new DatabaseService();
@@ -51,6 +52,8 @@ class Home extends Component {
 			lastLocalProductsSize: 10,
 			lastGlobalProductsPage: 0,
 			lastGlobalProductsSize: 10,
+			lastStoreProductsPage: 0,
+			lastStoreProductsSize: 10,
 
 			// SELL
 			lastSellGroupsPage: 0,
@@ -75,6 +78,7 @@ class Home extends Component {
 		this.productRepository = new ProductRepository();
 		this.sellHistoryRepository = new SellHistoryRepository();
 		this.profitHistoryRepository = new ProfitHistoryRepository();
+		this.storeProductRepository = new StoreProductRepository();
 
 		this.getAmountInfo();
 	}
@@ -115,6 +119,7 @@ class Home extends Component {
 								let isDownloaded = 
 									await this.getLocalProducts() && 
 									await this.getGlobalProducts() && 
+									await this.getStoreProducts() &&
 									await this.getSellGroups() &&
 									await this.getSellHistories() &&
 									await this.getSellHistoryGroup() &&
@@ -237,6 +242,55 @@ class Home extends Component {
 	
 			page++;
 			products.push(response);
+		}
+	}
+
+	async getStoreProducts() {
+		let storeProducts = [];
+		let size = this.state.lastStoreProductsSize;
+		let page = this.state.lastStoreProductsPage;
+	
+		while (true) {
+			let response;
+			try {
+				response = await this.apiService.getStoreProducts(page, size);
+			} catch (error) {
+				console.error("Error fetching global products:", error);
+				this.setState({
+					lastSize: size,
+					lastPage: page
+				});
+				
+				return false; // Indicate failure
+			}
+	
+			if (!response || !response.content || response.content.length === 0) {
+				console.log(storeProducts);
+				return true; // Indicate success and exit the loop
+			}
+	
+			for (const storeProduct of response.content) {
+				try {
+					await this.storeProductRepository.createStoreProductWithAllValues(
+						storeProduct.productId, 
+						storeProduct.nds,
+						storeProduct.price,
+						storeProduct.sellingPrice,
+						storeProduct.percentage,
+						storeProduct.count,
+						storeProduct.countType,
+						storeProduct.id,
+						true
+					)
+				} catch (error) {
+					console.error("Error processing product:", error);
+					// Continue with next product
+					continue;
+				}
+			}
+	
+			page++;
+			storeProducts.push(response);
 		}
 	}
 

@@ -35,6 +35,8 @@ class DatabaseRepository {
               percentage DOUBLE, 
               count DOUBLE, 
               count_type TEXT, 
+              global_id INTEGER,
+              saved boolean,
               FOREIGN KEY (product_id) REFERENCES product(id)
             );`,
             

@@ -11,9 +11,63 @@ class StoreProductRepository {
         this.db.transaction((tx) => {
           tx.executeSql(
             `INSERT INTO store_product 
-              (product_id, nds, price, selling_price, percentage, count, count_type) 
-              VALUES (?, ?, ?, ?, ?, ?, ?)`,
-            [product_id, nds, price, sellingPrice, percentage, count, countType],
+              (product_id, nds, price, selling_price, percentage, count, count_type, global_id, saved) 
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            [product_id, nds, price, sellingPrice, percentage, count, countType, null, 0],
+            (_, results) => {
+              resolve(true);
+            },
+            (_, error) => {
+              console.error("Error creating store product:", error);
+              reject(false);
+            }
+          );
+        });
+      });
+    } catch (error) {
+      console.error(`Error creating store product: ${error}`);
+      throw error;
+    }
+  }
+
+  async createStoreProductWithAllValues(
+    product_id, 
+    nds, 
+    price, 
+    sellingPrice, 
+    percentage, 
+    count, 
+    countType,
+    global_id,
+    saved
+  ) {
+    try {
+      await new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+          tx.executeSql(
+            `INSERT INTO store_product (
+              product_id, 
+              nds, 
+              price, 
+              selling_price, 
+              percentage, 
+              count, 
+              count_type, 
+              global_id, 
+              saved
+            ) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+              product_id, 
+              nds, 
+              price, 
+              sellingPrice, 
+              percentage, 
+              count, 
+              countType, 
+              global_id, 
+              saved ? 1 : 0
+            ],
             (_, results) => {
               resolve(true);
             },
@@ -51,9 +105,9 @@ class StoreProductRepository {
                             },
                             (_, error) => {
                                 console.error("Error deleting store product:", error);
-                                reject(false);
-                            }
-                        );
+                          reject(false);
+                        }
+                      );
                     } else {
                         // Otherwise, update the count
                         tx.executeSql(
@@ -84,8 +138,7 @@ class StoreProductRepository {
       console.error(`Error updating store product count: ${error}`);
       throw error;
     }
-}
-
+  }
 
   async getStoreProductsInfo() {
     return new Promise((resolve, reject) => {

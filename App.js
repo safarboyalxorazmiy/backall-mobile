@@ -101,6 +101,11 @@ class App extends Component {
 							await AsyncStorage.setItem("productNotSaved", "false")
 						}
 
+						let storeProductNotSaved = await Async.getItem("storeProductNotSaved");
+						if (storeProductNotSaved == "true") {
+
+						}
+
 						// SELL
 						let sellGroupNotSaved = await AsyncStorage.getItem("sellGroupNotSaved");
 						if (sellGroupNotSaved == "true") {
