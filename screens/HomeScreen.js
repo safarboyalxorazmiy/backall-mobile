@@ -119,7 +119,8 @@ class Home extends Component {
 									await this.getSellHistories() &&
 									await this.getSellHistoryGroup() &&
 									await this.getProfitGroups() &&
-									await this.getProfitHistoryGroup(); // storing products
+									await this.getProfitHistories() &&
+									await this.getProfitHistoryGroup();
 
 								// storing result of product storing
 								await AsyncStorage.setItem("isDownloaded", isDownloaded.toString());
