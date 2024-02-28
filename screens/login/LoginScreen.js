@@ -57,87 +57,87 @@ class Login extends Component {
   render() {
     const { email, password, loading } = this.state;
     return (
-        <ScrollView contentContainerStyle={styles.container}>
-            {(Platform.OS === 'android' || Platform.OS === 'ios') ?
-                <Logo style={styles.logo} resizeMode="cover" /> :
-                <Logo style={styles.logo} />}
-            <View style={styles.form}>
-                <Text style={styles.label}>Loginni kiriting</Text>
-                <TextInput
-                    style={{
-                        height: 64,
-                        width: screenWidth - (24 + 24),
-                        borderWidth: 1,
-                        borderRadius: 10,
-                        borderColor: (this.state.isLoginInputActive ? "#000" : this.state.error ? "red" : "#AFAFAF"),
-                        paddingVertical: 23,
-                        paddingHorizontal: 20,
-                        fontSize: 18,
-                        marginBottom: 16,
-                        fontFamily: 'Gilroy-Regular',
-                    }}
-                    placeholder="admin"
-                    placeholderTextColor="#AFAFAF"
-                    cursorColor={"#000"}
-                    value={email}
-                    onFocus={() => {
-                      this.setState({isLoginInputActive: true});
-                    }}
-                    onEndEditing={() => {
-                      this.setState({isLoginInputActive: false});
-                    }}
-                    onChangeText={(text) => this.setState({ email: text })}
-                />
-                <Text style={styles.label}>Parolni kiriting</Text>
-                <TextInput
-                    style={{
-                        height: 64,
-                        width: screenWidth - (24 + 24),
-                        borderWidth: 1,
-                        borderRadius: 10,
-                        borderColor: (this.state.isPasswordInputActive ? "#000" : this.state.error ? "red" : "#AFAFAF"),
-                        paddingVertical: 23,
-                        paddingHorizontal: 20,
-                        fontSize: 18,
-                        marginBottom: 16,
-                        fontFamily: 'Gilroy-Regular',
-                    }}
-                    placeholder="********"
-                    placeholderTextColor="#AFAFAF"
-                    secureTextEntry
-                    value={password}
-                    cursorColor={"#000"}
-                    onFocus={() => {
-                      this.setState({isPasswordInputActive: true});
-                    }}
-                    onEndEditing={() => {
-                      this.setState({isPasswordInputActive: false});
-                    }}
-                    onChangeText={(text) => this.setState({ password: text })}
-                />
-                {
-                this.state.error === true ?
-                <Animatable.View style={{
-                  width: screenWidth - (24 + 24),
-                  marginBottom: 16,
-                }} animation="shake" duration={500}>
-                  <Text style={{color: "red", fontFamily: "Gilroy-Regular"}}>Login va parol xato.</Text>
-                </Animatable.View> : null}
-                <TouchableOpacity onPress={async () => {
-                  await this.login()
-                }}>
-                    <View style={styles.button}>
-                        <Text style={styles.buttonText}>Kirish</Text>
-                    </View>
-                </TouchableOpacity>
-            </View>
-            <TouchableOpacity onPress={this.forgotPasswordLink} style={{ marginTop: 168 }}>
-                <View style={styles.forgotPasswordLink}>
-                    <Text style={styles.forgotPasswordText}>Parolni unutdingizmi?</Text>
+      <ScrollView contentContainerStyle={styles.container}>
+        {(Platform.OS === 'android' || Platform.OS === 'ios') ?
+          <Logo style={styles.logo} resizeMode="cover" /> :
+          <Logo style={styles.logo} />}
+        <View style={styles.form}>
+            <Text style={styles.label}>Loginni kiriting</Text>
+            <TextInput
+                style={{
+                    height: 64,
+                    width: screenWidth - (24 + 24),
+                    borderWidth: 1,
+                    borderRadius: 10,
+                    borderColor: (this.state.isLoginInputActive ? "#000" : this.state.error ? "red" : "#AFAFAF"),
+                    paddingVertical: 23,
+                    paddingHorizontal: 20,
+                    fontSize: 18,
+                    marginBottom: 16,
+                    fontFamily: 'Gilroy-Regular',
+                }}
+                placeholder="admin"
+                placeholderTextColor="#AFAFAF"
+                cursorColor={"#000"}
+                value={email}
+                onFocus={() => {
+                  this.setState({isLoginInputActive: true});
+                }}
+                onEndEditing={() => {
+                  this.setState({isLoginInputActive: false});
+                }}
+                onChangeText={(text) => this.setState({ email: text })}
+            />
+            <Text style={styles.label}>Parolni kiriting</Text>
+            <TextInput
+                style={{
+                    height: 64,
+                    width: screenWidth - (24 + 24),
+                    borderWidth: 1,
+                    borderRadius: 10,
+                    borderColor: (this.state.isPasswordInputActive ? "#000" : this.state.error ? "red" : "#AFAFAF"),
+                    paddingVertical: 23,
+                    paddingHorizontal: 20,
+                    fontSize: 18,
+                    marginBottom: 16,
+                    fontFamily: 'Gilroy-Regular',
+                }}
+                placeholder="********"
+                placeholderTextColor="#AFAFAF"
+                secureTextEntry
+                value={password}
+                cursorColor={"#000"}
+                onFocus={() => {
+                  this.setState({isPasswordInputActive: true});
+                }}
+                onEndEditing={() => {
+                  this.setState({isPasswordInputActive: false});
+                }}
+                onChangeText={(text) => this.setState({ password: text })}
+            />
+            {
+            this.state.error === true ?
+            <Animatable.View style={{
+              width: screenWidth - (24 + 24),
+              marginBottom: 16,
+            }} animation="shake" duration={500}>
+              <Text style={{color: "red", fontFamily: "Gilroy-Regular"}}>Login va parol xato.</Text>
+            </Animatable.View> : null}
+            <TouchableOpacity onPress={async () => {
+              await this.login()
+            }}>
+                <View style={styles.button}>
+                    <Text style={styles.buttonText}>Kirish</Text>
                 </View>
             </TouchableOpacity>
-            <StatusBar style="auto" />
-        </ScrollView>
+        </View>
+        <TouchableOpacity onPress={this.forgotPasswordLink} style={{ marginTop: 168 }}>
+          <View style={styles.forgotPasswordLink}>
+            <Text style={styles.forgotPasswordText}>Parolni unutdingizmi?</Text>
+          </View>
+        </TouchableOpacity>
+        <StatusBar style="auto" />
+      </ScrollView>
     );
   }
 }
