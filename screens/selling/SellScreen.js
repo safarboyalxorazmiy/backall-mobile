@@ -690,7 +690,7 @@ class Sell extends Component {
 		);
 
 		let sellGroupId = await this.sellHistoryRepository.createSellHistoryGroup(this.state.amount);
-		let profitGroupId = await this.profitHistoryRepository.createProfitHistoryGroup(this.state.profit);
+		let profitGroupId = await this.profitHistoryRepository.createProfitGroup(this.state.profit);
 
 
 		console.log("PROFIT ", this.state.profit);

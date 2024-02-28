@@ -7,7 +7,7 @@ class ProfitHistoryRepository {
     this.productRepository = new ProductRepository();
   }
 
-  async createProfitHistoryGroup(profit) {
+  async createProfitGroup(profit) {
     try {
       const createdDate = new Date().toISOString(); // Example: Get current timestamp
       const query = `
@@ -27,7 +27,7 @@ class ProfitHistoryRepository {
     }
   }
 
-  async createProfitHistoryGroupWithAllValues(created_date, profit, global_id, saved) {
+  async createProfitGroupWithAllValues(created_date, profit, global_id, saved) {
     try {
       const query = `
         INSERT INTO profit_group (created_date, global_id, profit, saved)
@@ -200,6 +200,25 @@ class ProfitHistoryRepository {
     });
   }
   
+  async createProfitHistoryGroup(history_id, group_id, global_id, saved) {
+    const insert = `
+      INSERT INTO profit_history_group(
+        history_id, 
+        global_id, 
+        group_id, 
+        saved
+      )
+      VALUES (?, ?, ?, ?);
+    `;
+
+    await this.db.transaction(async (tx) => {
+      await tx.executeSql(
+        insert,
+        [history_id, global_id, group_id, saved ? 1 : 0]
+      );
+    });
+  }
+
   async getAll(group_id) {
     try {
       const query = `

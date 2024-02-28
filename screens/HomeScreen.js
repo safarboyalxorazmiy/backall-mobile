@@ -65,6 +65,8 @@ class Home extends Component {
 			lastProfitGroupsSize: 10,
 			lastProfitHistoriesPage: 0,
 			lastProfitHistoriesSize: 10,
+			lastProfitHistoryGroupPage: 0,
+			lastProfitHistoryGroupSize: 10,	
 		}
 		
 		this.tokenService = new TokenService();
@@ -116,8 +118,9 @@ class Home extends Component {
 									await this.getSellGroups() &&
 									await this.getSellHistories() &&
 									await this.getSellHistoryGroup() &&
-									await this.getProfitGroups(); // storing products
-		
+									await this.getProfitGroups() &&
+									await this.getProfitHistoryGroup(); // storing products
+
 								// storing result of product storing
 								await AsyncStorage.setItem("isDownloaded", isDownloaded.toString());
 						
@@ -399,7 +402,7 @@ class Home extends Component {
 	
 			for (const profitGroup of response.content) {
 				try {
-					await this.profitHistoryRepository.createProfitHistoryGroupWithAllValues(
+					await this.profitHistoryRepository.createProfitGroupWithAllValues(
 						profitGroup.createdDate,
 						profitGroup.profit,
 						profitGroup.id,
@@ -462,8 +465,50 @@ class Home extends Component {
 			profitHistories.push(response);
 		}
 	}
-
-
+	
+	async getProfitHistoryGroup() {
+		let profitHistoryGroup = [];
+		let size = this.state.lastProfitHistoryGroupSize;
+		let page = this.state.lastProfitHistoryGroupPage;
+	
+		while (true) {
+			let response;
+			try {
+				response = await this.apiService.getProfitHistoryGroup(page, size);
+			} catch (error) {
+				console.error("Error fetching global products:", error);
+				this.setState({
+					lastSize: size,
+					lastPage: page
+				});
+				
+				return false; // Indicate failure
+			}
+	
+			if (!response || !response.content || response.content.length === 0) {
+				console.log(profitHistoryGroup);
+				return true; // Indicate success and exit the loop
+			}
+	
+			for (const profitHistoryGroup of response.content) {
+				try {
+					await this.profitHistoryRepository.createProfitHistoryGroup(
+						profitHistoryGroup.sellHistoryId,
+						profitHistoryGroup.sellGroupId,
+						profitHistoryGroup.id,
+						true
+					);
+				} catch (error) {
+					console.error("Error processing product:", error);
+					// Continue with next product
+					continue;
+				}
+			}
+	
+			page++;
+			profitHistoryGroup.push(response);
+		}
+	}
 
 	async getAmountInfo() {
 		// HOW TO GET yyyy-mm-dd from new Date()
