@@ -80,7 +80,7 @@ class App extends Component {
 					if (isNotSaved == true) {
 						// PRODUCT
 						let productNotSaved = await AsyncStorage.getItem("productNotSaved");
-						if (productNotSaved) {
+						if (productNotSaved == "true") {
 							let notSavedProducts = 
 								await productRepository.findProductsBySavedFalse();
 							for (const product of notSavedProducts) {
@@ -92,41 +92,44 @@ class App extends Component {
 									);
 	
 									await this.productRepository.updateSavedTrueByProductId(product.id, response.id);
+
 								} catch (e) {
 									continue;
 								}
 							}
+
+							await AsyncStorage.setItem("productNotSaved", "false")
 						}
 
 						// SELL
 						let sellGroupNotSaved = await AsyncStorage.getItem("sellGroupNotSaved");
-						if (sellGroupNotSaved) {
+						if (sellGroupNotSaved == "true") {
 
 						}
 
 						let sellHistoryNotSaved = await AsyncStorage.getItem("sellHistoryNotSaved");
-						if (sellHistoryNotSaved) {
+						if (sellHistoryNotSaved == "true") {
 
 						}
 
 						let sellHistoryGroupNotSaved = await AsyncStorage.getItem("sellHistoryGroupNotSaved");
-						if (sellHistoryGroupNotSaved) {
+						if (sellHistoryGroupNotSaved == "true") {
 
 						}
 
 						// PROFIT
 						let profitGroupNotSaved = await AsyncStorage.getItem("profitGroupNotSaved");
-						if (profitGroupNotSaved) {
+						if (profitGroupNotSaved == "true") {
 
 						}
 
 						let profitHistoryNotSaved = await AsyncStorage.getItem("profitHistoryNotSaved");
-						if (profitHistoryNotSaved) {
+						if (profitHistoryNotSaved == "true") {
 
 						}
 
 						let profitHistoryGroupNotSaved = await AsyncStorage.getItem("profitHistoryGroupNotSaved");
-						if (profitHistoryGroupNotSaved) {
+						if (profitHistoryGroupNotSaved == "true") {
 							
 						}
 					}
