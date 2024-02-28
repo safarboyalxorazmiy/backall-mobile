@@ -13,6 +13,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import ProductRepository from "./repository/ProductRepository";
 import ApiService from "./service/ApiService";
 import StoreProductRepository from "./repository/StoreProductRepository";
+import SellHistoryRepository from "./repository/SellHistoryRepository";
 
 const tokenService = new TokenService();
 
@@ -31,6 +32,7 @@ class App extends Component {
 
 		this.productRepository = new ProductRepository();
 		this.storeProductRepository = new StoreProductRepository();
+		this.sellHistoryRepository = new SellHistoryRepository();
 		this.apiService = new ApiService();
 	}
 	
@@ -108,7 +110,6 @@ class App extends Component {
 							let storeProducts = await this.storeProductRepository.findByWhereSavedFalse();
 							for (const storeProduct of storeProducts) {
 								try {
-
 									let products = await this.productRepository.findProductsById(storeProduct.product_id);
 
 									await this.apiService.createStoreProducts(
@@ -129,17 +130,57 @@ class App extends Component {
 						// SELL
 						let sellGroupNotSaved = await AsyncStorage.getItem("sellGroupNotSaved");
 						if (sellGroupNotSaved == "true") {
-
+							let sellGroups = await this.sellHistoryRepository.getSellGroupSavedFalse();
+							for (const sellGroup of sellGroups) {
+								try {
+									await this.apiService.createSellGroup(sellGroup.created_date, sellGroup.amount);
+								} catch (e) {
+									continue;
+								}
+							}
 						}
 
 						let sellHistoryNotSaved = await AsyncStorage.getItem("sellHistoryNotSaved");
 						if (sellHistoryNotSaved == "true") {
+							let sellHistories = await this.sellHistoryRepository.getSellHistorySavedFalse();
+							for (const sellHistory of sellHistories) {
+								try {
+									let products = await this.productRepository.findProductsById(sellHistory.product_id);
 
+									await this.apiService.createSellHistory(
+										products[0].id,
+										sellHistory.count,
+										sellHistory.count_type,
+										sellHistory.selling_price,
+										sellHistory.created_date
+									);
+								} catch (e) {
+									continue;
+								}
+							}
 						}
 
 						let sellHistoryGroupNotSaved = await AsyncStorage.getItem("sellHistoryGroupNotSaved");
 						if (sellHistoryGroupNotSaved == "true") {
-
+							let sellHistoryGroups = 
+								await this.sellHistoryRepository.getSellHistorySavedFalse();
+							for (const sellHistoryGroup of sellHistoryGroups) {
+								try {
+									let sellHistory = await this.sellHistoryRepository.findSellHistoryById(
+										sellHistoryGroup.history_id
+									);
+									let sellGroup = await this.sellHistoryRepository.findSellGroupById(
+										sellHistoryGroup.group_id
+									);
+									
+									await this.apiService.createSellHistoryGroup(
+										sellHistory[0].global_id,
+										sellGroup[0].global_id
+									);
+								} catch (e) {
+									continue;
+								}
+							}
 						}
 
 						// PROFIT

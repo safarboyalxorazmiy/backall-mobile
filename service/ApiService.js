@@ -99,6 +99,121 @@ class ApiService {
     return response.json();
   }
 
+  async createSellGroup(
+    createdDate,
+    amount
+  ) {
+    const accessToken = await this.tokenService.retrieveAccessToken();
+    const storeId = 1;
+
+    console.log({
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`
+      }
+    })
+  
+    if (!storeId) {
+      return new Error('Invalid storeId');
+    }
+  
+    const url = `${serverUrl}/api/v1/store/sell/group/create`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        createdDate: createdDate,
+        storeId: storeId,
+        amount: amount
+      })
+    });
+  
+    if (!response.ok) {
+      return new Error('Network response was not ok');
+    }
+  
+    return response.json();
+  }
+
+  async createSellHistory(
+    productId,
+    count,
+    countType,
+    sellingPrice,
+    createdDate
+  ) {
+    const accessToken = await this.tokenService.retrieveAccessToken();
+    const storeId = 1;
+
+    if (!storeId) {
+      return new Error('Invalid storeId');
+    }
+  
+    const url = `${serverUrl}/api/v1/store/sell/group/create`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        productId: productId,
+        storeId: storeId,
+        count: count,
+        countType: countType,
+        sellingPrice: sellingPrice,
+        createdDate: createdDate
+      })
+    });
+  
+    if (!response.ok) {
+      return new Error('Network response was not ok');
+    }
+  
+    return response.json();
+  }
+
+  async createSellHistoryGroup(
+    sellHistoryId, sellGroupId
+  ) {
+    const accessToken = await this.tokenService.retrieveAccessToken();
+    const storeId = 1;
+
+    console.log({
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`
+      }
+    })
+  
+    if (!storeId) {
+      return new Error('Invalid storeId');
+    }
+  
+    const url = `${serverUrl}/api/v1/store/sell/link/create`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        sellHistoryId: sellHistoryId,
+        sellGroupId: sellGroupId,
+        storeId: storeId
+      })
+    });
+  
+    if (!response.ok) {
+      return new Error('Network response was not ok');
+    }
+  
+    return response.json();
+  }
+
   async getStoreId() {
     return await AsyncStorage.getItem("store_id");
   }

@@ -381,6 +381,93 @@ class SellHistoryRepository {
     }
   }
 
+  async getSellGroupSavedFalse() {
+    try {
+      const query = `
+        SELECT * FROM sell_group where saved = 0;
+      `;
+
+      const result = await new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+          tx.executeSql(
+            query,
+            [],
+            (_, resultSet) => resolve(resultSet),
+            (_, error) => reject(error)
+          );
+        });
+      });
+  
+      if (!result || !result.rows || !result.rows._array) {
+        throw new Error("Unexpected result structure");
+      }
+  
+      const rows = result.rows._array;
+      return rows;
+    } catch (error) {
+      console.error("Error retrieving sell history:", error);
+      throw error;
+    }
+  }
+
+  async getSellHistorySavedFalse() {
+    try {
+      const query = `
+        SELECT * FROM sell_history where saved = 0;
+      `;
+
+      const result = await new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+          tx.executeSql(
+            query,
+            [],
+            (_, resultSet) => resolve(resultSet),
+            (_, error) => reject(error)
+          );
+        });
+      });
+  
+      if (!result || !result.rows || !result.rows._array) {
+        throw new Error("Unexpected result structure");
+      }
+  
+      const rows = result.rows._array;
+      return rows;
+    } catch (error) {
+      console.error("Error retrieving sell history:", error);
+      throw error;
+    }
+  }
+
+  async getSellHistoryGroupSavedFalse() {
+    try {
+      const query = `
+        SELECT * FROM sell_history_group where saved = 0;
+      `;
+
+      const result = await new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+          tx.executeSql(
+            query,
+            [],
+            (_, resultSet) => resolve(resultSet),
+            (_, error) => reject(error)
+          );
+        });
+      });
+  
+      if (!result || !result.rows || !result.rows._array) {
+        throw new Error("Unexpected result structure");
+      }
+  
+      const rows = result.rows._array;
+      return rows;
+    } catch (error) {
+      console.error("Error retrieving sell history:", error);
+      throw error;
+    }
+  }
+
   async getTop10SellGroupByDate(lastHistoryId, fromDate, toDate) {
     try {
         const query = `
@@ -412,6 +499,64 @@ class SellHistoryRepository {
     } catch (error) {
         console.error("Error retrieving sell history:", error);
         throw error;
+    }
+  }
+
+  async findSellHistoryById(id) {
+    try {
+      const query = `
+        SELECT * FROM sell_history where id = ?;
+      `;
+
+      const result = await new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+          tx.executeSql(
+            query,
+            [id],
+            (_, resultSet) => resolve(resultSet),
+            (_, error) => reject(error)
+          );
+        });
+      });
+  
+      if (!result || !result.rows || !result.rows._array) {
+        throw new Error("Unexpected result structure");
+      }
+  
+      const rows = result.rows._array;
+      return rows;
+    } catch (error) {
+      console.error("Error retrieving sell history:", error);
+      throw error;
+    }
+  }
+
+  async findSellGroupById(id) {
+    try {
+      const query = `
+        SELECT * FROM sell_group where id = ?;
+      `;
+
+      const result = await new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+          tx.executeSql(
+            query,
+            [id],
+            (_, resultSet) => resolve(resultSet),
+            (_, error) => reject(error)
+          );
+        });
+      });
+  
+      if (!result || !result.rows || !result.rows._array) {
+        throw new Error("Unexpected result structure");
+      }
+  
+      const rows = result.rows._array;
+      return rows;
+    } catch (error) {
+      console.error("Error retrieving sell history:", error);
+      throw error;
     }
   }
 
