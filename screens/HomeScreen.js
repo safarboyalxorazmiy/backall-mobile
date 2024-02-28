@@ -50,7 +50,9 @@ class Home extends Component {
 			lastGlobalProductsPage: 0,
 			lastGlobalProductsSize: 10,
 			lastSellGroupsPage: 0,
-			lastSellGroupsSize: 10
+			lastSellGroupsSize: 10,
+			lastSellHistoriesPage: 0,
+			lastSellHistoriesSize: 10
 		}
 		
 		this.tokenService = new TokenService();
@@ -95,8 +97,12 @@ class Home extends Component {
 								})
 								this.setState({spinner: true});
 								
-								let isDownloaded = await this.getLocalProducts() && await this.getGlobalProducts(); // storing products
-	
+								let isDownloaded = 
+									await this.getLocalProducts() && 
+									await this.getGlobalProducts() && 
+									await this.getSellGroups() &&
+									await this.getSellHistories(); // storing products
+		
 								// storing result of product storing
 								await AsyncStorage.setItem("isDownloaded", isDownloaded.toString());
 						
@@ -254,7 +260,54 @@ class Home extends Component {
 			}
 	
 			page++;
-			products.push(response);
+			sellGroups.push(response);
+		}
+	}
+
+	async getSellHistories() {
+		let sellHistories = [];
+		let size = this.state.lastSellHistoriesSize;
+		let page = this.state.lastSellHistoriesPage;
+	
+		while (true) {
+			let response;
+			try {
+				response = await this.apiService.getSellHistories(page, size);
+			} catch (error) {
+				console.error("Error fetching global products:", error);
+				this.setState({
+					lastSize: size,
+					lastPage: page
+				});
+				
+				return false; // Indicate failure
+			}
+	
+			if (!response || !response.content || response.content.length === 0) {
+				console.log(sellHistories);
+				return true; // Indicate success and exit the loop
+			}
+	
+			for (const sellHistory of response.content) {
+				try {
+					await this.sellHistoryRepository.createSellHistoryWithAllValues(
+						sellHistory.productId,
+						sellHistory.id,
+						sellHistory.count,
+						sellHistory.countType,
+						sellHistory.sellingPrice,
+						sellHistory.createdDate,
+						true
+					);
+				} catch (error) {
+					console.error("Error processing product:", error);
+					// Continue with next product
+					continue;
+				}
+			}
+	
+			page++;
+			sellHistories.push(response);
 		}
 	}
 

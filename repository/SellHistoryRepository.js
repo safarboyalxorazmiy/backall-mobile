@@ -180,6 +180,49 @@ class SellHistoryRepository {
     }
   }
 
+  async createSellHistoryWithAllValues(
+    product_id, 
+    global_id,
+    count, 
+    count_type, 
+    selling_price,
+    created_date,
+    saved
+  ) {
+    try {
+      const query = `
+        INSERT INTO sell_history (
+          product_id, 
+          global_id,
+          count, 
+          count_type, 
+          selling_price, 
+          created_date,
+          saved
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?);
+      `;
+
+      await this.db.transaction(async (tx) => {
+        await tx.executeSql(query, [
+            product_id, 
+            global_id,
+            count, 
+            count_type, 
+            selling_price,
+            created_date.toISOString(),
+            saved ? 1 : 0
+          ]);
+      });
+
+      let lastIdOfSellHistory = await this.getLastIdOfSellHistory(product_id, created_date.toISOString());
+      return lastIdOfSellHistory.id;
+    } catch (error) {
+      console.error("Error creating sell group:", error);
+      throw error;
+    }
+  }
+
   async createSellHistoryAndLinkWithGroup(
     product_id, 
     count, 

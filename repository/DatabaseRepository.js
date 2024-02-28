@@ -46,6 +46,7 @@ class DatabaseRepository {
               count_type TEXT, 
               selling_price DOUBLE, 
               created_date TIMESTAMP, 
+              saved boolean,
               FOREIGN KEY (product_id) REFERENCES product(id)
             );`,
 
