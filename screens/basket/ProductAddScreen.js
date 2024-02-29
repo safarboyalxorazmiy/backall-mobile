@@ -875,8 +875,10 @@ class ProductAdd extends Component {
 				this.state.amountType
 			);
 
+			await AsyncStorage.setItem("isNotSaved", "true")
 			await AsyncStorage.setItem("productNotSaved", "true");
-
+			await AsyncStorage.setItem("storeProductNotSaved", "true");
+			
 			this.setState({
 				seriyaInputValue: "",
 				brandInputValue: "",

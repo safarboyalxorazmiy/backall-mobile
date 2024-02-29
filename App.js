@@ -332,6 +332,8 @@ class App extends Component {
 								}
 							}
 						}
+
+						await AsyncStorage.setItem("isNotSaved", "false")
 					}
 				}
 			}, 5000);

@@ -813,6 +813,20 @@ class Sell extends Component {
 			amount: 0,
 			profit: 0
 		});
+
+		await AsyncStorage.setItem("isNotSaved", "true")
+		await AsyncStorage.setItem("sellGroupNotSaved", "true");
+		await AsyncStorage.setItem("sellHistoryNotSaved", "true");
+		await AsyncStorage.setItem("sellHistoryGroupNotSaved", "true");
+		await AsyncStorage.setItem("sellAmountDateNotSaved", "true");
+		await AsyncStorage.setItem("profitGroupNotSaved", "true");
+		await AsyncStorage.setItem("profitHistoryNotSaved", "true");
+		await AsyncStorage.setItem("profitHistoryGroupNotSaved", "true");
+		await AsyncStorage.setItem("profitAmountDateNotSaved", "true");
+
+
+
+
 		// Navigate screen
 		const {navigation} = this.props;
 		navigation.navigate("Shopping");
