@@ -960,6 +960,49 @@ class Home extends Component {
 												await this.databaseRepository.clear();
 												await AsyncStorage.clear();
 
+												this.setState({
+													shoppingCardColors: ["#E59C0D", "#FDD958"],
+													profitCardColors: ["#2C8134", "#1DCB00"],
+													profitAmount: 0,
+													sellAmount: 0,
+													notAllowed: "",
+													animation: new Animated.Value(0),
+													spinner: false,
+													isConnected: null,
+													isLoading: false,
+													isDownloaded: "false",
+
+													// PRODUCT
+													lastLocalProductsPage: 0,
+													lastLocalProductsSize: 10,
+													lastGlobalProductsPage: 0,
+													lastGlobalProductsSize: 10,
+													lastStoreProductsPage: 0,
+													lastStoreProductsSize: 10,
+
+													// SELL
+													lastSellGroupsPage: 0,
+													lastSellGroupsSize: 10,
+													lastSellHistoriesPage: 0,
+													lastSellHistoriesSize: 10,
+													lastSellHistoryGroupPage: 0,
+													lastSellHistoryGroupSize: 10,	
+													lastSellAmountDatePage: 0,
+													lastSellAmountDateSize: 10,	
+
+													// PROFIT
+													lastProfitGroupsPage: 0,
+													lastProfitGroupsSize: 10,
+													lastProfitHistoriesPage: 0,
+													lastProfitHistoriesSize: 10,
+													lastProfitHistoryGroupPage: 0,
+													lastProfitHistoryGroupSize: 10,	
+													lastProfitAmountDatePage: 0,
+													lastProfitAmountDateSize: 10,	
+
+													menuOpened: false
+												})
+
 												const {navigation} = this.props;
 												await this.tokenService.checkTokens(navigation);
 											}}>
