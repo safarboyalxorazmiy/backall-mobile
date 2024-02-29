@@ -161,7 +161,75 @@ class AmountDateRepository {
 				});
 		});
 	}
+
+	async updateProfitAmountDateSavedTrueById(local_id, global_id) {
+    try {
+      await this.db.transaction((tx) => {
+        tx.executeSql(
+          "UPDATE profit_amount_date SET saved = 1, global_id = ? WHERsE id = ?",
+          [global_id, local_id]  // Use prepared statement for security
+        );
+      });
+    } catch (error) {
+      console.error(`Error updating product: ${error}`);
+      throw error; // Re-throw to handle the error in the calling code
+    }
+  }
+
+	async updateSellAmountDateSavedTrueById(local_id, global_id) {
+    try {
+      await this.db.transaction((tx) => {
+        tx.executeSql(
+          "UPDATE profit_amount_date SET saved = 1, global_id = ? WHERsE id = ?",
+          [global_id, local_id]  // Use prepared statement for security
+        );
+      });
+    } catch (error) {
+      console.error(`Error updating product: ${error}`);
+      throw error; // Re-throw to handle the error in the calling code
+    }
+  }
 	
+	async getProfitAmountDateSavedFalse() {
+		return new Promise((resolve, reject) => {
+			const selectQuery = `SELECT amount
+                           FROM profit_amount_date
+                           WHERE saved = 0;`;
+			this.db.transaction(tx => {
+				tx.executeSql(selectQuery, [], (tx, results) => {
+						if (results.rows.length > 0) {
+							resolve(results.rows.item(0).amount);
+						} else {
+							resolve(0.00); // Return null if no record found for the date
+						}
+					},
+					error => {
+						reject(`Error retrieving profit amount: ${error.message}`);
+					});
+			});
+		});
+	}
+
+	async getSellAmountDateSavedFalse() {
+		return new Promise((resolve, reject) => {
+			const selectQuery = `SELECT amount
+                           FROM sell_amount_date
+                           WHERE saved = =0;`;
+			this.db.transaction(tx => {
+				tx.executeSql(selectQuery, [], (tx, results) => {
+						if (results.rows.length > 0) {
+							resolve(results.rows.item(0).amount);
+						} else {
+							resolve(0.00); // Return null if no record found for the date
+						}
+					},
+					error => {
+						reject(`Error retrieving profit amount: ${error.message}`);
+					});
+			});
+		});
+	}
+
 	async getProfitAmountInfoByDate(date) {
 		return new Promise((resolve, reject) => {
 			const selectQuery = `SELECT amount

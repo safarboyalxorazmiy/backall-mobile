@@ -15,6 +15,7 @@ import ApiService from "./service/ApiService";
 import StoreProductRepository from "./repository/StoreProductRepository";
 import SellHistoryRepository from "./repository/SellHistoryRepository";
 import ProfitHistoryRepository from "./repository/ProfitHistoryRepository";
+import AmountDateRepository from "./repository/AmountDateRepository";
 
 const tokenService = new TokenService();
 
@@ -35,6 +36,7 @@ class App extends Component {
 		this.storeProductRepository = new StoreProductRepository();
 		this.sellHistoryRepository = new SellHistoryRepository();
 		this.profitHistoryRepository = new ProfitHistoryRepository();
+		this.amountDateRepository = new AmountDateRepository();
 		this.apiService = new ApiService();
 	}
 	
@@ -205,6 +207,29 @@ class App extends Component {
 							}
 						}
 
+						let sellAmountDateNotSaved = await Async.getItem("sellAmountDateNotSaved");
+						if (sellAmountDateNotSaved == "true") {
+							let notSavedSellAmountDates = 
+								await this.amountDateRepository.getSellAmountDateSavedFalse();
+							for (const sellAmountDate of notSavedSellAmountDates) {
+								try {
+									
+									let response = 
+										await this.apiService.createSellAmountDate(
+											sellAmountDate.date,
+											sellAmountDate.amount
+										);
+
+									this.amountDateRepository.updateSellAmountDateSavedTrueById(
+										sellAmountDate.id,
+										response.id
+									);
+								} catch (e) {
+									continue;
+								}
+							}
+						}
+
 						// PROFIT
 						let profitGroupNotSaved = await AsyncStorage.getItem("profitGroupNotSaved");
 						if (profitGroupNotSaved == "true") {
@@ -277,6 +302,29 @@ class App extends Component {
 
 									this.profitHistoryRepository.updateProfitHistoryGroupSavedTrueById(
 										profitHistoryGroup.id,
+										response.id
+									);
+								} catch (e) {
+									continue;
+								}
+							}
+						}
+
+						let profitAmountDateNotSaved = await Async.getItem("profitAmountDateNotSaved");
+						if (profitAmountDateNotSaved == "true") {
+							let notSavedProfitAmountDates = 
+								await this.amountDateRepository.getProfitAmountDateSavedFalse();
+							for (const profitAmountDate of notSavedProfitAmountDates) {
+								try {
+									
+									let response = 
+										await this.apiService.createSellAmountDate(
+											profitAmountDate.date,
+											profitAmountDate.amount
+										);
+
+									this.amountDateRepository.updateProfitAmountDateSavedTrueById(
+										profitAmountDate.id,
 										response.id
 									);
 								} catch (e) {

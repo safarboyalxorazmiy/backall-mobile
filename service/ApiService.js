@@ -449,6 +449,42 @@ class ApiService {
     return response.json();
   }
 
+  async createSellAmountDate(
+    date, amount
+  ) {
+    const accessToken = await this.tokenService.retrieveAccessToken();
+    console.log({
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`
+      }
+    })
+  
+    if (!this.storeId) {
+      return new Error('Invalid storeId');
+    }
+  
+    const url = `${serverUrl}/api/v1/store/sell/amount/date/create`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        date: date,
+        amount: amount,
+        storeId: this.storeId
+      })
+    });
+  
+    if (!response.ok) {
+      return new Error('Network response was not ok');
+    }
+  
+    return response.json();
+  }
+
   // CREATE PROFIT
   async createProfitGroup(
     createdDate,
@@ -548,6 +584,42 @@ class ApiService {
       body: JSON.stringify({
         profitHistoryId: profitHistoryId,
         profitGroupId: profitGroupId,
+        storeId: this.storeId
+      })
+    });
+  
+    if (!response.ok) {
+      return new Error('Network response was not ok');
+    }
+  
+    return response.json();
+  }
+
+  async createSellAmountDate(
+    date, amount
+  ) {
+    const accessToken = await this.tokenService.retrieveAccessToken();
+    console.log({
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`
+      }
+    })
+  
+    if (!this.storeId) {
+      return new Error('Invalid storeId');
+    }
+  
+    const url = `${serverUrl}/api/v1/store/profit/amount/date/create`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        date: date,
+        amount: amount,
         storeId: this.storeId
       })
     });
