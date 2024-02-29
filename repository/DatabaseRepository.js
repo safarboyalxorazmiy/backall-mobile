@@ -103,16 +103,18 @@ class DatabaseRepository {
             // DATE AMOUNTS.
             `CREATE TABLE IF NOT EXISTS profit_amount_date (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
-              global_id INTEGER, 
               date TEXT NOT NULL,
-              amount DOUBLE NOT NULL
+              amount DOUBLE NOT NULL,
+              global_id INTEGER, 
+              saved boolean
             );`,
 
             `CREATE TABLE IF NOT EXISTS sell_amount_date (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
-              global_id INTEGER,
               date TEXT NOT NULL,              
-              amount DOUBLE NOT NULL
+              amount DOUBLE NOT NULL,
+              global_id INTEGER,
+              saved boolean
             );`,
 
             // `DROP TABLE profit_amount_date;`,

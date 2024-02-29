@@ -4,6 +4,49 @@ class AmountDateRepository {
 	constructor() {
 		this.db = new DatabaseRepository().getDatabase();
 	}
+
+	async createProfitAmountWithAllValues(profitAmount, date, global_id, saved) {
+		const insertQuery = `
+		INSERT INTO profit_amount_date (
+			date, 
+			amount,
+			global_id, 
+			saved
+		) VALUES (?, ?);`;
+		tx.executeSql(insertQuery, [
+			date, 
+			profitAmount, 
+			global_id, 
+			saved ? 1 : 0
+		], (tx, insertResults) => {
+		
+			if (insertResults.rowsAffected > 0) {
+			console.log(`Profit amount inserted successfully`);
+		} else {
+			console.log(`Failed to insert profit amount`);
+		}
+		},
+		error => {
+		console.error(`Error inserting profit amount: ${error.message}`);
+		});
+	}
+
+	async createSellAmountWithAllValues(sellAmount, date, global_id, saved) {
+		const insertQuery = 
+		`INSERT INTO sell_amount_date (date, amount, global_id, saved)
+			VALUES (?, ?, ?, ?);`;
+		tx.executeSql(
+			insertQuery, [date, sellAmount, global_id, saved ? 1 : 0], 
+			(tx, insertResults) => {
+				if (insertResults.rowsAffected > 0) {
+					console.log(`Sell amount inserted successfully`);
+				} else {
+					console.log(`Failed to insert sell amount`);
+				}
+			},
+			error => {}
+		);
+	}
 	
 	async setProfitAmount(profitAmount, date) {
 		const selectQuery = `SELECT amount
@@ -27,9 +70,9 @@ class AmountDateRepository {
 							},
 							error => {
 								// If no record with the given date exists, insert a new record
-								const insertQuery = `INSERT INTO profit_amount_date (date, amount)
+								const insertQuery = `INSERT INTO profit_amount_date (date, amount, global_id, saved)
                                      VALUES (?, ?);`;
-								tx.executeSql(insertQuery, [date, profitAmount], (tx, insertResults) => {
+								tx.executeSql(insertQuery, [date, profitAmount, null, 0], (tx, insertResults) => {
 										if (insertResults.rowsAffected > 0) {
 											console.log(`Profit amount inserted successfully`);
 										} else {
@@ -38,12 +81,12 @@ class AmountDateRepository {
 									},
 									error => {
 										console.error(`Error inserting profit amount: ${error.message}`);
-									});
+								});
 							});
 					} else {
-						const insertQuery = `INSERT INTO profit_amount_date (date, amount)
-                                 VALUES (?, ?);`;
-						tx.executeSql(insertQuery, [date, profitAmount], (tx, insertResults) => {
+						const insertQuery = `INSERT INTO profit_amount_date (date, amount, global_id, saved)
+                                 VALUES (?, ?, ?, ?);`;
+						tx.executeSql(insertQuery, [date, profitAmount, null, 0], (tx, insertResults) => {
 								if (insertResults.rowsAffected > 0) {
 									console.log(`Profit amount inserted successfully`);
 								} else {

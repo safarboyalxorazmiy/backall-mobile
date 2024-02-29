@@ -65,6 +65,8 @@ class Home extends Component {
 			lastSellHistoriesSize: 10,
 			lastSellHistoryGroupPage: 0,
 			lastSellHistoryGroupSize: 10,	
+			lastSellAmountDatePage: 0,
+			lastSellAmountDateSize: 10,	
 
 			// PROFIT
 			lastProfitGroupsPage: 0,
@@ -73,6 +75,8 @@ class Home extends Component {
 			lastProfitHistoriesSize: 10,
 			lastProfitHistoryGroupPage: 0,
 			lastProfitHistoryGroupSize: 10,	
+			lastProfitAmountDatePage: 0,
+			lastProfitAmountDateSize: 10,	
 
 			menuOpened: false,
 		}
@@ -131,9 +135,11 @@ class Home extends Component {
 									await this.getSellGroups() &&
 									await this.getSellHistories() &&
 									await this.getSellHistoryGroup() &&
+									await this.getSellAmountDate() &&
 									await this.getProfitGroups() &&
 									await this.getProfitHistories() &&
-									await this.getProfitHistoryGroup();
+									await this.getProfitHistoryGroup() &&
+									await this.getProfitAmountDate();
 
 								// storing result of product storing
 								await AsyncStorage.setItem("isDownloaded", isDownloaded.toString());
@@ -439,6 +445,50 @@ class Home extends Component {
 		}
 	}
 
+	async getSellAmountDate() {
+		let sellAmountDate = [];
+		let size = this.state.lastSellAmountDateSize;
+		let page = this.state.lastSellAmountDatePage;
+	
+		while (true) {
+			let response;
+			try {
+				response = await this.apiService.getSellAmountDate(page, size);
+			} catch (error) {
+				console.error("Error fetching global products:", error);
+				this.setState({
+					lastSize: size,
+					lastPage: page
+				});
+				
+				return false; // Indicate failure
+			}
+	
+			if (!response || !response.content || response.content.length === 0) {
+				console.log(sellAmountDate);
+				return true; // Indicate success and exit the loop
+			}
+	
+			for (const sellAmountDate of response.content) {
+				try {
+					await this.amountDateRepository.createSellAmountWithAllValues(
+						sellAmountDate.amount,
+						sellAmountDate.date,
+						sellAmountDate.id,
+						true
+					);
+				} catch (error) {
+					console.error("Error processing product:", error);
+					// Continue with next product
+					continue;
+				}
+			}
+	
+			page++;
+			sellAmountDate.push(response);
+		}
+	}
+
 	// PROFIT
 	async getProfitGroups() {
 		let profitGroups = [];
@@ -571,6 +621,50 @@ class Home extends Component {
 	
 			page++;
 			profitHistoryGroup.push(response);
+		}
+	}
+
+	async getProfitAmountDate() {
+		let profitAmountDate = [];
+		let size = this.state.lastProfitAmountDateSize;
+		let page = this.state.lastProfitAmountDatePage;
+	
+		while (true) {
+			let response;
+			try {
+				response = await this.apiService.getProfitAmountDate(page, size);
+			} catch (error) {
+				console.error("Error fetching global products:", error);
+				this.setState({
+					lastSize: size,
+					lastPage: page
+				});
+				
+				return false; // Indicate failure
+			}
+	
+			if (!response || !response.content || response.content.length === 0) {
+				console.log(profitAmountDate);
+				return true; // Indicate success and exit the loop
+			}
+	
+			for (const profitAmountDate of response.content) {
+				try {
+					await this.amountDateRepository.createProfitAmountWithAllValues(
+						profitAmountDate.amount,
+						profitAmountDate.date,
+						profitAmountDate.id,
+						true
+					);
+				} catch (error) {
+					console.error("Error processing product:", error);
+					// Continue with next product
+					continue;
+				}
+			}
+	
+			page++;
+			profitAmountDate.push(response);
 		}
 	}
 

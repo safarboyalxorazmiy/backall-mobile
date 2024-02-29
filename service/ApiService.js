@@ -135,14 +135,14 @@ class ApiService {
     return response.json();
   }
 
-  async getSellHistoryGroup(page, size) {
+  async getSellAmountDate(page, size) {
     const accessToken = await this.tokenService.retrieveAccessToken();
   
     if (!this.storeId) {
       return new Error('Invalid storeId');
     }
   
-    const url = `${serverUrl}/api/v1/store/sell/link/info?storeId=${this.storeId}&page=${page}&size=${size}`;
+    const url = `${serverUrl}/api/v1/store/sell/amount/date/get?storeId=${this.storeId}&page=${page}&size=${size}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -210,6 +210,28 @@ class ApiService {
     }
   
     const url = `${serverUrl}/api/v1/store/profit/link/info?storeId=${this.storeId}&page=${page}&size=${size}`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`
+      }
+    });
+  
+    if (!response.ok) {
+      return new Error('Network response was not ok');
+    }
+  
+    return response.json();
+  }
+
+  async getProfitAmountDate(page, size) {
+    const accessToken = await this.tokenService.retrieveAccessToken();
+  
+    if (!this.storeId) {
+      return new Error('Invalid storeId');
+    }
+  
+    const url = `${serverUrl}/api/v1/store/profit/amount/date/get?storeId=${this.storeId}&page=${page}&size=${size}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
