@@ -55,7 +55,9 @@ const styles = StyleSheet.create({
   navItem: {
     display: "flex",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-start",
+    height: 93,
+    width: "20%"
   },
   activeBorder: {
     marginBottom: 30,
@@ -256,15 +258,17 @@ class NavigationService extends Component {
             <TouchableOpacity key={index} style={styles.navItem} onPress={onPress}>
               {isFocused && route.name !== "Sell" && <View style={styles.activeBorder}></View>}
               {!isFocused && route.name !== "Sell" && <View style={styles.inactiveBorder}></View>}
-              {route.name === "Home" && (isFocused ? <DashboardIconActive /> : <DashboardIcon />)}
-              {route.name === "Basket" && (isFocused ? <BasketIconActive /> : <BasketIcon />)}
-              {route.name === "Sell" && (
-                <View style={{ height: 93, display: "flex", justifyContent: "center" }}>
-                  <ScanIcon />
-                </View>
-              )}
-              {route.name === "Shopping" && (isFocused ? <ShoppingIconActive /> : <ShoppingIcon />)}
-              {route.name === "Profit" && (isFocused ? <WalletIconActive /> : <WalletIcon />)}
+              <View>
+                {route.name === "Home" && (isFocused ? <DashboardIconActive /> : <DashboardIcon />)}
+                {route.name === "Basket" && (isFocused ? <BasketIconActive /> : <BasketIcon />)}
+                {route.name === "Sell" && (
+                  <View style={{ height: 93, display: "flex", justifyContent: "center" }}>
+                    <ScanIcon />
+                  </View>
+                )}
+                {route.name === "Shopping" && (isFocused ? <ShoppingIconActive /> : <ShoppingIcon />)}
+                {route.name === "Profit" && (isFocused ? <WalletIconActive /> : <WalletIcon />)}
+              </View>
             </TouchableOpacity>
           );
         })}
