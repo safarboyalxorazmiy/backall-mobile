@@ -38,10 +38,6 @@ class TokenService {
 	};
 	
 	checkTokens = async (navigation) => {
-		if (this.isLoggedIn) {
-			return true;
-		}
-		
 		const access_token = await this.retrieveAccessToken();
 		
 		console.log(access_token)

@@ -47,7 +47,7 @@ class VerificationScreen extends Component {
 				await this.tokenService.storeAccessToken(result.access_token);
 				await this.tokenService.storeRefreshToken(result.refresh_token);
 				await AsyncStorage.setItem("role", result.role);
-				await AsyncStorage.setItem("store_id", result.storeId);
+				await AsyncStorage.setItem("store_id", result.storeId + "");
 
 				const accessToken = await this.tokenService.retrieveAccessToken();
 				console.log(accessToken);

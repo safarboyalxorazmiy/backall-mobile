@@ -26,6 +26,10 @@ import SellHistoryRepository from "../repository/SellHistoryRepository";
 import ProfitHistoryRepository from "../repository/ProfitHistoryRepository";
 import StoreProductRepository from "../repository/StoreProductRepository";
 
+import MenuIcon from "../assets/menu-icon.svg";
+import LogoutIcon from "../assets/logout-icon.svg";
+import CrossIcon from "../assets/cross-icon.svg";
+
 const tokenService = new TokenService();
 const databaseService = new DatabaseService();
 
@@ -70,6 +74,8 @@ class Home extends Component {
 			lastProfitHistoriesSize: 10,
 			lastProfitHistoryGroupPage: 0,
 			lastProfitHistoryGroupSize: 10,	
+
+			menuOpened: true
 		}
 		
 		this.tokenService = new TokenService();
@@ -91,6 +97,8 @@ class Home extends Component {
 		const {navigation} = this.props;
 		navigation.addListener("focus", 
 			async () => {
+				// await AsyncStorage.clear();
+
 				let isLoggedIn = await tokenService.checkTokens()
 				if (isLoggedIn) {
 					let isDownloaded = await AsyncStorage.getItem("isDownloaded");
@@ -611,7 +619,18 @@ class Home extends Component {
 					/>
 
 					<View style={styles.container}>
-						<Text style={styles.pageTitle}>Bosh sahifa</Text>
+						<View style={styles.header}>
+							<Text style={styles.pageTitle}>Bosh sahifa</Text>
+							<TouchableOpacity
+								onPress={() => {
+									this.setState({
+										menuOpened: true
+									})
+								}}
+								style={styles.menuIcon}>
+								<MenuIcon />
+							</TouchableOpacity>
+						</View>
 						
 						<View style={styles.cards}>
 							<TouchableOpacity
@@ -763,6 +782,102 @@ class Home extends Component {
 								</Animated.View>
 							</View>
 					</Modal>
+
+					<Modal
+						visible={this.state.menuOpened}
+						animationIn={"slideInUp"}
+						animationOut={"slideInDown"}
+						animationInTiming={200}
+						transparent={true}>
+							<View style={{
+								position: "absolute",
+								width: "150%",
+								height: screenHeight,
+								flex: 1,
+								alignItems: "center",
+								justifyContent: "center",
+								backgroundColor: "#00000099",
+								left: -50,
+								right: -50,
+								top: 0
+							}}></View>
+
+							<View style={{
+								height: screenHeight,
+								display: "flex",
+								alignItems: "center",
+								justifyContent: "center"
+							}}>
+								<Animated.View style={{
+									width: screenWidth,
+									marginLeft: "auto",
+									marginRight: "auto",
+									flex: 1,
+									alignItems: "center",
+									justifyContent: "flex-end",
+									marginBottom: 0,
+									marginLeft: "-5.5%",
+									transform: [{translateY}]
+								}}>
+									<View style={{
+										width: "100%",
+										height: 500,
+										display: "flex",
+										justifyContent: "space-between",
+										padding: 20,
+										borderRadius: 0,
+										backgroundColor: "#fff",
+										borderTopRightRadius: 20,
+										borderTopLeftRadius: 20
+									}}>
+										<View style={{
+											height: 24,
+											width: "100%",
+											display: "flex",
+											alignItems: "flex-end",
+											justifyContent: "flex-end",
+											marginBottom: 24,
+											marginTop: 10
+										}}>
+										<TouchableOpacity onPress={() => {
+											this.setState({menuOpened: false})
+										}}>
+											<CrossIcon/>
+										</TouchableOpacity>
+									</View>
+
+										<TouchableOpacity
+											style={{
+												display: "flex",
+												alignItems: "center",
+												height: 55,
+												justifyContent: "center",
+												backgroundColor: "#fff",
+												width: "100%",
+												borderRadius: 12,
+												paddingHorizontal: 30,
+												borderTopWidth: 1,
+												borderTopColor: "#F1F1F1",
+												display: "flex",
+												flexDirection: "row",
+												gap: 17,
+											}}
+											onPress={async () => {
+												this.setState({notAllowed: "false"});
+												await AsyncStorage.setItem("not_allowed", "false")
+											}}>
+												<LogoutIcon />
+											<Text
+												style={{
+													fontFamily: "Gilroy-Bold",
+													fontSize: 18,
+													color: "#D93E3C",
+												}}>Hammasini tozalash va chiqish</Text>
+										</TouchableOpacity>
+									</View>
+								</Animated.View>
+							</View>
+					</Modal>
 				</>
 		);
 	}
@@ -776,17 +891,29 @@ const styles = StyleSheet.create({
 		paddingTop: 52
 	},
 	
+	header : {
+		display: "flex",
+		flexDirection: "row",
+		height: 44,
+		width: screenWidth - (24 + 24),
+		// borderBottomColor: "#AFAFAF",
+		// borderBottomWidth: 1,
+		marginBottom: 24,
+		justifyContent: "space-between",
+		alignItems: "center"
+	},
+
+	menuIcon: {
+		// backgroundColor: "red",
+		padding: 6
+	},
+
 	pageTitle: {
 		fontSize: 18,
 		fontFamily: "Gilroy-SemiBold",
-		height: 44,
-		borderBottomColor: "#AFAFAF",
-		borderBottomWidth: 1,
-		width: screenWidth - (24 + 24),
 		textAlign: "center",
-		marginBottom: 24
 	},
-	
+
 	shoppingIconWrapper: {
 		width: 141,
 		height: 141,
