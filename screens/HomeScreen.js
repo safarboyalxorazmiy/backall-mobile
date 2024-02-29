@@ -26,7 +26,7 @@ import SellHistoryRepository from "../repository/SellHistoryRepository";
 import ProfitHistoryRepository from "../repository/ProfitHistoryRepository";
 import StoreProductRepository from "../repository/StoreProductRepository";
 
-import MenuIcon from "../assets/menu-icon.svg";
+import MenuIcon from "../assets/menu-icon 2.svg";
 import LogoutIcon from "../assets/logout-icon.svg";
 import CrossIcon from "../assets/cross-icon.svg";
 import DatabaseRepository from "../repository/DatabaseRepository";
@@ -78,6 +78,8 @@ class Home extends Component {
 			lastProfitAmountDatePage: 0,
 			lastProfitAmountDateSize: 10,	
 
+			menuFocused: false,
+			crossFocused: false,
 			menuOpened: false,
 		}
 		
@@ -91,7 +93,16 @@ class Home extends Component {
 		this.tokenService = new TokenService();
 
 		this.getAmountInfo();
+		this.animatedValue = new Animated.Value(0);
 	}
+
+	startAnimation = () => {
+    Animated.timing(this.animatedValue, {
+      toValue: 1,
+      duration: 1000,
+      useNativeDriver: false, // Note: Native driver is not supported for changing borderRadius
+    }).start();
+  };
 	
 	async componentDidMount() {
 		this.unsubscribe = NetInfo.addEventListener((state) => {
@@ -700,6 +711,11 @@ class Home extends Component {
 			inputRange: [0, 1],
 			outputRange: [0, -100] // Adjust the value as needed
 		});
+
+		const backgroundColor = this.animatedValue.interpolate({
+      inputRange: [0, 1],
+      outputRange: ['#FFF', '#F1F1F1'],
+    });
 		
 		return (
 			<>
@@ -720,9 +736,35 @@ class Home extends Component {
 									this.setState({
 										menuOpened: true
 									})
+
+									this.startAnimation()
 								}}
-								style={styles.menuIcon}>
-								<MenuIcon />
+								onPressIn={() => {
+									this.setState(
+										{menuFocused: true}
+									)
+
+									this.startAnimation()
+								}}
+
+								onPressOut={() => {
+									this.setState(
+										{menuFocused: false}
+									)
+
+									this.startAnimation();
+								}}
+
+								activeOpacity={1}>
+								<Animated.View 
+									style={this.state.menuFocused ? {
+										backgroundColor: backgroundColor,
+										padding: 10,
+										paddingVertical: 15,
+										borderRadius: 50,
+									} : styles.menuIcon}>
+									<MenuIcon />
+								</Animated.View>
 							</TouchableOpacity>
 						</View>
 						
@@ -806,7 +848,7 @@ class Home extends Component {
 
 					<Modal
 						visible={this.state.notAllowed === "true"}
-						animationIn={"slideInUp"}
+						animationIn={"slideOutUp"}
 						animationOut={"slideOutDown"}
 						animationInTiming={200}
 						transparent={true}>
@@ -910,15 +952,14 @@ class Home extends Component {
 									alignItems: "center",
 									justifyContent: "flex-end",
 									marginBottom: 0,
-									marginLeft: "-5.5%",
-									transform: [{translateY}]
+									marginLeft: "-5.5%"
 								}}>
 									<View style={{
 										width: "100%",
 										height: 500,
 										display: "flex",
 										justifyContent: "space-between",
-										padding: 20,
+										paddingTop: 40,
 										borderRadius: 0,
 										backgroundColor: "#fff",
 										borderTopRightRadius: 20,
@@ -931,12 +972,38 @@ class Home extends Component {
 											alignItems: "flex-end",
 											justifyContent: "flex-end",
 											marginBottom: 24,
-											marginTop: 10
 										}}>
-										<TouchableOpacity onPress={async() => {
-											this.setState({menuOpened: false});
-										}}>
-											<CrossIcon/>
+										<TouchableOpacity 
+											onPressIn={() => {
+												this.startAnimation();
+												this.setState({
+													crossFocused: true
+												})
+											}}
+
+											onPressOut={() => {
+												this.setState({
+													crossFocused: false
+												})
+											}}
+
+											activeOpacity={1}
+											
+											onPress={async() => {
+												this.setState({menuOpened: false});
+											}}>
+											<Animated.View style={this.state.crossFocused ? {
+												backgroundColor: backgroundColor,
+												borderRadius: 50,
+												padding: 20
+											} : {
+												backgroundColor: "#FFF",
+												borderRadius: 50,
+												padding: 20
+											}}>
+												<CrossIcon/>
+											</Animated.View>
+
 										</TouchableOpacity>
 									</View>
 
@@ -1044,8 +1111,10 @@ const styles = StyleSheet.create({
 	},
 
 	menuIcon: {
-		// backgroundColor: "red",
-		padding: 6
+		backgroundColor: "#FFF",
+		padding: 10,
+		paddingVertical: 15,
+		borderRadius: 50
 	},
 
 	pageTitle: {
