@@ -51,7 +51,13 @@ class VerificationScreen extends Component {
 
 				const accessToken = await this.tokenService.retrieveAccessToken();
 				console.log(accessToken);
-				console.log(await this.tokenService.retrieveRefreshToken())
+				console.log(await this.tokenService.retrieveRefreshToken());
+				
+				this.setState({
+					verificationCode: "",
+					error: false
+				});
+
 				navigation.navigate("Home");
 			} else {
 				this.setState({

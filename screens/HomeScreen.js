@@ -29,9 +29,7 @@ import StoreProductRepository from "../repository/StoreProductRepository";
 import MenuIcon from "../assets/menu-icon.svg";
 import LogoutIcon from "../assets/logout-icon.svg";
 import CrossIcon from "../assets/cross-icon.svg";
-
-const tokenService = new TokenService();
-const databaseService = new DatabaseService();
+import DatabaseRepository from "../repository/DatabaseRepository";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -51,6 +49,7 @@ class Home extends Component {
 			isConnected: null,
 			isLoading: false,
 			isDownloaded: "false",
+
 			// PRODUCT
 			lastLocalProductsPage: 0,
 			lastLocalProductsSize: 10,
@@ -75,16 +74,17 @@ class Home extends Component {
 			lastProfitHistoryGroupPage: 0,
 			lastProfitHistoryGroupSize: 10,	
 
-			menuOpened: true
+			menuOpened: false,
 		}
 		
-		this.tokenService = new TokenService();
 		this.amountDateRepository = new AmountDateRepository();
 		this.apiService = new ApiService();
 		this.productRepository = new ProductRepository();
 		this.sellHistoryRepository = new SellHistoryRepository();
 		this.profitHistoryRepository = new ProfitHistoryRepository();
 		this.storeProductRepository = new StoreProductRepository();
+		this.databaseRepository = new DatabaseRepository();
+		this.tokenService = new TokenService();
 
 		this.getAmountInfo();
 	}
@@ -99,10 +99,10 @@ class Home extends Component {
 			async () => {
 				// await AsyncStorage.clear();
 
-				let isLoggedIn = await tokenService.checkTokens()
+				let isLoggedIn = await this.tokenService.checkTokens()
 				if (isLoggedIn) {
 					let isDownloaded = await AsyncStorage.getItem("isDownloaded");
-					if (isDownloaded != "true") {
+					if (isDownloaded != "true" && isDownloaded != null) {
 						// LOAD..
 	
 						let intervalId = setInterval(async () => {
@@ -600,7 +600,7 @@ class Home extends Component {
 	
 	render() {
 		const {navigation} = this.props;
-		tokenService.checkTokens(navigation);
+		this.tokenService.checkTokens(navigation);
 
 		const translateY = this.state.animation.interpolate({
 			inputRange: [0, 1],
@@ -839,8 +839,8 @@ class Home extends Component {
 											marginBottom: 24,
 											marginTop: 10
 										}}>
-										<TouchableOpacity onPress={() => {
-											this.setState({menuOpened: false})
+										<TouchableOpacity onPress={async() => {
+											this.setState({menuOpened: false});
 										}}>
 											<CrossIcon/>
 										</TouchableOpacity>
@@ -863,8 +863,11 @@ class Home extends Component {
 												gap: 17,
 											}}
 											onPress={async () => {
-												this.setState({notAllowed: "false"});
-												await AsyncStorage.setItem("not_allowed", "false")
+												await this.databaseRepository.clear();
+												await AsyncStorage.clear();
+
+												const {navigation} = this.props;
+												await this.tokenService.checkTokens(navigation);
 											}}>
 												<LogoutIcon />
 											<Text
