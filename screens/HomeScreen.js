@@ -1008,20 +1008,17 @@ class Home extends Component {
 									</View>
 
 										<TouchableOpacity
-											style={{
-												display: "flex",
-												alignItems: "center",
-												height: 55,
-												justifyContent: "center",
-												backgroundColor: "#fff",
-												width: "100%",
-												borderRadius: 12,
-												paddingHorizontal: 30,
-												borderTopWidth: 1,
-												borderTopColor: "#F1F1F1",
-												display: "flex",
-												flexDirection: "row",
-												gap: 17,
+											activeOpacity={1}
+											onPressIn={() => {
+												this.setState({
+													clearButtonFocused: true
+												})
+												this.startAnimation()
+											}}
+											onPressOut={() => {
+												this.setState({
+													clearButtonFocused: false
+												})
 											}}
 											onPress={async () => {
 												await this.databaseRepository.clear();
@@ -1073,13 +1070,35 @@ class Home extends Component {
 												const {navigation} = this.props;
 												await this.tokenService.checkTokens(navigation);
 											}}>
-												<LogoutIcon />
-											<Text
-												style={{
-													fontFamily: "Gilroy-Bold",
-													fontSize: 18,
-													color: "#D93E3C",
-												}}>Hammasini tozalash va chiqish</Text>
+												<Animated.View style={[
+													{
+														display: "flex",
+														alignItems: "center",
+														height: 55,
+														justifyContent: "center",
+														width: "100%",
+														paddingHorizontal: 30,
+														borderTopWidth: 1,
+														borderTopColor: "#F1F1F1",
+														display: "flex",
+														flexDirection: "row",
+														gap: 17
+													}, this.state.clearButtonFocused ? {
+														backgroundColor: backgroundColor
+													}: {
+														backgroundColor: "#FFF"
+													}
+												]}>
+													<LogoutIcon />
+													<Text
+														style={{
+															fontFamily: "Gilroy-Bold",
+															fontSize: 18,
+															color: "#D93E3C",
+														}}>
+															Hammasini tozalash va chiqish
+														</Text>
+												</Animated.View>
 										</TouchableOpacity>
 									</View>
 								</Animated.View>
