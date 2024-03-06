@@ -85,8 +85,8 @@ class Profit extends Component {
 
   
   async initProfitHistoryGroup() {
-        await this.profitHistoryRepository.init();
-        await this.amountDateRepository.init();
+    await this.profitHistoryRepository.init();
+    await this.amountDateRepository.init();
 
       await this.getDateInfo();
 

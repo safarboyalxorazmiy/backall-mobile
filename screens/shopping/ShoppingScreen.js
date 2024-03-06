@@ -82,6 +82,9 @@ class Shopping extends Component {
 	}
 	
 	async initSellingHistoryGroup() {
+		await this.sellHistoryRepository.init();
+		await this.amountDateRepository.init();
+
 		this.getDateInfo();
 		if (this.state.fromDate != null && this.state.toDate != null) {
 			let lastSellHistoryGroup =
@@ -316,7 +319,7 @@ class Shopping extends Component {
 						{this.state.groupedHistories.map((group) => (
 							<View key={group.date}>
 								{/* Amount Calculation */}
-								{group.totalAmount && (
+								{
 									<View style={styles.historyTitleWrapper}>
 										<Text style={styles.historyTitleText}>{group.dateInfo}</Text>
 										
@@ -324,7 +327,7 @@ class Shopping extends Component {
 										
 										<Text style={styles.historyTitleText}>{`${group.totalAmount} so’m`}</Text>
 									</View>
-								)}
+								}
 								
 								{group.histories.map((history) => (
 									<TouchableOpacity

@@ -3,8 +3,6 @@ import DatabaseRepository from "./DatabaseRepository";
 class AmountDateRepository {
 	constructor() {
 		this.db = new DatabaseRepository().getDatabase();
-
-		this.init()
 	}
 
 	async init() {
@@ -30,6 +28,8 @@ class AmountDateRepository {
 					);`
 				);
 			})
+
+			resolve(true)
     });
   }
 

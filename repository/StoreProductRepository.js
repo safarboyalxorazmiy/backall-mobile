@@ -3,8 +3,6 @@ import DatabaseRepository from "./DatabaseRepository";
 class StoreProductRepository {
   constructor() {
     this.db = new DatabaseRepository().getDatabase();
-
-    this.init();
   };
 
   async init() {
@@ -12,7 +10,7 @@ class StoreProductRepository {
       this.db.transaction((tx) => {
         tx.executeSql(
           `CREATE TABLE IF NOT EXISTS product(
-            id INTEGER PRIMARY KEY, 
+            id INTEGER PRIMARY KEY AUTOINCREMENT, 
             name TEXT NOT NULL, 
             brand_name TEXT NOT NULL, 
             serial_number TEXT NOT NULL,
@@ -37,7 +35,10 @@ class StoreProductRepository {
             FOREIGN KEY (product_id) REFERENCES product(id)
           );`
         );
+
       });
+
+      resolve(true);
     });
   }
 

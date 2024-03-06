@@ -6,8 +6,6 @@ class SellHistoryRepository {
     this.db = new DatabaseRepository().getDatabase();
 
     this.productRepository = new ProductRepository();
-
-    this.init();
   }
 
   async init() {
@@ -49,6 +47,8 @@ class SellHistoryRepository {
           );`
         );
       });
+
+      resolve(true);
     });
   }
 
@@ -200,7 +200,7 @@ class SellHistoryRepository {
           global_id,
           saved
         )
-        VALUES (?, ?, ?, ?, ?, ?);
+        VALUES (?, ?, ?, ?, ?, null, 0);
       `;
 
       await this.db.transaction(async (tx) => {
@@ -209,9 +209,7 @@ class SellHistoryRepository {
             count, 
             count_type, 
             selling_price,
-            created_date.toISOString(),
-            null,
-            0
+            created_date.toISOString()
           ]);
       });
 
@@ -295,13 +293,13 @@ class SellHistoryRepository {
         global_id,
         saved
       ) 
-      VALUES (?, ?, ?, ?);
+      VALUES (?, ?, null, 0);
     `;
 
     await this.db.transaction(async (tx) => {
       await tx.executeSql(
         insert,
-        [group_id, historyId, null, 0]
+        [group_id, historyId]
       );
     });
 

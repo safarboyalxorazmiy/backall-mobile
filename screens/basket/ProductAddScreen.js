@@ -275,8 +275,7 @@ class ProductAdd extends Component {
 	onEndEditingSellingPriceInput = () => {
 		if (this.state.sellingPriceType === "SO'M") {
 			if (
-				this.state.priceInputValue == "" ||
-				this.state.priceInputValue > this.state.sellingPriceInputValue
+				this.state.priceInputValue == ""
 			) {
 				this.setState({
 					priceInputValue: "",
@@ -300,6 +299,7 @@ class ProductAdd extends Component {
 				sellingPrice: this.state.sellingPriceInputValue,
 				percentageOfPrice: percentage
 			});
+
 		} else {
 			const exactSellingPrice = (this.state.priceInputValue * this.state.sellingPriceInputValue) / 100;
 			this.state.profitCalculation = exactSellingPrice;

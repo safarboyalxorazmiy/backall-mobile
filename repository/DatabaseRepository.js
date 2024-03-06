@@ -17,7 +17,7 @@ class DatabaseRepository {
         this.db.transaction(async (tx) => {
           const queries = [
             `CREATE TABLE IF NOT EXISTS product(
-              id INTEGER PRIMARY KEY, 
+              id INTEGER PRIMARY KEY AUTOINCREMENT, 
               name TEXT NOT NULL, 
               brand_name TEXT NOT NULL, 
               serial_number TEXT NOT NULL,

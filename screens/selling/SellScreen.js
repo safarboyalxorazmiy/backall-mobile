@@ -106,6 +106,10 @@ class Sell extends Component {
 				navigation.navigate(from);
 			}
 
+			await this.amountDateRepository.init();
+			await this.profitHistoryRepository.init();
+			await this.sellHistoryRepository.init();
+
 			let currentDate = new Date();
 			let currentMonth = currentDate.getMonth();
 			let lastStoredMonth = parseInt(await AsyncStorage.getItem("month"));
@@ -113,8 +117,6 @@ class Sell extends Component {
 			if (currentMonth === lastStoredMonth) {
 				this.setState({thisMonthSellAmount: thisMonthSellAmount});
 			}
-			
-			await this.initSellingHistoryGroup();
 		});
 	}
 
@@ -644,7 +646,7 @@ class Sell extends Component {
 											selectedProduct.count = parseFloat(this.state.quantityInputValue);
 
 											this.setState({
-												amount: this.state.amount + selectedProduct.selling_price
+												amount: this.state.amount + (selectedProduct.selling_price * selectedProduct.count)
 											});
 
 											this.setState({
@@ -654,8 +656,24 @@ class Sell extends Component {
 												)
 											});
 
-											let allSellingProducts = this.state.sellingProducts.concat(selectedProduct);
-											this.setState({sellingProducts: allSellingProducts});
+											let foundProduct = this.state.sellingProducts.find(product => product.id === selectedProduct.id);
+											if (foundProduct != null) {
+												const updatedSellingProducts = this.state.sellingProducts.map(product => {
+													if (product.id === selectedProduct.id) {
+														return { ...product, count: product.count + selectedProduct.count };
+													}
+													return product;
+												});
+
+												this.setState(prevState => ({
+													sellingProducts: updatedSellingProducts
+												}));
+											} else {
+												this.setState(prevState => ({
+													sellingProducts: [...prevState.sellingProducts, selectedProduct]
+												}));
+											}
+
 
 											// TODO CLEAR STATE:::
 											this.setState({
@@ -690,10 +708,10 @@ class Sell extends Component {
 		);
 
 		let sellGroupId = await this.sellHistoryRepository.createSellHistoryGroup(this.state.amount);
+		console.log(this.state.profit);
 		let profitGroupId = await this.profitHistoryRepository.createProfitGroup(this.state.profit);
 
-
-		console.log("PROFIT ", this.state.profit);
+		console.log("PROFIT ", profitGroupId);
 
 		this.state.sellingProducts.forEach(
 			async (sellingProduct) => {
@@ -707,7 +725,9 @@ class Sell extends Component {
 			});
 
 
-		console.log("PROFIT GROUP:::", profitGroupId)
+		console.log("PROFIT GROUP:::", profitGroupId);
+		console.log("SELL GROUP:::", sellGroupId);
+
 		// SMALL TASKS
 		/*
 			* Find selling price and actual price then profit.
@@ -731,6 +751,8 @@ class Sell extends Component {
 			}
 		]
 		*/
+
+
 
 
 		// price and selling_price

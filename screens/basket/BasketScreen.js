@@ -26,7 +26,6 @@ const screenHeight = Dimensions.get("window").height;
 class Basket extends Component {
 	constructor(props) {
 		super(props);
-		this.textInputRef = React.createRef();
 		
 		this.state = {
 			isCreated: "false",
@@ -39,6 +38,7 @@ class Basket extends Component {
       animation: new Animated.Value(0),
 			role: ""
 		}
+		
 		this.storeProductRepository = new StoreProductRepository();
 
 		this.keyboardDidShowListener = Keyboard.addListener(
@@ -50,6 +50,7 @@ class Basket extends Component {
       this.keyboardDidHide
     );
 
+		this.textInputRef = React.createRef();
 		this.loadData();
 	}
 
@@ -62,55 +63,63 @@ class Basket extends Component {
   };
 	
 	async componentDidMount() {
-		await this.getCreated();
 		const {navigation} = this.props;
-		await this.storeProductRepository.init();
+		console.log(navigation);
 
-		this.setState(
-			{role: await AsyncStorage.getItem("role")}
-		);
-		
-		navigation.addListener("focus", async () => {
-			await this.storeProductRepository.init();
+		navigation.addListener("focus", 
+			async () => {
+				await this.storeProductRepository.init();
 
-			// ROLE ERROR
-			let notAllowed = await AsyncStorage.getItem("not_allowed");
-			this.setState({notAllowed: notAllowed})
+				// ROLE ERROR
+				let notAllowed = await AsyncStorage.getItem("not_allowed");
+				this.setState({notAllowed: notAllowed})
 
-			this.setState(
-				{role: await AsyncStorage.getItem("role")}
-			);
-			
-			this.setState(
-				{
-					isCreated: "false",
-					storeProducts: [],
-					addButtonStyle: styles.addButton,
-					searchInputValue: "",
-					lastId: 0,
-					lastYPos: 0
-				}
-			);
+				this.setState(
+					{role: await AsyncStorage.getItem("role")}
+				);
+				
+				this.setState(
+					{
+						isCreated: "false",
+						storeProducts: [],
+						addButtonStyle: styles.addButton,
+						searchInputValue: "",
+						lastId: 0,
+						lastYPos: 0
+					}
+				);
 
-			await this.getCreated();
-			let storeProducts = await this.storeProductRepository.findTopStoreProductsInfo(this.state.lastId);
-			let last = storeProducts[storeProducts.length - 1];
-			if (last != undefined) {
+				await this.getCreated();
+				let storeProducts = await this.storeProductRepository.findTopStoreProductsInfo(this.state.lastId);
+				let last = storeProducts[storeProducts.length - 1];
+				if (last != undefined) {
+					this.setState({
+						lastId: last.id
+					})
+
+					console.log("LAST ID::", last.id)
+				};
+
 				this.setState({
-					lastId: last.id
-				})
+					storeProducts: storeProducts,
+					searchInputValue: ""
+				});
 
-				console.log("LAST ID::", last.id)
-			};
+				console.log("Hello world!")
+				this.setState(
+					{role: await AsyncStorage.getItem("role")}
+				);
 
-			this.setState({
-				storeProducts: storeProducts,
-				searchInputValue: ""
-			});
-		});
+				console.log(this.state.role === "SELLER");
+				
+				await this.storeProductRepository.init();
+			}
+		);	
 	}
 
 	async loadData() {
+		await this.storeProductRepository.init();
+
     const newStoreProducts = await this.storeProductRepository.findTopStoreProductsInfo(this.state.lastId);
 		let last = newStoreProducts[newStoreProducts.length - 1];
 		if (last != undefined) {
@@ -129,6 +138,15 @@ class Basket extends Component {
 			storeProducts: allProducts,
 			searchInputValue: ""
 		});
+
+		await this.getCreated();
+		await this.storeProductRepository.init();
+
+		this.setState(
+			{role: await AsyncStorage.getItem("role")}
+		);
+
+		console.log("LOAD DATA ENDED")
 	}
 	
 	async getCreated() {

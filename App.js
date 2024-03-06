@@ -73,270 +73,279 @@ class App extends Component {
 				this.setState({isConnected: state.isConnected});
 			});
 			
-			this.logInternetStatusInterval = setInterval(async () => {
-				console.log(
-					"Is connected?", 
-					this.state.isConnected === null ? "Loading..." : 
-					this.state.isConnected ? "Yes" : "No"
-				);
+			// this.logInternetStatusInterval = setInterval(async () => {
+			// 	console.log(
+			// 		"Is connected?", 
+			// 		this.state.isConnected === null ? "Loading..." : 
+			// 		this.state.isConnected ? "Yes" : "No"
+			// 	);
 
-				if (this.state.isConnected) {
-					// internet exist do something
-					// 
+			// 	if (this.state.isConnected) {
+			// 		// internet exist do something
+			// 		// 
 
-					let isNotSaved = await AsyncStorage.getItem("isNotSaved");
-					if (isNotSaved == true) {
+			// 		let isNotSaved = await AsyncStorage.getItem("isNotSaved");
+			// 		if (isNotSaved == true) {
 						
-						// PRODUCT
-						let productNotSaved = await AsyncStorage.getItem("productNotSaved");
-						if (productNotSaved == "true") {
-							let notSavedProducts = 
-								await productRepository.findProductsBySavedFalse();
-							for (const product of notSavedProducts) {
-								try {
-									let response = await this.apiService.createLocalProduct(
-										product.serial_number, 
-										product.name, 
-										product.brand_name
-									);
+			// 			// PRODUCT
+			// 			let productNotSaved = await AsyncStorage.getItem("productNotSaved");
+			// 			if (productNotSaved == "true") {
+			// 				let notSavedProducts = 
+			// 					await productRepository.findProductsBySavedFalse();
+			// 				for (const product of notSavedProducts) {
+			// 					try {
+			// 						let response = await this.apiService.createLocalProduct(
+			// 							product.serial_number, 
+			// 							product.name, 
+			// 							product.brand_name
+			// 						);
 	
-									await this.productRepository.updateSavedTrueByProductId(product.id, response.id);
-								} catch (e) {
-									continue;
-								}
-							}
+			// 						await this.productRepository.updateSavedTrueByProductId(product.id, response.id);
+			// 					} catch (e) {
+			// 						console.error(e)
+			// 						continue;
+			// 					}
+			// 				}
 
-							await AsyncStorage.setItem("productNotSaved", "false")
-						}
+			// 				await AsyncStorage.setItem("productNotSaved", "false")
+			// 			}
 
-						let storeProductNotSaved = await Async.getItem("storeProductNotSaved");
-						if (storeProductNotSaved == "true") {
-							let storeProducts = await this.storeProductRepository.findByWhereSavedFalse();
-							for (const storeProduct of storeProducts) {
-								try {
-									let products = await this.productRepository.findProductsById(storeProduct.product_id);
+			// 			let storeProductNotSaved = await Async.getItem("storeProductNotSaved");
+			// 			if (storeProductNotSaved == "true") {
+			// 				let storeProducts = await this.storeProductRepository.findByWhereSavedFalse();
+			// 				for (const storeProduct of storeProducts) {
+			// 					try {
+			// 						let products = await this.productRepository.findProductsById(storeProduct.product_id);
 
-									let response = await this.apiService.createStoreProducts(
-										products[0].id,
-										storeProduct.nds,
-										storeProduct.price,
-										storeProduct.selling_price,
-										storeProduct.percentage,
-										storeProduct.count,
-										storeProduct.count_type
-									);
+			// 						let response = await this.apiService.createStoreProducts(
+			// 							products[0].id,
+			// 							storeProduct.nds,
+			// 							storeProduct.price,
+			// 							storeProduct.selling_price,
+			// 							storeProduct.percentage,
+			// 							storeProduct.count,
+			// 							storeProduct.count_type
+			// 						);
 
-									await this.storeProductRepository.updateSavedTrueById(storeProduct.id, response.id);
-								} catch (e) {
-									continue;
-								}
-							}
-						}
+			// 						await this.storeProductRepository.updateSavedTrueById(storeProduct.id, response.id);
+			// 					} catch (e) {
+			// 						console.error(e)
+			// 						continue;
+			// 					}
+			// 				}
+			// 			}
 
-						// SELL
-						let sellGroupNotSaved = await AsyncStorage.getItem("sellGroupNotSaved");
-						if (sellGroupNotSaved == "true") {
-							let sellGroups = await this.sellHistoryRepository.getSellGroupSavedFalse();
-							for (const sellGroup of sellGroups) {
-								try {
-									let response = await this.apiService.createSellGroup(
-										sellGroup.created_date, 
-										sellGroup.amount
-									);
+			// 			// SELL
+			// 			let sellGroupNotSaved = await AsyncStorage.getItem("sellGroupNotSaved");
+			// 			if (sellGroupNotSaved == "true") {
+			// 				let sellGroups = await this.sellHistoryRepository.getSellGroupSavedFalse();
+			// 				for (const sellGroup of sellGroups) {
+			// 					try {
+			// 						let response = await this.apiService.createSellGroup(
+			// 							sellGroup.created_date, 
+			// 							sellGroup.amount
+			// 						);
 
-									await this.sellHistoryRepository.updateSellGroupSavedTrueById(
-										sellGroup.id, 
-										response.id
-									);
-								} catch (e) {
-									continue;
-								}
-							}
-						}
+			// 						await this.sellHistoryRepository.updateSellGroupSavedTrueById(
+			// 							sellGroup.id, 
+			// 							response.id
+			// 						);
+			// 					} catch (e) {
+			// 						console.error(e)
+			// 						continue;
+			// 					}
+			// 				}
+			// 			}
 
-						let sellHistoryNotSaved = await AsyncStorage.getItem("sellHistoryNotSaved");
-						if (sellHistoryNotSaved == "true") {
-							let sellHistories = await this.sellHistoryRepository.getSellHistorySavedFalse();
-							for (const sellHistory of sellHistories) {
-								try {
-									let products = await this.productRepository.findProductsById(sellHistory.product_id);
+			// 			let sellHistoryNotSaved = await AsyncStorage.getItem("sellHistoryNotSaved");
+			// 			if (sellHistoryNotSaved == "true") {
+			// 				let sellHistories = await this.sellHistoryRepository.getSellHistorySavedFalse();
+			// 				for (const sellHistory of sellHistories) {
+			// 					try {
+			// 						let products = await this.productRepository.findProductsById(sellHistory.product_id);
 
-									let response = await this.apiService.createSellHistory(
-										products[0].id,
-										sellHistory.count,
-										sellHistory.count_type,
-										sellHistory.selling_price,
-										sellHistory.created_date
-									);
+			// 						let response = await this.apiService.createSellHistory(
+			// 							products[0].id,
+			// 							sellHistory.count,
+			// 							sellHistory.count_type,
+			// 							sellHistory.selling_price,
+			// 							sellHistory.created_date
+			// 						);
 
-									await this.sellHistoryRepository.updateSellHistoryGroupSavedTrueById(
-										sellHistory.id, 
-										response.id
-									);
-								} catch (e) {
-									continue;
-								}
-							}
-						}
+			// 						await this.sellHistoryRepository.updateSellHistoryGroupSavedTrueById(
+			// 							sellHistory.id, 
+			// 							response.id
+			// 						);
+			// 					} catch (e) {
+			// 						console.error(e)
+			// 						continue;
+			// 					}
+			// 				}
+			// 			}
 
-						let sellHistoryGroupNotSaved = await AsyncStorage.getItem("sellHistoryGroupNotSaved");
-						if (sellHistoryGroupNotSaved == "true") {
-							let sellHistoryGroups = 
-								await this.sellHistoryRepository.getSellHistorySavedFalse();
-							for (const sellHistoryGroup of sellHistoryGroups) {
-								try {
-									let sellHistory = await this.sellHistoryRepository.findSellHistoryById(
-										sellHistoryGroup.history_id
-									);
-									let sellGroup = await this.sellHistoryRepository.findSellGroupById(
-										sellHistoryGroup.group_id
-									);
+			// 			let sellHistoryGroupNotSaved = await AsyncStorage.getItem("sellHistoryGroupNotSaved");
+			// 			if (sellHistoryGroupNotSaved == "true") {
+			// 				let sellHistoryGroups = 
+			// 					await this.sellHistoryRepository.getSellHistorySavedFalse();
+			// 				for (const sellHistoryGroup of sellHistoryGroups) {
+			// 					try {
+			// 						let sellHistory = await this.sellHistoryRepository.findSellHistoryById(
+			// 							sellHistoryGroup.history_id
+			// 						);
+			// 						let sellGroup = await this.sellHistoryRepository.findSellGroupById(
+			// 							sellHistoryGroup.group_id
+			// 						);
 									
-									let response = await this.apiService.createSellHistoryGroup(
-										sellHistory[0].global_id,
-										sellGroup[0].global_id
-									);
+			// 						let response = await this.apiService.createSellHistoryGroup(
+			// 							sellHistory[0].global_id,
+			// 							sellGroup[0].global_id
+			// 						);
 
-									this.sellHistoryRepository.updateSellHistoryGroupSavedTrueById(
-										sellHistoryGroup.id,
-										response.id
-									)
-								} catch (e) {
-									continue;
-								}
-							}
-						}
+			// 						this.sellHistoryRepository.updateSellHistoryGroupSavedTrueById(
+			// 							sellHistoryGroup.id,
+			// 							response.id
+			// 						)
+			// 					} catch (e) {
+			// 						console.error(e)
+			// 						continue;
+			// 					}
+			// 				}
+			// 			}
 
-						let sellAmountDateNotSaved = await Async.getItem("sellAmountDateNotSaved");
-						if (sellAmountDateNotSaved == "true") {
-							let notSavedSellAmountDates = 
-								await this.amountDateRepository.getSellAmountDateSavedFalse();
-							for (const sellAmountDate of notSavedSellAmountDates) {
-								try {
+			// 			let sellAmountDateNotSaved = await Async.getItem("sellAmountDateNotSaved");
+			// 			if (sellAmountDateNotSaved == "true") {
+			// 				let notSavedSellAmountDates = 
+			// 					await this.amountDateRepository.getSellAmountDateSavedFalse();
+			// 				for (const sellAmountDate of notSavedSellAmountDates) {
+			// 					try {
 									
-									let response = 
-										await this.apiService.createSellAmountDate(
-											sellAmountDate.date,
-											sellAmountDate.amount
-										);
+			// 						let response = 
+			// 							await this.apiService.createSellAmountDate(
+			// 								sellAmountDate.date,
+			// 								sellAmountDate.amount
+			// 							);
 
-									this.amountDateRepository.updateSellAmountDateSavedTrueById(
-										sellAmountDate.id,
-										response.id
-									);
-								} catch (e) {
-									continue;
-								}
-							}
-						}
+			// 						this.amountDateRepository.updateSellAmountDateSavedTrueById(
+			// 							sellAmountDate.id,
+			// 							response.id
+			// 						);
+			// 					} catch (e) {
+			// 						continue;
+			// 					}
+			// 				}
+			// 			}
 
-						// PROFIT
-						let profitGroupNotSaved = await AsyncStorage.getItem("profitGroupNotSaved");
-						if (profitGroupNotSaved == "true") {
-							let profitGroups = await this.profitHistoryRepository.getProfitGroupSavedFalse();
-							for (const profitGroup of profitGroups) {
-								try {
-									let response = await this.apiService.createProfitGroup(
-										profitGroup.created_date, 
-										profitGroup.profit
-									);
+			// 			// PROFIT
+			// 			let profitGroupNotSaved = await AsyncStorage.getItem("profitGroupNotSaved");
+			// 			if (profitGroupNotSaved == "true") {
+			// 				let profitGroups = await this.profitHistoryRepository.getProfitGroupSavedFalse();
+			// 				for (const profitGroup of profitGroups) {
+			// 					try {
+			// 						let response = await this.apiService.createProfitGroup(
+			// 							profitGroup.created_date, 
+			// 							profitGroup.profit
+			// 						);
 
-									await this.profitHistoryRepository.updateProfitGroupSavedTrueById(
-										profitGroup.id, 
-										response.id
-									);
-								} catch (e) {
-									continue;
-								}
-							}
-						}
+			// 						await this.profitHistoryRepository.updateProfitGroupSavedTrueById(
+			// 							profitGroup.id, 
+			// 							response.id
+			// 						);
+			// 					} catch (e) {
+			// 						console.error(e)
+			// 						continue;
+			// 					}
+			// 				}
+			// 			}
 
-						let profitHistoryNotSaved = await AsyncStorage.getItem("profitHistoryNotSaved");
-						if (profitHistoryNotSaved == "true") {
-							let profitHistories = await this.profitHistoryRepository.getProfitHistorySavedFalse();
-							for (const profitHistory of profitHistories) {
-								try {
-									let products = await this.productRepository.findProductsById(
-										profitHistory.product_id
-									);
+			// 			let profitHistoryNotSaved = await AsyncStorage.getItem("profitHistoryNotSaved");
+			// 			if (profitHistoryNotSaved == "true") {
+			// 				let profitHistories = await this.profitHistoryRepository.getProfitHistorySavedFalse();
+			// 				for (const profitHistory of profitHistories) {
+			// 					try {
+			// 						let products = await this.productRepository.findProductsById(
+			// 							profitHistory.product_id
+			// 						);
 
-									let response = await this.apiService.createProfitHistory(
-										products[0].id,
-										profitHistory.count,
-										profitHistory.count_type,
-										profitHistory.profit,
-										profitHistory.created_date
-									);
+			// 						let response = await this.apiService.createProfitHistory(
+			// 							products[0].id,
+			// 							profitHistory.count,
+			// 							profitHistory.count_type,
+			// 							profitHistory.profit,
+			// 							profitHistory.created_date
+			// 						);
 
-									await this.profitHistoryRepository.updateProfitHistoryGroupSavedTrueById(
-										profitHistory.id, 
-										response.id
-									);
-								} catch (e) {
-									continue;
-								}
-							}
-						}
+			// 						await this.profitHistoryRepository.updateProfitHistoryGroupSavedTrueById(
+			// 							profitHistory.id, 
+			// 							response.id
+			// 						);
+			// 					} catch (e) {
+			// 						console.error(e)
+			// 						continue;
+			// 					}
+			// 				}
+			// 			}
 
-						let profitHistoryGroupNotSaved = await AsyncStorage.getItem("profitHistoryGroupNotSaved");
-						if (profitHistoryGroupNotSaved == "true") {
-							let profitHistoryGroups = 
-								await this.profitHistoryRepository.getProfitHistorySavedFalse();
-							for (const profitHistoryGroup of profitHistoryGroups) {
-								try {
-									let profitHistory = 
-										await this.profitHistoryRepository.findProfitHistoryById(
-											profitHistoryGroup.history_id
-										);
+			// 			let profitHistoryGroupNotSaved = await AsyncStorage.getItem("profitHistoryGroupNotSaved");
+			// 			if (profitHistoryGroupNotSaved == "true") {
+			// 				let profitHistoryGroups = 
+			// 					await this.profitHistoryRepository.getProfitHistorySavedFalse();
+			// 				for (const profitHistoryGroup of profitHistoryGroups) {
+			// 					try {
+			// 						let profitHistory = 
+			// 							await this.profitHistoryRepository.findProfitHistoryById(
+			// 								profitHistoryGroup.history_id
+			// 							);
 
-									let profitGroup = 
-										await this.profitHistoryRepository.findProfitGroupById(
-											profitHistoryGroup.group_id
-										);
+			// 						let profitGroup = 
+			// 							await this.profitHistoryRepository.findProfitGroupById(
+			// 								profitHistoryGroup.group_id
+			// 							);
 
-									let response = 
-										await this.apiService.createProfitHistoryGroup(
-											profitHistory[0].global_id,
-											profitGroup[0].global_id
-										);
+			// 						let response = 
+			// 							await this.apiService.createProfitHistoryGroup(
+			// 								profitHistory[0].global_id,
+			// 								profitGroup[0].global_id
+			// 							);
 
-									this.profitHistoryRepository.updateProfitHistoryGroupSavedTrueById(
-										profitHistoryGroup.id,
-										response.id
-									);
-								} catch (e) {
-									continue;
-								}
-							}
-						}
+			// 						this.profitHistoryRepository.updateProfitHistoryGroupSavedTrueById(
+			// 							profitHistoryGroup.id,
+			// 							response.id
+			// 						);
+			// 					} catch (e) {
+			// 						console.error(e)
+			// 						continue;
+			// 					}
+			// 				}
+			// 			}
 
-						let profitAmountDateNotSaved = await Async.getItem("profitAmountDateNotSaved");
-						if (profitAmountDateNotSaved == "true") {
-							let notSavedProfitAmountDates = 
-								await this.amountDateRepository.getProfitAmountDateSavedFalse();
-							for (const profitAmountDate of notSavedProfitAmountDates) {
-								try {
+			// 			let profitAmountDateNotSaved = await Async.getItem("profitAmountDateNotSaved");
+			// 			if (profitAmountDateNotSaved == "true") {
+			// 				let notSavedProfitAmountDates = 
+			// 					await this.amountDateRepository.getProfitAmountDateSavedFalse();
+			// 				for (const profitAmountDate of notSavedProfitAmountDates) {
+			// 					try {
 									
-									let response = 
-										await this.apiService.createSellAmountDate(
-											profitAmountDate.date,
-											profitAmountDate.amount
-										);
+			// 						let response = 
+			// 							await this.apiService.createSellAmountDate(
+			// 								profitAmountDate.date,
+			// 								profitAmountDate.amount
+			// 							);
 
-									this.amountDateRepository.updateProfitAmountDateSavedTrueById(
-										profitAmountDate.id,
-										response.id
-									);
-								} catch (e) {
-									continue;
-								}
-							}
-						}
+			// 						this.amountDateRepository.updateProfitAmountDateSavedTrueById(
+			// 							profitAmountDate.id,
+			// 							response.id
+			// 						);
+			// 					} catch (e) {
+			// 						console.error(e)
+			// 						continue;
+			// 					}
+			// 				}
+			// 			}
 
-						await AsyncStorage.setItem("isNotSaved", "false")
-					}
-				}
-			}, 5000);
+			// 			await AsyncStorage.setItem("isNotSaved", "false")
+			// 		}
+			// 	}
+			// }, 5000);
 		}
 	}
 	

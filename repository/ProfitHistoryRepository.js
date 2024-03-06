@@ -17,9 +17,9 @@ class ProfitHistoryRepository {
             count DOUBLE NOT NULL, 
             count_type TEXT NOT NULL,
             profit DOUBLE NOT NULL, 
-            created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             global_id INTEGER,
-            saved boolean
+            saved BOOLEAN
           );`
         );
   
@@ -29,35 +29,36 @@ class ProfitHistoryRepository {
             created_date TIMESTAMP,
             profit DOUBLE,
             global_id INTEGER,
-            saved boolean
+            saved BOOLEAN
           );`
         );
   
         tx.executeSql(
           `CREATE TABLE IF NOT EXISTS profit_history_group (
             id INTEGER PRIMARY KEY AUTOINCREMENT, 
-            global_id INTEGER,
             history_id INTEGER NOT NULL,
             group_id INTEGER NOT NULL, 
-            saved boolean, 
+            global_id INTEGER,
+            saved BOOLEAN, 
             FOREIGN KEY (group_id) REFERENCES profit_group(id), 
             FOREIGN KEY (history_id) REFERENCES profit_history(id)
           );`
         );
       });
+
+      resolve(true)
     });
   }
 
-  async createProfitGroup(profit) {
+  async createProfitGroup(profit) {    
     try {
-      const createdDate = new Date().toISOString(); // Example: Get current timestamp
       const query = `
         INSERT INTO profit_group (created_date, profit, global_id, saved)
-        VALUES (?, ?, ?, ?);`;
+        VALUES (CURRENT_DATE, ?, null, 0);`;
 
       // Execute the query
       await this.db.transaction(async (tx) => {
-        await tx.executeSql(query, [createdDate, profit, null, 0]);
+        tx.executeSql(query, [profit]);
       });
 
       let lastProfitHistoryGroup = await this.getLastProfitHistoryGroupId();
@@ -181,7 +182,7 @@ class ProfitHistoryRepository {
           global_id, 
           saved
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?);
+        VALUES (?, ?, ?, ?, ?, null, 0);
       `;
       
       await this.db.transaction(async (tx) => {
@@ -192,9 +193,7 @@ class ProfitHistoryRepository {
             count, 
             count_type, 
             profit, 
-            created_date.toISOString(),
-            null, 
-            0
+            created_date.toISOString()
           ]
         );
       });
@@ -261,13 +260,13 @@ class ProfitHistoryRepository {
         group_id,
         global_id,
         saved
-      ) VALUES (?, ?, ?);
+      ) VALUES (?, ?, null, 0);
     `;
 
     await this.db.transaction(async (tx) => {
       await tx.executeSql(
         insert,
-        [historyId, group_id, null, 0]
+        [historyId, group_id]
       );
     });
   }
