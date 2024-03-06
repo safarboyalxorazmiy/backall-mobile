@@ -65,6 +65,10 @@ class Basket extends Component {
 		await this.getCreated();
 		const {navigation} = this.props;
 		await this.storeProductRepository.init();
+
+		this.setState(
+			{role: await AsyncStorage.getItem("role")}
+		);
 		
 		navigation.addListener("focus", async () => {
 			await this.storeProductRepository.init();
