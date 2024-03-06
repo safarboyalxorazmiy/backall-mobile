@@ -43,6 +43,9 @@ class Shopping extends Component {
 		const {navigation} = this.props;
 		
 		navigation.addListener("focus", async () => {
+			await this.sellHistoryRepository.init();
+			await this.amountDateRepository.init();
+
 			// ROLE ERROR
 			let notAllowed = await AsyncStorage.getItem("not_allowed");
 			this.setState({notAllowed: notAllowed})

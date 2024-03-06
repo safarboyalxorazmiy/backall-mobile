@@ -84,7 +84,7 @@ class DatabaseRepository {
             `CREATE TABLE IF NOT EXISTS profit_group (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               created_date TIMESTAMP,
-              profit DOUBLE
+              profit DOUBLE,
               global_id INTEGER,
               saved boolean,
             );`,
@@ -149,7 +149,7 @@ class DatabaseRepository {
     if (this.db !== null) {
       try {
         await this.db.transaction(async (tx) => {
-          const queries = [
+          await this.executeQueries(tx, [
             // DROP TABLES
             `DROP TABLE IF EXISTS profit_amount_date;`,
             `DROP TABLE IF EXISTS sell_amount_date;`,
@@ -161,16 +161,13 @@ class DatabaseRepository {
             `DROP TABLE IF EXISTS sell_history;`,
             `DROP TABLE IF EXISTS store_product;`,
             `DROP TABLE IF EXISTS product;`
-          ];
-  
-          console.log(queries);
-          await this.executeQueries(tx, queries);
+          ]);
         });
       } catch (error) {
         console.error('Error initializing database:', error);
       }
     }
-  }  
+  }    
 
   getDatabase() {
     return this.db;

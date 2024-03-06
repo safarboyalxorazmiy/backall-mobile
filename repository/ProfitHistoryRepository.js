@@ -7,6 +7,47 @@ class ProfitHistoryRepository {
     this.productRepository = new ProductRepository();
   }
 
+  async init() {
+    return new Promise((resolve, reject) => {
+      this.db.transaction((tx) => {
+        tx.executeSql(
+          `CREATE TABLE IF NOT EXISTS profit_history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            product_id INTEGER NOT NULL, 
+            count DOUBLE NOT NULL, 
+            count_type TEXT NOT NULL,
+            profit DOUBLE NOT NULL, 
+            created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            global_id INTEGER,
+            saved boolean
+          );`
+        );
+  
+        tx.executeSql(
+          `CREATE TABLE IF NOT EXISTS profit_group (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            created_date TIMESTAMP,
+            profit DOUBLE,
+            global_id INTEGER,
+            saved boolean
+          );`
+        );
+  
+        tx.executeSql(
+          `CREATE TABLE IF NOT EXISTS profit_history_group (
+            id INTEGER PRIMARY KEY AUTOINCREMENT, 
+            global_id INTEGER,
+            history_id INTEGER NOT NULL,
+            group_id INTEGER NOT NULL, 
+            saved boolean, 
+            FOREIGN KEY (group_id) REFERENCES profit_group(id), 
+            FOREIGN KEY (history_id) REFERENCES profit_history(id)
+          );`
+        );
+      });
+    });
+  }
+
   async createProfitGroup(profit) {
     try {
       const createdDate = new Date().toISOString(); // Example: Get current timestamp

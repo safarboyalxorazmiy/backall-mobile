@@ -6,6 +6,50 @@ class SellHistoryRepository {
     this.db = new DatabaseRepository().getDatabase();
 
     this.productRepository = new ProductRepository();
+
+    this.init();
+  }
+
+  async init() {
+    return new Promise((resolve, reject) => {
+      this.db.transaction((tx) => {
+        tx.executeSql(
+          `CREATE TABLE IF NOT EXISTS sell_history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT, 
+            product_id INTEGER, 
+            count DOUBLE, 
+            count_type TEXT, 
+            selling_price DOUBLE, 
+            created_date TIMESTAMP, 
+            global_id INTEGER, 
+            saved boolean, 
+            FOREIGN KEY (product_id) REFERENCES product(id)
+          );`,
+        );
+  
+        tx.executeSql(
+          `CREATE TABLE IF NOT EXISTS sell_group (
+            id INTEGER PRIMARY KEY AUTOINCREMENT, 
+            created_date TIMESTAMP, 
+            amount DOUBLE, 
+            global_id INTEGER, 
+            saved boolean
+          );`
+        );
+  
+        tx.executeSql(
+          `CREATE TABLE IF NOT EXISTS sell_history_group (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,  
+            group_id INTEGER, 
+            history_id INTEGER, 
+            global_id INTEGER, 
+            saved boolean,  
+            FOREIGN KEY (group_id) REFERENCES sell_group(id), 
+            FOREIGN KEY (history_id) REFERENCES sell_history(id)
+          );`
+        );
+      });
+    });
   }
 
   async createSellHistoryGroup(amount) {

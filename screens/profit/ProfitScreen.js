@@ -37,7 +37,13 @@ class Profit extends Component {
   async componentDidMount() {
     const {navigation} = this.props;
 
+    await this.profitHistoryRepository.init();
+    await this.amountDateRepository.init();
+
     navigation.addListener("focus", async () => {
+        await this.profitHistoryRepository.init();
+        await this.amountDateRepository.init();
+        
         // ROLE ERROR
         let notAllowed = await AsyncStorage.getItem("not_allowed");
         this.setState({notAllowed: notAllowed})
@@ -79,13 +85,16 @@ class Profit extends Component {
 
   
   async initProfitHistoryGroup() {
+        await this.profitHistoryRepository.init();
+        await this.amountDateRepository.init();
+
       await this.getDateInfo();
 
       if (this.state.fromDate != null && this.state.toDate != null) {
           let lastProfitGroup = await this.profitHistoryRepository.getLastProfitHistoryGroupIdByDate(this.state.fromDate, this.state.toDate);
 
           if (lastProfitGroup == null) {
-              return;
+            return;
           }
 
           profitHistories = await this.profitHistoryRepository.getTop10ProfitGroupByStartIdAndDate(lastProfitGroup.id, this.state.fromDate, this.state.toDate);
@@ -95,6 +104,7 @@ class Profit extends Component {
               groupedHistories: await this.groupByDate(profitHistories),
               lastGroupId: lastProfitGroup.id
           })
+          
           this.setState({
               profitHistories: profitHistories,
               groupedHistories: await this.groupByDate(profitHistories),

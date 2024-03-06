@@ -3,7 +3,35 @@ import DatabaseRepository from "./DatabaseRepository";
 class AmountDateRepository {
 	constructor() {
 		this.db = new DatabaseRepository().getDatabase();
+
+		this.init()
 	}
+
+	async init() {
+		return new Promise((resolve, reject) => {
+			this.db.transaction(tx => {
+				tx.executeSql(
+					`CREATE TABLE IF NOT EXISTS profit_amount_date (
+						id INTEGER PRIMARY KEY AUTOINCREMENT,
+						date TEXT NOT NULL,
+						amount DOUBLE NOT NULL,
+						global_id INTEGER, 
+						saved boolean
+					);`
+				);
+
+				tx.executeSql(
+					`CREATE TABLE IF NOT EXISTS sell_amount_date (
+						id INTEGER PRIMARY KEY AUTOINCREMENT,
+						date TEXT NOT NULL,              
+						amount DOUBLE NOT NULL,
+						global_id INTEGER,
+						saved boolean
+					);`
+				);
+			})
+    });
+  }
 
 	async createProfitAmountWithAllValues(profitAmount, date, global_id, saved) {
 		const insertQuery = `

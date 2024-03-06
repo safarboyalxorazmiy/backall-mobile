@@ -64,8 +64,11 @@ class Basket extends Component {
 	async componentDidMount() {
 		await this.getCreated();
 		const {navigation} = this.props;
+		await this.storeProductRepository.init();
 		
 		navigation.addListener("focus", async () => {
+			await this.storeProductRepository.init();
+
 			// ROLE ERROR
 			let notAllowed = await AsyncStorage.getItem("not_allowed");
 			this.setState({notAllowed: notAllowed})

@@ -3,6 +3,42 @@ import DatabaseRepository from "./DatabaseRepository";
 class StoreProductRepository {
   constructor() {
     this.db = new DatabaseRepository().getDatabase();
+
+    this.init();
+  };
+
+  async init() {
+    return new Promise((resolve, reject) => {
+      this.db.transaction((tx) => {
+        tx.executeSql(
+          `CREATE TABLE IF NOT EXISTS product(
+            id INTEGER PRIMARY KEY, 
+            name TEXT NOT NULL, 
+            brand_name TEXT NOT NULL, 
+            serial_number TEXT NOT NULL,
+            type TEXT NOT NULL,
+            global_id INTEGER,
+            saved boolean
+          );`
+        );
+
+        tx.executeSql(
+          `CREATE TABLE IF NOT EXISTS store_product(
+            id INTEGER PRIMARY KEY AUTOINCREMENT, 
+            product_id INTEGER, 
+            nds BOOLEAN, 
+            price DOUBLE, 
+            selling_price DOUBLE, 
+            percentage DOUBLE, 
+            count DOUBLE, 
+            count_type TEXT, 
+            global_id INTEGER,
+            saved boolean,
+            FOREIGN KEY (product_id) REFERENCES product(id)
+          );`
+        );
+      });
+    });
   }
 
   async create(product_id, nds, price, sellingPrice, percentage, count, countType) {
@@ -12,8 +48,8 @@ class StoreProductRepository {
           tx.executeSql(
             `INSERT INTO store_product 
               (product_id, nds, price, selling_price, percentage, count, count_type, global_id, saved) 
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-            [product_id, nds, price, sellingPrice, percentage, count, countType, null, 0],
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+            [product_id, nds ? 1 : 0, price, sellingPrice, percentage, count, countType, null, 0],
             (_, results) => {
               resolve(true);
             },
@@ -202,41 +238,18 @@ class StoreProductRepository {
       });
     });
   }
-
+  
   async findTopStoreProductsInfo(lastId) {
     if (lastId === 0) {
       return new Promise((resolve, reject) => {
         this.db.transaction((tx) => {
-            tx.executeSql(
-                `SELECT sp.id, p.brand_name, p.name, sp.count, sp.count_type
-                FROM store_product sp
-                JOIN product p ON sp.product_id = p.id
-                WHERE sp.id > ?
-                ORDER BY sp.id
-                LIMIT 13;`,
-                [lastId],
-                (_, { rows }) => {
-                    const storeProductsInfo = rows._array; // Get raw result array
-                    resolve(storeProductsInfo);
-                },
-                (_, error) => {
-                    console.error("Error retrieving store products info:", error);
-                    reject(error);
-                }
-            );
-        });
-      });
-    }
-
-    return new Promise((resolve, reject) => {
-      this.db.transaction((tx) => {
           tx.executeSql(
               `SELECT sp.id, p.brand_name, p.name, sp.count, sp.count_type
               FROM store_product sp
               JOIN product p ON sp.product_id = p.id
               WHERE sp.id > ?
               ORDER BY sp.id
-              LIMIT 1;`,
+              LIMIT 13;`,
               [lastId],
               (_, { rows }) => {
                   const storeProductsInfo = rows._array; // Get raw result array
@@ -246,6 +259,29 @@ class StoreProductRepository {
                   console.error("Error retrieving store products info:", error);
                   reject(error);
               }
+          );
+        });
+      });
+    }
+
+    return new Promise((resolve, reject) => {
+      this.db.transaction((tx) => {
+          tx.executeSql(
+            `SELECT sp.id, p.brand_name, p.name, sp.count, sp.count_type
+            FROM store_product sp
+            JOIN product p ON sp.product_id = p.id
+            WHERE sp.id > ?
+            ORDER BY sp.id
+            LIMIT 1;`,
+            [lastId],
+            (_, { rows }) => {
+              const storeProductsInfo = rows._array; // Get raw result array
+              resolve(storeProductsInfo);
+            },
+            (_, error) => {
+              console.error("Error retrieving store products info:", error);
+              reject(error);
+            }
           );
       });
     });
