@@ -63,8 +63,8 @@ class App extends Component {
 		if (Platform.OS == "android" || Platform.OS == "ios") {
 			const databaseRepository = new DatabaseRepository();
 			try {
-				await databaseRepository.init();
-				console.log("Database initialized successfully");
+				// await databaseRepository.init();
+				// console.log("Database initialized successfully");
 			} catch (error) {
 				console.error("Error initializing database:", error);
 			}

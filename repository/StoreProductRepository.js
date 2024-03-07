@@ -42,30 +42,63 @@ class StoreProductRepository {
     });
   }
 
+  //#######################################
   async create(product_id, nds, price, sellingPrice, percentage, count, countType) {
     try {
       await new Promise((resolve, reject) => {
         this.db.transaction((tx) => {
           tx.executeSql(
-            `INSERT INTO store_product 
-              (product_id, nds, price, selling_price, percentage, count, count_type, global_id, saved) 
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);`,
-            [product_id, nds ? 1 : 0, price, sellingPrice, percentage, count, countType, null, 0],
-            (_, results) => {
-              resolve(true);
+            `SELECT * FROM store_product where product_id = ?;`,
+            [product_id],
+            (_, { rows }) => {
+              if (rows._array && rows.length >= 1) {
+                console.log(rows._array);
+
+                let previousCount = parseFloat(rows._array[0].count);
+
+                console.log(previousCount + parseFloat(count));
+
+                tx.executeSql(
+                  `UPDATE store_product 
+                    SET price = ?, selling_price = ?, percentage = ?, count = ?, count_type = ?
+                    WHERE product_id = ?;`,
+                  [price, sellingPrice, percentage, previousCount + parseFloat(count), countType, product_id]
+                );
+
+                resolve(true);
+              } else {
+                // rows array undefined or equals 0;
+                tx.executeSql(
+                  `INSERT INTO store_product 
+                    (product_id, nds, price, selling_price, percentage, count, count_type, global_id, saved) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+                  [product_id, nds ? 1 : 0, price, sellingPrice, percentage, count, countType, null, 0]
+                );
+
+                resolve(true);
+              }
             },
             (_, error) => {
               console.error("Error creating store product:", error);
               reject(false);
             }
-          );
-        });
+          )
+        })
       });
     } catch (error) {
       console.error(`Error creating store product: ${error}`);
       throw error;
     }
   }
+
+  createStoreProduct(product_id, nds, price, sellingPrice, percentage, count, countType, tx) {
+    
+  }
+
+  updateValuesStoreProduct(product_id, price, sellingPrice, percentage, count, countType, tx) {
+      
+  }
+  //#######################################
 
   async createStoreProductWithAllValues(
     product_id, 
