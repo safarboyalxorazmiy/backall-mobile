@@ -807,7 +807,7 @@ class Sell extends Component {
 		let lastSellAmount = await AsyncStorage.getItem("month_sell_amount")
 		let lastProfitAmount = await AsyncStorage.getItem("month_profit_amount")
 
-		if (lastSellAmount) {
+		if (lastSellAmount == null || lastSellAmount == "") {
 			await AsyncStorage.setItem("month_sell_amount", this.state.amount + "");
 		} else {
 			let calc = parseInt(lastSellAmount) + this.state.amount;
@@ -817,7 +817,7 @@ class Sell extends Component {
 			);
 		}
 
-		if (lastProfitAmount) {
+		if (lastProfitAmount == null || lastProfitAmount == "") {
 			await AsyncStorage.setItem("month_profit_amount", this.state.profit + "");
 		} else {
 			let calc = parseInt(lastProfitAmount) + this.state.profit;
@@ -845,9 +845,6 @@ class Sell extends Component {
 		await AsyncStorage.setItem("profitHistoryNotSaved", "true");
 		await AsyncStorage.setItem("profitHistoryGroupNotSaved", "true");
 		await AsyncStorage.setItem("profitAmountDateNotSaved", "true");
-
-
-
 
 		// Navigate screen
 		const {navigation} = this.props;
