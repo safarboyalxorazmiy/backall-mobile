@@ -12,7 +12,8 @@ class VerificationScreen extends Component {
 
 		this.state = {
 			verificationCode: "",
-			error: false
+			error: false,
+			focusedKey: null
 		};
 
 		this.apiService = new ApiService();
@@ -91,15 +92,33 @@ class VerificationScreen extends Component {
 				{row.map((key, keyIndex) => (
 					<TouchableOpacity
 						key={keyIndex}
-						style={styles.keyboardKey}
-						onPress={() => {
+						style={this.state.focusedKey == key ? {
+							width: 100,
+							height: 100,
+							display: "flex",
+							justifyContent: "center",
+							alignItems: "center",
+							marginHorizontal: 5,
+							backgroundColor: "#222",
+							borderRadius: 50
+						} : styles.keyboardKey}
+
+						onPressIn={() => {
+							this.setState({focusedKey: key});
+							console.log(key);
+
 							if (key === 'Delete') {
 								this.handleDelete();
 							} else {
 								this.handleKeyPress(key);
 							}
 						}}
-					>
+						
+						onPressOut={() => {
+							this.setState({focusedKey: null});
+						}}
+
+						activeOpacity={1}>
 						<Text style={styles.keyText}>{key}</Text>
 					</TouchableOpacity>
 				))}
@@ -171,13 +190,17 @@ const styles = StyleSheet.create({
 	keyboardRow: {
 		display: "flex",
 		flexDirection: "row",
-		columnGap: 100,
-		marginBottom: 50,
+		columnGap: 30,
+		marginBottom: 25,
 	},
 
 	keyboardKey: {
-		padding: 10,
-		marginHorizontal: 5
+		marginHorizontal: 5,
+		width: 100,
+		height: 100,
+		display: "flex",
+		justifyContent: "center",
+		alignItems: "center",
 	},
 
 	keyText: {
