@@ -182,7 +182,7 @@ class ShoppingDetail extends Component {
 							<BackIcon/>
 						</TouchableOpacity>
 						
-						<Text style={styles.title}>Mahsulotdan qolgan foyda</Text>
+						<Text style={styles.title}>Sotilgan mahsulotlar</Text>
 					</View>
 					
 					
@@ -219,7 +219,7 @@ class ShoppingDetail extends Component {
 									</View>
 									
 									<View style={styles.profitRow}>
-										<Text style={styles.profitText}>Qolgan foyda</Text>
+										<Text style={styles.profitText}>Sotilgan narxi</Text>
 										<Text style={styles.profitPrice}>{(item.selling_price).toLocaleString()} so’m</Text>
 									</View>
 								</View>

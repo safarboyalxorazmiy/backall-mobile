@@ -539,7 +539,7 @@ class Sell extends Component {
 									</View>
 
 									<View style={styles.inputBlock}>
-										<Text style={styles.modalLabel}>Qiymati</Text>
+										<Text style={styles.modalLabel}>Miqdori</Text>
 										<TextInput
 											onFocus={() => {
 												this.setState({isQuantityInputFocused: true})
@@ -592,7 +592,7 @@ class Sell extends Component {
 									*/}
 
 									<View style={styles.inputBlock}>
-										<Text style={styles.modalLabel}>Sotuvdagi narxi (1 kg/dona)</Text>
+										<Text style={styles.modalLabel}>Sotuvdagi narxi (1 kg/dona/litr)</Text>
 										<TextInput
 											onFocus={() => {
 												this.setState({isPriceInputFocused: true});

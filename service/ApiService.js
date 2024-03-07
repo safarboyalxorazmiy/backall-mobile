@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import TokenService from "./TokenService";
 
-const serverUrl = "http://192.168.0.105:8080";
+const serverUrl = "http://192.168.0.101:8080";
 class ApiService {
 	constructor() {
     this.tokenService = new TokenService();

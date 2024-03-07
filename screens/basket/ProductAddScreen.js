@@ -22,7 +22,6 @@ import StoreProductRepository from "../../repository/StoreProductRepository";
 const amountData = [
 	{label: "DONA"},
 	{label: "KG"},
-	{label: "GR"},
 	{label: "LITR"}
 ];
 
