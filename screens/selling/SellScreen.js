@@ -23,6 +23,7 @@ import ProfitHistoryRepository from "../../repository/ProfitHistoryRepository";
 import AmountDateRepository from "../../repository/AmountDateRepository";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import TrashIcon from "../../assets/trash-icon.svg"
+import * as Animatable from 'react-native-animatable';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -71,7 +72,8 @@ class Sell extends Component {
 			productNameContentStyle: {},
 			productNameInputValue: "",
 			quantityInputValue: "",
-			priceInputValue: ""
+			priceInputValue: "",
+			quantityInputError: false
 		};
 
 		this.keyboardDidShowListener = Keyboard.addListener(
@@ -225,6 +227,14 @@ class Sell extends Component {
 
 			if (existingProductIndex !== -1) {
 				newSellingProducts[existingProductIndex].count += 1;
+
+				
+				let minusedValue = storeProduct[0].count - newSellingProducts[existingProductIndex].count;
+				console.log(minusedValue);
+				if (minusedValue < 0) {
+					// no product error
+					return;
+				}
 
 				this.setState({
 					amount: this.state.amount + newSellingProducts[existingProductIndex].selling_price
@@ -419,12 +429,13 @@ class Sell extends Component {
 												productNameContentStyle: {},
 												productNameInputValue: "",
 												quantityInputValue: "",
-												priceInputValue: ""
+												priceInputValue: "",
+												quantityInputError: false
 											});
 
 											this.toggleModal()
 										}}>
-											<CrossIcon/>
+											<CrossIcon />
 										</TouchableOpacity>
 									</View>
 
@@ -561,7 +572,7 @@ class Sell extends Component {
 												paddingHorizontal: 16,
 												paddingVertical: 14,
 												borderWidth: 1,
-												borderColor: (this.state.isQuantityInputFocused ? "#222" : "#AFAFAF"),
+												borderColor: (this.state.quantityInputError ? "red" : this.state.isQuantityInputFocused ? "#222" : "#AFAFAF"),
 												borderRadius: 8,
 												fontFamily: "Gilroy-Medium",
 												fontWeight: "500",
@@ -578,6 +589,12 @@ class Sell extends Component {
 
 											placeholderTextColor="#AAAAAA"
 											value={this.state.quantityInputValue}/>
+											{
+												this.state.quantityInputError ? 
+												<Animatable.View animation="shake" duration={500}>
+													<Text style={{color: "red"}}>Miqdor yetarli emas.</Text>
+												</Animatable.View> : null
+											}
 									</View>
 
 									{/* 
@@ -642,54 +659,92 @@ class Sell extends Component {
 												return;
 											}
 
-											selectedProduct.serial_number = "";
-											selectedProduct.count = parseFloat(this.state.quantityInputValue);
+											let sellingProducts = [...this.state.sellingProducts];
 
-											this.setState({
-												amount: this.state.amount + (selectedProduct.selling_price * selectedProduct.count)
-											});
+											let existingProductIndex =
+												sellingProducts.findIndex(
+													element => element.id === selectedProduct.id
+												);
 
-											this.setState({
-												profit: this.state.profit + (
-													selectedProduct.selling_price -
-													selectedProduct.price
-												)
-											});
+												console.log(existingProductIndex);
+											if (existingProductIndex !== -1) {
 
-											let foundProduct = this.state.sellingProducts.find(product => product.id === selectedProduct.id);
-											if (foundProduct != null) {
-												const updatedSellingProducts = this.state.sellingProducts.map(product => {
+											let minusedValue = 
+												parseFloat(selectedProduct.count) - 
+												(
+													parseFloat(this.state.quantityInputValue) 
+													+ 
+													sellingProducts[existingProductIndex].count
+												);
+
+											if (minusedValue < 0) {
+												this.setState({quantityInputError: true})
+												return;
+											} else {
+												// method will countinue
+											}
+										} else {
+											let minusedValue = 
+												parseFloat(selectedProduct.count) - parseFloat(this.state.quantityInputValue);
+											if (minusedValue < 0) {
+												this.setState({quantityInputError: true})
+												return;
+											} else {
+												
+												// method will countinue
+											}
+										}
+
+										selectedProduct.serial_number = "";
+										selectedProduct.count = parseFloat(this.state.quantityInputValue);
+
+										this.setState({
+											amount: this.state.amount + (selectedProduct.selling_price * selectedProduct.count)
+										});
+
+										this.setState({
+											profit: this.state.profit + (
+												selectedProduct.selling_price -
+												selectedProduct.price
+											)
+										});
+
+										let foundProduct = 
+											this.state.sellingProducts.find(product => product.id === selectedProduct.id);
+										if (foundProduct != null) {
+											const updatedSellingProducts = 
+												this.state.sellingProducts.map(product => {
 													if (product.id === selectedProduct.id) {
 														return { ...product, count: product.count + selectedProduct.count };
 													}
 													return product;
 												});
 
-												this.setState(prevState => ({
-													sellingProducts: updatedSellingProducts
-												}));
-											} else {
-												this.setState(prevState => ({
-													sellingProducts: [...prevState.sellingProducts, selectedProduct]
-												}));
-											}
+											this.setState((prevState) => ({
+												sellingProducts: updatedSellingProducts
+											}));
+										} else {
+											this.setState((prevState) => ({
+												sellingProducts: [...prevState.sellingProducts, selectedProduct]
+											}));
+										}
 
+										// TODO CLEAR STATE:::
+										this.setState({
+											isProductNameInputFocused: false,
+											isQuantityInputFocused: false,
+											isPriceInputFocused: false,
+											recommenderProducts: [],
+											selectedProduct: {},
+											productNameContentStyle: {},
+											productNameInputValue: "",
+											quantityInputValue: "",
+											priceInputValue: "",
+											quantityInputError: false
+										});
 
-											// TODO CLEAR STATE:::
-											this.setState({
-												isProductNameInputFocused: false,
-												isQuantityInputFocused: false,
-												isPriceInputFocused: false,
-												recommenderProducts: [],
-												selectedProduct: {},
-												productNameContentStyle: {},
-												productNameInputValue: "",
-												quantityInputValue: "",
-												priceInputValue: ""
-											});
-
-											this.toggleModal();
-										}}>
+										this.toggleModal();
+									}}>
 										<Text
 											style={styles.modalButtonText}>Savatga qo’shish</Text>
 									</TouchableOpacity>
