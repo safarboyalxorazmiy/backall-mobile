@@ -55,8 +55,8 @@ class ProductRepository {
       const result = await new Promise((resolve, reject) => {
         this.db.transaction((tx) => {
           tx.executeSql(
-            "INSERT INTO product (name, global_id, brand_name, serial_number, type) VALUES (?, ?, ?, ?, ?)",
-            [name, null, brand_name, serial_number, "LOCAL"],
+            "INSERT INTO product (name, brand_name, serial_number, type, global_id, saved) VALUES (?, ?, ?, ?, ?, ?)",
+            [name, brand_name, serial_number, "LOCAL", null, 0],
             (_, results) => {
               if (results.insertId) {
                 resolve(results.insertId);
@@ -317,7 +317,7 @@ class ProductRepository {
         this.db.transaction((tx) => {
           tx.executeSql(
             "SELECT * FROM product WHERE id = ?;",
-            [global_id],
+            [id],
             (_, results) => {
               console.log('Results:', results.rows);
   
@@ -328,6 +328,7 @@ class ProductRepository {
                     name: row.name,
                     brand_name: row.brand_name,
                     serial_number: row.serial_number,
+                    global_id: row.global_id
                   };
                 } else {
                   console.warn("Received undefined row in query results.");

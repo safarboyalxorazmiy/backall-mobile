@@ -40,7 +40,7 @@ class AmountDateRepository {
 			amount,
 			global_id, 
 			saved
-		) VALUES (?, ?);`;
+		) VALUES (?, ?, ?, ?);`;
 		tx.executeSql(insertQuery, [
 			date, 
 			profitAmount, 
@@ -87,7 +87,7 @@ class AmountDateRepository {
 						const currentProfit = results.rows.item(0).amount;
 						const updatedProfit = currentProfit + profitAmount;
 						const updateQuery = `UPDATE profit_amount_date
-                                 SET amount = ?
+                                 SET amount = ?, saved = 0
                                  WHERE date = ?;`;
 						tx.executeSql(updateQuery, [updatedProfit, date], (tx, updateResults) => {
 								if (updateResults.rowsAffected > 0) {
@@ -144,7 +144,7 @@ class AmountDateRepository {
 						const currentSell = results.rows.item(0).amount;
 						const updatedSell = currentSell + sellAmount;
 						const updateQuery = `UPDATE sell_amount_date
-                                 SET amount = ?
+                                 SET amount = ?, saved = 0
                                  WHERE date = ?;`;
 						tx.executeSql(updateQuery, [updatedSell, date], (tx, updateResults) => {
 								if (updateResults.rowsAffected > 0) {
@@ -154,12 +154,12 @@ class AmountDateRepository {
 								}
 							},
 							error => {
-							
+								console.error("Error setting sell amount", error);
 							});
 					} else {
 						// If no record with the given date exists, insert a new record
-						const insertQuery = `INSERT INTO sell_amount_date (date, amount)
-                                 VALUES (?, ?);`;
+						const insertQuery = `INSERT INTO sell_amount_date (date, amount, global_id, saved)
+                                 VALUES (?, ?, null, 0);`;
 						tx.executeSql(insertQuery, [date, sellAmount], (tx, insertResults) => {
 								if (insertResults.rowsAffected > 0) {
 									console.log(`Sell amount inserted successfully`);
@@ -169,13 +169,13 @@ class AmountDateRepository {
 							},
 							error => {
 								// If no record with the given date exists, insert a new record
-								
+								console.error("Error setting sell amount:", error)
 							});
 					}
 				},
 				error => {
-					const insertQuery = `INSERT INTO sell_amount_date (date, amount)
-                               VALUES (?, ?);`;
+					const insertQuery = `INSERT INTO sell_amount_date (date, amount, global_id, saved)
+                               VALUES (?, ?, null, 0);`;
 					tx.executeSql(insertQuery, [date, sellAmount], (tx, insertResults) => {
 							if (insertResults.rowsAffected > 0) {
 								console.log(`Sell amount inserted successfully`);
@@ -208,7 +208,7 @@ class AmountDateRepository {
     try {
       await this.db.transaction((tx) => {
         tx.executeSql(
-          "UPDATE profit_amount_date SET saved = 1, global_id = ? WHERsE id = ?",
+          "UPDATE sell_amount_date SET saved = 1, global_id = ? WHERE id = ?",
           [global_id, local_id]  // Use prepared statement for security
         );
       });
@@ -220,15 +220,13 @@ class AmountDateRepository {
 	
 	async getProfitAmountDateSavedFalse() {
 		return new Promise((resolve, reject) => {
-			const selectQuery = `SELECT amount
-                           FROM profit_amount_date
-                           WHERE saved = 0;`;
+			const selectQuery = `SELECT * FROM profit_amount_date WHERE saved = 0;`;
 			this.db.transaction(tx => {
 				tx.executeSql(selectQuery, [], (tx, results) => {
 						if (results.rows.length > 0) {
-							resolve(results.rows.item(0).amount);
+							resolve(results.rows._array);
 						} else {
-							resolve(0.00); // Return null if no record found for the date
+							resolve([]); // Return null if no record found for the date
 						}
 					},
 					error => {
@@ -240,19 +238,17 @@ class AmountDateRepository {
 
 	async getSellAmountDateSavedFalse() {
 		return new Promise((resolve, reject) => {
-			const selectQuery = `SELECT amount
-                           FROM sell_amount_date
-                           WHERE saved = =0;`;
+			const selectQuery = `SELECT * FROM sell_amount_date WHERE saved = 0;`;
 			this.db.transaction(tx => {
 				tx.executeSql(selectQuery, [], (tx, results) => {
 						if (results.rows.length > 0) {
-							resolve(results.rows.item(0).amount);
+							resolve(results.rows._array);
 						} else {
-							resolve(0.00); // Return null if no record found for the date
+							resolve([]); // Return null if no record found for the date
 						}
 					},
 					error => {
-						reject(`Error retrieving profit amount: ${error.message}`);
+						reject(`Error retrieving sell amount date: ${error.message}`);
 					});
 			});
 		});

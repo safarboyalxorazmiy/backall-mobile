@@ -1,11 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import TokenService from "./TokenService";
 
-const serverUrl = "http://192.168.0.101:8080";
+const serverUrl = "http://backall.uz";
 class ApiService {
 	constructor() {
     this.tokenService = new TokenService();
-    this.storeId = this.getStoreId();
   }
 
   /**UTIL FUNCTIONS**/ 
@@ -18,20 +17,16 @@ class ApiService {
   // GET PRODUCT PAGINATION
   async getLocalProducts(page, size) {
     const accessToken = await this.tokenService.retrieveAccessToken();
-    const storeId = 1;
+    const storeId = parseInt(await this.getStoreId());
 
     console.log({
       method: "GET",
       headers: {
         "Authorization": `Bearer ${accessToken}`
       }
-    })
+    });
   
-    if (!this.storeId) {
-      return new Error('Invalid storeId');
-    }
-  
-    const url = `${serverUrl}/api/v1/product/get/local/info?storeId=${this.storeId}&page=${page}&size=${size}`;
+    const url = `${serverUrl}/api/v1/product/get/local/info?storeId=${storeId}&page=${page}&size=${size}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -48,12 +43,9 @@ class ApiService {
 
   async getGlobalProducts(page, size) {
     const accessToken = await this.tokenService.retrieveAccessToken();
-  
-    if (!this.storeId) {
-      return new Error('Invalid storeId');
-    }
-  
-    const url = `${serverUrl}/api/v1/product/get/global/info?storeId=${this.storeId}&page=${page}&size=${size}`;
+    const storeId = parseInt(await this.getStoreId());
+
+    const url = `${serverUrl}/api/v1/product/get/global/info?storeId=${storeId}&page=${page}&size=${size}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -70,12 +62,9 @@ class ApiService {
 
   async getStoreProducts(page, size) {
     const accessToken = await this.tokenService.retrieveAccessToken();
+    const storeId = parseInt(await this.getStoreId());
   
-    if (!this.storeId) {
-      return new Error('Invalid storeId');
-    }
-  
-    const url = `${serverUrl}/api/v1/store/product/get/info?storeId=${this.storeId}&page=${page}&size=${size}`;
+    const url = `${serverUrl}/api/v1/store/product/get/info?storeId=${storeId}&page=${page}&size=${size}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -94,11 +83,10 @@ class ApiService {
   async getSellGroups(page, size) {
     const accessToken = await this.tokenService.retrieveAccessToken();
   
-    if (!this.storeId) {
-      return new Error('Invalid storeId');
-    }
+    const storeId = parseInt(await this.getStoreId());
+
   
-    const url = `${serverUrl}/api/v1/store/sell/group/get?storeId=${this.storeId}&page=${page}&size=${size}`;
+    const url = `${serverUrl}/api/v1/store/sell/group/get?storeId=${storeId}&page=${page}&size=${size}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -116,11 +104,10 @@ class ApiService {
   async getSellHistories(page, size) {
     const accessToken = await this.tokenService.retrieveAccessToken();
   
-    if (!this.storeId) {
-      return new Error('Invalid storeId');
-    }
+    const storeId = parseInt(await this.getStoreId());
+
   
-    const url = `${serverUrl}/api/v1/store/sell/history/get?storeId=${this.storeId}&page=${page}&size=${size}`;
+    const url = `${serverUrl}/api/v1/store/sell/history/get?storeId=${storeId}&page=${page}&size=${size}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -138,11 +125,10 @@ class ApiService {
   async getSellAmountDate(page, size) {
     const accessToken = await this.tokenService.retrieveAccessToken();
   
-    if (!this.storeId) {
-      return new Error('Invalid storeId');
-    }
+    const storeId = parseInt(await this.getStoreId());
+
   
-    const url = `${serverUrl}/api/v1/store/sell/amount/date/get?storeId=${this.storeId}&page=${page}&size=${size}`;
+    const url = `${serverUrl}/api/v1/store/sell/amount/date/get?storeId=${storeId}&page=${page}&size=${size}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -161,11 +147,10 @@ class ApiService {
   async getProfitGroups(page, size) {
     const accessToken = await this.tokenService.retrieveAccessToken();
   
-    if (!this.storeId) {
-      return new Error('Invalid storeId');
-    }
+    const storeId = parseInt(await this.getStoreId());
+
   
-    const url = `${serverUrl}/api/v1/store/profit/group/get?storeId=${this.storeId}&page=${page}&size=${size}`;
+    const url = `${serverUrl}/api/v1/store/profit/group/get?storeId=${storeId}&page=${page}&size=${size}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -183,11 +168,10 @@ class ApiService {
   async getProfitHistories(page, size) {
     const accessToken = await this.tokenService.retrieveAccessToken();
   
-    if (!this.storeId) {
-      return new Error('Invalid storeId');
-    }
+    const storeId = parseInt(await this.getStoreId());
+
   
-    const url = `${serverUrl}/api/v1/store/profit/history/get?storeId=${this.storeId}&page=${page}&size=${size}`;
+    const url = `${serverUrl}/api/v1/store/profit/history/get?storeId=${storeId}&page=${page}&size=${size}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -205,11 +189,10 @@ class ApiService {
   async getProfitHistoryGroup(page, size) {
     const accessToken = await this.tokenService.retrieveAccessToken();
   
-    if (!this.storeId) {
-      return new Error('Invalid storeId');
-    }
+    const storeId = parseInt(await this.getStoreId());
+
   
-    const url = `${serverUrl}/api/v1/store/profit/link/info?storeId=${this.storeId}&page=${page}&size=${size}`;
+    const url = `${serverUrl}/api/v1/store/profit/link/info?storeId=${storeId}&page=${page}&size=${size}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -227,11 +210,10 @@ class ApiService {
   async getProfitAmountDate(page, size) {
     const accessToken = await this.tokenService.retrieveAccessToken();
   
-    if (!this.storeId) {
-      return new Error('Invalid storeId');
-    }
+    const storeId = parseInt(await this.getStoreId());
+
   
-    const url = `${serverUrl}/api/v1/store/profit/amount/date/get?storeId=${this.storeId}&page=${page}&size=${size}`;
+    const url = `${serverUrl}/api/v1/store/profit/amount/date/get?storeId=${storeId}&page=${page}&size=${size}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -254,6 +236,8 @@ class ApiService {
     name,
     brandName
   ) {
+    const storeId = parseInt(await this.getStoreId());
+
     const accessToken = await this.tokenService.retrieveAccessToken();
 
     console.log({
@@ -262,10 +246,10 @@ class ApiService {
         "Authorization": `Bearer ${accessToken}`
       }
     })
-  
-    if (!storeId) {
-      return new Error('Invalid storeId');
-    }
+
+    console.log(
+      "Store id", parseInt(await this.getStoreId())
+    )
   
     const url = `${serverUrl}/api/v1/product/create`;
     const response = await fetch(url, {
@@ -279,7 +263,7 @@ class ApiService {
         name: name,
         brandName: brandName,
         type: "LOCAL",
-        storeId: this.storeId
+        storeId: storeId
       })
     });
   
@@ -307,11 +291,22 @@ class ApiService {
         "Authorization": `Bearer ${accessToken}`
       }
     })
+
+    const storeId = parseInt(await this.getStoreId());
   
-    if (!this.storeId) {
-      return new Error('Invalid storeId');
-    }
-  
+    console.log(
+      JSON.stringify({
+        storeId: storeId,
+        productId: productId,
+        nds: nds,
+        price: price,
+        sellingPrice: sellingPrice,
+        percentage: percentage,
+        count: count,
+        countType: countType
+      })
+    )
+
     const url = `${serverUrl}/api/v1/store/product/create`;
     const response = await fetch(url, {
       method: "POST",
@@ -320,7 +315,7 @@ class ApiService {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        storeId: this.storeId,
+        storeId: storeId,
         productId: productId,
         nds: nds,
         price: price,
@@ -352,9 +347,7 @@ class ApiService {
       }
     })
   
-    if (!this.storeId) {
-      return new Error('Invalid storeId');
-    }
+    const storeId = parseInt(await this.getStoreId());
   
     const url = `${serverUrl}/api/v1/store/sell/group/create`;
     const response = await fetch(url, {
@@ -365,7 +358,7 @@ class ApiService {
       },
       body: JSON.stringify({
         createdDate: createdDate,
-        storeId: this.storeId,
+        storeId: storeId,
         amount: amount
       })
     });
@@ -385,11 +378,9 @@ class ApiService {
     createdDate
   ) {
     const accessToken = await this.tokenService.retrieveAccessToken();
-    if (!this.storeId) {
-      return new Error('Invalid storeId');
-    }
+    const storeId = parseInt(await this.getStoreId());
   
-    const url = `${serverUrl}/api/v1/store/sell/group/create`;
+    const url = `${serverUrl}/api/v1/store/sell/history/create`;
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -398,7 +389,7 @@ class ApiService {
       },
       body: JSON.stringify({
         productId: productId,
-        storeId: this.storeId,
+        storeId: storeId,
         count: count,
         countType: countType,
         sellingPrice: sellingPrice,
@@ -424,9 +415,7 @@ class ApiService {
       }
     })
   
-    if (!this.storeId) {
-      return new Error('Invalid storeId');
-    }
+    const storeId = parseInt(await this.getStoreId());
   
     const url = `${serverUrl}/api/v1/store/sell/link/create`;
     const response = await fetch(url, {
@@ -438,7 +427,7 @@ class ApiService {
       body: JSON.stringify({
         sellHistoryId: sellHistoryId,
         sellGroupId: sellGroupId,
-        storeId: this.storeId
+        storeId: storeId
       })
     });
   
@@ -460,9 +449,8 @@ class ApiService {
       }
     })
   
-    if (!this.storeId) {
-      return new Error('Invalid storeId');
-    }
+    const storeId = parseInt(await this.getStoreId());
+
   
     const url = `${serverUrl}/api/v1/store/sell/amount/date/create`;
     const response = await fetch(url, {
@@ -474,7 +462,7 @@ class ApiService {
       body: JSON.stringify({
         date: date,
         amount: amount,
-        storeId: this.storeId
+        storeId: storeId
       })
     });
   
@@ -498,9 +486,8 @@ class ApiService {
       }
     })
   
-    if (!this.storeId) {
-      return new Error('Invalid storeId');
-    }
+    const storeId = parseInt(await this.getStoreId());
+
   
     const url = `${serverUrl}/api/v1/store/profit/group/create`;
     const response = await fetch(url, {
@@ -511,7 +498,7 @@ class ApiService {
       },
       body: JSON.stringify({
         createdDate: createdDate,
-        storeId: this.storeId,
+        storeId: storeId,
         profit: profit
       })
     });
@@ -531,11 +518,10 @@ class ApiService {
     createdDate
   ) {
     const accessToken = await this.tokenService.retrieveAccessToken();
-    if (!this.storeId) {
-      return new Error('Invalid storeId');
-    }
+    const storeId = parseInt(await this.getStoreId());
+
   
-    const url = `${serverUrl}/api/v1/store/profit/group/create`;
+    const url = `${serverUrl}/api/v1/store/profit/history/create`;
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -544,7 +530,7 @@ class ApiService {
       },
       body: JSON.stringify({
         productId: productId,
-        storeId: this.storeId,
+        storeId: storeId,
         count: count,
         countType: countType,
         profit: profit,
@@ -570,10 +556,8 @@ class ApiService {
       }
     })
   
-    if (!this.storeId) {
-      return new Error('Invalid storeId');
-    }
-  
+    const storeId = parseInt(await this.getStoreId());
+
     const url = `${serverUrl}/api/v1/store/profit/link/create`;
     const response = await fetch(url, {
       method: "POST",
@@ -584,7 +568,7 @@ class ApiService {
       body: JSON.stringify({
         profitHistoryId: profitHistoryId,
         profitGroupId: profitGroupId,
-        storeId: this.storeId
+        storeId: storeId
       })
     });
   
@@ -606,9 +590,8 @@ class ApiService {
       }
     })
   
-    if (!this.storeId) {
-      return new Error('Invalid storeId');
-    }
+        const storeId = parseInt(await this.getStoreId());
+
   
     const url = `${serverUrl}/api/v1/store/profit/amount/date/create`;
     const response = await fetch(url, {
@@ -620,7 +603,7 @@ class ApiService {
       body: JSON.stringify({
         date: date,
         amount: amount,
-        storeId: this.storeId
+        storeId: storeId
       })
     });
   

@@ -22,7 +22,8 @@ import SellHistoryRepository from "../../repository/SellHistoryRepository";
 import ProfitHistoryRepository from "../../repository/ProfitHistoryRepository";
 import AmountDateRepository from "../../repository/AmountDateRepository";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import TrashIcon from "../../assets/trash-icon.svg"
+import TrashIcon from "../../assets/trash-icon.svg";
+import TrashIconBlack from "../../assets/trash-icon-black.svg";
 import * as Animatable from 'react-native-animatable';
 
 const screenWidth = Dimensions.get("window").width;
@@ -44,7 +45,6 @@ const renderItem = ({item}) => {
 
 
 const keyExtractor = (item) => item.id;
-
 
 class Sell extends Component {
 	constructor(props) {
@@ -73,7 +73,8 @@ class Sell extends Component {
 			productNameInputValue: "",
 			quantityInputValue: "",
 			priceInputValue: "",
-			quantityInputError: false
+			quantityInputError: false,
+			isUtilizationModalVisible: false
 		};
 
 		this.keyboardDidShowListener = Keyboard.addListener(
@@ -222,13 +223,11 @@ class Sell extends Component {
 
 			let existingProductIndex =
 				newSellingProducts.findIndex(
-					element => element.id === storeProduct[0].id
+					element => element.id === storeProduct[0].id && element.count > 0
 				);
 
 			if (existingProductIndex !== -1) {
 				newSellingProducts[existingProductIndex].count += 1;
-
-				
 				let minusedValue = storeProduct[0].count - newSellingProducts[existingProductIndex].count;
 				console.log(minusedValue);
 				if (minusedValue < 0) {
@@ -323,6 +322,17 @@ class Sell extends Component {
 						<Text style={styles.pageTitleText}>
 							Sotiladigan mahsulotlar
 						</Text>
+
+						<TouchableOpacity
+							style={{
+								paddingRight: 8
+							}}
+							onPressIn={() => {
+								// OPEN UTILIZATION MODAL
+								this.setState({	isUtilizationModalVisible: true});
+							}}>
+							<TrashIconBlack />
+						</TouchableOpacity>
 					</View>
 
 					<TextInput
@@ -752,6 +762,383 @@ class Sell extends Component {
 							</Animated.View>
 						</View>
 					</Modal>
+
+					<Modal
+						visible={this.state.isUtilizationModalVisible}
+						animationType="none"
+						style={{}}
+						transparent={true}>
+						<TouchableOpacity
+							activeOpacity={1}
+							onPress={this.toggleModal}>
+							<View style={{
+								position: "absolute",
+								width: screenWidth,
+								height: screenHeight,
+								flex: 1,
+								backgroundColor: "#00000099"
+							}}></View>
+						</TouchableOpacity>
+						<View style={{
+							height: screenHeight,
+							display: "flex",
+							alignItems: "center",
+							justifyContent: "center"
+						}}>
+							<Animated.View style={{
+								width: screenWidth - (16 * 2),
+								maxWidth: 343,
+								marginLeft: "auto",
+								marginRight: "auto",
+								flex: 1,
+								alignItems: "center",
+
+								justifyContent: (this.state.isKeyboardOn ? "flex-start" : "center"),
+								marginTop: (this.state.isKeyboardOn ? 120 : 0),
+								transform: [{translateY}]
+							}}>
+								<View style={{
+									width: "100%",
+									padding: 20,
+									borderRadius: 12,
+									backgroundColor: "#fff",
+								}}>
+									<View style={styles.crossIconWrapper}>
+										<TouchableOpacity onPress={() => {
+											this.setState({
+												isProductNameInputFocused: false,
+												isQuantityInputFocused: false,
+												isPriceInputFocused: false,
+												recommenderProducts: [],
+												selectedProduct: {},
+												productNameContentStyle: {},
+												productNameInputValue: "",
+												quantityInputValue: "",
+												priceInputValue: "",
+												quantityInputError: false
+											});
+
+											this.setState((prevState) => ({
+												isUtilizationModalVisible: !prevState.isUtilizationModalVisible,
+											}));
+										}}>
+											<CrossIcon />
+										</TouchableOpacity>
+									</View>
+
+									<View>
+										<Text style={styles.modalLabel}>Mahsulot nomi</Text>
+										<TextInput
+											onChangeText={async (value) => {
+												this.setState({
+													productNameInputValue: value
+												});
+
+												if (value !== "" || value !== " ") {
+													let storeProducts =
+														await this.storeProductRepository.searchProductsInfo(
+															value + "%"
+														);
+
+													this.setState({
+														recommenderProducts: storeProducts
+													});
+
+													this.setState({
+														isQuantityInputFocused: false,
+														isPriceInputFocused: false,
+														selectedProduct: {},
+														productNameContentStyle: {},
+														quantityInputValue: "",
+														priceInputValue: ""
+													});
+												}
+											}}
+
+											onFocus={() => {
+												this.setState({
+													isProductNameInputFocused: true
+												});
+											}}
+
+											onEndEditing={() => {
+												this.setState({
+													isProductNameInputFocused: false
+												});
+											}}
+
+											style={{
+												paddingHorizontal: 16,
+												paddingVertical: 14,
+												borderWidth: 1,
+												borderColor: (this.state.isProductNameInputFocused ? "#222" : "#AFAFAF"),
+												borderRadius: 8,
+												fontFamily: "Gilroy-Medium",
+												fontWeight: "500",
+												fontSize: 16,
+												lineHeight: 24,
+												marginTop: 4
+											}}
+
+											cursorColor={"#222"}
+
+											placeholder="Nomini kiriting"
+
+											placeholderTextColor="#AAAAAA"
+
+											value={this.state.productNameInputValue}/>
+
+										<View style={{marginTop: 2}}>
+											<View style={this.state.productNameContentStyle}>
+												{
+													this.state.recommenderProducts.map(
+														(item, index) =>
+															(
+																<Pressable
+																	onPress={() => {
+																		this.selectProduct(item);
+																	}}
+
+																	onPressIn={() => {
+																		Animated.spring(this.state.scaleValue, {
+																			toValue: 0.9,
+																			useNativeDriver: true,
+																		}).start();
+																	}}
+
+																	onPressOut={() => {
+																		Animated.spring(this.state.scaleValue, {
+																			toValue: 1,
+																			useNativeDriver: true,
+																		}).start();
+																	}}
+
+																	style={({pressed}) => [
+																		{
+																			paddingVertical: 14,
+																			paddingHorizontal: 16,
+																			borderTopWidth: 1,
+																			borderColor: "#F1F1F1"
+																		},
+																		animatedStyle,
+																		{
+																			backgroundColor: pressed ? '#CCCCCC' : '#FBFBFB',
+																		},
+																	]}
+																	key={index}>
+
+																	<Text>{item.brand_name}</Text>
+																</Pressable>
+															)
+													)
+												}
+											</View>
+										</View>
+									</View>
+
+									<View style={styles.inputBlock}>
+										<Text style={styles.modalLabel}>Miqdori</Text>
+										<TextInput
+											onFocus={() => {
+												this.setState({isQuantityInputFocused: true})
+											}}
+
+											onEndEditing={() => {
+												this.setState({isQuantityInputFocused: false})
+											}}
+
+											onChangeText={(value) => {
+												this.setState({quantityInputValue: value});
+												// FIST OF ALL GET CURRENT SELLING PRICE.
+												let sellingPrice = this.state.selectedProduct.selling_price;
+												console.log((parseInt(value) * sellingPrice))
+												this.setState({priceInputValue: (parseInt(value) * sellingPrice) + ""})
+											}}
+
+											style={{
+												paddingHorizontal: 16,
+												paddingVertical: 14,
+												borderWidth: 1,
+												borderColor: (this.state.quantityInputError ? "red" : this.state.isQuantityInputFocused ? "#222" : "#AFAFAF"),
+												borderRadius: 8,
+												fontFamily: "Gilroy-Medium",
+												fontWeight: "500",
+												fontSize: 16,
+												lineHeight: 24,
+												marginTop: 4
+											}}
+
+											cursorColor={"#222"}
+
+											placeholder="Sonini kiriting"
+
+											keyboardType="numeric"
+
+											placeholderTextColor="#AAAAAA"
+											value={this.state.quantityInputValue}/>
+											{
+												this.state.quantityInputError ? 
+												<Animatable.View animation="shake" duration={500}>
+													<Text style={{color: "red"}}>Miqdor yetarli emas.</Text>
+												</Animatable.View> : null
+											}
+									</View>
+
+									<View style={styles.inputBlock}>
+										<Text style={styles.modalLabel}>Sotuvdagi narxi (1 kg/dona/litr)</Text>
+										<TextInput
+											onFocus={() => {
+												this.setState({isPriceInputFocused: true});
+											}}
+
+											onEndEditing={() => {
+												this.setState({isPriceInputFocused: false});
+											}}
+
+											onChangeText={(value) => {
+												this.setState({priceInputValue: value})
+												let productSellingPrice = this.state.selectedProduct.selling_price;
+												let quantity = (parseFloat(value) / productSellingPrice).toFixed(2);
+												this.setState({quantityInputValue: quantity})
+											}}
+
+											style={{
+												paddingHorizontal: 16,
+												paddingVertical: 14,
+												borderWidth: 1,
+												borderColor: (this.state.isPriceInputFocused ? "#222" : "#AFAFAF"),
+												borderRadius: 8,
+												fontFamily: "Gilroy-Medium",
+												fontWeight: "500",
+												fontSize: 16,
+												lineHeight: 24,
+												marginTop: 4
+											}}
+
+											placeholder="1 kg/dona narxini kiriting"
+
+											placeholderTextColor="#AAAAAA"
+
+											cursorColor={"#222"}
+
+											keyboardType="numeric"
+
+											value={this.state.priceInputValue}/>
+									</View>
+
+									<TouchableOpacity
+										style={styles.modalButton}
+										onPress={() => {
+											let selectedProduct = this.state.selectedProduct;
+											if (!selectedProduct) {
+												// TODO RED ERROR
+												return;
+											}
+
+											let sellingProducts = [...this.state.sellingProducts];
+
+											let existingProductIndex =
+												sellingProducts.findIndex(
+													element => element.id === selectedProduct.id
+												);
+
+												console.log(existingProductIndex);
+											if (existingProductIndex !== -1) {
+
+											let minusedValue = 
+												parseFloat(selectedProduct.count) - 
+												(
+													parseFloat(this.state.quantityInputValue) 
+													+ 
+													sellingProducts[existingProductIndex].count
+												);
+
+											if (minusedValue < 0) {
+												this.setState({quantityInputError: true})
+												return;
+											} else {
+												// method will countinue
+											}
+										} else {
+											let minusedValue = 
+												parseFloat(selectedProduct.count) - parseFloat(this.state.quantityInputValue);
+											if (minusedValue < 0) {
+												this.setState({quantityInputError: true})
+												return;
+											} else {
+												
+												// method will countinue
+											}
+										}
+
+										selectedProduct.serial_number = "";
+										selectedProduct.count = parseFloat(this.state.quantityInputValue);
+
+										// DON'T ADD - value to AMOUNT
+										// this.setState({
+										// 	amount: this.state.amount + (selectedProduct.selling_price * selectedProduct.count)
+										// });
+
+										// NO PROFIT
+										// this.setState({
+										// 	profit: this.state.profit + (
+										// 		selectedProduct.selling_price -
+										// 		selectedProduct.price
+										// 	)
+										// });
+
+										let foundProduct = 
+											this.state.sellingProducts.find(product => product.id === selectedProduct.id && product.count < 0);
+										if (foundProduct != null) {
+											const updatedSellingProducts = 
+												this.state.sellingProducts.map(product => {
+													if (product.id === selectedProduct.id && product.count < 0) {
+														return { ...product, count: (
+															product.count + 
+															parseFloat("-" + selectedProduct.count)
+														)};
+													}
+													return product;
+												});
+
+											this.setState((prevState) => ({
+												sellingProducts: updatedSellingProducts
+											}));
+										} else {
+											selectedProduct.count = parseFloat("-" + selectedProduct.count);
+											console.log("PRODUCT COUNT::")
+											console.log(selectedProduct.count)
+
+											this.setState((prevState) => ({
+												sellingProducts: [...prevState.sellingProducts, selectedProduct]
+											}));
+										}
+
+										// TODO CLEAR STATE:::
+										this.setState({
+											isProductNameInputFocused: false,
+											isQuantityInputFocused: false,
+											isPriceInputFocused: false,
+											recommenderProducts: [],
+											selectedProduct: {},
+											productNameContentStyle: {},
+											productNameInputValue: "",
+											quantityInputValue: "",
+											priceInputValue: "",
+											quantityInputError: false
+										});
+
+										this.setState((prevState) => ({
+											isUtilizationModalVisible: !prevState.isUtilizationModalVisible,
+										}));
+									}}>
+										<Text
+											style={styles.modalButtonText}>Utilizatsiya qilish</Text>
+									</TouchableOpacity>
+								</View>
+							</Animated.View>
+						</View>
+					</Modal>
 				</View>
 			</>
 		);
@@ -770,6 +1157,8 @@ class Sell extends Component {
 
 		this.state.sellingProducts.forEach(
 			async (sellingProduct) => {
+				console.log(sellingProduct);
+
 				await this.sellHistoryRepository.createSellHistoryAndLinkWithGroup(
 					sellingProduct.product_id,
 					sellingProduct.count,
@@ -814,14 +1203,28 @@ class Sell extends Component {
 
 		this.state.sellingProducts.forEach(
 			async (sellingProduct) => {
-				await this.profitHistoryRepository.createProfitHistoryAndLinkWithGroup(
-					sellingProduct.product_id,
-					sellingProduct.count,
-					sellingProduct.count_type,
-					sellingProduct.selling_price - sellingProduct.price,
-					profitGroupId
-				);
+				if (sellingProduct.selling_price > 0) {
+					if (sellingProduct.count > 0) {
+						await this.profitHistoryRepository.createProfitHistoryAndLinkWithGroup(
+							sellingProduct.product_id,
+							sellingProduct.count,
+							sellingProduct.count_type,
+							sellingProduct.selling_price - sellingProduct.price,
+							profitGroupId
+						);
+					} else {
+						await this.profitHistoryRepository.createProfitHistoryAndLinkWithGroup(
+							sellingProduct.product_id,
+							sellingProduct.count,
+							sellingProduct.count_type,
+							0,
+							profitGroupId
+						);
+					}
+				}
 
+				// sellingProduct.count is -5 make it 5 and run this method
+				sellingProduct.count = Math.abs(sellingProduct.count);
 
 				this.storeProductRepository.updateCount(
 					sellingProduct.product_id,
@@ -932,14 +1335,16 @@ const styles = StyleSheet.create({
 
 	pageTitle: {
 		width: screenWidth - (16 + 16),
+		// backgroundColor: "red",
 		display: "flex",
 		flexDirection: "row",
 		alignItems: "center",
+		justifyContent: "space-between",
 		marginBottom: 10,
 	},
 
 	pageTitleText: {
-		width: 299,
+		width: 250,
 		textAlign: "center",
 		fontSize: 18,
 		fontFamily: "Gilroy-SemiBold",

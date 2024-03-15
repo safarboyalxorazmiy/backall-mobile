@@ -121,50 +121,50 @@ class Home extends Component {
 					if (isDownloaded != "true" && isDownloaded != null) {
 						// LOAD..
 	
-						// let intervalId = setInterval(async () => {
-						// 	if (this.state.isConnected) { // Has internet connection
-						// 		console.log(this.state.isDownloaded)
-						// 		if (this.state.isDownloaded === "true") {
-						// 			clearInterval(intervalId);
-						// 			console.log("CLEARED");
-						// 			return;
-						// 		}
+						let intervalId = setInterval(async () => {
+							if (this.state.isConnected) { // Has internet connection
+								console.log(this.state.isDownloaded)
+								if (this.state.isDownloaded === "true") {
+									clearInterval(intervalId);
+									console.log("CLEARED");
+									return;
+								}
 		
-						// 		if (this.state.isLoading) { // is loading don't load again
-						// 			return;
-						// 		}
+								if (this.state.isLoading) { // is loading don't load again
+									return;
+								}
 		
-						// 		console.log("LOADING STARTED")
-						// 		this.setState({ // loading started
-						// 			isLoading: true
-						// 		})
-						// 		this.setState({spinner: true});
+								console.log("LOADING STARTED")
+								this.setState({ // loading started
+									isLoading: true
+								})
+								this.setState({spinner: true});
 								
-						// 		let isDownloaded = 
-						// 			await this.getLocalProducts() && 
-						// 			await this.getGlobalProducts() && 
-						// 			await this.getStoreProducts() &&
-						// 			await this.getSellGroups() &&
-						// 			await this.getSellHistories() &&
-						// 			await this.getSellHistoryGroup() &&
-						// 			await this.getSellAmountDate() &&
-						// 			await this.getProfitGroups() &&
-						// 			await this.getProfitHistories() &&
-						// 			await this.getProfitHistoryGroup() &&
-						// 			await this.getProfitAmountDate();
+								let isDownloaded = 
+									await this.getLocalProducts() && 
+									await this.getGlobalProducts() && 
+									await this.getStoreProducts() &&
+									await this.getSellGroups() &&
+									await this.getSellHistories() &&
+									await this.getSellHistoryGroup() &&
+									await this.getSellAmountDate() &&
+									await this.getProfitGroups() &&
+									await this.getProfitHistories() &&
+									await this.getProfitHistoryGroup() &&
+									await this.getProfitAmountDate();
 
-						// 		// storing result of product storing
-						// 		await AsyncStorage.setItem("isDownloaded", isDownloaded.toString());
+								// storing result of product storing
+								await AsyncStorage.setItem("isDownloaded", isDownloaded.toString());
 						
-						// 		this.setState({ // loading finished
-						// 			isLoading: false,
-						// 			isDownloaded: isDownloaded.toString()
-						// 		});
-						// 		console.log("LOADING FINISHED");
+								this.setState({ // loading finished
+									isLoading: false,
+									isDownloaded: isDownloaded.toString()
+								});
+								console.log("LOADING FINISHED");
 						
-						// 		this.setState({spinner: false});
-						// 	}
-						// }, 5000);
+								this.setState({spinner: false});
+							}
+						}, 5000);
 					}
 	
 					await this.getAmountInfo();

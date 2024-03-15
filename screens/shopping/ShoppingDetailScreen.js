@@ -220,7 +220,11 @@ class ShoppingDetail extends Component {
 									
 									<View style={styles.profitRow}>
 										<Text style={styles.profitText}>Sotilgan narxi</Text>
-										<Text style={styles.profitPrice}>{(item.selling_price).toLocaleString()} so’m</Text>
+										<Text style={styles.profitPrice}>
+											{
+												(item.count * item.selling_price).toLocaleString()
+											} so’m
+										</Text>
 									</View>
 								</View>
 							))

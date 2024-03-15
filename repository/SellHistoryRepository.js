@@ -513,7 +513,7 @@ class SellHistoryRepository {
     try {
       await this.db.transaction((tx) => {
         tx.executeSql(
-          "UPDATE sell_history_group SET saved = 1, global_id = ? WHERE id = ?",
+          "UPDATE sell_history_group SET saved = 1, global_id = ? WHERE id = ?;",
           [global_id, local_id]  // Use prepared statement for security
         );
       });

@@ -60,7 +60,7 @@ class StoreProductRepository {
 
                 tx.executeSql(
                   `UPDATE store_product 
-                    SET price = ?, selling_price = ?, percentage = ?, count = ?, count_type = ?
+                    SET price = ?, selling_price = ?, percentage = ?, count = ?, count_type = ?, saved = 0
                     WHERE product_id = ?;`,
                   [price, sellingPrice, percentage, previousCount + parseFloat(count), countType, product_id]
                 );
