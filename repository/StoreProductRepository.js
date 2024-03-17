@@ -126,7 +126,7 @@ class StoreProductRepository {
               global_id, 
               saved
             ) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
               product_id, 
               nds, 

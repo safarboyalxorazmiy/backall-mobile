@@ -41,39 +41,47 @@ class AmountDateRepository {
 			global_id, 
 			saved
 		) VALUES (?, ?, ?, ?);`;
-		tx.executeSql(insertQuery, [
-			date, 
-			profitAmount, 
-			global_id, 
-			saved ? 1 : 0
-		], (tx, insertResults) => {
+		await this.db.transaction(async (tx) => {
+      await tx.executeSql(insertQuery, [
+					date, 
+					profitAmount, 
+					global_id, 
+					saved ? 1 : 0
+				], (tx, insertResults) => {
+					if (insertResults.rowsAffected > 0) {
+					console.log(`Profit amount inserted successfully`);
+				} else {
+					console.log(`Failed to insert profit amount`);
+				}
+			},
+			error => {
+				console.error(`Error inserting profit amount: ${error.message}`);
+			});
+    });
+
 		
-			if (insertResults.rowsAffected > 0) {
-			console.log(`Profit amount inserted successfully`);
-		} else {
-			console.log(`Failed to insert profit amount`);
-		}
-		},
-		error => {
-		console.error(`Error inserting profit amount: ${error.message}`);
-		});
 	}
 
 	async createSellAmountWithAllValues(sellAmount, date, global_id, saved) {
 		const insertQuery = 
 		`INSERT INTO sell_amount_date (date, amount, global_id, saved)
 			VALUES (?, ?, ?, ?);`;
-		tx.executeSql(
-			insertQuery, [date, sellAmount, global_id, saved ? 1 : 0], 
-			(tx, insertResults) => {
-				if (insertResults.rowsAffected > 0) {
-					console.log(`Sell amount inserted successfully`);
-				} else {
-					console.log(`Failed to insert sell amount`);
-				}
-			},
-			error => {}
-		);
+
+			await this.db.transaction(async (tx) => {
+				await tx.executeSql(
+					insertQuery, [date, sellAmount, global_id, saved ? 1 : 0], 
+					(tx, insertResults) => {
+						if (insertResults.rowsAffected > 0) {
+							console.log(`Sell amount inserted successfully`);
+						} else {
+							console.log(`Failed to insert sell amount`);
+						}
+					},
+					error => {
+						console.error("Error on createSellAmountWithAllValues: ", error)
+					}
+				);
+		})
 	}
 	
 	async setProfitAmount(profitAmount, date) {

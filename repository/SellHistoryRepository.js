@@ -53,15 +53,16 @@ class SellHistoryRepository {
   }
 
   async createSellHistoryGroup(amount) {
+    let currentDate = new Date();
     try {
       const query = `
         INSERT INTO sell_group (created_date, global_id, amount, saved)
-        VALUES (CURRENT_DATE, null, ?, 0);
+        VALUES (?, null, ?, 0);
       `;
 
       // Execute the query
       await this.db.transaction(async (tx) => {
-        await tx.executeSql(query, [amount]);
+        await tx.executeSql(query, [currentDate.toISOString(), amount]);
       });
 
       console.log("Sell group created successfully.");
@@ -74,12 +75,12 @@ class SellHistoryRepository {
       console.log("&&&&&&&&&&&&&&");
       return lastSellHistoryGroup.id;
     } catch (error) {
-      console.error("Error creating sell group:", error);
+      console.error("Error createSellHistoryGroup:", error);
       throw error;
     }
   }
 
-  async createSellHistoryGroupWithAllValues(
+  async createSellGroupWithAllValues(
     created_date, 
     amount, 
     global_id, 
@@ -94,7 +95,7 @@ class SellHistoryRepository {
       // Execute the query
       await this.db.transaction(async (tx) => {
         await tx.executeSql(query, [
-          created_date.toISOString(), 
+          created_date, 
           global_id, 
           amount, 
           saved ? 1 : 0
@@ -111,7 +112,7 @@ class SellHistoryRepository {
       console.log("&&&&&&&&&&&&&&");
       return lastSellHistoryGroup.id;
     } catch (error) {
-      console.error("Error creating sell group:", error);
+      console.error("Error createSellHistoryGroupWithAllValues:", error);
       throw error;
     }
   }
@@ -142,7 +143,7 @@ class SellHistoryRepository {
   
       return rows;
     } catch (error) {
-      console.error("Error retrieving sell history:", error);
+      console.error("Error getLastSellHistoryGroupId:", error);
       throw error;
     }
   }
@@ -176,7 +177,7 @@ class SellHistoryRepository {
 
         return row;
     } catch (error) {
-        console.error("Error retrieving sell history:", error);
+        console.error("Error getLastSellHistoryGroupByDate:", error);
         throw error;
     }
   }
@@ -224,7 +225,7 @@ class SellHistoryRepository {
       console.log(lastIdOfSellHistory);
       return lastIdOfSellHistory.id;
     } catch (error) {
-      console.error("Error creating sell group:", error);
+      console.error("Error createSellHistory:", error);
       throw error;
     }
   }
@@ -258,16 +259,17 @@ class SellHistoryRepository {
             count, 
             count_type, 
             selling_price,
-            created_date.toISOString(),
+            created_date,
             global_id,
             saved ? 1 : 0
           ]);
       });
 
-      let lastIdOfSellHistory = await this.getLastIdOfSellHistory(product_id, created_date.toISOString());
+      let lastIdOfSellHistory =  
+        await this.getLastIdOfSellHistory(product_id, created_date);
       return lastIdOfSellHistory.id;
     } catch (error) {
-      console.error("Error creating sell group:", error);
+      console.error("Error createSellHistoryWithAllValues:", error);
       throw error;
     }
   }
@@ -352,12 +354,15 @@ class SellHistoryRepository {
         console.error("Unexpected result structure:", result);
         throw new Error("Unexpected result structure");
       }
-  
 
       const rows = result.rows._array[0];
+      if (rows == null) {
+        return [];
+      }
+      
       return rows;
     } catch (error) {
-      console.error("Error retrieving sell history:", error);
+      console.error("Error getLastIdOfSellHistory:", error);
       throw error;
     }
   }
@@ -389,7 +394,7 @@ class SellHistoryRepository {
       console.log('Sell history retrieved successfully:', rows);
       return rows;
     } catch (error) {
-      console.error("Error retrieving sell history:", error);
+      console.error("Error getAll:", error);
       throw error;
     }
   }
@@ -418,7 +423,7 @@ class SellHistoryRepository {
       const rows = result.rows._array;
       return rows;
     } catch (error) {
-      console.error("Error retrieving sell history:", error);
+      console.error("Error getAllSellGroup:", error);
       throw error;
     }
   }
@@ -447,7 +452,7 @@ class SellHistoryRepository {
       const rows = result.rows._array;
       return rows;
     } catch (error) {
-      console.error("Error retrieving sell history:", error);
+      console.error("Error getSellGroupSavedFalse:", error);
       throw error;
     }
   }
@@ -476,7 +481,7 @@ class SellHistoryRepository {
       const rows = result.rows._array;
       return rows;
     } catch (error) {
-      console.error("Error retrieving sell history:", error);
+      console.error("Error getSellHistorySavedFalse:", error);
       throw error;
     }
   }
@@ -547,7 +552,7 @@ class SellHistoryRepository {
       const rows = result.rows._array;
       return rows;
     } catch (error) {
-      console.error("Error retrieving sell history:", error);
+      console.error("Error getSellHistoryGroupSavedFalse:", error);
       throw error;
     }
   }
@@ -581,7 +586,7 @@ class SellHistoryRepository {
         console.log(rows)
         return rows;
     } catch (error) {
-        console.error("Error retrieving sell history:", error);
+        console.error("Error getTop10SellGroupByDate:", error);
         throw error;
     }
   }
@@ -610,7 +615,36 @@ class SellHistoryRepository {
       const rows = result.rows._array;
       return rows;
     } catch (error) {
-      console.error("Error retrieving sell history:", error);
+      console.error("Error findSellHistoryById:", error);
+      throw error;
+    }
+  }
+
+  async findSellHistoryByGlobalId(global_id) {
+    try {
+      const query = `
+        SELECT * FROM sell_history where global_id = ?;
+      `;
+
+      const result = await new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+          tx.executeSql(
+            query,
+            [global_id],
+            (_, resultSet) => resolve(resultSet),
+            (_, error) => reject(error)
+          );
+        });
+      });
+  
+      if (!result || !result.rows || !result.rows._array) {
+        throw new Error("Unexpected result structure");
+      }
+  
+      const rows = result.rows._array;
+      return rows;
+    } catch (error) {
+      console.error("Error findSellHistoryById:", error);
       throw error;
     }
   }
@@ -639,7 +673,36 @@ class SellHistoryRepository {
       const rows = result.rows._array;
       return rows;
     } catch (error) {
-      console.error("Error retrieving sell history:", error);
+      console.error("Error findSellGroupById:", error);
+      throw error;
+    }
+  }
+
+  async findSellGroupByGlobalId(global_id) {
+    try {
+      const query = `
+        SELECT * FROM sell_group where global_id = ?;
+      `;
+
+      const result = await new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+          tx.executeSql(
+            query,
+            [global_id],
+            (_, resultSet) => resolve(resultSet),
+            (_, error) => reject(error)
+          );
+        });
+      });
+  
+      if (!result || !result.rows || !result.rows._array) {
+        throw new Error("Unexpected result structure");
+      }
+  
+      const rows = result.rows._array;
+      return rows;
+    } catch (error) {
+      console.error("Error findSellGroupById:", error);
       throw error;
     }
   }
@@ -880,7 +943,7 @@ class SellHistoryRepository {
 
       return rows;
     } catch (error) {
-      console.error("Error retrieving sell history:", error);
+      console.error("Error getSellHistoryInfoById:", error);
       throw error;
     }
   }
@@ -911,7 +974,7 @@ class SellHistoryRepository {
       console.log("ins res: ", result.rows._array);
       return result.rows._array;
     } catch (error) {
-      console.error("Error retrieving sell history:", error);
+      console.error("Error getSellGroupInfoById:", error);
       throw error;
     }
   }

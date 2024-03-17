@@ -110,86 +110,121 @@ class Home extends Component {
 		});
 
 		const {navigation} = this.props;
-		navigation.addListener("focus", 
-			async () => {
-				// await AsyncStorage.clear();
-				console.log("HOME NAVIGATED");
-				
-				let isLoggedIn = await this.tokenService.checkTokens()
-				if (isLoggedIn) {
-					let isDownloaded = await AsyncStorage.getItem("isDownloaded");
-					if (isDownloaded != "true" && isDownloaded != null) {
-						// LOAD..
+		navigation.addListener("focus", async () => {
+			console.log("HOME NAVIGATED");
 	
-						let intervalId = setInterval(async () => {
-							if (this.state.isConnected) { // Has internet connection
-								console.log(this.state.isDownloaded)
+			let isLoggedIn = await this.tokenService.checkTokens();
+			if (isLoggedIn) {
+				let isDownloaded = await AsyncStorage.getItem("isDownloaded");
+				console.log("isDownloaded??", isDownloaded);
+				if (isDownloaded !== "true" || isDownloaded == null) {
+						// LOAD..
+						console.log("ABOUT TO LOAD...");
+
+						console.log("Initial isConnected:", this.state.isConnected);
+
+						// Check if setInterval callback is reached
+						console.log("Setting up setInterval...");
+
+						setInterval(async () => {
+							console.log("Interval internet is connected:", this.state.isConnected);
+
+							// Ensure proper context binding
+							console.log("this state in setInterval:", this.state);
+
+							if (this.state.isConnected) {
 								if (this.state.isDownloaded === "true") {
 									clearInterval(intervalId);
 									console.log("CLEARED");
 									return;
 								}
-		
-								if (this.state.isLoading) { // is loading don't load again
-									return;
-								}
-		
-								console.log("LOADING STARTED")
-								this.setState({ // loading started
-									isLoading: true
-								})
-								this.setState({spinner: true});
-								
-								let isDownloaded = 
-									await this.getLocalProducts() && 
-									await this.getGlobalProducts() && 
-									await this.getStoreProducts() &&
-									await this.getSellGroups() &&
-									await this.getSellHistories() &&
-									await this.getSellHistoryGroup() &&
-									await this.getSellAmountDate() &&
-									await this.getProfitGroups() &&
-									await this.getProfitHistories() &&
-									await this.getProfitHistoryGroup() &&
-									await this.getProfitAmountDate();
 
-								// storing result of product storing
-								await AsyncStorage.setItem("isDownloaded", isDownloaded.toString());
-						
-								this.setState({ // loading finished
-									isLoading: false,
-									isDownloaded: isDownloaded.toString()
-								});
-								console.log("LOADING FINISHED");
-						
-								this.setState({spinner: false});
+								try {
+									// Has internet connection
+									await this.loadProducts();
+								} catch (error) {
+									console.error("Error loading products:", error);
+								}
 							}
 						}, 5000);
-					}
-	
-					await this.getAmountInfo();
-	
-					let notAllowed = await AsyncStorage.getItem("not_allowed");
-					this.setState({notAllowed: notAllowed})
 				}
+
+				await this.getAmountInfo();
+
+				let notAllowed = await AsyncStorage.getItem("not_allowed");
+				this.setState({ notAllowed: notAllowed });
 			}
-		);
+	});
+	
+	}
+
+	async loadProducts() {
+		console.log("LOADING STARTED")
+
+		await this.storeProductRepository.init();
+		await this.sellHistoryRepository.init();
+		await this.profitHistoryRepository.init();
+		await this.amountDateRepository.init();
+
+		if (!this.state.isLoading) { // is loadring don't load again
+			try {
+				console.log("LOADING STARTED")
+				this.setState({ // loading started
+					isLoading: true
+				})
+				this.setState({spinner: true});
+				
+				let isDownloaded = 
+					await this.getLocalProducts() && 
+					await this.getGlobalProducts() && 
+					await this.getStoreProducts() &&
+					await this.getSellGroups() &&
+					await this.getSellHistories() &&
+					await this.getSellHistoryGroup() &&
+					await this.getSellAmountDate() &&
+					await this.getProfitGroups() &&
+					await this.getProfitHistories() &&
+					await this.getProfitHistoryGroup() &&
+					await this.getProfitAmountDate();
+
+				// storing result of product storing
+				await AsyncStorage.setItem("isDownloaded", isDownloaded.toString());
+
+				this.setState({ // loading finished
+					isLoading: false,
+					isDownloaded: isDownloaded.toString()
+				});
+				console.log("LOADING FINISHED");
+
+				this.setState({spinner: false});
+			} catch (e) {
+				console.log("LOADING ERRORED");
+
+				console.error(e);
+
+				// storing result of product storing
+				await AsyncStorage.setItem("isDownloaded", isDownloaded.toString());
+
+				this.setState({ // loading finished
+					isLoading: false,
+					isDownloaded: isDownloaded.toString()
+				});
+				console.log("LOADING FINISHED");
+			}
+		}
 	}
 
 	// PRODUCT PAGINATION
 	async getLocalProducts() {
+		console.log("GETTING LOCAL PRODUCTS ⏳⏳⏳");
+
 		let products = [];
 		let size = this.state.lastLocalProductsSize;
 		let page = this.state.lastLocalProductsPage;
 	
 		while (true) {
 			let downloadedProducts;
-			try {
-				downloadedProducts = await this.apiService.getLocalProducts(page, size);
-			} catch (error) {
-				console.error("Error fetching local products:", error);
-				return false;
-			}
+			downloadedProducts = await this.apiService.getLocalProducts(page, size);
 	
 			if (
 				!downloadedProducts || 
@@ -211,7 +246,7 @@ class Home extends Component {
 						true
 					);
 				} catch (error) {
-					console.error("Error creating local product:", error);
+					console.error("Error creating local products:", error);
 				}
 			}
 
@@ -223,6 +258,8 @@ class Home extends Component {
 	}
 
 	async getGlobalProducts() {
+		console.log("GETTING GLOBAL PRODUCTS ⏳⏳⏳")
+
 		let products = [];
 		let size = this.state.lastGlobalProductsSize;
 		let page = this.state.lastGlobalProductsPage;
@@ -260,7 +297,7 @@ class Home extends Component {
 						);
 					}
 				} catch (error) {
-					console.error("Error processing product:", error);
+					console.error("Error getGlobalProducts:", error);
 					// Continue with next product
 					continue;
 				}
@@ -272,6 +309,8 @@ class Home extends Component {
 	}
 
 	async getStoreProducts() {
+		console.log("GETTING STORE PRODUCTS ⏳⏳⏳");
+
 		let storeProducts = [];
 		let size = this.state.lastStoreProductsSize;
 		let page = this.state.lastStoreProductsPage;
@@ -310,7 +349,7 @@ class Home extends Component {
 						true
 					)
 				} catch (error) {
-					console.error("Error processing product:", error);
+					console.error("Error getStoreProducts:", error);
 					// Continue with next product
 					continue;
 				}
@@ -323,6 +362,8 @@ class Home extends Component {
 
 	// SELL PAGINATION
 	async getSellGroups() {
+		console.log("GETTING SELL GROUPS ⏳⏳⏳");
+
 		let sellGroups = [];
 		let size = this.state.lastSellGroupsSize;
 		let page = this.state.lastSellGroupsPage;
@@ -348,14 +389,14 @@ class Home extends Component {
 	
 			for (const sellGroup of response.content) {
 				try {
-					await this.sellHistoryRepository.createSellHistoryGroupWithAllValues(
+					await this.sellHistoryRepository.createSellGroupWithAllValues(
 						sellGroup.createdDate,
 						sellGroup.amount,
 						sellGroup.id,
 						true
 					);
 				} catch (error) {
-					console.error("Error processing product:", error);
+					console.error("Error getSellGroups:", error);
 					// Continue with next product
 					continue;
 				}
@@ -367,6 +408,8 @@ class Home extends Component {
 	}
 
 	async getSellHistories() {
+		console.log("GETTING SELL HISTORIES ⏳⏳⏳");
+
 		let sellHistories = [];
 		let size = this.state.lastSellHistoriesSize;
 		let page = this.state.lastSellHistoriesPage;
@@ -391,9 +434,10 @@ class Home extends Component {
 			}
 	
 			for (const sellHistory of response.content) {
+				let productsByGlobalId = await this.productRepository.findProductsByGlobalId(sellHistory.productId);
 				try {
 					await this.sellHistoryRepository.createSellHistoryWithAllValues(
-						sellHistory.productId,
+						productsByGlobalId[0].id,
 						sellHistory.id,
 						sellHistory.count,
 						sellHistory.countType,
@@ -402,7 +446,7 @@ class Home extends Component {
 						true
 					);
 				} catch (error) {
-					console.error("Error processing product:", error);
+					console.error("Error getSellHistories:", error);
 					// Continue with next product
 					continue;
 				}
@@ -414,6 +458,8 @@ class Home extends Component {
 	}
 
 	async getSellHistoryGroup() {
+		console.log("GETTING SELL HISTORY GROUP ⏳⏳⏳");
+
 		let sellHistoryGroup = [];
 		let size = this.state.lastSellHistoryGroupSize;
 		let page = this.state.lastSellHistoryGroupPage;
@@ -438,15 +484,18 @@ class Home extends Component {
 			}
 	
 			for (const sellHistoryGroup of response.content) {
+				let sellGroupId = await this.sellHistoryRepository.findSellGroupByGlobalId(sellHistoryGroup.sellGroupId);
+				let sellHistoryId = await this.sellHistoryRepository.findSellHistoryByGlobalId(sellHistoryGroup.sellHistoryId);
+
 				try {
 					await this.sellHistoryRepository.createSellHistoryGroupWithAllValues(
-						sellHistoryGroup.sellHistoryId,
-						sellHistoryGroup.sellGroupId,
+						sellHistoryId[0].id,
+						sellGroupId[0].id,
 						sellHistoryGroup.id,
 						true
 					);
 				} catch (error) {
-					console.error("Error processing product:", error);
+					console.error("Error getSellHistoryGroup:", error);
 					// Continue with next product
 					continue;
 				}
@@ -458,6 +507,8 @@ class Home extends Component {
 	}
 
 	async getSellAmountDate() {
+		console.log("GETTING SELL AMOUNT DATE ⏳⏳⏳");
+
 		let sellAmountDate = [];
 		let size = this.state.lastSellAmountDateSize;
 		let page = this.state.lastSellAmountDatePage;
@@ -490,7 +541,7 @@ class Home extends Component {
 						true
 					);
 				} catch (error) {
-					console.error("Error processing product:", error);
+					console.error("Error getSellAmountDate:", error);
 					// Continue with next product
 					continue;
 				}
@@ -503,6 +554,8 @@ class Home extends Component {
 
 	// PROFIT
 	async getProfitGroups() {
+		console.log("GETTING PROFIT GROUPS ⏳⏳⏳");
+
 		let profitGroups = [];
 		let size = this.state.lastProfitGroupsSize;
 		let page = this.state.lastProfitGroupsPage;
@@ -512,7 +565,7 @@ class Home extends Component {
 			try {
 				response = await this.apiService.getProfitGroups(page, size);
 			} catch (error) {
-				console.error("Error fetching global products:", error);
+				console.error("Error fetching getProfitGroups():", error);
 				this.setState({
 					lastSize: size,
 					lastPage: page
@@ -535,7 +588,7 @@ class Home extends Component {
 						true
 					);
 				} catch (error) {
-					console.error("Error processing product:", error);
+					console.error("Error getProfitGroups:", error);
 					// Continue with next product
 					continue;
 				}
@@ -547,6 +600,8 @@ class Home extends Component {
 	}
 
 	async getProfitHistories() {
+		console.log("GETTING PROFIT HISTORIES ⏳⏳⏳");
+
 		let profitHistories = [];
 		let size = this.state.lastProfitHistoriesSize;
 		let page = this.state.lastProfitHistoriesPage;
@@ -571,9 +626,14 @@ class Home extends Component {
 			}
 	
 			for (const profitHistory of response.content) {
+				console.log("PROFIT HISTORY FROM BACKEND::", profitHistory);
 				try {
+					let localProductsById = await this.productRepository.findProductsByGlobalId(profitHistory.productId);
+
+					console.log("LOCAL PRODUCTS FOUND::", localProductsById);
+
 					await this.profitHistoryRepository.createProfitHistoryWithAllValues(
-						profitHistory.productId,
+						localProductsById[0].id,
 						profitHistory.id,
 						profitHistory.count,
 						profitHistory.countType,
@@ -582,7 +642,7 @@ class Home extends Component {
 						true
 					);
 				} catch (error) {
-					console.error("Error processing product:", error);
+					console.error("Error getProfitHistories:", error);
 					continue;
 				}
 			}
@@ -593,6 +653,7 @@ class Home extends Component {
 	}
 	
 	async getProfitHistoryGroup() {
+		console.log("GETTING PROFIT HISTORY GROUP ⏳⏳⏳")
 		let profitHistoryGroup = [];
 		let size = this.state.lastProfitHistoryGroupSize;
 		let page = this.state.lastProfitHistoryGroupPage;
@@ -617,15 +678,18 @@ class Home extends Component {
 			}
 	
 			for (const profitHistoryGroup of response.content) {
+				let profitGroupId = await this.profitHistoryRepository.findProfitGroupByGlobalId(profitHistoryGroup.profitGroupId);
+			 	let profitHistoryId = await this.profitHistoryRepository.findProfitHistoryByGlobalId(profitHistoryGroup.profitHistoryId);
+
 				try {
 					await this.profitHistoryRepository.createProfitHistoryGroup(
-						profitHistoryGroup.sellHistoryId,
-						profitHistoryGroup.sellGroupId,
+						profitHistoryId[0].id,
+						profitGroupId[0].id,
 						profitHistoryGroup.id,
 						true
 					);
 				} catch (error) {
-					console.error("Error processing product:", error);
+					console.error("Error getProfitHistoryGroup:", error);
 					// Continue with next product
 					continue;
 				}
@@ -637,6 +701,8 @@ class Home extends Component {
 	}
 
 	async getProfitAmountDate() {
+		console.log("GETTING PROFIT AMOUNT DATE ⏳⏳⏳");
+
 		let profitAmountDate = [];
 		let size = this.state.lastProfitAmountDateSize;
 		let page = this.state.lastProfitAmountDatePage;
@@ -669,7 +735,7 @@ class Home extends Component {
 						true
 					);
 				} catch (error) {
-					console.error("Error processing product:", error);
+					console.error("Error getProfitAmountDate:", error);
 					// Continue with next product
 					continue;
 				}

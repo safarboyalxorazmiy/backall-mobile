@@ -1151,6 +1151,7 @@ class Sell extends Component {
 
 		let sellGroupId = await this.sellHistoryRepository.createSellHistoryGroup(this.state.amount);
 		console.log(this.state.profit);
+		
 		let profitGroupId = await this.profitHistoryRepository.createProfitGroup(this.state.profit);
 
 		console.log("PROFIT ", profitGroupId);

@@ -202,7 +202,7 @@ class App extends Component {
 							console.log("Products: ", products);
 
 							let response = await this.apiService.createSellHistory(
-								products[0].id,
+								products[0].global_id,
 								sellHistory.count,
 								sellHistory.count_type,
 								sellHistory.selling_price,
@@ -315,7 +315,7 @@ class App extends Component {
 							);
 
 							let response = await this.apiService.createProfitHistory(
-								products[0].id,
+								products[0].global_id,
 								profitHistory.count,
 								profitHistory.count_type,
 								profitHistory.profit,
@@ -399,7 +399,7 @@ class App extends Component {
 				await AsyncStorage.setItem("isNotSaved", "false");
 				this.setState({isSavingStarted: false});
 			} catch (e) {
-				console.error(e);
+				console.error(e);	
 				await AsyncStorage.setItem("isNotSaved", "true");
 				this.setState({isSavingStarted: false});
 			}

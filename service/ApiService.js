@@ -14,288 +14,412 @@ class ApiService {
 
   /* GET */
 
-  // GET PRODUCT PAGINATION
+    // GET PRODUCT PAGINATION
   async getLocalProducts(page, size) {
-    const accessToken = await this.tokenService.retrieveAccessToken();
-    const storeId = parseInt(await this.getStoreId());
+      try {
+          const accessToken = await this.tokenService.retrieveAccessToken();
+          const storeId = parseInt(await this.getStoreId());
 
-    console.log({
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${accessToken}`
+          const requestOptions = {
+              method: "GET",
+              headers: {
+                  "Authorization": `Bearer ${accessToken}`
+              }
+          };
+
+          console.log('Sending request to:', `${serverUrl}/api/v1/product/get/local/info?storeId=${storeId}&page=${page}&size=${size}`);
+          console.log('Request body:', requestOptions);
+
+          const response = await fetch(`${serverUrl}/api/v1/product/get/local/info?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
+
+          console.log('Response status:', response.status);
+          const responseBody = await response.json();
+          console.log('Response body:', responseBody);
+
+          if (!response.ok) {
+              throw new Error('Network response was not ok');
+          }
+
+          return responseBody;
+      } catch (error) {
+          console.log("Local fucking product error: ", error)
       }
-    });
-  
-    const url = `${serverUrl}/api/v1/product/get/local/info?storeId=${storeId}&page=${page}&size=${size}`;
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${accessToken}`
-      }
-    });
-  
-    if (!response.ok) {
-      return new Error('Network response was not ok');
-    }
-  
-    return response.json();
   }
 
   async getGlobalProducts(page, size) {
-    const accessToken = await this.tokenService.retrieveAccessToken();
-    const storeId = parseInt(await this.getStoreId());
+    try {
+        const accessToken = await this.tokenService.retrieveAccessToken();
+        const storeId = parseInt(await this.getStoreId());
 
-    const url = `${serverUrl}/api/v1/product/get/global/info?storeId=${storeId}&page=${page}&size=${size}`;
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${accessToken}`
-      }
-    });
-  
-    if (!response.ok) {
-      return new Error('Network response was not ok');
+        const requestOptions = {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${accessToken}`
+            }
+        };
+
+        console.log('Sending request to:', `${serverUrl}/api/v1/product/get/global/info?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log('Request body:', requestOptions);
+
+        const response = await fetch(`${serverUrl}/api/v1/product/get/global/info?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
+
+        console.log('Response status:', response.status);
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        return await response.json(); // Return the parsed JSON directly
+    } catch (error) {
+        console.log("Error occurred: ", error);
+        throw error; // Re-throwing the error for handling in the calling code
     }
-  
-    return response.json();
   }
 
   async getStoreProducts(page, size) {
-    const accessToken = await this.tokenService.retrieveAccessToken();
-    const storeId = parseInt(await this.getStoreId());
-  
-    const url = `${serverUrl}/api/v1/store/product/get/info?storeId=${storeId}&page=${page}&size=${size}`;
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${accessToken}`
-      }
-    });
-  
-    if (!response.ok) {
-      return new Error('Network response was not ok');
+    try {
+        const accessToken = await this.tokenService.retrieveAccessToken();
+        const storeId = parseInt(await this.getStoreId());
+
+        const requestOptions = {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${accessToken}`
+            }
+        };
+
+        console.log('Sending request to:', `${serverUrl}/api/v1/store/product/get/info?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log('Request body:', requestOptions);
+
+        const response = await fetch(`${serverUrl}/api/v1/store/product/get/info?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
+
+        console.log('Response status:', response.status);
+        const responseBody = await response.json();
+        console.log('Response body:', responseBody);
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        return responseBody;
+    } catch (error) {
+        console.log("Error occurred: ", error);
+        throw error; // Re-throwing the error for handling in the calling code
     }
-  
-    return response.json();
   }
+
 
   // GET SELL PAGINATION 
   async getSellGroups(page, size) {
-    const accessToken = await this.tokenService.retrieveAccessToken();
-  
-    const storeId = parseInt(await this.getStoreId());
+    try {
+        const accessToken = await this.tokenService.retrieveAccessToken();
+        const storeId = parseInt(await this.getStoreId());
 
-  
-    const url = `${serverUrl}/api/v1/store/sell/group/get?storeId=${storeId}&page=${page}&size=${size}`;
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${accessToken}`
-      }
-    });
-  
-    if (!response.ok) {
-      return new Error('Network response was not ok');
+        const requestOptions = {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${accessToken}`
+            }
+        };
+
+        console.log('Sending request to:', `${serverUrl}/api/v1/store/sell/group/get?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log('Request body:', requestOptions);
+
+        const response = await fetch(`${serverUrl}/api/v1/store/sell/group/get?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
+
+        console.log('Response status:', response.status);
+        const responseBody = await response.json();
+        console.log('Response body:', responseBody);
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        return responseBody;
+    } catch (error) {
+        console.log("Error occurred: ", error);
+        throw error; // Re-throwing the error for handling in the calling code
     }
-  
-    return response.json();
   }
-  
-  async getSellHistories(page, size) {
-    const accessToken = await this.tokenService.retrieveAccessToken();
-  
-    const storeId = parseInt(await this.getStoreId());
 
-  
-    const url = `${serverUrl}/api/v1/store/sell/history/get?storeId=${storeId}&page=${page}&size=${size}`;
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${accessToken}`
+  async getSellHistories(page, size) {
+      try {
+          const accessToken = await this.tokenService.retrieveAccessToken();
+          const storeId = parseInt(await this.getStoreId());
+
+          const requestOptions = {
+              method: "GET",
+              headers: {
+                  "Authorization": `Bearer ${accessToken}`
+              }
+          };
+
+          console.log('Sending request to:', `${serverUrl}/api/v1/store/sell/history/get?storeId=${storeId}&page=${page}&size=${size}`);
+          console.log('Request body:', requestOptions);
+
+          const response = await fetch(`${serverUrl}/api/v1/store/sell/history/get?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
+
+          console.log('Response status:', response.status);
+          const responseBody = await response.json();
+          console.log('Response body:', responseBody);
+
+          if (!response.ok) {
+              throw new Error('Network response was not ok');
+          }
+
+          return responseBody;
+      } catch (error) {
+          console.log("Error occurred: ", error);
+          throw error; // Re-throwing the error for handling in the calling code
       }
-    });
-  
-    if (!response.ok) {
-      return new Error('Network response was not ok');
-    }
-  
-    return response.json();
   }
 
   async getSellAmountDate(page, size) {
-    const accessToken = await this.tokenService.retrieveAccessToken();
-  
-    const storeId = parseInt(await this.getStoreId());
+      try {
+          const accessToken = await this.tokenService.retrieveAccessToken();
+          const storeId = parseInt(await this.getStoreId());
 
-  
-    const url = `${serverUrl}/api/v1/store/sell/amount/date/get?storeId=${storeId}&page=${page}&size=${size}`;
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${accessToken}`
+          const requestOptions = {
+              method: "GET",
+              headers: {
+                  "Authorization": `Bearer ${accessToken}`
+              }
+          };
+
+          console.log('Sending request to:', `${serverUrl}/api/v1/store/sell/amount/date/get?storeId=${storeId}&page=${page}&size=${size}`);
+          console.log('Request body:', requestOptions);
+
+          const response = await fetch(`${serverUrl}/api/v1/store/sell/amount/date/get?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
+
+          console.log('Response status:', response.status);
+          const responseBody = await response.json();
+          console.log('Response body:', responseBody);
+
+          if (!response.ok) {
+              throw new Error('Network response was not ok');
+          }
+
+          return responseBody;
+      } catch (error) {
+          console.log("Error occurred: ", error);
+          throw error; // Re-throwing the error for handling in the calling code
       }
-    });
-  
-    if (!response.ok) {
-      return new Error('Network response was not ok');
-    }
-  
-    return response.json();
   }
+
+  async getSellHistoryGroup(page, size) {
+      try {
+          const accessToken = await this.tokenService.retrieveAccessToken();
+          const storeId = parseInt(await this.getStoreId());
+
+          const requestOptions = {
+              method: "GET",
+              headers: {
+                  "Authorization": `Bearer ${accessToken}`
+              }
+          };
+
+          console.log('Sending request to:', `${serverUrl}/api/v1/store/sell/link/info?storeId=${storeId}&page=${page}&size=${size}`);
+          console.log('Request body:', requestOptions);
+
+          const response = await fetch(`${serverUrl}/api/v1/store/sell/link/info?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
+
+          console.log('Response status:', response.status);
+          const responseBody = await response.json();
+          console.log('Response body:', responseBody);
+
+          if (!response.ok) {
+              throw new Error('Network response was not ok');
+          }
+
+          return responseBody;
+      } catch (error) {
+          console.log("Error occurred: ", error);
+          throw error; // Re-throwing the error for handling in the calling code
+      }
+  }
+
 
   // GET PROFIT PAGINATION
   async getProfitGroups(page, size) {
-    const accessToken = await this.tokenService.retrieveAccessToken();
-  
-    const storeId = parseInt(await this.getStoreId());
+    try {
+        const accessToken = await this.tokenService.retrieveAccessToken();
+        const storeId = parseInt(await this.getStoreId());
 
-  
-    const url = `${serverUrl}/api/v1/store/profit/group/get?storeId=${storeId}&page=${page}&size=${size}`;
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${accessToken}`
-      }
-    });
-  
-    if (!response.ok) {
-      return new Error('Network response was not ok');
+        const requestOptions = {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${accessToken}`
+            }
+        };
+
+        console.log('Sending request to:', `${serverUrl}/api/v1/store/profit/group/get?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log('Request body:', requestOptions);
+
+        const response = await fetch(`${serverUrl}/api/v1/store/profit/group/get?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
+
+        console.log('Response status:', response.status);
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        return await response.json(); // Return the parsed JSON directly
+    } catch (error) {
+        console.log("Error occurred: ", error);
+        throw error; // Re-throwing the error for handling in the calling code
     }
-  
-    return response.json();
   }
-  
-  async getProfitHistories(page, size) {
-    const accessToken = await this.tokenService.retrieveAccessToken();
-  
-    const storeId = parseInt(await this.getStoreId());
 
-  
-    const url = `${serverUrl}/api/v1/store/profit/history/get?storeId=${storeId}&page=${page}&size=${size}`;
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${accessToken}`
-      }
-    });
-  
-    if (!response.ok) {
-      return new Error('Network response was not ok');
+
+  async getProfitHistories(page, size) {
+    try {
+        const accessToken = await this.tokenService.retrieveAccessToken();
+        const storeId = parseInt(await this.getStoreId());
+
+        const requestOptions = {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${accessToken}`
+            }
+        };
+
+        console.log('Sending request to:', `${serverUrl}/api/v1/store/profit/history/get?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log('Request body:', requestOptions);
+
+        const response = await fetch(`${serverUrl}/api/v1/store/profit/history/get?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
+
+        console.log('Response status:', response.status);
+        const responseBody = await response.json(); // Read JSON response only once
+        console.log('Response body:', responseBody);
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        return responseBody; // Return the JSON response
+    } catch (error) {
+        console.log("Error occurred: ", error);
+        throw error; // Re-throwing the error for handling in the calling code
     }
-  
-    return response.json();
   }
 
   async getProfitHistoryGroup(page, size) {
-    const accessToken = await this.tokenService.retrieveAccessToken();
-  
-    const storeId = parseInt(await this.getStoreId());
+      try {
+          const accessToken = await this.tokenService.retrieveAccessToken();
+          const storeId = parseInt(await this.getStoreId());
 
-  
-    const url = `${serverUrl}/api/v1/store/profit/link/info?storeId=${storeId}&page=${page}&size=${size}`;
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${accessToken}`
+          const requestOptions = {
+              method: "GET",
+              headers: {
+                  "Authorization": `Bearer ${accessToken}`
+              }
+          };
+
+          console.log('Sending request to:', `${serverUrl}/api/v1/store/profit/link/info?storeId=${storeId}&page=${page}&size=${size}`);
+          console.log('Request body:', requestOptions);
+
+          const response = await fetch(`${serverUrl}/api/v1/store/profit/link/info?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
+
+          console.log('Response status:', response.status);
+          const responseBody = await response.json(); // Read JSON response only once
+          console.log('Response body:', responseBody);
+
+          if (!response.ok) {
+              throw new Error('Network response was not ok');
+          }
+
+          return responseBody; // Return the JSON response
+      } catch (error) {
+          console.log("Error occurred: ", error);
+          throw error; // Re-throwing the error for handling in the calling code
       }
-    });
-  
-    if (!response.ok) {
-      return new Error('Network response was not ok');
-    }
-  
-    return response.json();
   }
 
   async getProfitAmountDate(page, size) {
-    const accessToken = await this.tokenService.retrieveAccessToken();
-  
-    const storeId = parseInt(await this.getStoreId());
+    try {
+        const accessToken = await this.tokenService.retrieveAccessToken();
+        const storeId = parseInt(await this.getStoreId());
 
-  
-    const url = `${serverUrl}/api/v1/store/profit/amount/date/get?storeId=${storeId}&page=${page}&size=${size}`;
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${accessToken}`
-      }
-    });
-  
-    if (!response.ok) {
-      return new Error('Network response was not ok');
+        const requestOptions = {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${accessToken}`
+            }
+        };
+
+        console.log('Sending request to:', `${serverUrl}/api/v1/store/profit/amount/date/get?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log('Request body:', requestOptions);
+
+        const response = await fetch(`${serverUrl}/api/v1/store/profit/amount/date/get?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
+
+        console.log('Response status:', response.status);
+        const responseBody = await response.json(); // Read JSON response only once
+        console.log('Response body:', responseBody);
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        return responseBody; // Return the JSON response
+    } catch (error) {
+        console.log("Error occurred: ", error);
+        throw error; // Re-throwing the error for handling in the calling code
     }
-  
-    return response.json();
   }
 
-  /* POST */
+  // Function to handle common request logic
+  async sendRequest(url, requestOptions) {
+    try {
+        const response = await fetch(url, requestOptions);
+        console.log('Response status:', response.status);
+        const responseBody = await response.json();
+        console.log('Response body:', responseBody);
+        
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        
+        return responseBody;
+    } catch (error) {
+        console.log("Error occurred: ", error);
+        throw error;
+    }
+  }
 
-  // PRODUCTS
-  async createLocalProduct(
-    serialNumber, 
-    name,
-    brandName
-  ) {
+  // Function to create local product
+  async createLocalProduct(serialNumber, name, brandName) {
     const storeId = parseInt(await this.getStoreId());
-
     const accessToken = await this.tokenService.retrieveAccessToken();
 
-    console.log({
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${accessToken}`
-      }
-    })
-
-    console.log(
-      "Store id", parseInt(await this.getStoreId())
-    )
-  
-    const url = `${serverUrl}/api/v1/product/create`;
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${accessToken}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
+    const requestBody = {
         serialNumber: serialNumber,
         name: name,
         brandName: brandName,
         type: "LOCAL",
         storeId: storeId
-      })
-    });
-  
-    if (!response.ok) {
-      return new Error('Network response was not ok');
-    }
-  
-    return response.json();
+    };
+
+    const requestOptions = {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${accessToken}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(requestBody)
+    };
+
+    console.log('Sending request to:', `${serverUrl}/api/v1/product/create`);
+    console.log('Request body:', requestOptions);
+
+    return await this.sendRequest(`${serverUrl}/api/v1/product/create`, requestOptions);
   }
 
-  async createStoreProducts(
-    productId,
-    nds,
-    price,
-    sellingPrice,
-    percentage,
-    count,
-    countType
-  ) {
+  // Function to create store products
+  async createStoreProducts(productId, nds, price, sellingPrice, percentage, count, countType) {
     const accessToken = await this.tokenService.retrieveAccessToken();
-
-    console.log({
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${accessToken}`
-      }
-    })
-
     const storeId = parseInt(await this.getStoreId());
-  
-    console.log(
-      JSON.stringify({
+
+    const requestBody = {
         storeId: storeId,
         productId: productId,
         nds: nds,
@@ -304,72 +428,51 @@ class ApiService {
         percentage: percentage,
         count: count,
         countType: countType
-      })
-    )
+    };
 
-    const url = `${serverUrl}/api/v1/store/product/create`;
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${accessToken}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        storeId: storeId,
-        productId: productId,
-        nds: nds,
-        price: price,
-        sellingPrice: sellingPrice,
-        percentage: percentage,
-        count: count,
-        countType: countType
-      })
-    });
-  
-    if (!response.ok) {
-      return new Error('Network response was not ok');
-    }
-  
-    return response.json();
+    const requestOptions = {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${accessToken}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(requestBody)
+    };
+
+    console.log('Sending request to:', `${serverUrl}/api/v1/store/product/create`);
+    console.log('Request body:', requestOptions);
+
+    return await this.sendRequest(`${serverUrl}/api/v1/store/product/create`, requestOptions);
   }
 
-  // CREATE SELL
-  async createSellGroup(
-    createdDate,
-    amount
-  ) {
+  // ***SELL CREATION***
+  // Function to create sell group
+  async createSellGroup(createdDate, amount) {
     const accessToken = await this.tokenService.retrieveAccessToken();
-
-    console.log({
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${accessToken}`
-      }
-    })
-  
     const storeId = parseInt(await this.getStoreId());
-  
-    const url = `${serverUrl}/api/v1/store/sell/group/create`;
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${accessToken}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
+
+    const requestBody = {
         createdDate: createdDate,
         storeId: storeId,
         amount: amount
-      })
-    });
-  
-    if (!response.ok) {
-      return new Error('Network response was not ok');
-    }
-  
-    return response.json();
+    };
+
+    const requestOptions = {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${accessToken}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(requestBody)
+    };
+
+    console.log('Sending request to:', `${serverUrl}/api/v1/store/sell/group/create`);
+    console.log('Request body:', requestOptions);
+
+    return await this.sendRequest(`${serverUrl}/api/v1/store/sell/group/create`, requestOptions);
   }
 
+  // Function to create sell history
   async createSellHistory(
     productId,
     count,
@@ -380,8 +483,7 @@ class ApiService {
     const accessToken = await this.tokenService.retrieveAccessToken();
     const storeId = parseInt(await this.getStoreId());
   
-    const url = `${serverUrl}/api/v1/store/sell/history/create`;
-    const response = await fetch(url, {
+    const requestOptions = {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${accessToken}`,
@@ -395,30 +497,19 @@ class ApiService {
         sellingPrice: sellingPrice,
         createdDate: createdDate
       })
-    });
-  
-    if (!response.ok) {
-      return new Error('Network response was not ok');
     }
   
-    return response.json();
+    return await this.sendRequest(`${serverUrl}/api/v1/store/sell/history/create`, requestOptions);
   }
 
+  // Function to create sell history group
   async createSellHistoryGroup(
     sellHistoryId, sellGroupId
   ) {
     const accessToken = await this.tokenService.retrieveAccessToken();
-    console.log({
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${accessToken}`
-      }
-    })
-  
     const storeId = parseInt(await this.getStoreId());
-  
-    const url = `${serverUrl}/api/v1/store/sell/link/create`;
-    const response = await fetch(url, {
+
+    const requestOptions = {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${accessToken}`,
@@ -429,31 +520,19 @@ class ApiService {
         sellGroupId: sellGroupId,
         storeId: storeId
       })
-    });
+    };
   
-    if (!response.ok) {
-      return new Error('Network response was not ok');
-    }
-  
-    return response.json();
+    return await this.sendRequest(`${serverUrl}/api/v1/store/sell/link/create`, requestOptions);
   }
 
+  
   async createSellAmountDate(
     date, amount
   ) {
     const accessToken = await this.tokenService.retrieveAccessToken();
-    console.log({
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${accessToken}`
-      }
-    })
-  
     const storeId = parseInt(await this.getStoreId());
 
-  
-    const url = `${serverUrl}/api/v1/store/sell/amount/date/create`;
-    const response = await fetch(url, {
+    const requestOptions = {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${accessToken}`,
@@ -464,52 +543,40 @@ class ApiService {
         amount: amount,
         storeId: storeId
       })
-    });
-  
-    if (!response.ok) {
-      return new Error('Network response was not ok');
-    }
-  
-    return response.json();
+    };
+
+    return await this.sendRequest(`${serverUrl}/api/v1/store/sell/amount/date/create`, requestOptions);
   }
 
-  // CREATE PROFIT
-  async createProfitGroup(
-    createdDate,
-    profit
-  ) {
+
+  // ***PROFIT CREATION***
+  // Function to create profit group
+  async createProfitGroup(createdDate, profit) {
     const accessToken = await this.tokenService.retrieveAccessToken();
-    console.log({
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${accessToken}`
-      }
-    })
-  
     const storeId = parseInt(await this.getStoreId());
 
-  
-    const url = `${serverUrl}/api/v1/store/profit/group/create`;
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${accessToken}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
+    const requestBody = {
         createdDate: createdDate,
         storeId: storeId,
         profit: profit
-      })
-    });
-  
-    if (!response.ok) {
-      return new Error('Network response was not ok');
-    }
-  
-    return response.json();
+    };
+
+    const requestOptions = {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${accessToken}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(requestBody)
+    };
+
+    console.log('Sending request to:', `${serverUrl}/api/v1/store/profit/group/create`);
+    console.log('Request body:', requestOptions);
+
+    return await this.sendRequest(`${serverUrl}/api/v1/store/profit/group/create`, requestOptions);
   }
 
+  // Function to create profit history
   async createProfitHistory(
     productId,
     count,
@@ -520,9 +587,7 @@ class ApiService {
     const accessToken = await this.tokenService.retrieveAccessToken();
     const storeId = parseInt(await this.getStoreId());
 
-  
-    const url = `${serverUrl}/api/v1/store/profit/history/create`;
-    const response = await fetch(url, {
+    const requestOptions = {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${accessToken}`,
@@ -536,30 +601,19 @@ class ApiService {
         profit: profit,
         createdDate: createdDate
       })
-    });
-  
-    if (!response.ok) {
-      return new Error('Network response was not ok');
     }
-  
-    return response.json();
+
+    return await this.sendRequest(`${serverUrl}/api/v1/store/profit/history/create`, requestOptions);
   }
 
+  // Function to create profit history group
   async createProfitHistoryGroup(
     profitHistoryId, profitGroupId
   ) {
     const accessToken = await this.tokenService.retrieveAccessToken();
-    console.log({
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${accessToken}`
-      }
-    })
-  
     const storeId = parseInt(await this.getStoreId());
 
-    const url = `${serverUrl}/api/v1/store/profit/link/create`;
-    const response = await fetch(url, {
+    const requestOptions = {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${accessToken}`,
@@ -570,49 +624,37 @@ class ApiService {
         profitGroupId: profitGroupId,
         storeId: storeId
       })
-    });
+    };
   
-    if (!response.ok) {
-      return new Error('Network response was not ok');
-    }
-  
-    return response.json();
+    return await this.sendRequest(`${serverUrl}/api/v1/store/profit/link/create`, requestOptions);
   }
 
-  async createSellAmountDate(
+  async createProfitAmountDate(
     date, amount
   ) {
     const accessToken = await this.tokenService.retrieveAccessToken();
-    console.log({
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${accessToken}`
-      }
-    })
-  
-        const storeId = parseInt(await this.getStoreId());
+    const storeId = parseInt(await this.getStoreId());
 
-  
-    const url = `${serverUrl}/api/v1/store/profit/amount/date/create`;
-    const response = await fetch(url, {
+    const requestBody = {
+      date: date,
+      amount: amount,
+      storeId: storeId
+    };
+
+    const requestOptions = {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${accessToken}`,
-        "Content-Type": "application/json"
+          "Authorization": `Bearer ${accessToken}`,
+          "Content-Type": "application/json"
       },
-      body: JSON.stringify({
-        date: date,
-        amount: amount,
-        storeId: storeId
-      })
-    });
-  
-    if (!response.ok) {
-      return new Error('Network response was not ok');
-    }
-  
-    return response.json();
+      body: JSON.stringify(requestBody)
+    };
+
+    return await this.sendRequest(`${serverUrl}/api/v1/store/profit/amount/date/create`, requestOptions);
   }
+
+
+
 
   // AUTH
   async check(email, password) {

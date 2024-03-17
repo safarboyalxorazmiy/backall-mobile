@@ -50,15 +50,17 @@ class ProfitHistoryRepository {
     });
   }
 
-  async createProfitGroup(profit) {    
+  async createProfitGroup(profit) {
+    let current_date = new Date();
+
     try {
       const query = `
         INSERT INTO profit_group (created_date, profit, global_id, saved)
-        VALUES (CURRENT_DATE, ?, null, 0);`;
+        VALUES (?, ?, null, 0);`;
 
       // Execute the query
       await this.db.transaction(async (tx) => {
-        tx.executeSql(query, [profit]);
+        tx.executeSql(query, [current_date.toISOString(), profit]);
       });
 
       let lastProfitHistoryGroup = await this.getLastProfitHistoryGroupId();
@@ -83,7 +85,7 @@ class ProfitHistoryRepository {
       // Execute the query
       await this.db.transaction(async (tx) => {
         await tx.executeSql(query, [
-          created_date.toISOString(), 
+          created_date, 
           profit, 
           global_id, 
           saved ? 1 : 0
@@ -211,9 +213,9 @@ class ProfitHistoryRepository {
     count, 
     count_type, 
     profit, 
+    created_date,
     saved
   ) {
-    let created_date = new Date();
     
     try {
       const insertProfitHistoryQuery = `
@@ -237,14 +239,18 @@ class ProfitHistoryRepository {
             count, 
             count_type, 
             profit, 
-            created_date.toISOString(),
+            created_date,
             global_id, 
             saved ? 1 : 0
           ]
         );
       });
 
-      let lastIdOfProfitHistory = await this.getLastIdOfProfitHistory(product_id, created_date.toISOString());
+      let lastIdOfProfitHistory = 
+        await this.getLastIdOfProfitHistory(
+          product_id, 
+          created_date
+        );
       return lastIdOfProfitHistory.id;
     } catch (error) {
       throw error;
@@ -271,12 +277,14 @@ class ProfitHistoryRepository {
     });
   }
   
-  async createProfitHistoryGroup(history_id, group_id, global_id, saved) {
+  async createProfitHistoryGroup(
+    history_id, group_id, global_id, saved
+  ) {
     const insert = `
       INSERT INTO profit_history_group(
         history_id, 
-        global_id, 
         group_id, 
+        global_id, 
         saved
       )
       VALUES (?, ?, ?, ?);
@@ -285,7 +293,7 @@ class ProfitHistoryRepository {
     await this.db.transaction(async (tx) => {
       await tx.executeSql(
         insert,
-        [history_id, global_id, group_id, saved ? 1 : 0]
+        [history_id, group_id, global_id, saved ? 1 : 0]
       );
     });
   }
@@ -550,6 +558,36 @@ class ProfitHistoryRepository {
     }
   }
 
+  async findProfitHistoryByGlobalId(global_id) {
+    try {
+      const query = `
+        SELECT * FROM profit_history WHERE global_id = ?;
+      `;
+
+      const result = await new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+          tx.executeSql(
+            query,
+            [global_id],
+            (_, resultSet) => resolve(resultSet),
+            (_, error) => reject(error)
+          );
+        });
+      });
+  
+      if (!result || !result.rows || !result.rows._array) {
+        console.error("Unexpected result structure:", result);
+        throw new Error("Unexpected result structure");
+      }
+  
+      const rows = result.rows._array;
+      return rows;
+    } catch (error) {
+      console.error("Error retrieving sell history:", error);
+      throw error;
+    }
+  }
+
   async findProfitGroupById(id) {
     try {
       const query = `
@@ -561,6 +599,36 @@ class ProfitHistoryRepository {
           tx.executeSql(
             query,
             [id],
+            (_, resultSet) => resolve(resultSet),
+            (_, error) => reject(error)
+          );
+        });
+      });
+  
+      if (!result || !result.rows || !result.rows._array) {
+        console.error("Unexpected result structure:", result);
+        throw new Error("Unexpected result structure");
+      }
+  
+      const rows = result.rows._array;
+      return rows;
+    } catch (error) {
+      console.error("Error retrieving sell history:", error);
+      throw error;
+    }
+  }
+
+  async findProfitGroupByGlobalId(global_id) {
+    try {
+      const query = `
+        SELECT * FROM profit_group WHERE global_id = ?;
+      `;
+
+      const result = await new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+          tx.executeSql(
+            query,
+            [global_id],
             (_, resultSet) => resolve(resultSet),
             (_, error) => reject(error)
           );

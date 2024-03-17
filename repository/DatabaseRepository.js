@@ -153,12 +153,15 @@ class DatabaseRepository {
             // DROP TABLES
             `DROP TABLE IF EXISTS profit_amount_date;`,
             `DROP TABLE IF EXISTS sell_amount_date;`,
+
             `DROP TABLE IF EXISTS profit_history_group;`,
             `DROP TABLE IF EXISTS profit_group;`,
             `DROP TABLE IF EXISTS profit_history;`,
+
             `DROP TABLE IF EXISTS sell_history_group;`,
             `DROP TABLE IF EXISTS sell_group;`,
             `DROP TABLE IF EXISTS sell_history;`,
+
             `DROP TABLE IF EXISTS store_product;`,
             `DROP TABLE IF EXISTS product;`
           ]);
