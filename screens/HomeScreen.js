@@ -111,6 +111,14 @@ class Home extends Component {
 
 		const {navigation} = this.props;
 		navigation.addListener("focus", async () => {
+			if (this.unsubscribe) {
+        this.unsubscribe();
+			}
+
+			this.unsubscribe = NetInfo.addEventListener((state) => {
+					this.setState({isConnected: state.isConnected});
+			});
+
 			console.log("HOME NAVIGATED");
 	
 			let isLoggedIn = await this.tokenService.checkTokens();
@@ -156,6 +164,12 @@ class Home extends Component {
 			}
 	});
 	
+	}
+
+	componentWillUnmount() {
+    if (this.unsubscribe) {
+			this.unsubscribe();
+    }
 	}
 
 	async loadProducts() {
