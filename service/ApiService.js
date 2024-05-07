@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import TokenService from "./TokenService";
 
-const serverUrl = "http://backall.uz";
+const serverUrl = "http://api.backall.uz";
 class ApiService {
 	constructor() {
     this.tokenService = new TokenService();

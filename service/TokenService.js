@@ -1,7 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class TokenService {
-	isLoggedIn = false;
+	constructor() {
+		
+		this.isLoggedIn = false;
+	}
 	
 	storeAccessToken = async (access_token) => {
 		try {

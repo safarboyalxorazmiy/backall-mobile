@@ -13,7 +13,6 @@ import {LinearGradient} from "expo-linear-gradient";
 
 import ShoppingIcon from "../assets/home/shopping-icon.svg";
 import BenefitIcon from "../assets/home/benefit-icon.svg";
-import DatabaseService from '../service/DatabaseService';
 import AmountDateRepository from "../repository/AmountDateRepository";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import TokenService from '../service/TokenService';
@@ -80,7 +79,7 @@ class Home extends Component {
 
 			menuFocused: false,
 			crossFocused: false,
-			menuOpened: false,
+			menuOpened: false
 		}
 		
 		this.amountDateRepository = new AmountDateRepository();
@@ -104,7 +103,7 @@ class Home extends Component {
     }).start();
   };
 	
-	async componentDidMount() {
+	async componentDidMount() {		
 		this.unsubscribe = NetInfo.addEventListener((state) => {
 			this.setState({isConnected: state.isConnected});
 		});
@@ -120,8 +119,10 @@ class Home extends Component {
 			});
 
 			console.log("HOME NAVIGATED");
-	
-			let isLoggedIn = await this.tokenService.checkTokens();
+
+			const {navigation} = this.props;
+			let isLoggedIn = await this.tokenService.checkTokens(navigation);
+
 			if (isLoggedIn) {
 				let isDownloaded = await AsyncStorage.getItem("isDownloaded");
 				console.log("isDownloaded??", isDownloaded);
@@ -134,7 +135,9 @@ class Home extends Component {
 						// Check if setInterval callback is reached
 						console.log("Setting up setInterval...");
 
-						setInterval(async () => {
+						let intervalId;
+
+						intervalId = setInterval(async () => {
 							console.log("Interval internet is connected:", this.state.isConnected);
 
 							// Ensure proper context binding
@@ -785,9 +788,6 @@ class Home extends Component {
 	}
 	
 	render() {
-		const {navigation} = this.props;
-		this.tokenService.checkTokens(navigation);
-
 		const translateY = this.state.animation.interpolate({
 			inputRange: [0, 1],
 			outputRange: [0, -100] // Adjust the value as needed

@@ -1,12 +1,12 @@
-import React, {Component} from "react";
-import {Text} from "react-native";
-import {AppRegistry} from "react-native";
-import {name as appName} from "./app.json";
-import {Platform} from "react-native";
+import React, { Component } from "react";
+import { Text } from "react-native";
+import { AppRegistry } from "react-native";
+import { name as appName } from "./app.json";
+import { Platform } from "react-native";
 import * as Font from "expo-font";
 import NetInfo from "@react-native-community/netinfo";
 import NavigationService from "./service/NavigationService";
-import {GestureHandlerRootView} from "react-native-gesture-handler";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import TokenService from "./service/TokenService";
 import DatabaseRepository from "./repository/DatabaseRepository";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -19,86 +19,94 @@ import AmountDateRepository from "./repository/AmountDateRepository";
 
 const tokenService = new TokenService();
 
-AppRegistry.registerComponent(appName, () => App);
-
 class App extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			fontsLoaded: false,
-			isConnected: null,
-			isSavingStarted: false
-		};
-		
-		const {navigation} = this.props;
-		tokenService.checkTokens(navigation);
+  constructor(props) {
+    super(props);
+    this.state = {
+      fontsLoaded: false,
+      isConnected: null,
+      isSavingStarted: false,
+    };
 
-		this.productRepository = new ProductRepository();
-		this.storeProductRepository = new StoreProductRepository();
-		this.sellHistoryRepository = new SellHistoryRepository();
-		this.profitHistoryRepository = new ProfitHistoryRepository();
-		this.amountDateRepository = new AmountDateRepository();
-		this.apiService = new ApiService();
-	}
-	
-	async loadCustomFonts() {
-		try {
-			await Font.loadAsync({
-				"Gilroy-Light": require("./assets/fonts/gilroy/Gilroy-Light.ttf"),
-				"Gilroy-Regular": require("./assets/fonts/gilroy/Gilroy-Regular.ttf"),
-				"Gilroy-Medium": require("./assets/fonts/gilroy/Gilroy-Medium.ttf"),
-				"Gilroy-SemiBold": require("./assets/fonts/gilroy/Gilroy-SemiBold.ttf"),
-				"Gilroy-Bold": require("./assets/fonts/gilroy/Gilroy-Bold.ttf"),
-				"Gilroy-Black": require("./assets/fonts/gilroy/Gilroy-Black.ttf")
-			});
-			
-			this.setState({fontsLoaded: true})
-		} catch (error) {
-			console.error("Error loading custom fonts:", error);
-		}
-	}
-	
-	async componentDidMount() {
-		await this.loadCustomFonts();
-		
-		if (Platform.OS == "android" || Platform.OS == "ios") {
-			const databaseRepository = new DatabaseRepository();
-			try {
-				// await databaseRepository.init();
-				// console.log("Database initialized successfully");
-			} catch (error) {
-				console.error("Error initializing database:", error);
-			}
-			
-			this.unsubscribe = NetInfo.addEventListener((state) => {
-				this.setState({isConnected: state.isConnected});
-			});
-			
-			this.logInternetStatusInterval = setInterval(async () => {
-				console.log(
-					"Is connected?", 
-					this.state.isConnected === null ? "Loading..." : 
-					this.state.isConnected ? "Yes" : "No"
-				);
+    if (this.props.navigation) {
+      tokenService.checkTokens(this.props.navigation);
+    } 
 
-				if (this.state.isConnected) {
-					// internet exist do something
-					// 
+    this.productRepository = new ProductRepository();
+    this.storeProductRepository = new StoreProductRepository();
+    this.sellHistoryRepository = new SellHistoryRepository();
+    this.profitHistoryRepository = new ProfitHistoryRepository();
+    this.amountDateRepository = new AmountDateRepository();
+    this.apiService = new ApiService();
 
-					let isNotSaved = await AsyncStorage.getItem("isNotSaved");
-					console.log(
-						"Is not saved", isNotSaved
-					)
+    // Bind methods to maintain correct context
+    this.loadCustomFonts = this.loadCustomFonts.bind(this);
+    this.checkInternetStatus = this.checkInternetStatus.bind(this);
+    this.saveData = this.saveData.bind(this);
+  }
 
-					if (isNotSaved == "true") {
-						await this.saveData();
-					}
-				}
-			}, 5000);
-		}
-	}
+  async loadCustomFonts() {
+    try {
+      await Font.loadAsync({
+        "Gilroy-Light": require("./assets/fonts/gilroy/Gilroy-Light.ttf"),
+        "Gilroy-Regular": require("./assets/fonts/gilroy/Gilroy-Regular.ttf"),
+        "Gilroy-Medium": require("./assets/fonts/gilroy/Gilroy-Medium.ttf"),
+        "Gilroy-SemiBold": require("./assets/fonts/gilroy/Gilroy-SemiBold.ttf"),
+        "Gilroy-Bold": require("./assets/fonts/gilroy/Gilroy-Bold.ttf"),
+        "Gilroy-Black": require("./assets/fonts/gilroy/Gilroy-Black.ttf"),
+      });
 
-	async saveData() {
+      this.setState({ fontsLoaded: true });
+    } catch (error) {
+      console.error("Error loading custom fonts:", error);
+    }
+  }
+
+  async componentDidMount() {
+    await this.loadCustomFonts();
+
+    if (Platform.OS == "android" || Platform.OS == "ios") {
+      const databaseRepository = new DatabaseRepository();
+      try {
+        // await databaseRepository.init();
+        // console.log("Database initialized successfully");
+      } catch (error) {
+        console.error("Error initializing database:", error);
+      }
+
+      this.unsubscribe = NetInfo.addEventListener((state) => {
+        this.setState({ isConnected: state.isConnected });
+      });
+
+      this.logInternetStatusInterval = setInterval(
+        this.checkInternetStatus,
+        5000
+      );
+    }
+  }
+
+  async checkInternetStatus() {
+    console.log(
+      "Is connected?",
+      this.state.isConnected === null
+        ? "Loading..."
+        : this.state.isConnected
+        ? "Yes"
+        : "No"
+    );
+
+    if (this.state.isConnected) {
+      // Internet is available, perform actions
+      let isNotSaved = await AsyncStorage.getItem("isNotSaved");
+      console.log("Is not saved", isNotSaved);
+
+      if (isNotSaved == "true") {
+        await this.saveData();
+      }
+    }
+  }
+
+  async saveData() {
 		if (!this.state.isSavingStarted) {
 			this.setState({isSavingStarted: true});
 
@@ -405,28 +413,31 @@ class App extends Component {
 			}
 		}
 	}
-	
-	componentWillUnmount() {
-		this.unsubscribe();
-		clearInterval(this.logInternetStatusInterval);
-	}
-	
-	render() {
-		if (!this.state.fontsLoaded) {
-			return (
-				<>
-					<Text>Loading</Text>
-				</>
-			)
-			return null;
-		}
-		
-		return (
-			<GestureHandlerRootView style={{flex: 1}}>
-				<NavigationService/>
-			</GestureHandlerRootView>
-		);
-	}
+
+  componentWillUnmount() {
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
+    if (this.logInternetStatusInterval) {
+      clearInterval(this.logInternetStatusInterval);
+    }
+  }
+
+  render() {
+    const { fontsLoaded } = this.state;
+
+    if (!fontsLoaded) {
+      return <Text>Loading</Text>;
+    }
+
+    return (
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <NavigationService />
+      </GestureHandlerRootView>
+    );
+  }
 }
+
+AppRegistry.registerComponent(appName, () => App);
 
 export default App;

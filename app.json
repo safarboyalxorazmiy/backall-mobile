@@ -6,6 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "platforms": ["ios", "android"],
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -36,7 +37,10 @@
       }
     },
     "runtimeVersion": {
-      "policy": "appVersion"
+      "policy": "sdk-49.0.13"
+    },
+    "channel": {
+      "name": "default"
     },
     "updates": {
       "url": "https://u.expo.dev/488daa54-ef3c-48ff-b4cb-744370363af0"
