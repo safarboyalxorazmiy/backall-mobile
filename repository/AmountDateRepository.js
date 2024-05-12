@@ -58,8 +58,6 @@ class AmountDateRepository {
 				console.error(`Error inserting profit amount: ${error.message}`);
 			});
     });
-
-		
 	}
 
 	async createSellAmountWithAllValues(sellAmount, date, global_id, saved) {

@@ -6,15 +6,13 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "platforms": ["ios", "android"],
+    "platforms": ["ios", "android", "web"],
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "jsEngine": "hermes",
     "ios": {
       "jsEngine": "jsc",
@@ -36,12 +34,8 @@
         "projectId": "488daa54-ef3c-48ff-b4cb-744370363af0"
       }
     },
-    "runtimeVersion": {
-      "policy": "sdk-49.0.13"
-    },
-    "channel": {
-      "name": "default"
-    },
+    "runtimeVersion": "sdk-43.0.0", 
+    "channel": "default", 
     "updates": {
       "url": "https://u.expo.dev/488daa54-ef3c-48ff-b4cb-744370363af0"
     }

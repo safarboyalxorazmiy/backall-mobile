@@ -119,6 +119,11 @@ class Home extends Component {
 			});
 
 			console.log("HOME NAVIGATED");
+	
+			await this.storeProductRepository.init();
+			await this.sellHistoryRepository.init();
+			await this.profitHistoryRepository.init();
+			await this.amountDateRepository.init();
 
 			const {navigation} = this.props;
 			let isLoggedIn = await this.tokenService.checkTokens(navigation);
@@ -764,6 +769,8 @@ class Home extends Component {
 	}
 
 	async getAmountInfo() {
+		await this.amountDateRepository.init();
+
 		// HOW TO GET yyyy-mm-dd from new Date()
 		
 		// Get the current date
