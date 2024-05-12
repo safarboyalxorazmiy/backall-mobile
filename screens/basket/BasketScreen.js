@@ -167,11 +167,6 @@ class Basket extends Component {
 	render() {
 		const {navigation} = this.props;
 
-		const translateY = this.state.animation.interpolate({
-			inputRange: [0, 1],
-			outputRange: [0, -100] // Adjust the value as needed
-		});
-
 		return (
 			<View style={styles.container}>
 				{/* Search section */}
@@ -240,7 +235,7 @@ class Basket extends Component {
 					animationIn={"slideInUp"}
 					animationOut={"slideOutDown"}
 					animationInTiming={200}>
-					<Checkmark
+					<View
 						style={{
 							//	transform: [{scale: this.state.checkmarkScale}],
 							margin: 0,
@@ -252,7 +247,7 @@ class Basket extends Component {
 						}}
 					>
 						<Success/>
-					</Checkmark>
+					</View>
 					
 					<View style={{
 						width: screenWidth - (15 * 2),
@@ -262,7 +257,7 @@ class Basket extends Component {
 						left: 15,
 						bottom: 30
 					}}>
-						<CheckmarkText
+						<Text
 							style={{
 								// transform: [{scale: this.state.checkmarkScale}],
 								marginLeft: 5,
@@ -272,7 +267,7 @@ class Basket extends Component {
 							}}
 						>
 							Mahsulot muvafaqqiyatli yaratildi!
-						</CheckmarkText>
+						</Text>
 						
 						<TouchableOpacity style={{
 							width: 343,
@@ -332,8 +327,7 @@ class Basket extends Component {
 								flex: 1,
 								alignItems: "center",
 								justifyContent: "flex-end",
-								marginBottom: 120,
-								transform: [{translateY}]
+								marginBottom: 120
 							}}>
 								<View style={{
 									width: "100%",
