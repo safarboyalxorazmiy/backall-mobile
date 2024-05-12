@@ -7,7 +7,6 @@ import {
 	Dimensions,
 	TouchableOpacity,
 	TextInput,
-	Animated,
 	Pressable, Keyboard,
 } from "react-native";
 import {Dropdown} from "react-native-element-dropdown";
@@ -70,12 +69,9 @@ class ProductAdd extends Component {
 			sellingPriceError: false,
 			priceInput: styles.priceInput,
 
-			checkmarkScale: new Animated.Value(0),
 			isCreated: false,
 
 			ndsWrapperStyle: styles.ndsWrapper,
-
-			scaleValue: new Animated.Value(1),
 
 			amountType: "DONA",
 			sellingPriceType: "SO'M",
@@ -92,17 +88,9 @@ class ProductAdd extends Component {
 	}
 
 	handlePressIn = () => {
-		Animated.spring(this.state.scaleValue, {
-			toValue: 0.9,
-			useNativeDriver: true,
-		}).start();
 	};
 
 	handlePressOut = () => {
-		Animated.spring(this.state.scaleValue, {
-			toValue: 1,
-			useNativeDriver: true,
-		}).start();
 	};
 
 	setCheckmarkScale(checkmarkScale) {
@@ -318,12 +306,6 @@ class ProductAdd extends Component {
 
 	render() {
 		const {navigation} = this.props;
-		const animatedStyle = {
-			backgroundColor: this.state.scaleValue.interpolate({
-				inputRange: [0.9, 1],
-				outputRange: ['green', 'blue'],
-			}),
-		};
 
 		return (
 			<View style={{
@@ -404,21 +386,12 @@ class ProductAdd extends Component {
 													}}
 
 													onPressIn={() => {
-														Animated.spring(this.state.scaleValue, {
-															toValue: 0.9,
-															useNativeDriver: true,
-														}).start();
 													}}
 													onPressOut={() => {
-														Animated.spring(this.state.scaleValue, {
-															toValue: 1,
-															useNativeDriver: true,
-														}).start();
 													}}
 
 													style={({pressed}) => [
 														styles.serialInputSuggestion,
-														animatedStyle,
 														{
 															backgroundColor: pressed ? '#CCCCCC' : '#FBFBFB',
 														},
@@ -744,7 +717,6 @@ class ProductAdd extends Component {
 									sellingPriceError: false,
 									priceInput: styles.priceInput,
 
-									checkmarkScale: new Animated.Value(0),
 									isCreated: false,
 
 									profitCalculation: "",
@@ -853,9 +825,6 @@ class ProductAdd extends Component {
 		}
 
 		if (isValidInputValues) {
-			Animated.timing(this.state.checkmarkScale, {
-				toValue: 1, duration: 500, useNativeDriver: true,
-			}).start();
 			await AsyncStorage.setItem("isCreated", "true");
 
 			let productId = await this.productRepository.createAndGetProductId(
@@ -893,9 +862,6 @@ class ProductAdd extends Component {
 			const {navigation} = this.props;
 			navigation.navigate("Basket");
 		} else {
-			Animated.timing(this.state.checkmarkScale, {
-				toValue: 1, duration: 500, useNativeDriver: true,
-			}).stop();
 		}
 	};
 

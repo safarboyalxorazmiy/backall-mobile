@@ -9,7 +9,6 @@ import {
 	TouchableOpacity,
 	Modal,
 	Keyboard,
-	Animated,
 	Pressable,
 	FlatList
 } from "react-native";
@@ -58,10 +57,6 @@ class Sell extends Component {
 			amount: 0,
 			profit: 0,
 			isKeyboardOn: false,
-
-			animation: new Animated.Value(0),
-			checkmarkScale: new Animated.Value(0),
-			scaleValue: new Animated.Value(1),
 
 			// MODAL VARIABLES
 			isProductNameInputFocused: false,
@@ -274,29 +269,15 @@ class Sell extends Component {
 
 	componentDidUpdate(prevProps, prevState) {
 		if (prevState.isKeyboardOn !== this.state.isKeyboardOn) {
-			Animated.timing(this.state.animation, {
-				toValue: this.state.isKeyboardOn ? 1 : 0,
-				duration: 300, // Adjust the duration as needed
-				useNativeDriver: false // Ensure useNativeDriver is set to false for justifyContent animation
-			}).start();
+			this.setState({
+				isKeyboardOn: this.state.isKeyboardOn ? 1 : 0
+			});
 		}
 	}
 
 	render() {
 		const {navigation} = this.props;
 		const {isModalVisible} = this.state;
-
-		const translateY = this.state.animation.interpolate({
-			inputRange: [0, 1],
-			outputRange: [0, -100] // Adjust the value as needed
-		});
-
-		const animatedStyle = {
-			backgroundColor: this.state.scaleValue.interpolate({
-				inputRange: [0.9, 1],
-				outputRange: ['green', 'blue'],
-			}),
-		};
 
 		return (
 			<>
@@ -410,7 +391,7 @@ class Sell extends Component {
 							alignItems: "center",
 							justifyContent: "center"
 						}}>
-							<Animated.View style={{
+							<View style={{
 								width: screenWidth - (16 * 2),
 								maxWidth: 343,
 								marginLeft: "auto",
@@ -420,7 +401,6 @@ class Sell extends Component {
 
 								justifyContent: (this.state.isKeybardOn ? "flex-start" : "center"),
 								marginTop: (this.state.isKeybardOn ? 120 : 0),
-								transform: [{translateY}]
 							}}>
 								<View style={{
 									width: "100%",
@@ -523,17 +503,15 @@ class Sell extends Component {
 																	}}
 
 																	onPressIn={() => {
-																		Animated.spring(this.state.scaleValue, {
-																			toValue: 0.9,
-																			useNativeDriver: true,
-																		}).start();
+																		this.setState({
+																			scaleValue: 0.9
+																		});
 																	}}
 
 																	onPressOut={() => {
-																		Animated.spring(this.state.scaleValue, {
-																			toValue: 1,
-																			useNativeDriver: true,
-																		}).start();
+																		this.setState({
+																			scaleValue: 1
+																		});
 																	}}
 
 																	style={({pressed}) => [
@@ -543,7 +521,6 @@ class Sell extends Component {
 																			borderTopWidth: 1,
 																			borderColor: "#F1F1F1"
 																		},
-																		animatedStyle,
 																		{
 																			backgroundColor: pressed ? '#CCCCCC' : '#FBFBFB',
 																		},
@@ -759,7 +736,7 @@ class Sell extends Component {
 											style={styles.modalButtonText}>Savatga qo’shish</Text>
 									</TouchableOpacity>
 								</View>
-							</Animated.View>
+							</View>
 						</View>
 					</Modal>
 
@@ -785,7 +762,7 @@ class Sell extends Component {
 							alignItems: "center",
 							justifyContent: "center"
 						}}>
-							<Animated.View style={{
+							<View style={{
 								width: screenWidth - (16 * 2),
 								maxWidth: 343,
 								marginLeft: "auto",
@@ -795,7 +772,6 @@ class Sell extends Component {
 
 								justifyContent: (this.state.isKeyboardOn ? "flex-start" : "center"),
 								marginTop: (this.state.isKeyboardOn ? 120 : 0),
-								transform: [{translateY}]
 							}}>
 								<View style={{
 									width: "100%",
@@ -900,17 +876,15 @@ class Sell extends Component {
 																	}}
 
 																	onPressIn={() => {
-																		Animated.spring(this.state.scaleValue, {
-																			toValue: 0.9,
-																			useNativeDriver: true,
-																		}).start();
+																		this.setState({
+																			scaleValue: 0.9
+																		});
 																	}}
 
 																	onPressOut={() => {
-																		Animated.spring(this.state.scaleValue, {
-																			toValue: 1,
-																			useNativeDriver: true,
-																		}).start();
+																		this.setState({
+																			scaleValue: 1
+																		});
 																	}}
 
 																	style={({pressed}) => [
@@ -920,7 +894,6 @@ class Sell extends Component {
 																			borderTopWidth: 1,
 																			borderColor: "#F1F1F1"
 																		},
-																		animatedStyle,
 																		{
 																			backgroundColor: pressed ? '#CCCCCC' : '#FBFBFB',
 																		},
@@ -1136,7 +1109,7 @@ class Sell extends Component {
 											style={styles.modalButtonText}>Utilizatsiya qilish</Text>
 									</TouchableOpacity>
 								</View>
-							</Animated.View>
+							</View>
 						</View>
 					</Modal>
 				</View>

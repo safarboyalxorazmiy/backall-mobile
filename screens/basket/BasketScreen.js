@@ -7,7 +7,6 @@ import {
 	TouchableOpacity,
 	TextInput,
 	ScrollView,
-	Animated,
 } from "react-native";
 import PlusIcon from "../../assets/plus-icon.svg";
 import SearchIcon from "../../assets/search-icon.svg";
@@ -18,8 +17,6 @@ import StoreProductRepository from "../../repository/StoreProductRepository";
 import { Keyboard } from 'react-native';
 import Modal from "react-native-modal";
 
-const Checkmark = Animated.createAnimatedComponent(View);
-const CheckmarkText = Animated.createAnimatedComponent(Text);
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
@@ -35,7 +32,6 @@ class Basket extends Component {
 			lastId: 0,
 			lastYPos: 0,
 			notAllowed: "",
-      animation: new Animated.Value(0),
 			role: ""
 		}
 		
@@ -328,7 +324,7 @@ class Basket extends Component {
 							alignItems: "center",
 							justifyContent: "center"
 						}}>
-							<Animated.View style={{
+							<View style={{
 								width: screenWidth - (16 * 2),
 								maxWidth: 343,
 								marginLeft: "auto",
@@ -372,7 +368,7 @@ class Basket extends Component {
 											}}>Tushunarli</Text>
 									</TouchableOpacity>
 								</View>
-							</Animated.View>
+							</View>
 						</View>
 				</Modal>
 			</View>

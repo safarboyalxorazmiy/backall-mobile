@@ -5,7 +5,6 @@ import {
 	Text,
 	View,
 	Dimensions,
-	Animated,
 	TouchableOpacity,
 	Platform
 } from "react-native";
@@ -43,7 +42,6 @@ class Home extends Component {
 			profitAmount: 0,
 			sellAmount: 0,
 			notAllowed: "",
-			animation: new Animated.Value(0),
       spinner: false,
 			isConnected: null,
 			isLoading: false,
@@ -92,17 +90,8 @@ class Home extends Component {
 		this.tokenService = new TokenService();
 
 		this.getAmountInfo();
-		this.animatedValue = new Animated.Value(0);
 	}
 
-	startAnimation = () => {
-    Animated.timing(this.animatedValue, {
-      toValue: 1,
-      duration: 1000,
-      useNativeDriver: false, // Note: Native driver is not supported for changing borderRadius
-    }).start();
-  };
-	
 	async componentDidMount() {		
 		this.unsubscribe = NetInfo.addEventListener((state) => {
 			this.setState({isConnected: state.isConnected});
@@ -795,15 +784,6 @@ class Home extends Component {
 	}
 	
 	render() {
-		const translateY = this.state.animation.interpolate({
-			inputRange: [0, 1],
-			outputRange: [0, -100] // Adjust the value as needed
-		});
-
-		const backgroundColor = this.animatedValue.interpolate({
-      inputRange: [0, 1],
-      outputRange: ['#FFF', '#F1F1F1'],
-    });
 		
 		return (
 			<>
@@ -825,14 +805,12 @@ class Home extends Component {
 										menuOpened: true
 									})
 
-									this.startAnimation()
 								}}
 								onPressIn={() => {
 									this.setState(
 										{menuFocused: true}
 									)
 
-									this.startAnimation()
 								}}
 
 								onPressOut={() => {
@@ -840,19 +818,18 @@ class Home extends Component {
 										{menuFocused: false}
 									)
 
-									this.startAnimation();
 								}}
 
 								activeOpacity={1}>
-								<Animated.View 
+								<View 
 									style={this.state.menuFocused ? {
-										backgroundColor: backgroundColor,
+										backgroundColor: "black",
 										padding: 10,
 										paddingVertical: 15,
 										borderRadius: 50,
 									} : styles.menuIcon}>
 									<MenuIcon />
-								</Animated.View>
+								</View>
 							</TouchableOpacity>
 						</View>
 						
@@ -959,7 +936,7 @@ class Home extends Component {
 								alignItems: "center",
 								justifyContent: "center"
 							}}>
-								<Animated.View style={{
+								<View style={{
 									width: screenWidth - (16 * 2),
 									maxWidth: 343,
 									marginLeft: "auto",
@@ -968,7 +945,6 @@ class Home extends Component {
 									alignItems: "center",
 									justifyContent: "flex-end",
 									marginBottom: 120,
-									transform: [{translateY}]
 								}}>
 									<View style={{
 										width: "100%",
@@ -1003,7 +979,7 @@ class Home extends Component {
 												}}>Tushunarli</Text>
 										</TouchableOpacity>
 									</View>
-								</Animated.View>
+								</View>
 							</View>
 					</Modal>
 
@@ -1032,7 +1008,7 @@ class Home extends Component {
 								alignItems: "center",
 								justifyContent: "center"
 							}}>
-								<Animated.View style={{
+								<View style={{
 									width: screenWidth,
 									marginLeft: "auto",
 									marginRight: "auto",
@@ -1063,7 +1039,6 @@ class Home extends Component {
 										}}>
 										<TouchableOpacity 
 											onPressIn={() => {
-												this.startAnimation();
 												this.setState({
 													crossFocused: true
 												})
@@ -1080,8 +1055,8 @@ class Home extends Component {
 											onPress={async() => {
 												this.setState({menuOpened: false});
 											}}>
-											<Animated.View style={this.state.crossFocused ? {
-												backgroundColor: backgroundColor,
+											<View style={this.state.crossFocused ? {
+												backgroundColor: "black",
 												borderRadius: 50,
 												padding: 20
 											} : {
@@ -1090,7 +1065,7 @@ class Home extends Component {
 												padding: 20
 											}}>
 												<CrossIcon/>
-											</Animated.View>
+											</View>
 
 										</TouchableOpacity>
 									</View>
@@ -1101,7 +1076,6 @@ class Home extends Component {
 												this.setState({
 													clearButtonFocused: true
 												})
-												this.startAnimation()
 											}}
 											onPressOut={() => {
 												this.setState({
@@ -1118,7 +1092,6 @@ class Home extends Component {
 													profitAmount: 0,
 													sellAmount: 0,
 													notAllowed: "",
-													animation: new Animated.Value(0),
 													spinner: false,
 													isConnected: null,
 													isLoading: false,
@@ -1158,7 +1131,7 @@ class Home extends Component {
 												const {navigation} = this.props;
 												await this.tokenService.checkTokens(navigation);
 											}}>
-												<Animated.View style={[
+												<View style={[
 													{
 														display: "flex",
 														alignItems: "center",
@@ -1172,7 +1145,7 @@ class Home extends Component {
 														flexDirection: "row",
 														gap: 17
 													}, this.state.clearButtonFocused ? {
-														backgroundColor: backgroundColor
+														backgroundColor: "#FAFAFA"
 													}: {
 														backgroundColor: "#FFF"
 													}
@@ -1186,10 +1159,10 @@ class Home extends Component {
 														}}>
 															Hammasini tozalash va chiqish
 														</Text>
-												</Animated.View>
+												</View>
 										</TouchableOpacity>
 									</View>
-								</Animated.View>
+								</View>
 							</View>
 					</Modal>
 				</>
