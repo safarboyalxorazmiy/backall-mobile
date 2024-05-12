@@ -92,12 +92,13 @@ class Home extends Component {
 		this.getAmountInfo();
 	}
 
-	async componentDidMount() {		
+	async componentDidMount() {	
+		const {navigation} = this.props;
+
 		this.unsubscribe = NetInfo.addEventListener((state) => {
 			this.setState({isConnected: state.isConnected});
 		});
 
-		const {navigation} = this.props;
 		navigation.addListener("focus", async () => {
 			if (this.unsubscribe) {
         this.unsubscribe();
@@ -108,7 +109,10 @@ class Home extends Component {
 			});
 
 			console.log("HOME NAVIGATED");
-	
+
+			let isDownloaded = await AsyncStorage.getItem("isDownloaded");
+			this.setState({spinner: true});
+
 			await this.storeProductRepository.init();
 			await this.sellHistoryRepository.init();
 			await this.profitHistoryRepository.init();
@@ -118,7 +122,6 @@ class Home extends Component {
 			let isLoggedIn = await this.tokenService.checkTokens(navigation);
 
 			if (isLoggedIn) {
-				let isDownloaded = await AsyncStorage.getItem("isDownloaded");
 				console.log("isDownloaded??", isDownloaded);
 				if (isDownloaded !== "true" || isDownloaded == null) {
 						// LOAD..
@@ -147,18 +150,23 @@ class Home extends Component {
 								try {
 									// Has internet connection
 									await this.loadProducts();
+
+									this.setState({spinner: false});
 								} catch (error) {
 									console.error("Error loading products:", error);
+									this.setState({spinner: false});
 								}
 							}
 						}, 5000);
+				} else {
+					this.setState({spinner: false});
 				}
 
 				await this.getAmountInfo();
 
 				let notAllowed = await AsyncStorage.getItem("not_allowed");
 				this.setState({ notAllowed: notAllowed });
-			}
+			} 
 	});
 	
 	}
@@ -183,7 +191,6 @@ class Home extends Component {
 				this.setState({ // loading started
 					isLoading: true
 				})
-				this.setState({spinner: true});
 				
 				let isDownloaded = 
 					await this.getLocalProducts() && 
@@ -206,8 +213,6 @@ class Home extends Component {
 					isDownloaded: isDownloaded.toString()
 				});
 				console.log("LOADING FINISHED");
-
-				this.setState({spinner: false});
 			} catch (e) {
 				console.log("LOADING ERRORED");
 
