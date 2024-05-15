@@ -113,7 +113,7 @@ class Sell extends Component {
 			let lastStoredMonth = parseInt(await AsyncStorage.getItem("month"));
 			
 			if (currentMonth === lastStoredMonth) {
-				this.setState({thisMonthSellAmount: thisMonthSellAmount});
+				this.setState({thisMonthSellAmount: currentMonth});
 			}
 		});
 	}

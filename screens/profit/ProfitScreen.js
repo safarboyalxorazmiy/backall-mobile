@@ -26,7 +26,8 @@ class Profit extends Component {
       calendarInputContent: "--/--/----",
       thisMonthProfitAmount: 0.00,
       notAllowed: "",
-      animation: new Animated.Value(0)
+      animation: new Animated.Value(0),
+      notFinished: true 
     }
 
     this.profitHistoryRepository = new ProfitHistoryRepository();
@@ -64,6 +65,14 @@ class Profit extends Component {
         if (currentMonth === lastStoredMonth) {
             this.setState({thisMonthProfitAmount: thisMonthProfitAmount});
         }
+
+        
+        while (this.state.notFinished) {
+            console.log("Loading..")
+            this.setState({
+                notFinished: await this.getNextProfitHistoryGroup()
+            });
+        }
     });
   }
 
@@ -85,6 +94,10 @@ class Profit extends Component {
 
   
   async initProfitHistoryGroup() {
+    if (!this.state.notFinished) {
+        return;
+    }
+
     await this.profitHistoryRepository.init();
     await this.amountDateRepository.init();
 
@@ -258,7 +271,9 @@ class Profit extends Component {
                 onScrollBeginDrag={async (event) => {
                     if (!this.state.isCollecting) {
                         console.log("Scrolling ", event.nativeEvent.contentOffset);
-                        await this.getNextProfitHistoryGroup();
+                        this.setState({
+                            notFinished: await this.getNextProfitHistoryGroup()
+                        });
                     }
                 }} style={{width: "100%"}}>
                 <View style={{

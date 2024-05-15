@@ -31,6 +31,8 @@ class Shopping extends Component {
 			thisMonthSellAmount: 0.00,
 			notAllowed: "",
 			animation: new Animated.Value(0),
+
+			notFinished: true
 		};
 		
 		this.sellHistoryRepository = new SellHistoryRepository();
@@ -61,6 +63,13 @@ class Shopping extends Component {
 			}
 			
 			await this.initSellingHistoryGroup();
+
+			while (this.state.notFinished) {
+				console.log("Loading..")
+				this.setState({
+						notFinished: await this.getNextSellHistoryGroup()
+				});
+			}
 		});
 	}
 	
@@ -82,6 +91,10 @@ class Shopping extends Component {
 	}
 	
 	async initSellingHistoryGroup() {
+		if (!this.state.notFinished) {
+			return;
+		}
+
 		await this.sellHistoryRepository.init();
 		await this.amountDateRepository.init();
 
@@ -137,7 +150,7 @@ class Shopping extends Component {
 				isCollecting: false
 			});
 			
-			return;
+			return true;
 		}
 		
 		// PROBLEM:
@@ -151,7 +164,7 @@ class Shopping extends Component {
 		console.log(this.state.lastGroupId);
 		if ((this.state.lastGroupId - 10) < 0) {
 			this.setState({isCollecting: false});
-			return;
+			return false;
 		}
 		
 		let nextSellHistories = await this.sellHistoryRepository.getAllSellGroup(this.state.lastGroupId - 10);
@@ -163,6 +176,8 @@ class Shopping extends Component {
 			lastGroupId: this.state.lastGroupId - 10,
 			isCollecting: false
 		});
+
+		return true;
 	};
 	
 	getFormattedTime = (created_date) => {
@@ -245,7 +260,12 @@ class Shopping extends Component {
 				<ScrollView onScrollBeginDrag={async (event) => {
 					if (!this.state.isCollecting) {
 						console.log("Scrolling ", event.nativeEvent.contentOffset);
-						await this.getNextSellHistoryGroup();
+						
+						// this.setState({
+						// 	notFinished: 
+						// });
+
+						await this.getNextSellHistoryGroup()
 					}
 				}} style={{width: "100%"}}>
 					<View style={styles.pageTitle}>
