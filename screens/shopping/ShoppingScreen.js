@@ -180,6 +180,8 @@ class Shopping extends Component {
 	groupByDate = async (histories) => {
 		const grouped = {};
 		for (const history of histories) {
+			console.log(history);
+			
 			const date = history.created_date.split('T')[0];
 			const formattedDate = this.formatDate(date);
 			if (!grouped[date]) {

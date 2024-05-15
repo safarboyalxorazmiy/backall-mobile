@@ -789,6 +789,7 @@ class Home extends Component {
 	}
 	
 	render() {
+		const {navigation} = this.props;
 		
 		return (
 			<>

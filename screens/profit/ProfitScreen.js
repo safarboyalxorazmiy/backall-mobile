@@ -173,27 +173,33 @@ class Profit extends Component {
   };
 
   groupByDate = async (histories) => {
-      const grouped = {};
-      for (const history of histories) {
-          const date = history.created_date.split('T')[0];
-          const formattedDate = this.formatDate(date);
-          if (!grouped[date]) {
-              grouped[date] = {date, dateInfo: formattedDate, histories: [], totalProfit: 0};
-          }
-          grouped[date].histories.push(history);
+    const grouped = {};
+    for (const history of histories) {
+        if (history.profit == 0) {
+            continue;
+        }
 
-          let currentDate = new Date(date);
-          const year = currentDate.getFullYear();
-          const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed, so add 1
-          const day = String(currentDate.getDate()).padStart(2, '0');
+        const date = history.created_date.split('T')[0];
+        const formattedDate = this.formatDate(date);
 
-          // Format the date as yyyy-mm-dd
-          const currentFormattedDate = `${year}-${month}-${day}`;
-          grouped[date].totalProfit = await this.amountDateRepository.getProfitAmountInfoByDate(currentFormattedDate);
-      }
+        if (!grouped[date]) {
+            grouped[date] = {date, dateInfo: formattedDate, histories: [], totalProfit: 0};
+        } 
 
-      console.log(grouped);
-      return Object.values(grouped);
+        grouped[date].histories.push(history);
+
+        let currentDate = new Date(date);
+        const year = currentDate.getFullYear();
+        const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed, so add 1
+        const day = String(currentDate.getDate()).padStart(2, '0');
+
+        // Format the date as yyyy-mm-dd
+        const currentFormattedDate = `${year}-${month}-${day}`;
+        grouped[date].totalProfit = await this.amountDateRepository.getProfitAmountInfoByDate(currentFormattedDate);
+    }
+
+    console.log(grouped);
+    return Object.values(grouped);
   };
 
   formatDate = (dateString) => {
