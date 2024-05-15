@@ -357,6 +357,7 @@ class ProductAdd extends Component {
 						<Text
 							style={styles.label}>Mahsulot seriyasi</Text>
 						<TextInput
+							autoCapitalize="none"
 							cursorColor="#222222"
 							style={this.state.serialInputStyle}
 							placeholder="Seriyasini kiriting"
@@ -413,6 +414,7 @@ class ProductAdd extends Component {
 					<View style={styles.inputWrapper}>
 						<Text style={styles.label}>Brand nomi</Text>
 						<TextInput
+							autoCapitalize="none"
 							cursorColor="#222222"
 							style={this.state.brandInputStyle}
 							value={this.state.brandInputValue}
@@ -432,6 +434,7 @@ class ProductAdd extends Component {
 					<View style={styles.inputWrapper}>
 						<Text style={styles.label}>Mahsulot nomi</Text>
 						<TextInput
+							autoCapitalize="none"
 							cursorColor="#222222"
 							style={this.state.productInputStyle}
 							placeholder="Nomini kiriting"
@@ -453,6 +456,7 @@ class ProductAdd extends Component {
 						<Text style={styles.label}>Mahsulot miqdori</Text>
 						<View style={styles.amountGroup}>
 							<TextInput
+								autoCapitalize="none"
 								cursorColor="#222222"
 								keyboardType="numeric"
 								style={this.state.amountInputStyle}
@@ -532,6 +536,7 @@ class ProductAdd extends Component {
 					<View style={styles.inputWrapper}>
 						<Text style={styles.label}>Tan narxi (so’mda)</Text>
 						<TextInput
+							autoCapitalize="none"
 							cursorColor="#222222"
 							keyboardType="numeric"
 							style={this.state.priceInputStyle}
@@ -560,6 +565,7 @@ class ProductAdd extends Component {
 						<Text style={styles.label}>Sotilish narxi</Text>
 						<View style={styles.inputGroup}>
 							<TextInput
+								autoCapitalize="none"
 								cursorColor="#222222"
 								keyboardType="numeric"
 								style={this.state.priceInput}

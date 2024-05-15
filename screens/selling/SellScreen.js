@@ -317,6 +317,7 @@ class Sell extends Component {
 					</View>
 
 					<TextInput
+						autoCapitalize="none"
 						ref={this.inputRef}
 						style={{
 							backgroundColor: "white",
@@ -432,6 +433,7 @@ class Sell extends Component {
 									<View>
 										<Text style={styles.modalLabel}>Mahsulot nomi</Text>
 										<TextInput
+											autoCapitalize="none"
 											onChangeText={async (value) => {
 												this.setState({
 													productNameInputValue: value
@@ -539,6 +541,8 @@ class Sell extends Component {
 									<View style={styles.inputBlock}>
 										<Text style={styles.modalLabel}>Miqdori</Text>
 										<TextInput
+											autoCapitalize="none"
+
 											onFocus={() => {
 												this.setState({isQuantityInputFocused: true})
 											}}
@@ -598,6 +602,8 @@ class Sell extends Component {
 									<View style={styles.inputBlock}>
 										<Text style={styles.modalLabel}>Sotuvdagi narxi (1 kg/dona/litr)</Text>
 										<TextInput
+											autoCapitalize="none"
+
 											onFocus={() => {
 												this.setState({isPriceInputFocused: true});
 											}}
@@ -640,6 +646,7 @@ class Sell extends Component {
 									<TouchableOpacity
 										style={styles.modalButton}
 										onPress={() => {
+
 											let selectedProduct = this.state.selectedProduct;
 											if (!selectedProduct) {
 												// TODO RED ERROR
@@ -805,6 +812,8 @@ class Sell extends Component {
 									<View>
 										<Text style={styles.modalLabel}>Mahsulot nomi</Text>
 										<TextInput
+											autoCapitalize="none"
+
 											onChangeText={async (value) => {
 												this.setState({
 													productNameInputValue: value
@@ -912,6 +921,8 @@ class Sell extends Component {
 									<View style={styles.inputBlock}>
 										<Text style={styles.modalLabel}>Miqdori</Text>
 										<TextInput
+											autoCapitalize="none"
+
 											onFocus={() => {
 												this.setState({isQuantityInputFocused: true})
 											}}
@@ -960,6 +971,8 @@ class Sell extends Component {
 									<View style={styles.inputBlock}>
 										<Text style={styles.modalLabel}>Sotuvdagi narxi (1 kg/dona/litr)</Text>
 										<TextInput
+											autoCapitalize="none"
+
 											onFocus={() => {
 												this.setState({isPriceInputFocused: true});
 											}}
@@ -1118,6 +1131,11 @@ class Sell extends Component {
 	}
 
 	sellProducts = async () => {
+		if (this.state.sellingProducts.length == 0) {
+			// TODO ERROR MESSAGE IF THERE IS NO PRODUCT ADDED
+			return;
+		}
+
 		console.log(
 			this.state.sellingProducts
 		);

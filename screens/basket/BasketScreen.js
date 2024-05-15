@@ -177,6 +177,7 @@ class Basket extends Component {
 					<SearchIcon/>
 					
 					<TextInput
+						autoCapitalize="none"
 						ref={this.textInputRef}
 						style={styles.input}
 						placeholder="Mahsulot qidirish"
