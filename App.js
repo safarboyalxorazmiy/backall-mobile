@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text } from "react-native";
+import { Text, TouchableOpacity, View, Image, Linking } from "react-native";
 import { AppRegistry } from "react-native";
 import { name as appName } from "./app.json";
 import { Platform } from "react-native";
@@ -16,6 +16,7 @@ import StoreProductRepository from "./repository/StoreProductRepository";
 import SellHistoryRepository from "./repository/SellHistoryRepository";
 import ProfitHistoryRepository from "./repository/ProfitHistoryRepository";
 import AmountDateRepository from "./repository/AmountDateRepository";
+import RightArrow from "./assets/right-arrow.svg";
 
 const tokenService = new TokenService();
 
@@ -26,6 +27,7 @@ class App extends Component {
       fontsLoaded: false,
       isConnected: null,
       isSavingStarted: false,
+			notPayed: false
     };
 
     if (this.props.navigation) {
@@ -96,14 +98,45 @@ class App extends Component {
     );
 
     if (this.state.isConnected) {
-      // Internet is available, perform actions
-      let isNotSaved = await AsyncStorage.getItem("isNotSaved");
-      console.log("Is not saved", isNotSaved);
+			// Internet is available, perform actions
+			let isNotSaved = await AsyncStorage.getItem("isNotSaved");
+			console.log("Is not saved", isNotSaved);
 
-      if (isNotSaved == "true") {
-        await this.saveData();
-      }
-    }
+			
+				if (this.state.notPayed) {
+					let isPayed = await this.apiService.getPayment(email, monthYear);
+					console.log("Payed: ", isPayed)
+					
+					if (isPayed == true) {						
+						this.setState({
+							notPayed: false
+						})
+					}
+				}
+		
+			if (isNotSaved == "true") {
+				let email = await AsyncStorage.getItem("email");
+
+				console.log(email)
+				
+				// Get the current date
+				let currentDate = new Date();
+				// Extract month and year
+				let month = String(currentDate.getMonth() + 1).padStart(2, '0'); // getMonth() returns 0-based month
+				let year = currentDate.getFullYear();
+				let monthYear = `${month}/${year}`;
+		
+				let isPayed = await this.apiService.getPayment(email, monthYear);
+				console.log("Payed: ", isPayed)
+				if (isPayed == false) {
+					this.setState({
+						notPayed: true
+					})
+				}
+		
+				await this.saveData();
+			}
+		}
   }
 
   async saveData() {
@@ -432,6 +465,83 @@ class App extends Component {
 
     return (
       <GestureHandlerRootView style={{ flex: 1 }}>
+				{
+					this.state.notPayed && (<View style={{
+						width: "100%", 
+						height: "100%", 
+						backgroundColor: "#181926", 
+						paddingTop: 100,
+						paddingHorizontal: 16
+					}}>
+						<Text style={{
+							color: "white",
+							fontFamily: "Gilroy-SemiBold",
+							fontSize: 38
+						}}>Oylik abonent to'lovi muddati keldi!</Text>
+						<Image
+							source={require("./assets/cards.png")}
+							style={{width: 367, height: 254, marginTop: 50}}
+						/>
+						<View style={{
+							display: "flex",
+							flexDirection: "row",
+							alignItems: "center",
+							justifyContent: "space-between",
+							paddingTop: 24,
+							borderTopWidth: 2,
+							borderTopColor: "#07070A",
+							marginTop: 40
+						}}>
+							<Text style={{
+								color: "white",
+								fontFamily: "Gilroy-Bold",
+								fontSize: 24
+							}}>JAMI</Text>
+	
+							<View style={{
+								display: "flex",
+								flexDirection: "row",
+								alignItems: "flex-end",
+							}}>
+								<Text style={{
+									color: "white",
+									fontFamily: "Gilroy-Regular",
+									fontSize: 24
+								}}>126,529.30 </Text>
+	
+								<Text style={{
+									color: "white",
+									fontFamily: "Gilroy-Regular",
+									fontSize: 20
+								}}>so’m</Text>
+							</View>
+						</View>
+	
+						<TouchableOpacity 
+							style={{
+								backgroundColor: "black",
+								display: "flex",
+								flexDirection: "row",
+								alignItems: "center",
+								justifyContent: "center",
+								gap: 26,
+								padding: 16,
+								borderRadius: 8,
+								marginTop: 18
+							}}
+							onPress={() => {
+								Linking.openURL('https://t.me/backall_payment');
+							}}>
+							<Text style={{
+								fontSize: 18,
+								fontFamily: "Gilroy-Black",
+								color: "white"
+							}}>TO'LASH</Text>
+							<RightArrow />
+						</TouchableOpacity>
+					</View>)
+				}
+
         <NavigationService />
       </GestureHandlerRootView>
     );

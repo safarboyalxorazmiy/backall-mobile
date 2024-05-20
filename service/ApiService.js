@@ -14,6 +14,40 @@ class ApiService {
 
   /* GET */
 
+  async getPayment(email, monthYear) {
+    try {
+        const accessToken = await this.tokenService.retrieveAccessToken();
+
+        const requestOptions = {
+            method: "GET",
+            headers: {
+              "Authorization": `Bearer ${accessToken}`
+            }
+        };
+
+        console.log('Sending request to:', `${serverUrl}/payment/get?email=${email}&monthYear=${monthYear}`);
+        console.log('Request body:', requestOptions);
+
+        const response = 
+          await fetch(
+            `${serverUrl}/payment/get?email=${email}&monthYear=${monthYear}`, 
+            requestOptions
+          );
+
+        console.log('Response status:', response.status);
+        const responseBody = await response.json();
+        console.log('Response body:', responseBody);
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        return responseBody;
+    } catch (error) {
+      console.log("Local fucking product error: ", error)
+    }
+}
+
     // GET PRODUCT PAGINATION
   async getLocalProducts(page, size) {
       try {
