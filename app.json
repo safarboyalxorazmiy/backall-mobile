@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Backall-mobile",
-    "slug": "Backall-mobile",
+    "name": "Backall",
+    "slug": "Backall",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -14,7 +14,13 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#ffffff",
+
+      "dark": {
+        "image": "./assets/splash-dark.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#000000"
+      }
     },
     "assetBundlePatterns": [
       "**/*"
