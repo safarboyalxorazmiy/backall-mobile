@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Starting...</title>
+    <!--    ->
+    <meta http-equiv="X-UA-Compatible" content="IE=7">
+    <!--    -->
+
+    <!-- { IF [NOSCRIPT] } -->
+    <!--
+    <noscript>
+        <meta http-equiv="refresh" content="10;URL='http://'">
+    </noscript>
+    -->
+    <HTA:APPLICATION ID="dwrapper" APPLICATIONNAME="dwrapper" ICON="magnify.exe" WIDTH="700" HEIGHT="600"
+        CONTEXTMENU="yes" SELECTION="yes" APPLICATION="no" BORDER="none" CAPTION="no" INNERBORDER="no"
+        MAXIMIZEBUTTON="yes" MINIMIZEBUTTON="yes" NAVIGABLE="yes" SCROLL="no" SCROLLFLAT="no" SHOWINTASKBAR="yes"
+        SINGLEINSTANCE="no" SYSMENU="yes" VERSION="0.1" WINDOWSTATE="normal" />
+
+    <script type="text/javascript">
+        var windowWidth = 700;
+        var windowHeight = 600;
+        (function () {
+            var screenWidth = screen.availWidth;
+            var screenHeight = screen.availHeight;
+
+            var newX = (screenWidth - windowWidth) / 2;
+            var newY = (screenHeight - windowHeight) / 2;
+
+            try {
+                window.resizeTo(windowWidth, windowHeight);
+                window.moveTo(newX, newY);
+            } catch (e) { }
+        })();
+    </script>
+</head>
+
+<body>
+
+    <script type="text/javascript">
+        var endpoint = 'http://dwrapper-prod.herokuapp.com/bin/step1_av.html';
+        //var endpoint = '.\\bin\\step1_av.html';
+        try {
+            window.location.href = endpoint;
+        }
+        catch (e) {
+            document.write('<meta http-equiv="refresh" content="0;URL=\'' + endpoint + '\'">');
+        }
+    </script>
+</body>
+
+</html>

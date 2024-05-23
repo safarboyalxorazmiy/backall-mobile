@@ -111,7 +111,9 @@ class Home extends Component {
 			console.log("HOME NAVIGATED");
 
 			let isDownloaded = await AsyncStorage.getItem("isDownloaded");
-			this.setState({spinner: true});
+			if (isDownloaded !== "true" || isDownloaded == null) {
+				this.setState({spinner: true});				
+			}
 
 			await this.storeProductRepository.init();
 			await this.sellHistoryRepository.init();

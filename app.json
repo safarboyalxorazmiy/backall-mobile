@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Backall",
-    "slug": "Backall",
+    "slug": "Backall-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -14,19 +14,18 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff",
-
-      "dark": {
-        "image": "./assets/splash-dark.png",
-        "resizeMode": "contain",
-        "backgroundColor": "#000000"
-      }
+      "backgroundColor": "#ffffff"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "jsEngine": "hermes",
     "ios": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+
       "jsEngine": "jsc",
       "supportsTablet": true,
       "bundleIdentifier": "com.safarboyalkhwarizmi.Backallmobile"
@@ -36,6 +35,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      
       "package": "com.safarboyalkhwarizmi.Backallmobile"
     },
     "web": {

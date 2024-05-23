@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import { Text, TouchableOpacity, View, Image, Linking } from "react-native";
+import { Appearance, Text, TouchableOpacity, View, Image, Linking, StyleSheet } from "react-native";
 import { AppRegistry } from "react-native";
-import { name as appName } from "./app.json";
+import Constants from 'expo-constants';  // Import Constants
 import { Platform } from "react-native";
 import * as Font from "expo-font";
 import NetInfo from "@react-native-community/netinfo";
@@ -17,6 +17,9 @@ import SellHistoryRepository from "./repository/SellHistoryRepository";
 import ProfitHistoryRepository from "./repository/ProfitHistoryRepository";
 import AmountDateRepository from "./repository/AmountDateRepository";
 import RightArrow from "./assets/right-arrow.svg";
+import { Asset } from 'expo-asset';
+import * as SplashScreen from 'expo-splash-screen';
+import * as SystemUI from 'expo-system-ui';
 
 const tokenService = new TokenService();
 
@@ -27,7 +30,10 @@ class App extends Component {
       fontsLoaded: false,
       isConnected: null,
       isSavingStarted: false,
-			notPayed: false
+			notPayed: false,
+
+			theme: Appearance.getColorScheme(),
+      splashLoaded: false
     };
 
     if (this.props.navigation) {
@@ -65,6 +71,10 @@ class App extends Component {
   }
 
   async componentDidMount() {
+		SplashScreen.preventAutoHideAsync();
+    await this.loadResources();
+    SplashScreen.hideAsync();
+
     await this.loadCustomFonts();
 
     if (Platform.OS == "android" || Platform.OS == "ios") {
@@ -86,6 +96,26 @@ class App extends Component {
       );
     }
   }
+
+	loadResources = async () => {
+    try {
+      const { theme } = this.state;
+      let splashImage;
+      if (theme === 'dark') {
+        splashImage = require('./assets/splash-dark.png');
+        SystemUI.setBackgroundColorAsync('#000000');
+      } else {
+        splashImage = require('./assets/splash.png');
+        SystemUI.setBackgroundColorAsync('#ffffff');
+      }
+
+      // Preload splash image
+      await Asset.loadAsync(splashImage);
+      this.setState({ splashLoaded: true });
+    } catch (e) {
+      console.warn(e);
+    }
+  };
 
   async checkInternetStatus() {
     console.log(
@@ -457,10 +487,31 @@ class App extends Component {
   }
 
   render() {
+		const { theme, splashLoaded } = this.state;
+    if (!splashLoaded) {
+      return (
+				<View style={styles.container}>
+					<Image
+						source={theme === 'dark' ? require('./assets/splash-dark.png') : require('./assets/splash.png')}
+						style={styles.splashImage}
+						resizeMode="contain"
+					/>
+				</View>
+			); // Or a loading indicator if preferred
+    }
+
     const { fontsLoaded } = this.state;
 
     if (!fontsLoaded) {
-      return <Text>Loading</Text>;
+      return (
+				<View style={styles.container}>
+					<Image
+						source={theme === 'dark' ? require('./assets/splash-dark.png') : require('./assets/splash.png')}
+						style={styles.splashImage}
+						resizeMode="contain"
+					/>
+				</View>
+			);
     }
 
     return (
@@ -548,6 +599,18 @@ class App extends Component {
   }
 }
 
-AppRegistry.registerComponent(appName, () => App);
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  splashImage: {
+    width: '100%',
+    height: '100%',
+  },
+});
+
+AppRegistry.registerComponent("Backall", () => App);
 
 export default App;
