@@ -40,13 +40,12 @@ class TokenService {
 		}
 	};
 	
-	checkTokens = async (navigation) => {
+	checkTokens = async () => {
 		const access_token = await this.retrieveAccessToken();
 		
 		console.log(access_token)
 		
 		if (access_token == null) {
-			navigation.navigate("Login")
 			return false;
 		}
 		

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { StatusBar, StyleSheet, Text, View, TextInput, Dimensions, TouchableOpacity, ScrollView, Platform } from 'react-native';
 import Logo from '../../assets/logo.svg';
-import DatabaseService from '../../service/DatabaseService';
 import ApiService from "../../service/ApiService";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Animatable from 'react-native-animatable';
@@ -9,7 +8,6 @@ import * as Animatable from 'react-native-animatable';
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-const databaseService = new DatabaseService();
 class Login extends Component {
   constructor(props) {
       super(props);

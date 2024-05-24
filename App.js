@@ -37,7 +37,11 @@ class App extends Component {
     };
 
     if (this.props.navigation) {
-      tokenService.checkTokens(this.props.navigation);
+      let isLoggedIn = tokenService.checkTokens();
+
+			if (!isLoggedIn) {
+				this.props.navigation.navigate("Login");
+			} 
     } 
 
     this.productRepository = new ProductRepository();
@@ -131,21 +135,20 @@ class App extends Component {
 			// Internet is available, perform actions
 			let isNotSaved = await AsyncStorage.getItem("isNotSaved");
 			console.log("Is not saved", isNotSaved);
-
+			let email = await AsyncStorage.getItem("email");
 			
-				if (this.state.notPayed) {
-					let isPayed = await this.apiService.getPayment(email, monthYear);
-					console.log("Payed: ", isPayed)
-					
-					if (isPayed == true) {						
-						this.setState({
-							notPayed: false
-						})
-					}
+			if (this.state.notPayed) {
+				let isPayed = await this.apiService.getPayment(email, monthYear);
+				console.log("Payed: ", isPayed)
+				
+				if (isPayed == true) {						
+					this.setState({
+						notPayed: false
+					})
 				}
+			}
 		
 			if (isNotSaved == "true") {
-				let email = await AsyncStorage.getItem("email");
 
 				console.log(email)
 				

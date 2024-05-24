@@ -112,16 +112,20 @@ class Home extends Component {
 
 			let isDownloaded = await AsyncStorage.getItem("isDownloaded");
 			if (isDownloaded !== "true" || isDownloaded == null) {
-				this.setState({spinner: true});				
-			}
+				this.setState({spinner: true});
 
-			await this.storeProductRepository.init();
-			await this.sellHistoryRepository.init();
-			await this.profitHistoryRepository.init();
-			await this.amountDateRepository.init();
+				const {navigation} = this.props;
+				
+				let isLoggedIn = await this.tokenService.checkTokens();
+				if (!isLoggedIn) {
+					this.setState({spinner: false});
+					navigation.navigate("Login");
+				}
 
-			const {navigation} = this.props;
-			let isLoggedIn = await this.tokenService.checkTokens(navigation);
+				await this.storeProductRepository.init();
+				await this.sellHistoryRepository.init();
+				await this.profitHistoryRepository.init();
+				await this.amountDateRepository.init();
 
 			if (isLoggedIn) {
 				console.log("isDownloaded??", isDownloaded);
@@ -169,6 +173,7 @@ class Home extends Component {
 				let notAllowed = await AsyncStorage.getItem("not_allowed");
 				this.setState({ notAllowed: notAllowed });
 			} 
+		}
 	});
 	
 	}
@@ -1137,7 +1142,10 @@ class Home extends Component {
 												})
 
 												const {navigation} = this.props;
-												await this.tokenService.checkTokens(navigation);
+												let isLoggedIn = await this.tokenService.checkTokens();
+												if (!isLoggedIn) {
+													navigation.navigate("Login");
+												}
 											}}>
 												<View style={[
 													{
