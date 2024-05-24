@@ -64,6 +64,7 @@ class Login extends Component {
         <View style={styles.form}>
             <Text style={styles.label}>Loginni kiriting</Text>
             <TextInput
+                autoCapitalize="none"
                 style={{
                     height: 64,
                     width: screenWidth - (24 + 24),
@@ -90,6 +91,7 @@ class Login extends Component {
             />
             <Text style={styles.label}>Parolni kiriting</Text>
             <TextInput
+                autoCapitalize="none"
                 style={{
                     height: 64,
                     width: screenWidth - (24 + 24),
