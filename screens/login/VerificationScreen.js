@@ -1,10 +1,13 @@
 import React, {Component} from "react";
-import {StyleSheet, View, Text, TouchableOpacity, TextInput} from "react-native";
+import {StyleSheet, View, Text, TouchableOpacity, TextInput, Dimensions} from "react-native";
 import GreenCircle from "../../assets/small-green-circle.svg";
 import RedCircle from "../../assets/small-red-circle.svg"
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ApiService from "../../service/ApiService";
 import TokenService from '../../service/TokenService';
+
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 
 class VerificationScreen extends Component {
 	constructor(props) {
@@ -224,7 +227,11 @@ const styles = StyleSheet.create({
 		fontSize: 38,
 		fontFamily: "Gilroy-Bold",
 		marginLeft: 20,
-		marginTop: 100
+		marginTop: (
+			screenHeight >= 750 ? 100 : 
+			screenHeight >= 600 ? 50 : 
+			20
+		)
 	},
 
 	headerInfo: {
@@ -238,9 +245,14 @@ const styles = StyleSheet.create({
 		display: "flex",
 		alignItems: "center",
 		position: "absolute",
-		bottom: 0,
+		bottom: (
+			screenHeight >= 750 ? 0 : 
+			screenHeight >= 600 ? -40 : 
+			-50
+		),
 		left: 0,
-		right: 0
+		right: 0,
+		marginTop: 100
 	},
 
 	inputContainer: {

@@ -1033,7 +1033,11 @@ class Home extends Component {
 									<View style={{
 										width: "100%",
 										height: 500,
-										// marginBottom: 10,
+										marginBottom: (
+											screenHeight >= 750 ? 0 : 
+											screenHeight >= 600 ? 10 : 
+											10
+										),
 										display: "flex",
 										justifyContent: "space-between",
 										paddingTop: 40,
