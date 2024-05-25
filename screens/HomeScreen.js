@@ -1028,12 +1028,12 @@ class Home extends Component {
 									flex: 1,
 									alignItems: "center",
 									justifyContent: "flex-end",
-									marginBottom: 0,
 									marginLeft: "-5.5%"
 								}}>
 									<View style={{
 										width: "100%",
 										height: 500,
+										// marginBottom: 10,
 										display: "flex",
 										justifyContent: "space-between",
 										paddingTop: 40,
@@ -1048,7 +1048,7 @@ class Home extends Component {
 											display: "flex",
 											alignItems: "flex-end",
 											justifyContent: "flex-end",
-											marginBottom: 24,
+											// marginBottom: 24,
 										}}>
 										<TouchableOpacity 
 											onPressIn={() => {

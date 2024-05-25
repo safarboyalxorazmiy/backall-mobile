@@ -584,7 +584,7 @@ class App extends Component {
 								marginTop: 18
 							}}
 							onPress={() => {
-								Linking.openURL('https://t.me/backall_payment');
+								Linking.openURL('https://t.me/backall_admin');
 							}}>
 							<Text style={{
 								fontSize: 18,

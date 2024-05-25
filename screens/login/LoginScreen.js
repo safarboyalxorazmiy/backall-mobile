@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StatusBar, StyleSheet, Text, View, TextInput, Dimensions, TouchableOpacity, ScrollView, Platform } from 'react-native';
+import { StatusBar, StyleSheet, Text, View, TextInput, Dimensions, TouchableOpacity, ScrollView, Platform, Linking } from 'react-native';
 import Logo from '../../assets/logo.svg';
 import ApiService from "../../service/ApiService";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -131,7 +131,11 @@ class Login extends Component {
                 </View>
             </TouchableOpacity>
         </View>
-        <TouchableOpacity onPress={this.forgotPasswordLink} style={{ marginTop: 168 }}>
+        <TouchableOpacity 
+          onPress={() => {
+            Linking.openURL('https://t.me/backall_admin');
+          }} 
+          style={{ marginTop: 100 }}>
           <View style={styles.forgotPasswordLink}>
             <Text style={styles.forgotPasswordText}>Parolni unutdingizmi?</Text>
           </View>
