@@ -42,6 +42,24 @@ class Profit extends Component {
     await this.amountDateRepository.init();
 
     navigation.addListener("focus", async () => {
+        let isNotSaved = await AsyncStorage.getItem("isNotSaved");
+        if (isNotSaved == "true") {
+            this.setState({
+                notFinished: true,
+                profitHistories: [],
+                groupedHistories: []
+            });
+            
+            await this.initProfitHistoryGroup();
+
+            while (this.state.notFinished) {
+                console.log("Loading..")
+                this.setState({
+                    notFinished: await this.getNextProfitHistoryGroup()
+                });
+            }
+        }
+        
         await this.profitHistoryRepository.init();
         await this.amountDateRepository.init();
         

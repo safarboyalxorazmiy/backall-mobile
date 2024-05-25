@@ -45,6 +45,24 @@ class Shopping extends Component {
 		const {navigation} = this.props;
 		
 		navigation.addListener("focus", async () => {
+			let isNotSaved = await AsyncStorage.getItem("isNotSaved");
+			if (isNotSaved == "true") {
+				this.setState({
+					notFinished: true,
+					sellingHistory: [],
+					groupedHistories: []
+				});
+				
+				await this.initSellingHistoryGroup();
+
+				while (this.state.notFinished) {
+					console.log("Loading..")
+					this.setState({
+							notFinished: await this.getNextSellHistoryGroup()
+					});
+				}
+			}
+
 			await this.sellHistoryRepository.init();
 			await this.amountDateRepository.init();
 
