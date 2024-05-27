@@ -1286,7 +1286,7 @@ class Sell extends Component {
 			profit: 0
 		});
 
-		await AsyncStorage.setItem("isNotSaved", "true")
+		await AsyncStorage.setItem("isNotSaved", "true");
 		await AsyncStorage.setItem("sellGroupNotSaved", "true");
 		await AsyncStorage.setItem("sellHistoryNotSaved", "true");
 		await AsyncStorage.setItem("sellHistoryGroupNotSaved", "true");

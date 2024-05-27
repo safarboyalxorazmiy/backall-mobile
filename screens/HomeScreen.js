@@ -148,8 +148,9 @@ class Home extends Component {
 
 							if (this.state.isConnected) {
 								if (this.state.isDownloaded === "true") {
+									console.log("Downloaded")
 									clearInterval(intervalId);
-									console.log("CLEARED");
+									console.log("CLEARED ", intervalId);
 									return;
 								}
 
@@ -185,8 +186,6 @@ class Home extends Component {
 	}
 
 	async loadProducts() {
-		console.log("LOADING STARTED")
-
 		await this.storeProductRepository.init();
 		await this.sellHistoryRepository.init();
 		await this.profitHistoryRepository.init();
@@ -214,6 +213,7 @@ class Home extends Component {
 
 				// storing result of product storing
 				await AsyncStorage.setItem("isDownloaded", isDownloaded.toString());
+				console.log("LOADING ", isDownloaded.toString());
 
 				this.setState({ // loading finished
 					isLoading: false,

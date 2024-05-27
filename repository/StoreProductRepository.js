@@ -111,48 +111,109 @@ class StoreProductRepository {
     global_id,
     saved
   ) {
+    // Check if the product exists and update or delete if necessary
     try {
-      await new Promise((resolve, reject) => {
+      const productExists = await new Promise((resolve, reject) => {
         this.db.transaction((tx) => {
           tx.executeSql(
-            `INSERT INTO store_product (
-              product_id, 
-              nds, 
-              price, 
-              selling_price, 
-              percentage, 
-              count, 
-              count_type, 
-              global_id, 
-              saved
-            ) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [
-              product_id, 
-              nds, 
-              price, 
-              sellingPrice, 
-              percentage, 
-              count, 
-              countType, 
-              global_id, 
-              saved ? 1 : 0
-            ],
+            `SELECT count FROM store_product WHERE product_id = ?`,
+            [product_id],
             (_, results) => {
-              resolve(true);
+              if (results.rows.length > 0) {
+                const currentCount = results.rows.item(0).count;
+                resolve(true);
+              } else {
+                resolve(false);
+              }
             },
             (_, error) => {
-              console.error("Error creating store product:", error);
-              reject(false);
+              console.error("Error fetching store product count:", error);
+              reject(error);
             }
           );
         });
       });
+  
+      if (productExists) {
+        if (count === 0) {
+          // If the count is zero, delete the product
+          await new Promise((resolve, reject) => {
+            this.db.transaction((tx) => {
+              tx.executeSql(
+                `DELETE FROM store_product WHERE product_id = ?`,
+                [product_id],
+                (_, results) => {
+                  resolve(true);
+                },
+                (_, error) => {
+                  console.error("Error deleting store product:", error);
+                  reject(error);
+                }
+              );
+            });
+          });
+        } else {
+          // Otherwise, update the count
+          await new Promise((resolve, reject) => {
+            this.db.transaction((tx) => {
+              tx.executeSql(
+                `UPDATE store_product SET count = ? WHERE product_id = ?`,
+                [count, product_id],
+                (_, results) => {
+                  resolve(true);
+                },
+                (_, error) => {
+                  console.error("Error updating store product count:", error);
+                  reject(error);
+                }
+              );
+            });
+          });
+        }
+      } else {
+        // If the product doesn't exist, create a new one
+        await new Promise((resolve, reject) => {
+          this.db.transaction((tx) => {
+            tx.executeSql(
+              `INSERT INTO store_product (
+                product_id, 
+                nds, 
+                price, 
+                selling_price, 
+                percentage, 
+                count, 
+                count_type, 
+                global_id, 
+                saved
+              ) 
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+              [
+                product_id, 
+                nds, 
+                price, 
+                sellingPrice, 
+                percentage, 
+                count, 
+                countType, 
+                global_id, 
+                saved ? 1 : 0
+              ],
+              (_, results) => {
+                resolve(true);
+              },
+              (_, error) => {
+                console.error("Error creating store product:", error);
+                reject(error);
+              }
+            );
+          });
+        });
+      }
     } catch (error) {
-      console.error(`Error creating store product: ${error}`);
+      console.error(`Error processing store product: ${error}`);
       throw error;
     }
-  }
+  }  
 
   async updateCount(productId, count) {
     try {
@@ -278,7 +339,7 @@ class StoreProductRepository {
       return new Promise((resolve, reject) => {
         this.db.transaction((tx) => {
           tx.executeSql(
-              `SELECT sp.id, p.brand_name, p.name, sp.count, sp.count_type
+              `SELECT sp.id, sp.global_id, p.brand_name, p.name, sp.count, sp.count_type
               FROM store_product sp
               JOIN product p ON sp.product_id = p.id
               WHERE sp.id > ?
@@ -286,12 +347,12 @@ class StoreProductRepository {
               LIMIT 13;`,
               [lastId],
               (_, { rows }) => {
-                  const storeProductsInfo = rows._array; // Get raw result array
-                  resolve(storeProductsInfo);
+                const storeProductsInfo = rows._array; // Get raw result array
+                resolve(storeProductsInfo);
               },
               (_, error) => {
-                  console.error("Error retrieving store products info:", error);
-                  reject(error);
+                console.error("Error retrieving store products info:", error);
+                reject(error);
               }
           );
         });

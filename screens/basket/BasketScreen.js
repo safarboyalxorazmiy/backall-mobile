@@ -74,7 +74,6 @@ class Basket extends Component {
 	
 	async componentDidMount() {
 		const {navigation} = this.props;
-		console.log(navigation);
 
 		navigation.addListener("focus", 
 			async () => {
@@ -93,9 +92,9 @@ class Basket extends Component {
 						await AsyncStorage.setItem("productsLoadingIntervalProccessIsFinished", "true")
 
 						if (isProductsNotEmpty || isStoreProductsNotEmpty) {
-							await this.load();
+							await this.loadData();
 						}
-					}, 1000)
+					}, 2000)
 
 					await AsyncStorage.setItem("productsLoadingIntervalId", productsLoadingIntervalId.toString())
 				}
@@ -129,7 +128,8 @@ class Basket extends Component {
 
 
 	async load() {
-		let storeProducts = await this.storeProductRepository.findTopStoreProductsInfo(this.state.lastId);
+		let storeProducts = 
+			await this.storeProductRepository.findTopStoreProductsInfo(this.state.lastId);
 		let last = storeProducts[storeProducts.length - 1];
 		if (last != undefined) {
 			this.setState({
@@ -223,15 +223,60 @@ class Basket extends Component {
 				
 				return false; // Indicate failure
 			}
-	
+
 			if (!response || !response.content || response.content.length === 0) {
-				console.log(storeProducts);
 				return false; 
 			}
 	
 			for (const storeProduct of response.content) {
+
+				console.log("Accepted response: ", response.content)
+
 				try {
-					let products = await this.productRepository.findProductsByGlobalId(storeProduct.productId)
+					const updatedStoreProducts = this.state.storeProducts.map((product) => {
+						const storeProduct = response.content.find(p => p.id === product.global_id);
+						
+						if (storeProduct) {
+							console.log("Log the updated product")
+							console.log({
+								brand_name: product.brand_name,
+								count: storeProduct.count,
+								count_type: product.count_type,
+								id: product.id,
+								name: product.name,
+							});
+		
+							return {
+								brand_name: product.brand_name,
+								count: storeProduct.count,
+								count_type: product.count_type,
+								id: product.id,
+								name: product.name,
+							}; // Return the updated product
+						}
+
+						return product; // Return the original product if no update is needed
+					});
+		
+					console.log("⏳⏳⏳⏳⏳⏳");
+					console.log(updatedStoreProducts);
+		
+					this.setState({ storeProducts: updatedStoreProducts });
+		
+
+						
+
+					// console.log(
+					// 	updatedStoreProducts
+					// )
+
+					
+					
+					let products = 
+						await this.productRepository.findProductsByGlobalId(
+							storeProduct.productId
+						);
+
 					await this.storeProductRepository.createStoreProductWithAllValues(
 						products[0].id, 
 						storeProduct.nds,
