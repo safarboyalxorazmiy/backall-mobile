@@ -80,6 +80,38 @@ class ApiService {
       }
   }
 
+  async getNotDownloadedLocalProducts(page, size) {
+    try {
+        const accessToken = await this.tokenService.retrieveAccessToken();
+        const storeId = parseInt(await this.getStoreId());
+
+        const requestOptions = {
+            method: "GET",
+            headers: {
+              "Authorization": `Bearer ${accessToken}`
+            }
+        };
+
+        console.log('Sending request to:', `${serverUrl}/api/v1/product/get/local/info/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log('Request body:', requestOptions);
+
+        const response = await fetch(`${serverUrl}/api/v1/product/get/local/info/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
+
+        console.log('Response status:', response.status);
+        const responseBody = await response.json();
+        console.log('Response body:', responseBody);
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        return responseBody;
+    } catch (error) {
+        console.log("Local fucking product error: ", error)
+    }
+  }
+  
+
   async getGlobalProducts(page, size) {
     try {
         const accessToken = await this.tokenService.retrieveAccessToken();
@@ -141,6 +173,39 @@ class ApiService {
         throw error; // Re-throwing the error for handling in the calling code
     }
   }
+
+  async getStoreProductsNotDownloaded(page, size) {
+    try {
+        const accessToken = await this.tokenService.retrieveAccessToken();
+        const storeId = parseInt(await this.getStoreId());
+
+        const requestOptions = {
+            method: "GET",
+            headers: {
+              "Authorization": `Bearer ${accessToken}`
+            }
+        };
+
+        console.log('Sending request to:', `${serverUrl}/api/v1/store/product/get/info/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log('Request body:', requestOptions);
+
+        const response = await fetch(`${serverUrl}/api/v1/store/product/get/info/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
+
+        console.log('Response status:', response.status);
+        const responseBody = await response.json();
+        console.log('Response body:', responseBody);
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        return responseBody;
+    } catch (error) {
+        console.log("Error occurred: ", error);
+        throw error; // Re-throwing the error for handling in the calling code
+    }
+  }
+
 
 
   // GET SELL PAGINATION 

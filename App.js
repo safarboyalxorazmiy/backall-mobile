@@ -137,6 +137,13 @@ class App extends Component {
 			console.log("Is not saved", isNotSaved);
 			let email = await AsyncStorage.getItem("email");
 			
+			// Get the current date
+			let currentDate = new Date();
+			// Extract month and year
+			let month = String(currentDate.getMonth() + 1).padStart(2, '0'); // getMonth() returns 0-based month
+			let year = currentDate.getFullYear();
+			let monthYear = `${month}/${year}`;
+			
 			if (this.state.notPayed) {
 				let isPayed = await this.apiService.getPayment(email, monthYear);
 				console.log("Payed: ", isPayed)
@@ -152,12 +159,7 @@ class App extends Component {
 
 				console.log(email)
 				
-				// Get the current date
-				let currentDate = new Date();
-				// Extract month and year
-				let month = String(currentDate.getMonth() + 1).padStart(2, '0'); // getMonth() returns 0-based month
-				let year = currentDate.getFullYear();
-				let monthYear = `${month}/${year}`;
+				
 		
 				let isPayed = await this.apiService.getPayment(email, monthYear);
 				console.log("Payed: ", isPayed)

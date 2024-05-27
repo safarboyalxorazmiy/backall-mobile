@@ -27,6 +27,12 @@ import WalletIcon from "../assets/navbar/wallet-icon.svg";
 import WalletIconActive from "../assets/navbar/wallet-icon-active.svg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+import StoreProductRepository from "../repository/StoreProductRepository";
+import ProductRepository from "../repository/ProductRepository";
+
+import ApiService from "./ApiService";
+
+
 const Tab = createBottomTabNavigator();
 const routesWithoutNavbar = [
   "ProfitDetail",
@@ -88,6 +94,10 @@ class NavigationService extends Component {
     this.state = {
       navbarStyle: styles.navbar,
     };
+
+    this.storeProductRepository = new StoreProductRepository();
+		this.apiService = new ApiService();
+		this.productRepository = new ProductRepository();
   }
 
   componentDidMount() {
@@ -113,6 +123,8 @@ class NavigationService extends Component {
   _keyboardDidHide = () => {
     this.setState({ navbarStyle: styles.navbar });
   };
+
+  
 
   render() {
     return (
@@ -242,6 +254,7 @@ class NavigationService extends Component {
               type: "tabPress",
               target: route.key,
               canPreventDefault: true,
+
             });
 
             if (!isFocused && !event.defaultPrevented) {
@@ -251,6 +264,25 @@ class NavigationService extends Component {
               }
 
               navigation.navigate(route.name);
+
+              console.log("We are on: " + route.name)
+              
+              if (route.name != "Basket") {
+                let productsLoadingIntervalProccessIsFinished = 
+                  await AsyncStorage.getItem("productsLoadingIntervalProccessIsFinished");  
+                
+                if (productsLoadingIntervalProccessIsFinished == "true") {
+                  console.log("CLEARING")
+                  let productsLoadingIntervalId = 
+                    await AsyncStorage.getItem("productsLoadingIntervalId")
+
+                  if (productsLoadingIntervalId != "undefined") {
+                    clearInterval(parseInt(productsLoadingIntervalId));
+                    await AsyncStorage.setItem("productsLoadingIntervalId", "undefined")
+                    console.log("CLEARED " + productsLoadingIntervalId)  
+                  }
+                }
+              } 
             }
           };
 

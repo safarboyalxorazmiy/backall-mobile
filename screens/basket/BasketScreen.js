@@ -13,9 +13,12 @@ import SearchIcon from "../../assets/search-icon.svg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import BasketIcon from "../../assets/basket-icon-light.svg";
 import Success from "../../assets/success.svg";
-import StoreProductRepository from "../../repository/StoreProductRepository";
 import { Keyboard } from 'react-native';
 import Modal from "react-native-modal";
+
+import StoreProductRepository from "../../repository/StoreProductRepository";
+import ProductRepository from "../../repository/ProductRepository";
+import ApiService from "../../service/ApiService";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -32,10 +35,21 @@ class Basket extends Component {
 			lastId: 0,
 			lastYPos: 0,
 			notAllowed: "",
-			role: ""
+			role: "",
+
+			lastNotDownloadedProductsPage: 0,
+			lastNotDownloadedProductsSize: 10,
+      lastStoreProductsPage: 0,
+			lastStoreProductsSize: 10,
+
+      productsLoadingIntervalId: undefined,
+      productsLoadingIntervalProccessIsFinished: true
+
 		}
 		
 		this.storeProductRepository = new StoreProductRepository();
+		this.apiService = new ApiService();
+		this.productRepository = new ProductRepository();
 
 		this.keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
@@ -64,16 +78,36 @@ class Basket extends Component {
 
 		navigation.addListener("focus", 
 			async () => {
+				
 				await this.storeProductRepository.init();
+				
+				if (await AsyncStorage.getItem("role") === "BOSS") {
+					let productsLoadingIntervalId = setInterval(async () => {
+						await AsyncStorage.setItem("productsLoadingIntervalProccessIsFinished", "false")
+						
+						let isProductsNotEmpty = 
+							await this.getNotDownloadedLocalProducts();
+						let isStoreProductsNotEmpty = 
+							await this.getNotDownloadedStoreProducts();
+
+						await AsyncStorage.setItem("productsLoadingIntervalProccessIsFinished", "true")
+
+						if (isProductsNotEmpty || isStoreProductsNotEmpty) {
+							await this.load();
+						}
+					}, 1000)
+
+					await AsyncStorage.setItem("productsLoadingIntervalId", productsLoadingIntervalId.toString())
+				}
 
 				// ROLE ERROR
 				let notAllowed = await AsyncStorage.getItem("not_allowed");
-				this.setState({notAllowed: notAllowed})
+				this.setState({notAllowed: notAllowed});
 
 				this.setState(
 					{role: await AsyncStorage.getItem("role")}
 				);
-				
+
 				this.setState(
 					{
 						isCreated: "false",
@@ -86,31 +120,140 @@ class Basket extends Component {
 				);
 
 				await this.getCreated();
-				let storeProducts = await this.storeProductRepository.findTopStoreProductsInfo(this.state.lastId);
-				let last = storeProducts[storeProducts.length - 1];
-				if (last != undefined) {
-					this.setState({
-						lastId: last.id
-					})
-
-					console.log("LAST ID::", last.id)
-				};
-
-				this.setState({
-					storeProducts: storeProducts,
-					searchInputValue: ""
-				});
-
-				console.log("Hello world!")
-				this.setState(
-					{role: await AsyncStorage.getItem("role")}
-				);
-
-				console.log(this.state.role === "SELLER");
 				
-				await this.storeProductRepository.init();
+				
+				await this.load();
 			}
 		);	
+	}
+
+
+	async load() {
+		let storeProducts = await this.storeProductRepository.findTopStoreProductsInfo(this.state.lastId);
+		let last = storeProducts[storeProducts.length - 1];
+		if (last != undefined) {
+			this.setState({
+				lastId: last.id
+			})
+
+			console.log("LAST ID::", last.id)
+		};
+
+		this.setState({
+			storeProducts: storeProducts,
+			searchInputValue: ""
+		});
+
+		console.log("Hello world!")
+		this.setState(
+			{role: await AsyncStorage.getItem("role")}
+		);
+
+		console.log(this.state.role === "SELLER");
+
+		await this.storeProductRepository.init();
+	}
+
+	async getNotDownloadedLocalProducts() {
+		console.log("GETTING NOT DOWNLOADED NOT DOWNLOADED PRODUCTS ⏳⏳⏳");
+
+		let products = [];
+		let size = this.state.lastNotDownloadedProductsSize;
+		let page = this.state.lastNotDownloadedProductsPage;
+	
+		while (true) {
+			let downloadedProducts;
+			downloadedProducts = await this.apiService.getNotDownloadedLocalProducts(page, size);
+	
+			if (
+				!downloadedProducts || 
+				!downloadedProducts.content || 
+				downloadedProducts.content.length === 0
+			) {
+				console.log(products);
+				return false;
+			}
+
+			for (const product of downloadedProducts.content) {
+				try {
+					await this.productRepository.createProductWithGlobalId(
+						product.id,
+						product.name,
+						product.brandName,
+						product.serialNumber,
+						"LOCAL",
+						true
+					);
+				} 
+        catch (error) {
+					console.error("Error creating local products:", error);
+          
+          this.setState({
+            lastNotDownloadedProductsSize: size,
+            lastNotDownloadedProductsPage: page
+          });
+          
+          break; 
+				}
+			}
+
+			page++;
+			products.push(downloadedProducts);
+      return true;
+    }
+	}
+
+  async getNotDownloadedStoreProducts() {
+		console.log("GETTING NOT DOWNLOADED STORE PRODUCTS ⏳⏳⏳");
+
+		let storeProducts = [];
+		let size = this.state.lastStoreProductsSize;
+		let page = this.state.lastStoreProductsPage;
+	
+		while (true) {
+			let response;
+			try {
+				response = await this.apiService.getStoreProductsNotDownloaded(page, size);
+			} catch (error) {
+				console.error("Error fetching global products:", error);
+				this.setState({
+					lastStoreProductsSize: size,
+					lastStoreProductsPage: page
+				});
+				
+				return false; // Indicate failure
+			}
+	
+			if (!response || !response.content || response.content.length === 0) {
+				console.log(storeProducts);
+				return false; 
+			}
+	
+			for (const storeProduct of response.content) {
+				try {
+					let products = await this.productRepository.findProductsByGlobalId(storeProduct.productId)
+					await this.storeProductRepository.createStoreProductWithAllValues(
+						products[0].id, 
+						storeProduct.nds,
+						storeProduct.price,
+						storeProduct.sellingPrice,
+						storeProduct.percentage,
+						storeProduct.count,
+						storeProduct.countType,
+						storeProduct.id,
+						true
+					)
+				} catch (error) {
+					console.error("Error getStoreProducts:", error);
+					// Continue with next product
+					continue;
+				}
+			}
+	
+			page++;
+			storeProducts.push(response);
+      return true;
+		}
 	}
 
 	async loadData() {
@@ -195,9 +338,12 @@ class Basket extends Component {
 						const currentYPos = event.nativeEvent.contentOffset.y;
 						console.log("Current Y position:", currentYPos);
 
-						if ((currentYPos - this.state.lastYPos) > 30) {
+						let basketLoaded = await AsyncStorage.getItem("BasketLoaded")
+
+						if ((currentYPos - this.state.lastYPos) > 30 || basketLoaded == "true") {
 							this.setState({lastYPos: currentYPos});;
 							await this.loadData();
+							await AsyncStorage.setItem("BasketLoaded", "false")
 						}
 					}}
 				>
