@@ -230,6 +230,38 @@ class ApiService {
     }
   }
 
+  async getSellGroupsNotDownloaded(page, size) {
+    try {
+        const accessToken = await this.tokenService.retrieveAccessToken();
+        const storeId = parseInt(await this.getStoreId());
+
+        const requestOptions = {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${accessToken}`
+            }
+        };
+
+        console.log('Sending request to:', `${serverUrl}/api/v1/store/sell/group/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log('Request body:', requestOptions);
+
+        const response = await fetch(`${serverUrl}/api/v1/store/sell/group/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
+
+        console.log('Response status:', response.status);
+        const responseBody = await response.json();
+        console.log('Response body:', responseBody);
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        return responseBody;
+    } catch (error) {
+        console.log("Error occurred: ", error);
+        throw error; // Re-throwing the error for handling in the calling code
+    }
+  }
+
   async getSellHistories(page, size) {
       try {
           const accessToken = await this.tokenService.retrieveAccessToken();
@@ -260,6 +292,38 @@ class ApiService {
           console.log("Error occurred: ", error);
           throw error; // Re-throwing the error for handling in the calling code
       }
+  }
+
+  async getSellHistoriesNotDownloaded(page, size) {
+    try {
+        const accessToken = await this.tokenService.retrieveAccessToken();
+        const storeId = parseInt(await this.getStoreId());
+
+        const requestOptions = {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${accessToken}`
+            }
+        };
+
+        console.log('Sending request to:', `${serverUrl}/api/v1/store/sell/history/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log('Request body:', requestOptions);
+
+        const response = await fetch(`${serverUrl}/api/v1/store/sell/history/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
+
+        console.log('Response status:', response.status);
+        const responseBody = await response.json();
+        console.log('Response body:', responseBody);
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        return responseBody;
+    } catch (error) {
+        console.log("Error occurred: ", error);
+        throw error; // Re-throwing the error for handling in the calling code
+    }
   }
 
   async getSellAmountDate(page, size) {
@@ -294,6 +358,38 @@ class ApiService {
       }
   }
 
+  async getSellAmountDateNotDownloaded(page, size) {
+    try {
+        const accessToken = await this.tokenService.retrieveAccessToken();
+        const storeId = parseInt(await this.getStoreId());
+
+        const requestOptions = {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${accessToken}`
+            }
+        };
+
+        console.log('Sending request to:', `${serverUrl}/api/v1/store/sell/amount/date/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log('Request body:', requestOptions);
+
+        const response = await fetch(`${serverUrl}/api/v1/store/sell/amount/date/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
+
+        console.log('Response status:', response.status);
+        const responseBody = await response.json();
+        console.log('Response body:', responseBody);
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        return responseBody;
+    } catch (error) {
+        console.log("Error occurred: ", error);
+        throw error; // Re-throwing the error for handling in the calling code
+    }
+  }
+
   async getSellHistoryGroup(page, size) {
       try {
           const accessToken = await this.tokenService.retrieveAccessToken();
@@ -324,6 +420,38 @@ class ApiService {
           console.log("Error occurred: ", error);
           throw error; // Re-throwing the error for handling in the calling code
       }
+  }
+
+  async getSellHistoryGroupNotDownloaded(page, size) {
+    try {
+        const accessToken = await this.tokenService.retrieveAccessToken();
+        const storeId = parseInt(await this.getStoreId());
+
+        const requestOptions = {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${accessToken}`
+            }
+        };
+
+        console.log('Sending request to:', `${serverUrl}/api/v1/store/sell/link/info/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log('Request body:', requestOptions);
+
+        const response = await fetch(`${serverUrl}/api/v1/store/sell/link/info/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
+
+        console.log('Response status:', response.status);
+        const responseBody = await response.json();
+        console.log('Response body:', responseBody);
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        return responseBody;
+    } catch (error) {
+        console.log("Error occurred: ", error);
+        throw error; // Re-throwing the error for handling in the calling code
+    }
   }
 
 
@@ -358,6 +486,41 @@ class ApiService {
     }
   }
 
+  async getProfitGroupsNotDownloaded(page, size) {
+    try {
+      const accessToken = await this.tokenService.retrieveAccessToken();
+      const storeId = parseInt(await this.getStoreId());
+
+      const requestOptions = {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${accessToken}`
+          }
+      };
+
+      console.log(
+        'Sending request to:', 
+      `${serverUrl}/api/v1/store/profit/group/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`);
+      console.log('Request body:', requestOptions);
+
+      const response = 
+        await fetch(
+          `${serverUrl}/api/v1/store/profit/group/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`,
+          requestOptions
+        );
+
+      console.log('Response status:', response.status);
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      return await response.json(); // Return the parsed JSON directly
+    } catch (error) {
+      console.log("Error occurred: ", error);
+      throw error; // Re-throwing the error for handling in the calling code
+    }
+  }
 
   async getProfitHistories(page, size) {
     try {
@@ -375,6 +538,38 @@ class ApiService {
         console.log('Request body:', requestOptions);
 
         const response = await fetch(`${serverUrl}/api/v1/store/profit/history/get?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
+
+        console.log('Response status:', response.status);
+        const responseBody = await response.json(); // Read JSON response only once
+        console.log('Response body:', responseBody);
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        return responseBody; // Return the JSON response
+    } catch (error) {
+        console.log("Error occurred: ", error);
+        throw error; // Re-throwing the error for handling in the calling code
+    }
+  }
+
+  async getProfitHistoriesNotDownloaded(page, size) {
+    try {
+        const accessToken = await this.tokenService.retrieveAccessToken();
+        const storeId = parseInt(await this.getStoreId());
+
+        const requestOptions = {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${accessToken}`
+            }
+        };
+
+        console.log('Sending request to:', `${serverUrl}/api/v1/store/profit/history/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log('Request body:', requestOptions);
+
+        const response = await fetch(`${serverUrl}/api/v1/store/profit/history/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
         console.log('Response status:', response.status);
         const responseBody = await response.json(); // Read JSON response only once
@@ -423,6 +618,38 @@ class ApiService {
       }
   }
 
+  async getProfitHistoryGroupNotDownloaded(page, size) {
+    try {
+        const accessToken = await this.tokenService.retrieveAccessToken();
+        const storeId = parseInt(await this.getStoreId());
+
+        const requestOptions = {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${accessToken}`
+            }
+        };
+
+        console.log('Sending request to:', `${serverUrl}/api/v1/store/profit/link/info/not/downlaoded?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log('Request body:', requestOptions);
+
+        const response = await fetch(`${serverUrl}/api/v1/store/profit/link/info/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
+
+        console.log('Response status:', response.status);
+        const responseBody = await response.json(); // Read JSON response only once
+        console.log('Response body:', responseBody);
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        return responseBody; // Return the JSON response
+    } catch (error) {
+        console.log("Error occurred: ", error);
+        throw error; // Re-throwing the error for handling in the calling code
+    }
+}
+
   async getProfitAmountDate(page, size) {
     try {
         const accessToken = await this.tokenService.retrieveAccessToken();
@@ -439,6 +666,38 @@ class ApiService {
         console.log('Request body:', requestOptions);
 
         const response = await fetch(`${serverUrl}/api/v1/store/profit/amount/date/get?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
+
+        console.log('Response status:', response.status);
+        const responseBody = await response.json(); // Read JSON response only once
+        console.log('Response body:', responseBody);
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        return responseBody; // Return the JSON response
+    } catch (error) {
+        console.log("Error occurred: ", error);
+        throw error; // Re-throwing the error for handling in the calling code
+    }
+  }
+
+  async getProfitAmountDateNotDownloaded(page, size) {
+    try {
+        const accessToken = await this.tokenService.retrieveAccessToken();
+        const storeId = parseInt(await this.getStoreId());
+
+        const requestOptions = {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${accessToken}`
+            }
+        };
+
+        console.log('Sending request to:', `${serverUrl}/api/v1/store/profit/amount/date/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log('Request body:', requestOptions);
+
+        const response = await fetch(`${serverUrl}/api/v1/store/profit/amount/date/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
         console.log('Response status:', response.status);
         const responseBody = await response.json(); // Read JSON response only once
