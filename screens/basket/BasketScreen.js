@@ -75,13 +75,28 @@ class Basket extends Component {
 	async componentDidMount() {
 		const {navigation} = this.props;
 
+		await AsyncStorage.setItem("productsLoadingIntervalProccessIsFinished", "true");
+
 		navigation.addListener("focus", 
 			async () => {
-				
 				await this.storeProductRepository.init();
 				
 				if (await AsyncStorage.getItem("role") === "BOSS") {
 					let productsLoadingIntervalId = setInterval(async () => {
+						if (await AsyncStorage.getItem("productsLoadingIntervalProccessIsFinished") != "true") {
+							return;
+						}
+
+						console.log("INTERNAL STARTED SUCCESSFULLY! \n We are on: ");
+						console.log(await AsyncStorage.getItem("window"));
+						if (await AsyncStorage.getItem("window") != "Basket") {
+							if (productsLoadingIntervalId !== undefined) {
+								clearInterval(productsLoadingIntervalId);
+								console.log("CLEARED " + productsLoadingIntervalId);
+								return;
+							}
+						}
+
 						await AsyncStorage.setItem("productsLoadingIntervalProccessIsFinished", "false")
 						
 						let isProductsNotEmpty = 
@@ -95,8 +110,6 @@ class Basket extends Component {
 							await this.loadData();
 						}
 					}, 2000)
-
-					await AsyncStorage.setItem("productsLoadingIntervalId", productsLoadingIntervalId.toString())
 				}
 
 				// ROLE ERROR

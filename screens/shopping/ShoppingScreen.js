@@ -10,6 +10,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import AmountDateRepository from "../../repository/AmountDateRepository";
 import Modal from "react-native-modal";
 
+import ApiService from "../../service/ApiService";
+import ProductRepository from "../../repository/ProductRepository";
+
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
@@ -32,19 +35,291 @@ class Shopping extends Component {
 			notAllowed: "",
 			animation: new Animated.Value(0),
 
-			notFinished: true
+			notFinished: true,
+			
+			// SELL
+			lastSellGroupsPage: 0,
+			lastSellGroupsSize: 10,
+			lastSellHistoriesPage: 0,
+			lastSellHistoriesSize: 10,
+			lastSellHistoryGroupPage: 0,
+			lastSellHistoryGroupSize: 10,	
+			lastSellAmountDatePage: 0,
+			lastSellAmountDateSize: 10
 		};
 		
 		this.sellHistoryRepository = new SellHistoryRepository();
 		this.amountDateRepository = new AmountDateRepository();
+		this.productRepository = new ProductRepository();
+		this.apiService = new ApiService();
 		
 		this.initSellingHistoryGroup();
+	}
+
+	async getSellGroupNotDownloaded() {
+		console.log("GETTING NOT DOWNLOADED SELL GROUPS ⏳⏳⏳");
+
+		let sellGroups = [];
+		let size = this.state.lastSellGroupsSize;
+		let page = this.state.lastSellGroupsPage;
+	
+		while (true) {
+			let response;
+			try {
+				response = await this.apiService.getSellGroupsNotDownloaded(page, size);
+			} catch (error) {
+				console.error("Error fetching global products:", error);
+				this.setState({
+					lastSize: size,
+					lastPage: page
+				});
+				
+				return false;
+			}
+	
+			if (!response || !response.content || response.content.length === 0) {
+				break;
+			}
+	
+			for (const sellGroup of response.content) {
+				try {
+					await this.sellHistoryRepository.createSellGroupWithAllValues(
+						sellGroup.createdDate,
+						sellGroup.amount,
+						sellGroup.id,
+						true
+					);
+				} catch (error) {
+					console.error("Error getSellGroups:", error);
+					// Continue with next product
+					continue;
+				}
+			}
+
+			page++;
+			sellGroups.push(response);
+		}
+
+		return sellGroups.length != 0;
+	}
+
+	async getSellHistoryNotDownloaded() {
+		console.log("GETTING NOT DOWNLOADED SELL HISTORIES ⏳⏳⏳");
+
+		let sellHistories = [];
+		let size = this.state.lastSellHistoriesSize;
+		let page = this.state.lastSellHistoriesPage;
+	
+		while (true) {
+			let response;
+			try {
+				response = await this.apiService.getSellHistoriesNotDownloaded(page, size);
+			} catch (error) {
+				console.error("Error fetching global products:", error);
+				this.setState({
+					lastSize: size,
+					lastPage: page
+				});
+				
+				break;
+			}
+	
+			if (!response || !response.content || response.content.length === 0) {
+				console.log(sellHistories);
+				return true; // Indicate success and exit the loop
+			}
+	
+			for (const sellHistory of response.content) {
+				if (sellHistory == undefined) {
+					continue;
+				}
+
+				let productsByGlobalId = 
+					await this.productRepository.findProductsByGlobalId(sellHistory.productId);
+				try {
+					await this.sellHistoryRepository.createSellHistoryWithAllValues(
+						productsByGlobalId[0].id,
+						sellHistory.id,
+						sellHistory.count,
+						sellHistory.countType,
+						sellHistory.sellingPrice,
+						sellHistory.createdDate,
+						true
+					);
+				} catch (error) {
+					console.error("Error getSellHistories:", error);
+					// Continue with next product
+					continue;
+				}
+			}
+	
+			page++;
+			sellHistories.push(response);
+		}
+
+		return sellHistories.length != 0;
+	}
+
+	async getSellHistoryGroupNotDownloaded() {
+		console.log("GETTING NOT DOWNLOADED SELL HISTORY GROUP ⏳⏳⏳");
+
+		let sellHistoryGroup = [];
+		let size = this.state.lastSellHistoryGroupSize;
+		let page = this.state.lastSellHistoryGroupPage;
+	
+		while (true) {
+			let response;
+			try {
+				response = await this.apiService.getSellHistoriesNotDownloaded(page, size);
+			} catch (error) {
+				console.error("Error fetching global products:", error);
+				this.setState({
+					lastSize: size,
+					lastPage: page
+				});
+				
+				return false; // Indicate failure
+			}
+	
+			if (!response || !response.content || response.content.length === 0) {
+				break;
+			}
+	
+			for (const sellHistoryGroup of response.content) {
+				let sellGroupId = 
+					await this.sellHistoryRepository.findSellGroupByGlobalId(
+						sellHistoryGroup.sellGroupId
+					);
+
+				let sellHistoryId = 
+					await this.sellHistoryRepository.findSellHistoryByGlobalId(
+						sellHistoryGroup.sellHistoryId
+					);
+
+				try {
+					await this.sellHistoryRepository.createSellHistoryGroupWithAllValues(
+						sellHistoryId[0].id,
+						sellGroupId[0].id,
+						sellHistoryGroup.id,
+						true
+					);
+				} catch (error) {
+					console.error("Error getSellHistoryGroup:", error);
+					// Continue with next product
+					continue;
+				}
+			}
+	
+			page++;
+			sellHistoryGroup.push(response);
+		}
+
+		return sellHistoryGroup.length != 0;
+	}
+
+	async getSellAmountDateNotDownloaded() {
+		console.log("GETTING NOT DOWNLOADED SELL AMOUNT DATE ⏳⏳⏳");
+
+		let sellAmountDate = [];
+		let size = this.state.lastSellAmountDateSize;
+		let page = this.state.lastSellAmountDatePage;
+	
+		while (true) {
+			let response;
+			try {
+				response = await this.apiService.getSellAmountDateNotDownloaded(page, size);
+			} catch (error) {
+				console.error("Error fetching global products:", error);
+				this.setState({
+					lastSize: size,
+					lastPage: page
+				});
+				
+				return false; // Indicate failure
+			}
+	
+			if (!response || !response.content || response.content.length === 0) {
+				break;
+			}
+	
+			for (const sellAmountDate of response.content) {
+				try {
+					await this.amountDateRepository.createSellAmountWithAllValues(
+						sellAmountDate.amount,
+						sellAmountDate.date,
+						sellAmountDate.id,
+						true
+					);
+				} catch (error) {
+					console.error("Error getSellAmountDate:", error);
+					// Continue with next product
+					continue;
+				}
+			}
+	
+			page++;
+			sellAmountDate.push(response);
+		}
+
+		return sellAmountDate.length != 0;
 	}
 	
 	async componentDidMount() {
 		const {navigation} = this.props;
+
+		await AsyncStorage.setItem("sellLoadingIntervalProccessIsFinished", "true");
 		
 		navigation.addListener("focus", async () => {
+
+			if (await AsyncStorage.getItem("role") === "BOSS") {
+				let sellLoadingIntervalId = setInterval(async () => {
+					if (await AsyncStorage.getItem("sellLoadingIntervalProccessIsFinished") != "true") {
+						return;
+					}
+
+					console.log("INTERNAL STARTED SUCCESSFULLY! \n We are on: ");
+					console.log(await AsyncStorage.getItem("window"));
+					if (await AsyncStorage.getItem("window") != "Shopping") {
+            if (sellLoadingIntervalId !== undefined) {
+							clearInterval(sellLoadingIntervalId);
+							console.log("CLEARED " + sellLoadingIntervalId);
+							return;
+            }
+					}
+
+					await AsyncStorage.setItem("sellLoadingIntervalProccessIsFinished", "false")
+					
+					let isSellGroupEmpty = 
+						await this.getSellGroupNotDownloaded();
+
+					let isSellHistoryEmpty = 
+						await this.getSellHistoryNotDownloaded();
+
+					let isSellHistoryGroupEmpty = 
+						await this.getSellHistoryGroupNotDownloaded();
+
+					let isSellAmountDateEmpty = 
+						await this.getSellAmountDateNotDownloaded();
+
+					await AsyncStorage.setItem(
+						"sellLoadingIntervalProccessIsFinished", 
+						"true"
+					);
+
+					if (isSellGroupEmpty || isSellHistoryEmpty || isSellHistoryGroupEmpty || isSellAmountDateEmpty) {
+						this.setState({
+							notFinished: true
+						});
+
+						while (this.state.notFinished) {
+							this.setState({
+								notFinished: await this.getNextSellHistoryGroup()
+							});
+						}
+					}
+				}, 2000)
+			}
+
 			let isNotSaved = await AsyncStorage.getItem("isNotSaved");
 			if (isNotSaved == "true") {
 				this.setState({
@@ -154,12 +429,14 @@ class Shopping extends Component {
 		if (this.state.fromDate != null && this.state.toDate) {
 			this.setState({isCollecting: true});
 			
-			let nextSellHistories = await this.sellHistoryRepository.getTop10SellGroupByDate(
-				this.state.lastGroupId - 10,
-				this.state.fromDate,
-				this.state.toDate
-			);
-			let allSellHistories = this.state.sellingHistory.concat(nextSellHistories);
+			let nextSellHistories = 
+				await this.sellHistoryRepository.getTop10SellGroupByDate(
+					this.state.lastGroupId - 10,
+					this.state.fromDate,
+					this.state.toDate
+				);
+
+				let allSellHistories = this.state.sellingHistory.concat(nextSellHistories);
 			
 			this.setState({
 				sellingHistory: allSellHistories,
@@ -185,7 +462,8 @@ class Shopping extends Component {
 			return false;
 		}
 		
-		let nextSellHistories = await this.sellHistoryRepository.getAllSellGroup(this.state.lastGroupId - 10);
+		let nextSellHistories = 
+			await this.sellHistoryRepository.getAllSellGroup(this.state.lastGroupId - 10);
 		let allSellHistories = this.state.sellingHistory.concat(nextSellHistories);
 		
 		this.setState({

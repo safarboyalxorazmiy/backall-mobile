@@ -181,7 +181,8 @@ class ApiService {
             }
         };
 
-        const response = await fetch(`${serverUrl}/api/v1/store/product/get/info/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
+        const response = 
+          await fetch(`${serverUrl}/api/v1/store/product/get/info/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
         const responseBody = await response.json();
 
         if (!response.ok) {
@@ -245,7 +246,8 @@ class ApiService {
         console.log('Sending request to:', `${serverUrl}/api/v1/store/sell/group/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`);
         console.log('Request body:', requestOptions);
 
-        const response = await fetch(`${serverUrl}/api/v1/store/sell/group/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
+        const response = 
+          await fetch(`${serverUrl}/api/v1/store/sell/group/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
         console.log('Response status:', response.status);
         const responseBody = await response.json();
@@ -437,7 +439,8 @@ class ApiService {
         console.log('Sending request to:', `${serverUrl}/api/v1/store/sell/link/info/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`);
         console.log('Request body:', requestOptions);
 
-        const response = await fetch(`${serverUrl}/api/v1/store/sell/link/info/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
+        const response = 
+          await fetch(`${serverUrl}/api/v1/store/sell/link/info/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
         console.log('Response status:', response.status);
         const responseBody = await response.json();

@@ -124,7 +124,32 @@ class NavigationService extends Component {
     this.setState({ navbarStyle: styles.navbar });
   };
 
-  
+  async clearIntervalIfNeeded(routeName, flagKey, intervalIdKey) {
+    let checking = true;
+
+    while (checking) {
+        // Get the flag indicating if the process is finished
+        let intervalProcessIsFinished = await AsyncStorage.getItem(flagKey);
+
+        if (intervalProcessIsFinished === "true") {
+            console.log("CLEARING");
+
+            // Get the interval ID to clear
+            let intervalId = await AsyncStorage.getItem(intervalIdKey);
+
+            if (intervalId !== "undefined") {
+                clearInterval(parseInt(intervalId));
+                await AsyncStorage.setItem(intervalIdKey, "undefined");
+                console.log("CLEARED " + intervalId);
+            }
+
+            checking = false;
+        }
+
+        // Adding a sleep delay of 2 seconds
+        await new Promise(resolve => setTimeout(resolve, 2000));
+    }
+  }
 
   render() {
     return (
@@ -265,24 +290,7 @@ class NavigationService extends Component {
 
               navigation.navigate(route.name);
 
-              console.log("We are on: " + route.name)
-              
-              if (route.name != "Basket") {
-                let productsLoadingIntervalProccessIsFinished = 
-                  await AsyncStorage.getItem("productsLoadingIntervalProccessIsFinished");  
-                
-                if (productsLoadingIntervalProccessIsFinished == "true") {
-                  console.log("CLEARING")
-                  let productsLoadingIntervalId = 
-                    await AsyncStorage.getItem("productsLoadingIntervalId")
-
-                  if (productsLoadingIntervalId != "undefined") {
-                    clearInterval(parseInt(productsLoadingIntervalId));
-                    await AsyncStorage.setItem("productsLoadingIntervalId", "undefined")
-                    console.log("CLEARED " + productsLoadingIntervalId)  
-                  }
-                }
-              } 
+              await AsyncStorage.setItem("window", route.name);      
             }
           };
 
