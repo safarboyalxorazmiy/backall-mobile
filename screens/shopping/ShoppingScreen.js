@@ -263,109 +263,7 @@ class Shopping extends Component {
 
 		return sellAmountDate.length != 0;
 	}
-	
-	async componentDidMount() {
-		const {navigation} = this.props;
 
-		await AsyncStorage.setItem("sellLoadingIntervalProccessIsFinished", "true");
-		
-		navigation.addListener("focus", async () => {
-
-			if (await AsyncStorage.getItem("role") === "BOSS") {
-				let sellLoadingIntervalId = setInterval(async () => {
-					if (await AsyncStorage.getItem("sellLoadingIntervalProccessIsFinished") != "true") {
-						return;
-					}
-
-					console.log("INTERNAL STARTED SUCCESSFULLY! \n We are on: ");
-					console.log(await AsyncStorage.getItem("window"));
-					if (await AsyncStorage.getItem("window") != "Shopping") {
-            if (sellLoadingIntervalId !== undefined) {
-							clearInterval(sellLoadingIntervalId);
-							console.log("CLEARED " + sellLoadingIntervalId);
-							return;
-            }
-					}
-
-					await AsyncStorage.setItem("sellLoadingIntervalProccessIsFinished", "false")
-					
-					let isSellGroupEmpty = 
-						await this.getSellGroupNotDownloaded();
-
-					let isSellHistoryEmpty = 
-						await this.getSellHistoryNotDownloaded();
-
-					let isSellHistoryGroupEmpty = 
-						await this.getSellHistoryGroupNotDownloaded();
-
-					let isSellAmountDateEmpty = 
-						await this.getSellAmountDateNotDownloaded();
-
-					await AsyncStorage.setItem(
-						"sellLoadingIntervalProccessIsFinished", 
-						"true"
-					);
-
-					if (isSellGroupEmpty || isSellHistoryEmpty || isSellHistoryGroupEmpty || isSellAmountDateEmpty) {
-						this.setState({
-							notFinished: true
-						});
-
-						while (this.state.notFinished) {
-							this.setState({
-								notFinished: await this.getNextSellHistoryGroup()
-							});
-						}
-					}
-				}, 2000)
-			}
-
-			let isNotSaved = await AsyncStorage.getItem("isNotSaved");
-			if (isNotSaved == "true") {
-				this.setState({
-					notFinished: true,
-					sellingHistory: [],
-					groupedHistories: []
-				});
-				
-				await this.initSellingHistoryGroup();
-
-				while (this.state.notFinished) {
-					console.log("Loading..")
-					this.setState({
-							notFinished: await this.getNextSellHistoryGroup()
-					});
-				}
-			}
-
-			await this.sellHistoryRepository.init();
-			await this.amountDateRepository.init();
-
-			// ROLE ERROR
-			let notAllowed = await AsyncStorage.getItem("not_allowed");
-			this.setState({notAllowed: notAllowed})
-
-			let thisMonthSellAmount = parseInt(await AsyncStorage.getItem("month_sell_amount"));
-			
-			let currentDate = new Date();
-			let currentMonth = currentDate.getMonth();
-			let lastStoredMonth = parseInt(await AsyncStorage.getItem("month"));
-			
-			if (currentMonth === lastStoredMonth) {
-				this.setState({thisMonthSellAmount: thisMonthSellAmount});
-			}
-			
-			await this.initSellingHistoryGroup();
-
-			while (this.state.notFinished) {
-				console.log("Loading..")
-				this.setState({
-						notFinished: await this.getNextSellHistoryGroup()
-				});
-			}
-		});
-	}
-	
 	async getDateInfo() {
 		this.setState({
 			fromDate: await AsyncStorage.getItem("ShoppingFromDate"),
@@ -382,7 +280,7 @@ class Shopping extends Component {
 			this.setState({calendarInputContent: "--/--/----"});
 		}
 	}
-	
+
 	async initSellingHistoryGroup() {
 		if (!this.state.notFinished) {
 			return;
@@ -542,7 +440,109 @@ class Shopping extends Component {
 		this.setState({currentMonthTotal: currentMonthTotal});
 		return currentMonthTotal;
 	};
-	
+
+	async componentDidMount() {
+		const {navigation} = this.props;
+
+		await AsyncStorage.setItem("sellLoadingIntervalProccessIsFinished", "true");
+		
+		navigation.addListener("focus", async () => {
+
+			if (await AsyncStorage.getItem("role") === "BOSS") {
+				let sellLoadingIntervalId = setInterval(async () => {
+					if (await AsyncStorage.getItem("sellLoadingIntervalProccessIsFinished") != "true") {
+						return;
+					}
+
+					console.log("INTERNAL STARTED SUCCESSFULLY! \n We are on: ");
+					console.log(await AsyncStorage.getItem("window"));
+					if (await AsyncStorage.getItem("window") != "Shopping") {
+            if (sellLoadingIntervalId !== undefined) {
+							clearInterval(sellLoadingIntervalId);
+							console.log("CLEARED " + sellLoadingIntervalId);
+							return;
+            }
+					}
+
+					await AsyncStorage.setItem("sellLoadingIntervalProccessIsFinished", "false")
+					
+					let isSellGroupEmpty = 
+						await this.getSellGroupNotDownloaded();
+
+					let isSellHistoryEmpty = 
+						await this.getSellHistoryNotDownloaded();
+
+					let isSellHistoryGroupEmpty = 
+						await this.getSellHistoryGroupNotDownloaded();
+
+					let isSellAmountDateEmpty = 
+						await this.getSellAmountDateNotDownloaded();
+
+					await AsyncStorage.setItem(
+						"sellLoadingIntervalProccessIsFinished", 
+						"true"
+					);
+
+					if (isSellGroupEmpty || isSellHistoryEmpty || isSellHistoryGroupEmpty || isSellAmountDateEmpty) {
+						this.setState({
+							notFinished: true
+						});
+
+						while (this.state.notFinished) {
+							this.setState({
+								notFinished: await this.getNextSellHistoryGroup()
+							});
+						}
+					}
+				}, 2000)
+			}
+
+			let isNotSaved = await AsyncStorage.getItem("isNotSaved");
+			if (isNotSaved == "true") {
+				this.setState({
+					notFinished: true,
+					sellingHistory: [],
+					groupedHistories: []
+				});
+				
+				await this.initSellingHistoryGroup();
+
+				while (this.state.notFinished) {
+					console.log("Loading..")
+					this.setState({
+							notFinished: await this.getNextSellHistoryGroup()
+					});
+				}
+			}
+
+			await this.sellHistoryRepository.init();
+			await this.amountDateRepository.init();
+
+			// ROLE ERROR
+			let notAllowed = await AsyncStorage.getItem("not_allowed");
+			this.setState({notAllowed: notAllowed})
+
+			let thisMonthSellAmount = parseInt(await AsyncStorage.getItem("month_sell_amount"));
+			
+			let currentDate = new Date();
+			let currentMonth = currentDate.getMonth();
+			let lastStoredMonth = parseInt(await AsyncStorage.getItem("month"));
+			
+			if (currentMonth === lastStoredMonth) {
+				this.setState({thisMonthSellAmount: thisMonthSellAmount});
+			}
+			
+			await this.initSellingHistoryGroup();
+
+			while (this.state.notFinished) {
+				console.log("Loading..")
+				this.setState({
+						notFinished: await this.getNextSellHistoryGroup()
+				});
+			}
+		});
+	}
+
 	render() {
 		const {navigation} = this.props;
 		

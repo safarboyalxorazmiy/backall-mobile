@@ -5,10 +5,13 @@ import {StyleSheet, Text, View, Dimensions, Image, TouchableOpacity, ScrollView,
 import CalendarIcon from "../../assets/calendar-icon.svg";
 import CrossIcon from "../../assets/cross-icon-light.svg";
 import ProfitIcon from "../../assets/profit-icon.svg";
-import ProfitHistoryRepository from '../../repository/ProfitHistoryRepository';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import AmountDateRepository from "../../repository/AmountDateRepository";
 import Modal from "react-native-modal";
+import ApiService from "../../service/ApiService";
+
+import ProductRepository from "../../repository/ProductRepository";
+import AmountDateRepository from "../../repository/AmountDateRepository";
+import ProfitHistoryRepository from '../../repository/ProfitHistoryRepository';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -27,71 +30,24 @@ class Profit extends Component {
       thisMonthProfitAmount: 0.00,
       notAllowed: "",
       animation: new Animated.Value(0),
-      notFinished: true 
+      notFinished: true,
+
+      lastProfitGroupsPage: 0,
+      lastProfitGroupsSize: 10,
+      lastProfitHistoriesPage: 0,
+      lastProfitHistoriesSize: 10,
+      lastProfitHistoryGroupPage: 0,
+      lastProfitHistoryGroupSize: 10,	
+      lastProfitAmountDatePage: 0,
+      lastProfitAmountDateSize: 10,	
     }
 
+		this.productRepository = new ProductRepository();
     this.profitHistoryRepository = new ProfitHistoryRepository();
     this.amountDateRepository = new AmountDateRepository();
+    this.apiService = new ApiService();
+
     this.initProfitHistoryGroup();
-  }
-
-  async componentDidMount() {
-    const {navigation} = this.props;
-
-    await this.profitHistoryRepository.init();
-    await this.amountDateRepository.init();
-
-    navigation.addListener("focus", async () => {
-        let isNotSaved = await AsyncStorage.getItem("isNotSaved");
-        if (isNotSaved == "true") {
-            this.setState({
-                notFinished: true,
-                profitHistories: [],
-                groupedHistories: []
-            });
-            
-            await this.initProfitHistoryGroup();
-
-            while (this.state.notFinished) {
-                console.log("Loading..")
-                this.setState({
-                    notFinished: await this.getNextProfitHistoryGroup()
-                });
-            }
-        }
-        
-        await this.profitHistoryRepository.init();
-        await this.amountDateRepository.init();
-        
-        // ROLE ERROR
-        let notAllowed = await AsyncStorage.getItem("not_allowed");
-        this.setState({notAllowed: notAllowed})
-
-        await this.initProfitHistoryGroup();
-
-        console.log(this.state.fromDate)
-        console.log(this.state.toDate)
-
-        console.log(this.state.profitHistories);
-
-        let thisMonthProfitAmount = parseInt(await AsyncStorage.getItem("month_profit_amount"));
-
-        let currentDate = new Date();
-        let currentMonth = currentDate.getMonth();
-        let lastStoredMonth = parseInt(await AsyncStorage.getItem("month"));
-
-        if (currentMonth === lastStoredMonth) {
-            this.setState({thisMonthProfitAmount: thisMonthProfitAmount});
-        }
-
-        
-        while (this.state.notFinished) {
-            console.log("Loading..")
-            this.setState({
-                notFinished: await this.getNextProfitHistoryGroup()
-            });
-        }
-    });
   }
 
   async getDateInfo() {
@@ -109,7 +65,6 @@ class Profit extends Component {
           this.setState({calendarInputContent: "--/--/----"});
       }
   }
-
   
   async initProfitHistoryGroup() {
     if (!this.state.notFinished) {
@@ -273,6 +228,324 @@ class Profit extends Component {
       }
       return `${hours}:${minutes}`;
   };
+
+  // Save not downloaded profit data
+
+  // PROFIT
+	async getProfitGroupNotDownloaded() {
+		console.log("GETTING PROFIT NOT DOWNLOADED GROUPS ⏳⏳⏳");
+
+		let profitGroups = [];
+		let size = this.state.lastProfitGroupsSize;
+		let page = this.state.lastProfitGroupsPage;
+	
+		while (true) {
+			let response;
+			try {
+				response = await this.apiService.getProfitGroupsNotDownloaded(page, size);
+			} catch (error) {
+				console.error("Error fetching getProfitGroups():", error);
+				this.setState({
+					lastSize: size,
+					lastPage: page
+				});
+				
+				return false; // Indicate failure
+			}
+	
+			if (!response || !response.content || response.content.length === 0) {
+				console.log(profitGroups);
+				break; // Indicate success and exit the loop
+			}
+	
+			for (const profitGroup of response.content) {
+				try {
+					await this.profitHistoryRepository.createProfitGroupWithAllValues(
+						profitGroup.createdDate,
+						profitGroup.profit,
+						profitGroup.id,
+						true
+					);
+				} catch (error) {
+					console.error("Error getProfitGroups:", error);
+					// Continue with next product
+					continue;
+				}
+			}
+	
+			page++;
+			profitGroups.push(response);
+		}
+
+    return profitGroups.length != 0;
+	}
+
+	async getProfitHistoriesNotDownloaded() {
+		console.log("GETTING PROFIT HISTORIES NOT DOWNLOADED ⏳⏳⏳");
+
+		let profitHistories = [];
+		let size = this.state.lastProfitHistoriesSize;
+		let page = this.state.lastProfitHistoriesPage;
+	
+		while (true) {
+			let response;
+			try {
+				response = await this.apiService.getProfitHistoriesNotDownloaded(page, size);
+			} catch (error) {
+				console.error("Error fetching global products:", error);
+				this.setState({
+					lastSize: size,
+					lastPage: page
+				});
+				
+				return false; // Indicate failure
+			}
+	
+			if (!response || !response.content || response.content.length === 0) {
+				console.log(profitHistories);
+				break; // Indicate success and exit the loop
+			}
+	
+			for (const profitHistory of response.content) {
+				console.log("PROFIT HISTORY FROM BACKEND::", profitHistory);
+				try {
+					let localProductsById = await this.productRepository.findProductsByGlobalId(profitHistory.productId);
+
+					console.log("LOCAL PRODUCTS FOUND::", localProductsById);
+
+					await this.profitHistoryRepository.createProfitHistoryWithAllValues(
+						localProductsById[0].id,
+						profitHistory.id,
+						profitHistory.count,
+						profitHistory.countType,
+						profitHistory.profit,
+						profitHistory.createdDate,
+						true
+					);
+				} catch (error) {
+					console.error("Error getProfitHistories:", error);
+					continue;
+				}
+			}
+	
+			page++;
+			profitHistories.push(response);
+		}
+
+    return profitHistories.length != 0;
+	}
+	
+	async getProfitHistoryGroupNotDownloaded() {
+		console.log("GETTING PROFIT HISTORY GROUP ⏳⏳⏳")
+		let profitHistoryGroup = [];
+		let size = this.state.lastProfitHistoryGroupSize;
+		let page = this.state.lastProfitHistoryGroupPage;
+	
+		while (true) {
+			let response;
+			try {
+				response = await this.apiService.getProfitHistoryGroupNotDownloaded(page, size);
+			} catch (error) {
+				console.error("Error fetching global products:", error);
+				this.setState({
+					lastSize: size,
+					lastPage: page
+				});
+				
+				return false; // Indicate failure
+			}
+	
+			if (!response || !response.content || response.content.length === 0) {
+				console.log(profitHistoryGroup);
+				break; // Indicate success and exit the loop
+			}
+	
+			for (const profitHistoryGroup of response.content) {
+				let profitGroupId = await this.profitHistoryRepository.findProfitGroupByGlobalId(profitHistoryGroup.profitGroupId);
+			 	let profitHistoryId = await this.profitHistoryRepository.findProfitHistoryByGlobalId(profitHistoryGroup.profitHistoryId);
+
+				try {
+					await this.profitHistoryRepository.createProfitHistoryGroup(
+						profitHistoryId[0].id,
+						profitGroupId[0].id,
+						profitHistoryGroup.id,
+						true
+					);
+				} catch (error) {
+					console.error("Error getProfitHistoryGroup:", error);
+					// Continue with next product
+					continue;
+				}
+			}
+	
+			page++;
+			profitHistoryGroup.push(response);
+		}
+
+    return profitHistoryGroup.length != 0;
+	}
+
+	async getProfitAmountDateNotDownloaded() {
+		console.log("GETTING PROFIT AMOUNT DATE NOT DOWNLOADED ⏳⏳⏳");
+
+		let profitAmountDate = [];
+		let size = this.state.lastProfitAmountDateSize;
+		let page = this.state.lastProfitAmountDatePage;
+	
+		while (true) {
+			let response;
+			try {
+				response = await this.apiService.getProfitAmountDateNotDownloaded(page, size);
+			} catch (error) {
+				console.error("Error fetching global products:", error);
+				this.setState({
+					lastSize: size,
+					lastPage: page
+				});
+				
+				return false; // Indicate failure
+			}
+	
+			if (!response || !response.content || response.content.length === 0) {
+				console.log(profitAmountDate);
+				break; // Indicate success and exit the loop
+			}
+	
+			for (const profitAmountDate of response.content) {
+				try {
+					await this.amountDateRepository.createProfitAmountWithAllValues(
+						profitAmountDate.amount,
+						profitAmountDate.date,
+						profitAmountDate.id,
+						true
+					);
+				} catch (error) {
+					console.error("Error getProfitAmountDate:", error);
+					// Continue with next product
+					continue;
+				}
+			}
+	
+			page++;
+			profitAmountDate.push(response);
+		}
+
+    return profitAmountDate.length != 0;
+	}
+
+  async componentDidMount() {
+    const {navigation} = this.props;
+
+    await this.profitHistoryRepository.init();
+    await this.amountDateRepository.init();
+
+		await AsyncStorage.setItem("profitLoadingIntervalProccessIsFinished", "true");
+
+    navigation.addListener("focus", async () => {
+      if (await AsyncStorage.getItem("role") === "BOSS") {
+				let profitLoadingIntervalId = setInterval(async () => {
+					if (await AsyncStorage.getItem("profitLoadingIntervalProccessIsFinished") != "true") {
+						return;
+					}
+
+					console.log("INTERNAL STARTED SUCCESSFULLY! \n We are on: ");
+					console.log(await AsyncStorage.getItem("window"));
+					if (await AsyncStorage.getItem("window") != "Profit") {
+            if (profitLoadingIntervalId !== undefined) {
+							clearInterval(profitLoadingIntervalId);
+							console.log("CLEARED " + profitLoadingIntervalId);
+							return;
+            }
+					}
+
+					await AsyncStorage.setItem("profitLoadingIntervalProccessIsFinished", "false")
+					
+					let isProfitGroupEmpty = 
+						await this.getProfitGroupNotDownloaded();
+
+					let isProfitHistoryEmpty = 
+						await this.getProfitHistoriesNotDownloaded();
+
+					let isProfitHistoryGroupEmpty = 
+						await this.getProfitHistoryGroupNotDownloaded();
+
+					let isProfitAmountDateEmpty = 
+						await this.getProfitAmountDateNotDownloaded();
+
+					await AsyncStorage.setItem(
+						"profitLoadingIntervalProccessIsFinished", 
+						"true"
+					);
+
+					if (
+            isProfitGroupEmpty || 
+            isProfitHistoryEmpty || 
+            isProfitHistoryGroupEmpty || 
+            isProfitAmountDateEmpty
+          ) {
+						this.setState({
+							notFinished: true
+						});
+
+						while (this.state.notFinished) {
+							this.setState({
+								notFinished: await this.getNextProfitHistoryGroup()
+							});
+						}
+					}
+				}, 2000)
+			}
+
+      let isNotSaved = await AsyncStorage.getItem("isNotSaved");
+      if (isNotSaved == "true") {
+          this.setState({
+            notFinished: true,
+            profitHistories: [],
+            groupedHistories: []
+          });
+          
+          await this.initProfitHistoryGroup();
+
+          while (this.state.notFinished) {
+            console.log("Loading..")
+            this.setState({
+              notFinished: await this.getNextProfitHistoryGroup()
+            });
+          }
+      }
+      
+      await this.profitHistoryRepository.init();
+      await this.amountDateRepository.init();
+      
+      // ROLE ERROR
+      let notAllowed = await AsyncStorage.getItem("not_allowed");
+      this.setState({notAllowed: notAllowed})
+
+      await this.initProfitHistoryGroup();
+
+      console.log(this.state.fromDate)
+      console.log(this.state.toDate)
+
+      console.log(this.state.profitHistories);
+
+      let thisMonthProfitAmount = parseInt(await AsyncStorage.getItem("month_profit_amount"));
+
+      let currentDate = new Date();
+      let currentMonth = currentDate.getMonth();
+      let lastStoredMonth = parseInt(await AsyncStorage.getItem("month"));
+
+      if (currentMonth === lastStoredMonth) {
+          this.setState({thisMonthProfitAmount: thisMonthProfitAmount});
+      }
+
+      
+      while (this.state.notFinished) {
+        this.setState({
+          notFinished: await this.getNextProfitHistoryGroup()
+        });
+      }
+    });
+  }
 
   render() {
       const {navigation} = this.props;
