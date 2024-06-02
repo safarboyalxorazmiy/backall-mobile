@@ -242,7 +242,7 @@ class Profit extends Component {
 		while (true) {
 			let response;
 			try {
-				response = await this.apiService.getProfitGroupsNotDownloaded(page, size);
+				response = await this.apiService.getProfitGroupsNotDownloaded(page, size, this.props.navigation);
 			} catch (error) {
 				console.error("Error fetching getProfitGroups():", error);
 				this.setState({
@@ -290,7 +290,7 @@ class Profit extends Component {
 		while (true) {
 			let response;
 			try {
-				response = await this.apiService.getProfitHistoriesNotDownloaded(page, size);
+				response = await this.apiService.getProfitHistoriesNotDownloaded(page, size, this.props.navigation);
 			} catch (error) {
 				console.error("Error fetching global products:", error);
 				this.setState({
@@ -344,7 +344,7 @@ class Profit extends Component {
 		while (true) {
 			let response;
 			try {
-				response = await this.apiService.getProfitHistoryGroupNotDownloaded(page, size);
+				response = await this.apiService.getProfitHistoryGroupNotDownloaded(page, size, this.props.navigation);
 			} catch (error) {
 				console.error("Error fetching global products:", error);
 				this.setState({
@@ -395,7 +395,7 @@ class Profit extends Component {
 		while (true) {
 			let response;
 			try {
-				response = await this.apiService.getProfitAmountDateNotDownloaded(page, size);
+				response = await this.apiService.getProfitAmountDateNotDownloaded(page, size, this.props.navigation);
 			} catch (error) {
 				console.error("Error fetching global products:", error);
 				this.setState({

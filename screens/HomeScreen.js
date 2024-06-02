@@ -247,7 +247,7 @@ class Home extends Component {
 	
 		while (true) {
 			let downloadedProducts;
-			downloadedProducts = await this.apiService.getLocalProducts(page, size);
+			downloadedProducts = await this.apiService.getLocalProducts(page, size, this.props.navigation);
 	
 			if (
 				!downloadedProducts || 
@@ -290,7 +290,8 @@ class Home extends Component {
 		while (true) {
 			let response;
 			try {
-				response = await this.apiService.getGlobalProducts(page, size);
+				response = 
+					await this.apiService.getGlobalProducts(page, size, this.props.navigation);
 			} catch (error) {
 				console.error("Error fetching global products:", error);
 				this.setState({
@@ -341,7 +342,7 @@ class Home extends Component {
 		while (true) {
 			let response;
 			try {
-				response = await this.apiService.getStoreProducts(page, size);
+				response = await this.apiService.getStoreProducts(page, size, this.props.navigation);
 			} catch (error) {
 				console.error("Error fetching global products:", error);
 				this.setState({
@@ -394,7 +395,7 @@ class Home extends Component {
 		while (true) {
 			let response;
 			try {
-				response = await this.apiService.getSellGroups(page, size);
+				response = await this.apiService.getSellGroups(page, size, this.props.navigation);
 			} catch (error) {
 				console.error("Error fetching global products:", error);
 				this.setState({
@@ -440,7 +441,7 @@ class Home extends Component {
 		while (true) {
 			let response;
 			try {
-				response = await this.apiService.getSellHistories(page, size);
+				response = await this.apiService.getSellHistories(page, size, this.props.navigation);
 			} catch (error) {
 				console.error("Error fetching global products:", error);
 				this.setState({
@@ -490,7 +491,7 @@ class Home extends Component {
 		while (true) {
 			let response;
 			try {
-				response = await this.apiService.getSellHistoryGroup(page, size);
+				response = await this.apiService.getSellHistoryGroup(page, size, this.props.navigation);
 			} catch (error) {
 				console.error("Error fetching global products:", error);
 				this.setState({
@@ -539,7 +540,7 @@ class Home extends Component {
 		while (true) {
 			let response;
 			try {
-				response = await this.apiService.getSellAmountDate(page, size);
+				response = await this.apiService.getSellAmountDate(page, size, this.props.navigation);
 			} catch (error) {
 				console.error("Error fetching global products:", error);
 				this.setState({
@@ -586,7 +587,7 @@ class Home extends Component {
 		while (true) {
 			let response;
 			try {
-				response = await this.apiService.getProfitGroups(page, size);
+				response = await this.apiService.getProfitGroups(page, size, this.props.navigation);
 			} catch (error) {
 				console.error("Error fetching getProfitGroups():", error);
 				this.setState({
@@ -632,7 +633,7 @@ class Home extends Component {
 		while (true) {
 			let response;
 			try {
-				response = await this.apiService.getProfitHistories(page, size);
+				response = await this.apiService.getProfitHistories(page, size, this.props.navigation);
 			} catch (error) {
 				console.error("Error fetching global products:", error);
 				this.setState({
@@ -684,7 +685,7 @@ class Home extends Component {
 		while (true) {
 			let response;
 			try {
-				response = await this.apiService.getProfitHistoryGroup(page, size);
+				response = await this.apiService.getProfitHistoryGroup(page, size, this.props.navigation);
 			} catch (error) {
 				console.error("Error fetching global products:", error);
 				this.setState({
@@ -733,7 +734,7 @@ class Home extends Component {
 		while (true) {
 			let response;
 			try {
-				response = await this.apiService.getProfitAmountDate(page, size);
+				response = await this.apiService.getProfitAmountDate(page, size, this.props.navigation);
 			} catch (error) {
 				console.error("Error fetching global products:", error);
 				this.setState({

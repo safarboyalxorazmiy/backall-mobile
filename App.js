@@ -145,7 +145,9 @@ class App extends Component {
 			let monthYear = `${month}/${year}`;
 			
 			if (this.state.notPayed) {
-				let isPayed = await this.apiService.getPayment(email, monthYear);
+				const {navigation} = this.props;
+				
+				let isPayed = await this.apiService.getPayment(email, monthYear, navigation);
 				console.log("Payed: ", isPayed)
 				
 				if (isPayed == true) {						
@@ -160,8 +162,8 @@ class App extends Component {
 				console.log(email)
 				
 				
-		
-				let isPayed = await this.apiService.getPayment(email, monthYear);
+				const {navigation} = this.props;
+				let isPayed = await this.apiService.getPayment(email, monthYear, navigation);
 				console.log("Payed: ", isPayed)
 				if (isPayed == false) {
 					this.setState({
@@ -192,8 +194,13 @@ class App extends Component {
 							let response = await this.apiService.createLocalProduct(
 								product.serial_number, 
 								product.name, 
-								product.brand_name
+								product.brand_name, 
+								this.props.navigation
 							);
+
+							if (!response) {
+								return;
+							}
 
 							console.log("Response:", response);
 
@@ -226,8 +233,13 @@ class App extends Component {
 								storeProduct.selling_price,
 								null,
 								storeProduct.count,
-								storeProduct.count_type
+								storeProduct.count_type, 
+								this.props.navigation
 							);
+
+							if (!response) {
+								return;
+							}
 
 							console.log("Response: ", response);
 							await this.storeProductRepository.updateSavedTrueById(storeProduct.id, response.id);
@@ -249,8 +261,13 @@ class App extends Component {
 						try {
 							let response = await this.apiService.createSellGroup(
 								sellGroup.created_date, 
-								sellGroup.amount
+								sellGroup.amount, 
+								this.props.navigation
 							);
+
+							if (!response) {
+								return;
+							}
 
 							await this.sellHistoryRepository.updateSellGroupSavedTrueById(
 								sellGroup.id, 
@@ -282,8 +299,13 @@ class App extends Component {
 								sellHistory.count,
 								sellHistory.count_type,
 								sellHistory.selling_price,
-								sellHistory.created_date
+								sellHistory.created_date, 
+								this.props.navigation
 							);
+
+							if (!response) {
+								return;
+							}
 
 							await this.sellHistoryRepository.updateSellHistorySavedTrueById(
 								sellHistory.id, 
@@ -314,8 +336,13 @@ class App extends Component {
 							
 							let response = await this.apiService.createSellHistoryGroup(
 								sellHistory[0].global_id,
-								sellGroup[0].global_id
+								sellGroup[0].global_id, 
+								this.props.navigation
 							);
+
+							if (!response) {
+								return;
+							}
 
 							this.sellHistoryRepository.updateSellHistoryGroupSavedTrueById(
 								sellHistoryGroup.id,
@@ -341,8 +368,13 @@ class App extends Component {
 							let response = 
 								await this.apiService.createSellAmountDate(
 									sellAmountDate.date,
-									sellAmountDate.amount
+									sellAmountDate.amount, 
+									this.props.navigation
 								);
+
+								if (!response) {
+									return;
+								}
 
 							this.amountDateRepository.updateSellAmountDateSavedTrueById(
 								sellAmountDate.id,
@@ -364,8 +396,13 @@ class App extends Component {
 						try {
 							let response = await this.apiService.createProfitGroup(
 								profitGroup.created_date, 
-								profitGroup.profit
+								profitGroup.profit, 
+								this.props.navigation
 							);
+
+							if (!response) {
+								return;
+							}
 
 							await this.profitHistoryRepository.updateProfitGroupSavedTrueById(
 								profitGroup.id, 
@@ -395,8 +432,13 @@ class App extends Component {
 								profitHistory.count,
 								profitHistory.count_type,
 								profitHistory.profit,
-								profitHistory.created_date
+								profitHistory.created_date, 
+								this.props.navigation
 							);
+
+							if (!response) {
+								return;
+							}
 
 							await this.profitHistoryRepository.updateProfitHistorySavedTrueById(
 								profitHistory.id, 
@@ -431,8 +473,13 @@ class App extends Component {
 							let response = 
 								await this.apiService.createProfitHistoryGroup(
 									profitHistory[0].global_id,
-									profitGroup[0].global_id
+									profitGroup[0].global_id, 
+									this.props.navigation
 								);
+
+							if (!response) {
+								return;
+							}
 
 							this.profitHistoryRepository.updateProfitHistoryGroupSavedTrueById(
 								profitHistoryGroup.id,
@@ -458,7 +505,8 @@ class App extends Component {
 							let response = 
 								await this.apiService.createSellAmountDate(
 									profitAmountDate.date,
-									profitAmountDate.amount
+									profitAmountDate.amount, 
+									this.props.navigation
 								);
 
 							this.amountDateRepository.updateProfitAmountDateSavedTrueById(

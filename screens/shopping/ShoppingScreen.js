@@ -66,7 +66,7 @@ class Shopping extends Component {
 		while (true) {
 			let response;
 			try {
-				response = await this.apiService.getSellGroupsNotDownloaded(page, size);
+				response = await this.apiService.getSellGroupsNotDownloaded(page, size, this.props.navigation);
 			} catch (error) {
 				console.error("Error fetching global products:", error);
 				this.setState({
@@ -113,7 +113,7 @@ class Shopping extends Component {
 		while (true) {
 			let response;
 			try {
-				response = await this.apiService.getSellHistoriesNotDownloaded(page, size);
+				response = await this.apiService.getSellHistoriesNotDownloaded(page, size, this.props.navigation);
 			} catch (error) {
 				console.error("Error fetching global products:", error);
 				this.setState({
@@ -170,7 +170,9 @@ class Shopping extends Component {
 		while (true) {
 			let response;
 			try {
-				response = await this.apiService.getSellHistoriesNotDownloaded(page, size);
+				response = await this.apiService.getSellHistoriesNotDownloaded(
+					page, size, this.props.navigation
+				);
 			} catch (error) {
 				console.error("Error fetching global products:", error);
 				this.setState({
@@ -227,7 +229,9 @@ class Shopping extends Component {
 		while (true) {
 			let response;
 			try {
-				response = await this.apiService.getSellAmountDateNotDownloaded(page, size);
+				response = await this.apiService.getSellAmountDateNotDownloaded(
+					page, size, this.props.navigation
+				);
 			} catch (error) {
 				console.error("Error fetching global products:", error);
 				this.setState({

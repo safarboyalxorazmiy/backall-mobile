@@ -176,7 +176,10 @@ class Basket extends Component {
 	
 		while (true) {
 			let downloadedProducts;
-			downloadedProducts = await this.apiService.getNotDownloadedLocalProducts(page, size);
+			downloadedProducts = 
+				await this.apiService.getNotDownloadedLocalProducts(
+					page, size, this.props.navigation
+				);
 	
 			if (
 				!downloadedProducts || 
@@ -226,7 +229,9 @@ class Basket extends Component {
 		while (true) {
 			let response;
 			try {
-				response = await this.apiService.getStoreProductsNotDownloaded(page, size);
+				response = await this.apiService.getStoreProductsNotDownloaded(
+					page, size, this.props.navigation
+				);
 			} catch (error) {
 				console.error("Error fetching global products:", error);
 				this.setState({
