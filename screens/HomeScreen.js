@@ -110,6 +110,8 @@ class Home extends Component {
 
 			console.log("HOME NAVIGATED");
 
+			await this.getAmountInfo();
+
 			let isDownloaded = await AsyncStorage.getItem("isDownloaded");
 			if (isDownloaded !== "true" || isDownloaded == null) {
 				this.setState({spinner: true});
@@ -793,7 +795,7 @@ class Home extends Component {
 		this.setState({
 			profitAmount: profitAmountInfo,
 			sellAmount: sellAmountInfo
-		})
+		});
 	}
 	
 	render() {
