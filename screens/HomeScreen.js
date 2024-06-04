@@ -153,6 +153,9 @@ class Home extends Component {
 									console.log("Downloaded")
 									clearInterval(intervalId);
 									console.log("CLEARED ", intervalId);
+
+									this.setState({spinner: false});
+									await this.getAmountInfo();
 									return;
 								}
 

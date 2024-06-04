@@ -1190,9 +1190,6 @@ class ApiService {
     );
   }
 
-
-
-
   // AUTH
   async check(email, password) {
     console.log(

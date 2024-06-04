@@ -503,7 +503,7 @@ class App extends Component {
 							console.log("PROFIT AMOUNT::", profitAmountDate);
 							
 							let response = 
-								await this.apiService.createSellAmountDate(
+								await this.apiService.createProfitAmountDate(
 									profitAmountDate.date,
 									profitAmountDate.amount, 
 									this.props.navigation
