@@ -1,12 +1,21 @@
-import React, { Component } from "react";
-import { Appearance, Text, TouchableOpacity, View, Image, Linking, StyleSheet } from "react-native";
-import { AppRegistry } from "react-native";
-import Constants from 'expo-constants';  // Import Constants
+import React, { Component, createRef } from "react";
+import { 
+	Appearance, 
+	Text, 
+	TouchableOpacity, 
+	View, 
+	Image, 
+	Linking, 
+	StyleSheet,
+	AppRegistry,
+	Modal,
+	Keyboard
+} from "react-native";
 import { Platform } from "react-native";
 import * as Font from "expo-font";
 import NetInfo from "@react-native-community/netinfo";
 import NavigationService from "./service/NavigationService";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { GestureHandlerRootView, TouchableWithoutFeedback } from "react-native-gesture-handler";
 import TokenService from "./service/TokenService";
 import DatabaseRepository from "./repository/DatabaseRepository";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -33,7 +42,7 @@ class App extends Component {
 			notPayed: false,
 
 			theme: Appearance.getColorScheme(),
-      splashLoaded: false
+      splashLoaded: false,
     };
 
     if (this.props.navigation) {
@@ -55,6 +64,8 @@ class App extends Component {
     this.loadCustomFonts = this.loadCustomFonts.bind(this);
     this.checkInternetStatus = this.checkInternetStatus.bind(this);
     this.saveData = this.saveData.bind(this);
+
+		this.touchableRef = createRef();
   }
 
   async loadCustomFonts() {
@@ -158,12 +169,12 @@ class App extends Component {
 			}
 		
 			if (isNotSaved == "true") {
+				this.touchableRef.current && this.touchableRef.current.onPress();
+				Keyboard.dismiss();
 
-				console.log(email)
-				
-				
 				const {navigation} = this.props;
-				let isPayed = await this.apiService.getPayment(email, monthYear, navigation);
+				let isPayed = 
+					await this.apiService.getPayment(email, monthYear, navigation);
 				console.log("Payed: ", isPayed)
 				if (isPayed == false) {
 					this.setState({
@@ -559,7 +570,11 @@ class App extends Component {
       return (
 				<View style={styles.container}>
 					<Image
-						source={theme === 'dark' ? require('./assets/splash-dark.png') : require('./assets/splash.png')}
+						source={
+							theme === 'dark' ? 
+							require('./assets/splash-dark.png') : 
+							require('./assets/splash.png')
+						}
 						style={styles.splashImage}
 						resizeMode="contain"
 					/>
@@ -570,80 +585,83 @@ class App extends Component {
     return (
       <GestureHandlerRootView style={{ flex: 1 }}>
 				{
-					this.state.notPayed && (<View style={{
-						width: "100%", 
-						height: "100%", 
-						backgroundColor: "#181926", 
-						paddingTop: 100,
-						paddingHorizontal: 16
-					}}>
-						<Text style={{
-							color: "white",
-							fontFamily: "Gilroy-SemiBold",
-							fontSize: 38
-						}}>Oylik abonent to'lovi muddati keldi!</Text>
-						<Image
-							source={require("./assets/cards.png")}
-							style={{width: 367, height: 254, marginTop: 50}}
-						/>
+					this.state.notPayed && 
+					(<Modal visible={this.state.notPayed}>
 						<View style={{
-							display: "flex",
-							flexDirection: "row",
-							alignItems: "center",
-							justifyContent: "space-between",
-							paddingTop: 24,
-							borderTopWidth: 2,
-							borderTopColor: "#07070A",
-							marginTop: 40
+							width: "100%", 
+							height: "100%", 
+							backgroundColor: "#181926", 
+							paddingTop: 100,
+							paddingHorizontal: 16
 						}}>
 							<Text style={{
 								color: "white",
-								fontFamily: "Gilroy-Bold",
-								fontSize: 24
-							}}>JAMI</Text>
-	
+								fontFamily: "Gilroy-SemiBold",
+								fontSize: 38
+							}}>Oylik abonent to'lovi muddati keldi!</Text>
+							<Image
+								source={require("./assets/cards.png")}
+								style={{width: 367, height: 254, marginTop: 50}}
+							/>
 							<View style={{
 								display: "flex",
 								flexDirection: "row",
-								alignItems: "flex-end",
-							}}>
-								<Text style={{
-									color: "white",
-									fontFamily: "Gilroy-Regular",
-									fontSize: 24
-								}}>126,529.30 </Text>
-	
-								<Text style={{
-									color: "white",
-									fontFamily: "Gilroy-Regular",
-									fontSize: 20
-								}}>so’m</Text>
-							</View>
-						</View>
-	
-						<TouchableOpacity 
-							style={{
-								backgroundColor: "black",
-								display: "flex",
-								flexDirection: "row",
 								alignItems: "center",
-								justifyContent: "center",
-								gap: 26,
-								padding: 16,
-								borderRadius: 8,
-								marginTop: 18
-							}}
-							onPress={() => {
-								Linking.openURL('https://t.me/backall_admin');
+								justifyContent: "space-between",
+								paddingTop: 24,
+								borderTopWidth: 2,
+								borderTopColor: "#07070A",
+								marginTop: 40
 							}}>
-							<Text style={{
-								fontSize: 18,
-								fontFamily: "Gilroy-Black",
-								color: "white"
-							}}>TO'LASH</Text>
-							<RightArrow />
-						</TouchableOpacity>
-					</View>)
+								<Text style={{
+									color: "white",
+									fontFamily: "Gilroy-Bold",
+									fontSize: 24
+								}}>JAMI</Text>
+		
+								<View style={{
+									display: "flex",
+									flexDirection: "row",
+									alignItems: "flex-end",
+								}}>
+									<Text style={{
+										color: "white",
+										fontFamily: "Gilroy-Regular",
+										fontSize: 24
+									}}>126,529.30 </Text>
+		
+									<Text style={{
+										color: "white",
+										fontFamily: "Gilroy-Regular",
+										fontSize: 20
+									}}>so’m</Text>
+								</View>
+							</View>
+		
+							<TouchableOpacity 
+								style={{
+									backgroundColor: "black",
+									display: "flex",
+									flexDirection: "row",
+									alignItems: "center",
+									justifyContent: "center",
+									gap: 26,
+									padding: 16,
+									borderRadius: 8,
+									marginTop: 18
+								}}
+								onPress={() => {
+									Linking.openURL('https://t.me/backall_admin');
+								}}>
+								<Text style={{
+									fontSize: 18,
+									fontFamily: "Gilroy-Black",
+									color: "white"
+								}}>TO'LASH</Text>
+								<RightArrow />
+							</TouchableOpacity>
+						</View>
+					</Modal>)
 				}
 
         <NavigationService />
