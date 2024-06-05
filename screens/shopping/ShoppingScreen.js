@@ -451,7 +451,6 @@ class Shopping extends Component {
 		await AsyncStorage.setItem("sellLoadingIntervalProccessIsFinished", "true");
 		
 		navigation.addListener("focus", async () => {
-
 			if (await AsyncStorage.getItem("role") === "BOSS") {
 				let sellLoadingIntervalId = setInterval(async () => {
 					if (await AsyncStorage.getItem("sellLoadingIntervalProccessIsFinished") != "true") {
@@ -493,6 +492,10 @@ class Shopping extends Component {
 						});
 
 						while (this.state.notFinished) {
+							if (await AsyncStorage.getItem("window") != "Shopping") {
+								break;
+							}
+			
 							this.setState({
 								notFinished: await this.getNextSellHistoryGroup()
 							});
@@ -512,6 +515,10 @@ class Shopping extends Component {
 				await this.initSellingHistoryGroup();
 
 				while (this.state.notFinished) {
+					if (await AsyncStorage.getItem("window") != "Shopping") {
+						break;
+					}
+	
 					console.log("Loading..")
 					this.setState({
 							notFinished: await this.getNextSellHistoryGroup()
@@ -539,6 +546,10 @@ class Shopping extends Component {
 			await this.initSellingHistoryGroup();
 
 			while (this.state.notFinished) {
+				if (await AsyncStorage.getItem("window") != "Shopping") {
+					break;
+				}
+
 				console.log("Loading..")
 				this.setState({
 						notFinished: await this.getNextSellHistoryGroup()
@@ -584,11 +595,15 @@ class Shopping extends Component {
 									navigation.navigate("Calendar");
 								}}
 								style={[
-									this.state.calendarInputContent === "--/--/----" ? styles.calendarInput : styles.calendarInputActive
+									this.state.calendarInputContent === "--/--/----" ? 
+										styles.calendarInput : 
+										styles.calendarInputActive
 								]}>
 								<Text
 									style={[
-										this.state.calendarInputContent === "--/--/----" ? styles.calendarInputPlaceholder : styles.calendarInputPlaceholderActive
+										this.state.calendarInputContent === "--/--/----" ? 
+											styles.calendarInputPlaceholder : 
+											styles.calendarInputPlaceholderActive
 									]}>{this.state.calendarInputContent}</Text>
 							</TouchableOpacity>
 							

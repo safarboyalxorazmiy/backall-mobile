@@ -488,6 +488,10 @@ class Profit extends Component {
 						});
 
 						while (this.state.notFinished) {
+              if (await AsyncStorage.getItem("window") != "Shopping") {
+                  break;
+              }
+              
 							this.setState({
 								notFinished: await this.getNextProfitHistoryGroup()
 							});
@@ -507,6 +511,10 @@ class Profit extends Component {
           await this.initProfitHistoryGroup();
 
           while (this.state.notFinished) {
+            if (await AsyncStorage.getItem("window") != "Shopping") {
+                break;
+            }
+
             console.log("Loading..")
             this.setState({
               notFinished: await this.getNextProfitHistoryGroup()
@@ -540,6 +548,10 @@ class Profit extends Component {
 
       
       while (this.state.notFinished) {
+        if (await AsyncStorage.getItem("window") != "Shopping") {
+					break;
+				}
+				
         this.setState({
           notFinished: await this.getNextProfitHistoryGroup()
         });
