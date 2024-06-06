@@ -150,6 +150,7 @@ class Home extends Component {
 
 							if (this.state.isConnected) {
 								if (this.state.isDownloaded === "true") {
+									await AsyncStorage.setItem("paymentTryCount", "0")
 									console.log("Downloaded")
 									clearInterval(intervalId);
 									console.log("CLEARED ", intervalId);

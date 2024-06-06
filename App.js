@@ -26,6 +26,7 @@ import SellHistoryRepository from "./repository/SellHistoryRepository";
 import ProfitHistoryRepository from "./repository/ProfitHistoryRepository";
 import AmountDateRepository from "./repository/AmountDateRepository";
 import RightArrow from "./assets/right-arrow.svg";
+import RightArrowLight from "./assets/right-arrow-light.svg"
 import { Asset } from 'expo-asset';
 import * as SplashScreen from 'expo-splash-screen';
 import * as SystemUI from 'expo-system-ui';
@@ -177,9 +178,21 @@ class App extends Component {
 					await this.apiService.getPayment(email, monthYear, navigation);
 				console.log("Payed: ", isPayed)
 				if (isPayed == false) {
-					this.setState({
-						notPayed: true
-					})
+					const currentDate = new Date();
+
+					const year = currentDate.getFullYear();
+					const month = ('0' + (currentDate.getMonth() + 1)).slice(-2); // Adding 1 because getMonth() returns zero-based month index
+					const day = ('0' + currentDate.getDate()).slice(-2);
+
+					const dateString = `${year}-${month}-${day}`;
+
+					if (
+						await AsyncStorage.getItem("lastPaymentShownDate") != dateString
+					) {
+						this.setState({
+							notPayed: true
+						})
+					}
 				}
 		
 				await this.saveData();
@@ -591,18 +604,63 @@ class App extends Component {
 							width: "100%", 
 							height: "100%", 
 							backgroundColor: "#181926", 
-							paddingTop: 100,
+							paddingTop: 60,
 							paddingHorizontal: 16
 						}}>
 							<Text style={{
 								color: "white",
 								fontFamily: "Gilroy-SemiBold",
-								fontSize: 38
+								fontSize: 38,
+								width: 280
 							}}>Oylik abonent to'lovi muddati keldi!</Text>
+							
+							<TouchableOpacity 
+								activeOpacity={1} 
+								onPress={async () => {
+									let tryCount = parseInt(
+										await AsyncStorage.getItem("paymentTryCount")
+									);
+									
+									if (tryCount >= 3) {
+										return;
+									} else {
+										await AsyncStorage.setItem("paymentTryCount", (tryCount + 1).toString());
+										
+										const currentDate = new Date();
+
+										const year = currentDate.getFullYear();
+										const month = ('0' + (currentDate.getMonth() + 1)).slice(-2); // Adding 1 because getMonth() returns zero-based month index
+										const day = ('0' + currentDate.getDate()).slice(-2);
+
+										const dateString = `${year}-${month}-${day}`;
+
+										await AsyncStorage.setItem("lastPaymentShownDate", dateString);
+
+										this.setState({
+											notPayed: false
+										});
+									}
+								}}
+								style={{
+									width: 44,
+									height: 44,
+									borderRadius: 8,
+									backgroundColor: "#07070A",
+									display: "flex",
+									alignItems: "center",
+									justifyContent: "center",
+									position: "absolute",
+									top: 32,
+									right: 19
+								}}>
+								<RightArrowLight />
+							</TouchableOpacity>
+
 							<Image
 								source={require("./assets/cards.png")}
 								style={{width: 367, height: 254, marginTop: 50}}
 							/>
+
 							<View style={{
 								display: "flex",
 								flexDirection: "row",
