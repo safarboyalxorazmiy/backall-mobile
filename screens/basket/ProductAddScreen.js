@@ -371,8 +371,6 @@ class ProductAdd extends Component {
 							onPressIn={() => {
 								this.scrollVertically(0);
 							}}
-
-							onBlur={this.handleInputBlur}
 						/>
 
 						<View style={{position: "relative", marginTop: 2}}>
