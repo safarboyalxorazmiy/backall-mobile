@@ -201,7 +201,10 @@ class App extends Component {
   }
 
   async saveData() {
-		if (!this.state.isSavingStarted) {
+		if (
+			(!this.state.isSavingStarted) && 
+			(await AsyncStorage.getItem("isFetchingNotCompleated") != "false")
+		) {
 			this.setState({isSavingStarted: true});
 
 			console.log("CREATING NOT SAVED STARTED");
