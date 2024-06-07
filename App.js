@@ -576,6 +576,7 @@ class App extends Component {
 				}
 
 				await AsyncStorage.setItem("isNotSaved", "false");
+				await AsyncStorage.setItem("isFetchingNotCompleated", "false");
 				this.setState({isSavingStarted: false});
 			} catch (e) {
 				console.error(e);	
