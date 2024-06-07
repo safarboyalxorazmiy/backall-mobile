@@ -230,8 +230,11 @@ class App extends Component {
 
 							await this.productRepository.updateSavedTrueByProductId(product.id, response.id);
 						} catch (e) {
-							console.error(e)
-							continue;
+							console.error(e);	
+							await AsyncStorage.setItem("isFetchingNotCompleated", "true");
+							await AsyncStorage.setItem("isNotSaved", "true");
+							this.setState({isSavingStarted: false});
+							return;
 						}
 					}
 
@@ -268,8 +271,11 @@ class App extends Component {
 							console.log("Response: ", response);
 							await this.storeProductRepository.updateSavedTrueById(storeProduct.id, response.id);
 						} catch (e) {
-							console.error(e)
-							continue;
+							console.error(e);	
+							await AsyncStorage.setItem("isFetchingNotCompleated", "true");
+							await AsyncStorage.setItem("isNotSaved", "true");
+							this.setState({isSavingStarted: false});
+							return;
 						}
 					}
 				}
@@ -298,8 +304,11 @@ class App extends Component {
 								response.id
 							);
 						} catch (e) {
-							console.error(e)
-							continue;
+							console.error(e);	
+							await AsyncStorage.setItem("isFetchingNotCompleated", "true");
+							await AsyncStorage.setItem("isNotSaved", "true");
+							this.setState({isSavingStarted: false});
+							return;
 						}
 					}
 				}
@@ -336,8 +345,11 @@ class App extends Component {
 								response.id
 							);
 						} catch (e) {
-							console.error(e)
-							continue;
+							console.error(e);	
+							await AsyncStorage.setItem("isFetchingNotCompleated", "true");
+							await AsyncStorage.setItem("isNotSaved", "true");
+							this.setState({isSavingStarted: false});
+							return;
 						}
 					}
 				}
@@ -373,8 +385,11 @@ class App extends Component {
 								response.id
 							)
 						} catch (e) {
-							console.error(e)
-							continue;
+							console.error(e);	
+							await AsyncStorage.setItem("isFetchingNotCompleated", "true");
+							await AsyncStorage.setItem("isNotSaved", "true");
+							this.setState({isSavingStarted: false});
+							return;
 						}
 					}
 				}
@@ -405,7 +420,11 @@ class App extends Component {
 								response.id
 							);
 						} catch (e) {
-							continue;
+							console.error(e);	
+							await AsyncStorage.setItem("isFetchingNotCompleated", "true");
+							await AsyncStorage.setItem("isNotSaved", "true");
+							this.setState({isSavingStarted: false});
+							return;
 						}
 					}
 				}
@@ -433,8 +452,11 @@ class App extends Component {
 								response.id
 							);
 						} catch (e) {
-							console.error(e)
-							continue;
+							console.error(e);	
+							await AsyncStorage.setItem("isFetchingNotCompleated", "true");
+							await AsyncStorage.setItem("isNotSaved", "true");
+							this.setState({isSavingStarted: false});
+							return;
 						}
 					}
 				}
@@ -469,8 +491,11 @@ class App extends Component {
 								response.id
 							);
 						} catch (e) {
-							console.error(e)
-							continue;
+							console.error(e);	
+							await AsyncStorage.setItem("isFetchingNotCompleated", "true");
+							await AsyncStorage.setItem("isNotSaved", "true");
+							this.setState({isSavingStarted: false});
+							return;
 						}
 					}
 				}
@@ -510,8 +535,11 @@ class App extends Component {
 								response.id
 							);
 						} catch (e) {
-							console.error(e)
-							continue;
+							console.error(e);	
+							await AsyncStorage.setItem("isFetchingNotCompleated", "true");
+							await AsyncStorage.setItem("isNotSaved", "true");
+							this.setState({isSavingStarted: false});
+							return;
 						}
 					}
 				}
@@ -538,8 +566,11 @@ class App extends Component {
 								response.id
 							);
 						} catch (e) {
-							console.error(e)
-							continue;
+							console.error(e);	
+							await AsyncStorage.setItem("isFetchingNotCompleated", "true");
+							await AsyncStorage.setItem("isNotSaved", "true");
+							this.setState({isSavingStarted: false});
+							return;
 						}
 					}
 				}
