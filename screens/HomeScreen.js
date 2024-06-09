@@ -14,6 +14,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Modal from "react-native-modal";
 import Spinner from "react-native-loading-spinner-overlay";
 import NetInfo from "@react-native-community/netinfo";
+import * as Animatable from "react-native-animatable";
 
 import SellHistoryRepository from "../repository/SellHistoryRepository";
 import ProfitHistoryRepository from "../repository/ProfitHistoryRepository";
@@ -22,15 +23,13 @@ import DatabaseRepository from "../repository/DatabaseRepository";
 import ProductRepository from "../repository/ProductRepository";
 import AmountDateRepository from "../repository/AmountDateRepository";
 import ApiService from "../service/ApiService";
-import TokenService from '../service/TokenService';
+import TokenService from "../service/TokenService";
 
 import MenuIcon from "../assets/menu-icon 2.svg";
 import LogoutIcon from "../assets/logout-icon.svg";
 import CrossIcon from "../assets/cross-icon.svg";
 import ShoppingIcon from "../assets/home/shopping-icon.svg";
 import BenefitIcon from "../assets/home/benefit-icon.svg";
-
-import * as Animatable from "react-native-animatable";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -204,7 +203,7 @@ class Home extends Component {
 		await this.profitHistoryRepository.init();
 		await this.amountDateRepository.init();
 
-		if (!this.state.isLoading) { // is loadring don't load again
+		if (!this.state.isLoading) { // is loadring don"t load again
 			try {
 				console.log("LOADING STARTED")
 				this.setState({ // loading started
@@ -793,8 +792,8 @@ class Home extends Component {
 		
 		// Extract year, month, and day
 		const year = currentDate.getFullYear();
-		const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed, so add 1
-		const day = String(currentDate.getDate()).padStart(2, '0');
+		const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Month is zero-indexed, so add 1
+		const day = String(currentDate.getDate()).padStart(2, "0");
 		
 		// Format the date as yyyy-mm-dd
 		const formattedDate = `${year}-${month}-${day}`;
@@ -816,7 +815,7 @@ class Home extends Component {
 			<>
 				<Spinner
 						visible={this.state.spinner}
-						textContent={'Yuklanyapti 10%'}
+						textContent={"Yuklanyapti 10%"}
 						textStyle={{
 							fontFamily: "Gilroy-Bold",
 							color: "#FFF"
@@ -876,7 +875,7 @@ class Home extends Component {
 									style={styles.card}>
 									
 									<View style={styles.shoppingIconWrapper}>
-										{Platform.OS === 'android' || Platform.OS === 'ios' ? (
+										{Platform.OS === "android" || Platform.OS === "ios" ? (
 											<ShoppingIcon
 												style={styles.shoppingIcon}
 												resizeMode="cover"/>
@@ -914,7 +913,7 @@ class Home extends Component {
 									start={{x: 0, y: 0.5}}
 								>
 									<View style={styles.benefitIconWrapper}>
-										{Platform.OS === 'android' || Platform.OS === 'ios' ? (
+										{Platform.OS === "android" || Platform.OS === "ios" ? (
 											<BenefitIcon
 												style={styles.benefitIcon}
 												resizeMode="cover"/>

@@ -1,4 +1,4 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 class TokenService {
 	constructor() {
@@ -8,35 +8,35 @@ class TokenService {
 	
 	storeAccessToken = async (access_token) => {
 		try {
-			await AsyncStorage.setItem('access_token', access_token);
+			await AsyncStorage.setItem("access_token", access_token);
 		} catch (error) {
-			console.error('Error storing token:', error);
+			console.error("Error storing token:", error);
 		}
 	};
 	
 	storeRefreshToken = async (refresh_token) => {
 		try {
-			await AsyncStorage.setItem('refresh_token', refresh_token);
+			await AsyncStorage.setItem("refresh_token", refresh_token);
 		} catch (error) {
-			console.error('Error storing token:', error);
+			console.error("Error storing token:", error);
 		}
 	};
 	
 	retrieveAccessToken = async () => {
 		try {
-			const token = await AsyncStorage.getItem('access_token');
+			const token = await AsyncStorage.getItem("access_token");
 			return token;
 		} catch (error) {
-			console.error('Error retrieving token:', error);
+			console.error("Error retrieving token:", error);
 		}
 	};
 	
 	retrieveRefreshToken = async () => {
 		try {
-			const token = await AsyncStorage.getItem('refresh_token');
+			const token = await AsyncStorage.getItem("refresh_token");
 			return token;
 		} catch (error) {
-			console.error('Error retrieving token:', error);
+			console.error("Error retrieving token:", error);
 		}
 	};
 	
@@ -56,9 +56,9 @@ class TokenService {
 	clearAsyncStorage = async () => {
 		try {
 			await AsyncStorage.clear();
-			console.log('AsyncStorage cleared successfully!');
+			console.log("AsyncStorage cleared successfully!");
 		} catch (error) {
-			console.error('Error clearing AsyncStorage: ', error);
+			console.error("Error clearing AsyncStorage: ", error);
 		}
 	};
 	

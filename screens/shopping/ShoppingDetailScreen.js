@@ -1,18 +1,18 @@
-import React, {Component} from 'react';
+import React, {Component} from "react";
 import {
 	View,
 	Text,
 	TouchableOpacity,
 	StyleSheet,
 	Dimensions
-} from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
+} from "react-native";
+import {ScrollView} from "react-native-gesture-handler";
 
 import BackIcon from "../../assets/arrow-left-icon.svg";
 import SellHistoryRepository from "../../repository/SellHistoryRepository";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const screenWidth = Dimensions.get('window').width;
+const screenWidth = Dimensions.get("window").width;
 
 class ShoppingDetail extends Component {
 	constructor(props) {
@@ -124,7 +124,7 @@ class ShoppingDetail extends Component {
 		
 		let hours = parsedDate.getHours();
 		let minutes = parsedDate.getMinutes();
-		let formattedTime = (hours < 10 ? '0' : '') + hours + ':' + (minutes < 10 ? '0' : '') + minutes;
+		let formattedTime = (hours < 10 ? "0" : "") + hours + ":" + (minutes < 10 ? "0" : "") + minutes;
 		
 		return formattedTime;
 	}

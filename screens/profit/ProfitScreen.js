@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { StatusBar } from 'expo-status-bar';
+import React, { Component } from "react";
+import { StatusBar } from "expo-status-bar";
 import {
   StyleSheet, 
   Text, 
@@ -172,7 +172,7 @@ class Profit extends Component {
             continue;
         }
 
-        const date = history.created_date.split('T')[0];
+        const date = history.created_date.split("T")[0];
         const formattedDate = this.formatDate(date);
 
         if (!grouped[date]) {
@@ -183,8 +183,8 @@ class Profit extends Component {
 
         let currentDate = new Date(date);
         const year = currentDate.getFullYear();
-        const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed, so add 1
-        const day = String(currentDate.getDate()).padStart(2, '0');
+        const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Month is zero-indexed, so add 1
+        const day = String(currentDate.getDate()).padStart(2, "0");
 
         // Format the date as yyyy-mm-dd
         const currentFormattedDate = `${year}-${month}-${day}`;
@@ -197,10 +197,10 @@ class Profit extends Component {
 
   formatDate = (dateString) => {
       const date = new Date(dateString);
-      const options = {day: 'numeric', month: 'long', weekday: 'long'};
-      const formattedDate = date.toLocaleDateString('uz', options);
+      const options = {day: "numeric", month: "long", weekday: "long"};
+      const formattedDate = date.toLocaleDateString("uz", options);
 
-      let [weekday, day] = formattedDate.split(', ');
+      let [weekday, day] = formattedDate.split(", ");
 
       weekday = weekday.charAt(0).toUpperCase() + weekday.slice(1);
       return `${day}, ${weekday}`;
@@ -675,7 +675,7 @@ class Profit extends Component {
                                 try {
                                     await AsyncStorage.setItem("profit_history_id", historyId);
                                 } catch (error) {
-                                    console.error('Error profit_history_id:', error);
+                                    console.error("Error profit_history_id:", error);
                                 }
 
                                 navigation.navigate("ProfitDetail", {history});
@@ -777,7 +777,7 @@ class Profit extends Component {
 
 const styles = StyleSheet.create({
     container: {
-        width: "100%", flex: 1, backgroundColor: '#fff', alignItems: 'center', paddingTop: 50
+        width: "100%", flex: 1, backgroundColor: "#fff", alignItems: "center", paddingTop: 50
     },
 
     navbar: {
@@ -798,7 +798,7 @@ const styles = StyleSheet.create({
     },
 
     navItem: {
-        display: "flex", alignItems: 'center', justifyContent: 'center'
+        display: "flex", alignItems: "center", justifyContent: "center"
     },
 
     activeBorder: {
@@ -860,7 +860,7 @@ const styles = StyleSheet.create({
     },
 
     button: {
-        backgroundColor: 'black',
+        backgroundColor: "black",
         paddingVertical: 10,
         paddingHorizontal: 14,
         borderRadius: 10,
@@ -870,7 +870,7 @@ const styles = StyleSheet.create({
     },
 
     buttonText: {
-        color: 'white', fontSize: 16, textAlign: 'center', fontFamily: "Roboto-Bold", textTransform: "uppercase"
+        color: "white", fontSize: 16, textAlign: "center", fontFamily: "Roboto-Bold", textTransform: "uppercase"
     },
 
     history: {

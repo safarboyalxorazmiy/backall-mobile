@@ -1,19 +1,19 @@
-import React, { Component } from 'react';
-import { StatusBar, StyleSheet, Text, View, TextInput, Dimensions, TouchableOpacity, ScrollView, Platform, Linking } from 'react-native';
-import Logo from '../../assets/logo.svg';
+import React, { Component } from "react";
+import { StatusBar, StyleSheet, Text, View, TextInput, Dimensions, TouchableOpacity, ScrollView, Platform, Linking } from "react-native";
+import Logo from "../../assets/logo.svg";
 import ApiService from "../../service/ApiService";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Animatable from 'react-native-animatable';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Animatable from "react-native-animatable";
 
-const screenWidth = Dimensions.get('window').width;
-const screenHeight = Dimensions.get('window').height;
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 
 class Login extends Component {
   constructor(props) {
       super(props);
       this.state = {
-          email: '',
-          password: '',
+          email: "",
+          password: "",
           error: false,
           isLoginInputActive: false,
           isPasswordInputActive: false,
@@ -42,21 +42,21 @@ class Login extends Component {
       }
               
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error("Error fetching data:", error);
     } finally {
       this.setState({ loading: false });
     }
   };
 
   forgotPasswordLink = () => {
-      this.props.navigation.navigate('Home');
+      this.props.navigation.navigate("Home");
   };
 
   render() {
     const { email, password, loading } = this.state;
     return (
       <ScrollView contentContainerStyle={styles.container}>
-        {(Platform.OS === 'android' || Platform.OS === 'ios') ?
+        {(Platform.OS === "android" || Platform.OS === "ios") ?
           <Logo style={styles.logo} resizeMode="cover" /> :
           <Logo style={styles.logo} />}
         <View style={styles.form}>
@@ -73,7 +73,7 @@ class Login extends Component {
                     paddingHorizontal: 20,
                     fontSize: 18,
                     marginBottom: 16,
-                    fontFamily: 'Gilroy-Regular',
+                    fontFamily: "Gilroy-Regular",
                 }}
                 placeholder="admin"
                 placeholderTextColor="#AFAFAF"
@@ -100,7 +100,7 @@ class Login extends Component {
                     paddingHorizontal: 20,
                     fontSize: 18,
                     marginBottom: 16,
-                    fontFamily: 'Gilroy-Regular',
+                    fontFamily: "Gilroy-Regular",
                 }}
                 placeholder="********"
                 placeholderTextColor="#AFAFAF"
@@ -133,7 +133,7 @@ class Login extends Component {
         </View>
         <TouchableOpacity 
           onPress={() => {
-            Linking.openURL('https://t.me/backall_admin');
+            Linking.openURL("https://t.me/backall_admin");
           }} 
           style={{ marginTop: 100 }}>
           <View style={styles.forgotPasswordLink}>
@@ -149,8 +149,8 @@ class Login extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
+        backgroundColor: "#fff",
+        alignItems: "center",
         paddingTop: 104,
         height: screenHeight
     },
@@ -161,12 +161,12 @@ const styles = StyleSheet.create({
         marginBottom: 83
     },
     form: {
-        alignItems: 'center'
+        alignItems: "center"
     },
     label: {
         fontSize: 16,
-        fontWeight: '500',
-        fontFamily: 'Gilroy-Medium',
+        fontWeight: "500",
+        fontFamily: "Gilroy-Medium",
         marginBottom: 4,
         width: screenWidth - (24 + 24)
     },
@@ -179,30 +179,30 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         fontSize: 18,
         marginBottom: 16,
-        fontFamily: 'Gilroy-Regular',
+        fontFamily: "Gilroy-Regular",
     },
     button: {
         width: screenWidth - (24 + 24),
-        backgroundColor: '#222',
-        color: 'white',
+        backgroundColor: "#222",
+        color: "white",
         paddingVertical: 14,
         borderRadius: 10,
     },
     buttonText: {
-        color: 'white',
-        textAlign: 'center',
+        color: "white",
+        textAlign: "center",
         fontSize: 20,
-        textTransform: 'capitalize',
-        fontWeight: '500',
-        fontFamily: 'Gilroy-Medium'
+        textTransform: "capitalize",
+        fontWeight: "500",
+        fontFamily: "Gilroy-Medium"
     },
     forgotPasswordLink: {
-        alignItems: 'center'
+        alignItems: "center"
     },
     forgotPasswordText: {
         fontSize: 16,
-        fontWeight: '500',
-        fontFamily: 'Gilroy-Medium'
+        fontWeight: "500",
+        fontFamily: "Gilroy-Medium"
     }
 });
 

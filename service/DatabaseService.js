@@ -171,8 +171,8 @@ class DatabaseService {
 			this.db.transaction((tx) => {
 				tx.executeSql(
 					`SELECT p.name                             AS product_name,
-                            sh.count || ' ' || sh.countType    AS count_and_type,
-                            strftime('%H:%M', sh.created_date) AS formatted_created_date
+                            sh.count || " " || sh.countType    AS count_and_type,
+                            strftime("%H:%M", sh.created_date) AS formatted_created_date
                      FROM sell_history AS sh
                               INNER JOIN products AS p ON sh.product_id = p.id`,
 					[],

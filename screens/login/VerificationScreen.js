@@ -4,7 +4,7 @@ import GreenCircle from "../../assets/small-green-circle.svg";
 import RedCircle from "../../assets/small-red-circle.svg"
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ApiService from "../../service/ApiService";
-import TokenService from '../../service/TokenService';
+import TokenService from "../../service/TokenService";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -84,10 +84,10 @@ class VerificationScreen extends Component {
 	renderCustomKeyboard() {
 		// Define custom keyboard layout
 		const keyboardLayout = [
-			['1', '2', '3'],
-			['4', '5', '6'],
-			['7', '8', '9'],
-			['', '0', '']
+			["1", "2", "3"],
+			["4", "5", "6"],
+			["7", "8", "9"],
+			["", "0", ""]
 		];
 
 		return keyboardLayout.map((row, rowIndex) => (
@@ -110,7 +110,7 @@ class VerificationScreen extends Component {
 							this.setState({focusedKey: key});
 							console.log(key);
 
-							if (key === 'Delete') {
+							if (key === "Delete") {
 								this.handleDelete();
 							} else {
 								this.handleKeyPress(key);

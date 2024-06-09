@@ -102,7 +102,7 @@ class ProfitDetail extends Component {
 
 		let hours = parsedDate.getHours();
 		let minutes = parsedDate.getMinutes();
-		let formattedTime = (hours < 10 ? '0' : '') + hours + ':' + (minutes < 10 ? '0' : '') + minutes;
+		let formattedTime = (hours < 10 ? "0" : "") + hours + ":" + (minutes < 10 ? "0" : "") + minutes;
 	
 		return formattedTime;
 	}

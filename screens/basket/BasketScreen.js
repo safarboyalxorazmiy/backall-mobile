@@ -54,11 +54,11 @@ class Basket extends Component {
 		this.productRepository = new ProductRepository();
 
 		this.keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
+      "keyboardDidShow",
       this.keyboardDidShow
     );
     this.keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
+      "keyboardDidHide",
       this.keyboardDidHide
     );
 
@@ -67,7 +67,7 @@ class Basket extends Component {
 	}
 
 	keyboardDidShow = () => {
-    this.setState({ addButtonStyle: { display: 'none' } });
+    this.setState({ addButtonStyle: { display: "none" } });
   };
 
   keyboardDidHide = () => {

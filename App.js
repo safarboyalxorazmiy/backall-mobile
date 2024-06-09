@@ -12,24 +12,26 @@ import {
 	Keyboard
 } from "react-native";
 import { Platform } from "react-native";
-import * as Font from "expo-font";
 import NetInfo from "@react-native-community/netinfo";
 import NavigationService from "./service/NavigationService";
-import { GestureHandlerRootView, TouchableWithoutFeedback } from "react-native-gesture-handler";
-import TokenService from "./service/TokenService";
-import DatabaseRepository from "./repository/DatabaseRepository";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import ProductRepository from "./repository/ProductRepository";
-import ApiService from "./service/ApiService";
+import { Asset } from "expo-asset";
+import * as Font from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+import * as SystemUI from "expo-system-ui";
+
 import StoreProductRepository from "./repository/StoreProductRepository";
 import SellHistoryRepository from "./repository/SellHistoryRepository";
 import ProfitHistoryRepository from "./repository/ProfitHistoryRepository";
 import AmountDateRepository from "./repository/AmountDateRepository";
+import ProductRepository from "./repository/ProductRepository";
+import DatabaseRepository from "./repository/DatabaseRepository";
+import TokenService from "./service/TokenService";
+import ApiService from "./service/ApiService";
+
 import RightArrow from "./assets/right-arrow.svg";
 import RightArrowLight from "./assets/right-arrow-light.svg"
-import { Asset } from 'expo-asset';
-import * as SplashScreen from 'expo-splash-screen';
-import * as SystemUI from 'expo-system-ui';
 
 const tokenService = new TokenService();
 
@@ -117,12 +119,12 @@ class App extends Component {
     try {
       const { theme } = this.state;
       let splashImage;
-      if (theme === 'dark') {
-        splashImage = require('./assets/splash-dark.png');
-        SystemUI.setBackgroundColorAsync('#000000');
+      if (theme === "dark") {
+        splashImage = require("./assets/splash-dark.png");
+        SystemUI.setBackgroundColorAsync("#000000");
       } else {
-        splashImage = require('./assets/splash.png');
-        SystemUI.setBackgroundColorAsync('#ffffff');
+        splashImage = require("./assets/splash.png");
+        SystemUI.setBackgroundColorAsync("#ffffff");
       }
 
       // Preload splash image
@@ -152,7 +154,7 @@ class App extends Component {
 			// Get the current date
 			let currentDate = new Date();
 			// Extract month and year
-			let month = String(currentDate.getMonth() + 1).padStart(2, '0'); // getMonth() returns 0-based month
+			let month = String(currentDate.getMonth() + 1).padStart(2, "0"); // getMonth() returns 0-based month
 			let year = currentDate.getFullYear();
 			let monthYear = `${month}/${year}`;
 			
@@ -181,8 +183,8 @@ class App extends Component {
 					const currentDate = new Date();
 
 					const year = currentDate.getFullYear();
-					const month = ('0' + (currentDate.getMonth() + 1)).slice(-2); // Adding 1 because getMonth() returns zero-based month index
-					const day = ('0' + currentDate.getDate()).slice(-2);
+					const month = ("0" + (currentDate.getMonth() + 1)).slice(-2); // Adding 1 because getMonth() returns zero-based month index
+					const day = ("0" + currentDate.getDate()).slice(-2);
 
 					const dateString = `${year}-${month}-${day}`;
 
@@ -604,7 +606,7 @@ class App extends Component {
       return (
 				<View style={styles.container}>
 					<Image
-						source={theme === 'dark' ? require('./assets/splash-dark.png') : require('./assets/splash.png')}
+						source={theme === "dark" ? require("./assets/splash-dark.png") : require("./assets/splash.png")}
 						style={styles.splashImage}
 						resizeMode="contain"
 					/>
@@ -619,9 +621,9 @@ class App extends Component {
 				<View style={styles.container}>
 					<Image
 						source={
-							theme === 'dark' ? 
-							require('./assets/splash-dark.png') : 
-							require('./assets/splash.png')
+							theme === "dark" ? 
+							require("./assets/splash-dark.png") : 
+							require("./assets/splash.png")
 						}
 						style={styles.splashImage}
 						resizeMode="contain"
@@ -647,7 +649,7 @@ class App extends Component {
 								fontFamily: "Gilroy-SemiBold",
 								fontSize: 38,
 								width: 280
-							}}>Oylik abonent to'lovi muddati keldi!</Text>
+							}}>Oylik abonent to"lovi muddati keldi!</Text>
 							
 							<TouchableOpacity 
 								activeOpacity={1} 
@@ -664,8 +666,8 @@ class App extends Component {
 										const currentDate = new Date();
 
 										const year = currentDate.getFullYear();
-										const month = ('0' + (currentDate.getMonth() + 1)).slice(-2); // Adding 1 because getMonth() returns zero-based month index
-										const day = ('0' + currentDate.getDate()).slice(-2);
+										const month = ("0" + (currentDate.getMonth() + 1)).slice(-2); // Adding 1 because getMonth() returns zero-based month index
+										const day = ("0" + currentDate.getDate()).slice(-2);
 
 										const dateString = `${year}-${month}-${day}`;
 
@@ -744,13 +746,13 @@ class App extends Component {
 									marginTop: 18
 								}}
 								onPress={() => {
-									Linking.openURL('https://t.me/backall_admin');
+									Linking.openURL("https://t.me/backall_admin");
 								}}>
 								<Text style={{
 									fontSize: 18,
 									fontFamily: "Gilroy-Black",
 									color: "white"
-								}}>TO'LASH</Text>
+								}}>TO"LASH</Text>
 								<RightArrow />
 							</TouchableOpacity>
 						</View>
@@ -766,12 +768,12 @@ class App extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   splashImage: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
 });
 

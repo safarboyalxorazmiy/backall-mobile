@@ -7,16 +7,19 @@ import {
 	Dimensions,
 	TouchableOpacity,
 	TextInput,
-	Pressable, Keyboard,
+	Pressable, 
+	Keyboard,
 } from "react-native";
-import {Dropdown} from "react-native-element-dropdown";
-import ToggleSwitch from 'toggle-switch-react-native';
-import * as Animatable from 'react-native-animatable';
-import BackIcon from "../../assets/arrow-left-icon.svg"
+import Dropdown from "react-native-element-dropdown";
+import ToggleSwitch from "toggle-switch-react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {TouchableWithoutFeedback} from "react-native-gesture-handler";
+import TouchableWithoutFeedback from "react-native-gesture-handler";
+import * as Animatable from "react-native-animatable";
+
 import ProductRepository from "../../repository/ProductRepository";
 import StoreProductRepository from "../../repository/StoreProductRepository";
+
+import BackIcon from "../../assets/arrow-left-icon.svg"
 
 const amountData = [
 	{label: "DONA"},
@@ -343,7 +346,7 @@ class ProductAdd extends Component {
 							marginTop: 10
 						}]}>
 
-						{/* CODE FOR INIT RANDOM PRODUCTS WHEN IT'S EMPTY.. */}
+						{/* CODE FOR INIT RANDOM PRODUCTS WHEN IT"S EMPTY.. */}
 						{/* <View style={{padding: 20}}>
 							<TouchableOpacity 
 								onPress={async () => {
@@ -392,7 +395,7 @@ class ProductAdd extends Component {
 													style={({pressed}) => [
 														styles.serialInputSuggestion,
 														{
-															backgroundColor: pressed ? '#CCCCCC' : '#FBFBFB',
+															backgroundColor: pressed ? "#CCCCCC" : "#FBFBFB",
 														},
 													]} key={index}>
 
@@ -999,7 +1002,7 @@ const styles = StyleSheet.create({
 		zIndex: 10,
 		overflow: "hidden",
 		elevation: 4,
-		shadowColor: 'rgba(0, 0, 0, 0.25)',
+		shadowColor: "rgba(0, 0, 0, 0.25)",
 		shadowOffset: {width: 2, height: 4},
 		shadowOpacity: 1,
 		shadowRadius: 4,

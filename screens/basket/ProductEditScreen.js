@@ -1,8 +1,14 @@
 import React, {Component} from "react";
-import DropDownPicker from 'react-native-dropdown-picker';
-import {Dimensions, StyleSheet, Text, TextInput, View} from "react-native";
-import {SelectList} from 'react-native-dropdown-select-list'
-import {FontAwesome} from "@expo/vector-icons";
+import DropDownPicker from "react-native-dropdown-picker";
+import {
+	Dimensions, 
+	StyleSheet,
+	Text,
+	TextInput,
+	View
+} from "react-native";
+import SelectList from "react-native-dropdown-select-list"
+import FontAwesome from "@expo/vector-icons";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -120,7 +126,7 @@ class ProductEdit extends Component {
 									paddingVertical: 14
 								}}
 								arrowicon={
-									<FontAwesome name="chevron-down" size={14} color={'white'}/>
+									<FontAwesome name="chevron-down" size={14} color={"white"}/>
 								}
 							/>
 						</View>

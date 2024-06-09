@@ -12,7 +12,7 @@ import {
 	Pressable,
 	FlatList
 } from "react-native";
-import Swipeable from 'react-native-gesture-handler/Swipeable';
+import Swipeable from "react-native-gesture-handler/Swipeable";
 
 import BackIcon from "../../assets/arrow-left-icon.svg";
 import CrossIcon from "../../assets/cross-icon.svg";
@@ -23,7 +23,7 @@ import AmountDateRepository from "../../repository/AmountDateRepository";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import TrashIcon from "../../assets/trash-icon.svg";
 import TrashIconBlack from "../../assets/trash-icon-black.svg";
-import * as Animatable from 'react-native-animatable';
+import * as Animatable from "react-native-animatable";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -75,13 +75,13 @@ class Sell extends Component {
 		};
 
 		this.keyboardDidShowListener = Keyboard.addListener(
-			'keyboardDidShow',
+			"keyboardDidShow",
 			() => {
 				this.setState({isKeyboardOn: true});
 			}
 		);
 		this.keyboardDidHideListener = Keyboard.addListener(
-			'keyboardDidHide',
+			"keyboardDidHide",
 			() => {
 				this.setState({isKeyboardOn: false});
 			}
@@ -362,7 +362,7 @@ class Sell extends Component {
 							style={styles.footerTitle}
 						>
 							<Text style={styles.priceTitle}>Buyurtma narxi</Text>
-							<Text style={styles.price}>{this.state.amount} so'm</Text>
+							<Text style={styles.price}>{this.state.amount} so"m</Text>
 						</View>
 
 						<TouchableOpacity
@@ -529,7 +529,7 @@ class Sell extends Component {
 																			borderColor: "#F1F1F1"
 																		},
 																		{
-																			backgroundColor: pressed ? '#CCCCCC' : '#FBFBFB',
+																			backgroundColor: pressed ? "#CCCCCC" : "#FBFBFB",
 																		},
 																	]}
 																	key={index}>
@@ -595,11 +595,11 @@ class Sell extends Component {
 
 									{/* 
 										BIZDA IKKITA TEXTINPUT BOR BIRIGA YOZILSA IKKINCHISIGA AVTOMATIK QIYMAT BERILISHI KERAK
-										QUANTITY O'ZGARTIRILSA NARXI NARXI O'ZGARTIRILSA QUANTITY 
+										QUANTITY O"ZGARTIRILSA NARXI NARXI O"ZGARTIRILSA QUANTITY 
 									*/}
 									{/* 
 										* 1. TextInput valuelarini stateda saqlash.
-										* 2. Birinchi textInput onChange bo'lganda ikkinchisini valuesini o'zgartirish.
+										* 2. Birinchi textInput onChange bo"lganda ikkinchisini valuesini o"zgartirish.
 										* 3. 
 										* 4. 
 									*/}
@@ -909,7 +909,7 @@ class Sell extends Component {
 																			borderColor: "#F1F1F1"
 																		},
 																		{
-																			backgroundColor: pressed ? '#CCCCCC' : '#FBFBFB',
+																			backgroundColor: pressed ? "#CCCCCC" : "#FBFBFB",
 																		},
 																	]}
 																	key={index}>
@@ -1065,7 +1065,7 @@ class Sell extends Component {
 										selectedProduct.serial_number = "";
 										selectedProduct.count = parseFloat(this.state.quantityInputValue);
 
-										// DON'T ADD - value to AMOUNT
+										// DON"T ADD - value to AMOUNT
 										// this.setState({
 										// 	amount: this.state.amount + (selectedProduct.selling_price * selectedProduct.count)
 										// });
@@ -1241,8 +1241,8 @@ class Sell extends Component {
 
 		// Extract year, month, and day
 		const year = currentDate.getFullYear();
-		const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed, so add 1
-		const day = String(currentDate.getDate()).padStart(2, '0');
+		const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Month is zero-indexed, so add 1
+		const day = String(currentDate.getDate()).padStart(2, "0");
 
 		// Format the date as yyyy-mm-dd
 		const formattedDate = `${year}-${month}-${day}`;
@@ -1526,7 +1526,7 @@ const styles = StyleSheet.create({
 		zIndex: 10,
 		overflow: "hidden",
 		elevation: 4,
-		shadowColor: 'rgba(0, 0, 0, 0.25)',
+		shadowColor: "rgba(0, 0, 0, 0.25)",
 		shadowOffset: {width: 2, height: 4},
 		shadowOpacity: 1,
 		shadowRadius: 4,

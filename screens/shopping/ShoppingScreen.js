@@ -360,7 +360,7 @@ class Shopping extends Component {
 		// PROBLEM:
 		// 	Bu yerda oxirgi da qolib ketgan 10 dan keyingi 5-4 larini 
 		// 	ola olmay qolishi mumkin...
-		// 	tekshirib agar muammo bo'lsa hal qilish kerak
+		// 	tekshirib agar muammo bo"lsa hal qilish kerak
 		
 		this.setState({isCollecting: true});
 		
@@ -402,7 +402,7 @@ class Shopping extends Component {
 		for (const history of histories) {
 			console.log(history);
 			
-			const date = history.created_date.split('T')[0];
+			const date = history.created_date.split("T")[0];
 			const formattedDate = this.formatDate(date);
 			if (!grouped[date]) {
 				grouped[date] = { date, dateInfo: formattedDate, histories: [], totalAmount: 0 };
@@ -411,8 +411,8 @@ class Shopping extends Component {
 			
 			let currentDate = new Date(date);
 			const year = currentDate.getFullYear();
-			const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed, so add 1
-			const day = String(currentDate.getDate()).padStart(2, '0');
+			const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Month is zero-indexed, so add 1
+			const day = String(currentDate.getDate()).padStart(2, "0");
 			
 			// Format the date as yyyy-mm-dd
 			const currentFormattedDate = `${year}-${month}-${day}`;
@@ -425,10 +425,10 @@ class Shopping extends Component {
 	
 	formatDate = (dateString) => {
 		const date = new Date(dateString);
-		const options = {day: 'numeric', month: 'long', weekday: 'long'};
-		const formattedDate = date.toLocaleDateString('uz', options);
+		const options = {day: "numeric", month: "long", weekday: "long"};
+		const formattedDate = date.toLocaleDateString("uz", options);
 		
-		let [weekday, day] = formattedDate.split(', ');
+		let [weekday, day] = formattedDate.split(", ");
 		
 		weekday = weekday.charAt(0).toUpperCase() + weekday.slice(1);
 		return `${day}, ${weekday}`;
@@ -569,7 +569,7 @@ class Shopping extends Component {
 		const {navigation} = this.props;
 
 		return (
-			<View style={[styles.container, Platform.OS === 'web' && {width: "100%"}]}>
+			<View style={[styles.container, Platform.OS === "web" && {width: "100%"}]}>
 				<ScrollView onScrollBeginDrag={async (event) => {
 					if (!this.state.isCollecting) {
 						console.log("Scrolling ", event.nativeEvent.contentOffset);

@@ -51,47 +51,47 @@ class CalendarPage extends Component {
     getCurrentDateString() {
         const currentDate = new Date();
         const year = currentDate.getFullYear();
-        const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-        const day = String(currentDate.getDate()).padStart(2, '0');
+        const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+        const day = String(currentDate.getDate()).padStart(2, "0");
 
         return `${year}-${month}-${day}`;
     }
 
     getCurrentMonth() {
         const date = new Date();
-        const options = {month: 'long'};
-        const formattedDate = date.toLocaleDateString('uz-UZ', options);
+        const options = {month: "long"};
+        const formattedDate = date.toLocaleDateString("uz-UZ", options);
 
-        const [month] = formattedDate.split(' ');
+        const [month] = formattedDate.split(" ");
         const lowerCaseMonth = month.charAt(0).toLowerCase() + month.slice(1);
         return lowerCaseMonth;
     }
 
     getCurrentDay() {
         const date = new Date();
-        const options = {day: 'numeric'};
-        const formattedDate = date.toLocaleDateString('uz-UZ', options);
+        const options = {day: "numeric"};
+        const formattedDate = date.toLocaleDateString("uz-UZ", options);
 
-        const [day] = formattedDate.split(' ');
-        const paddedDay = String(day).padStart(2, '0');
+        const [day] = formattedDate.split(" ");
+        const paddedDay = String(day).padStart(2, "0");
         return paddedDay;
     }
 
     getCurrentYear() {
         const date = new Date();
-        const options = {year: 'numeric'};
-        const formattedDate = date.toLocaleDateString('uz-UZ', options);
+        const options = {year: "numeric"};
+        const formattedDate = date.toLocaleDateString("uz-UZ", options);
 
-        const [year] = formattedDate.split(' ');
+        const [year] = formattedDate.split(" ");
         return year;
     }
 
     getMonth(dateString) {
         const dateObj = new Date(dateString);
-        const options = {month: 'long'};
-        const formattedDate = dateObj.toLocaleDateString('uz-UZ', options);
+        const options = {month: "long"};
+        const formattedDate = dateObj.toLocaleDateString("uz-UZ", options);
 
-        const [month] = formattedDate.split(' ');
+        const [month] = formattedDate.split(" ");
         const lowerCaseMonth = month.charAt(0).toLowerCase() + month.slice(1);
 
         return lowerCaseMonth;
@@ -100,17 +100,17 @@ class CalendarPage extends Component {
     getMonthIndexWithName(name) {
         name = name.toLowerCase();
         const monthNamesUzbek = [
-            'yanvar', 'fevral', 'mart', 'aprel', 'may', 'iyun',
-            'iyul', 'avgust', 'sentabr', 'oktyabr', 'noyabr', 'dekabr'
+            "yanvar", "fevral", "mart", "aprel", "may", "iyun",
+            "iyul", "avgust", "sentabr", "oktyabr", "noyabr", "dekabr"
         ];
 
         const monthIndex = monthNamesUzbek.indexOf(name);
 
         if (monthIndex !== -1) {
-            // Add 1 to the index, and use String to ensure it's a string
-            return String(monthIndex + 1).padStart(2, '0');
+            // Add 1 to the index, and use String to ensure it"s a string
+            return String(monthIndex + 1).padStart(2, "0");
         } else {
-            return '-1'; // or any other indicator for not found
+            return "-1"; // or any other indicator for not found
         }
     }
 
@@ -137,7 +137,7 @@ class CalendarPage extends Component {
     setForMonth() {
         let currentDate = new Date();
         const thisMonthName = this.getMonth(currentDate.toDateString());
-        const thisMonthIndex = String(currentDate.getMonth() + 1).padStart(2, '0');
+        const thisMonthIndex = String(currentDate.getMonth() + 1).padStart(2, "0");
 
         currentDate.setMonth(currentDate.getMonth() - 1);
 
@@ -146,15 +146,15 @@ class CalendarPage extends Component {
         }
 
         const lastMonthName = this.getMonth(currentDate.toDateString());
-        const lastMonthIndex = String(currentDate.getMonth() + 1).padStart(2, '0');
+        const lastMonthIndex = String(currentDate.getMonth() + 1).padStart(2, "0");
 
-        const thisDay = String(currentDate.getDate()).padStart(2, '0');
+        const thisDay = String(currentDate.getDate()).padStart(2, "0");
         const thisYear = currentDate.getFullYear();
-        const lastDay = String(currentDate.getDate()).padStart(2, '0');
+        const lastDay = String(currentDate.getDate()).padStart(2, "0");
         const lastYear = currentDate.getFullYear();
 
-        let fromDateString = `${currentDate.getFullYear()}-${thisMonthIndex}-${String(currentDate.getDate()).padStart(2, '0')}`;
-        let toDateString = `${currentDate.getFullYear()}-${lastMonthIndex}-${String(currentDate.getDate()).padStart(2, '0')}`;
+        let fromDateString = `${currentDate.getFullYear()}-${thisMonthIndex}-${String(currentDate.getDate()).padStart(2, "0")}`;
+        let toDateString = `${currentDate.getFullYear()}-${lastMonthIndex}-${String(currentDate.getDate()).padStart(2, "0")}`;
 
         this.setState({
             fromDayInputValue: thisDay + "",
@@ -177,15 +177,15 @@ class CalendarPage extends Component {
     setForWeek() {
         let currentDate = new Date();
         const thisMonthName = this.getMonth(currentDate.toDateString());
-        const thisMonthIndex = String(currentDate.getMonth() + 1).padStart(2, '0');
-        const thisDay = String(currentDate.getDate()).padStart(2, '0');
+        const thisMonthIndex = String(currentDate.getMonth() + 1).padStart(2, "0");
+        const thisDay = String(currentDate.getDate()).padStart(2, "0");
         const thisYear = currentDate.getFullYear();
 
         currentDate.setDate(currentDate.getDate() - 7);
 
         const lastMonthName = this.getMonth(currentDate.toDateString());
-        const lastMonthIndex = String(currentDate.getMonth() + 1).padStart(2, '0');
-        const lastDay = String(currentDate.getDate()).padStart(2, '0');
+        const lastMonthIndex = String(currentDate.getMonth() + 1).padStart(2, "0");
+        const lastDay = String(currentDate.getDate()).padStart(2, "0");
         const lastYear = currentDate.getFullYear();
 
         let fromDateString = `${thisYear}-${thisMonthIndex}-${thisDay}`;
@@ -478,7 +478,7 @@ class CalendarPage extends Component {
                                 <Calendar
                                     onDayPress={this.onDayPress}
                                     markedDates={{
-                                        [this.state.selectingDateType === 'FROM' ? this.state.fromDate : this.state.toDate]: {
+                                        [this.state.selectingDateType === "FROM" ? this.state.fromDate : this.state.toDate]: {
                                             selected: true,
                                             selectedColor: "blue"
                                         },

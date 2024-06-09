@@ -1,7 +1,8 @@
 import React, { Component } from "react";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { NavigationContainer } from "@react-navigation/native";
+import createBottomTabNavigator from "@react-navigation/bottom-tabs";
+import NavigationContainer from "@react-navigation/native";
 import { StyleSheet, View, TouchableOpacity, Keyboard } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import Home from "../screens/HomeScreen";
 import Basket from "../screens/basket/BasketScreen";
@@ -25,7 +26,6 @@ import ShoppingIcon from "../assets/navbar/shopping-icon.svg";
 import ShoppingIconActive from "../assets/navbar/shopping-icon-active.svg";
 import WalletIcon from "../assets/navbar/wallet-icon.svg";
 import WalletIconActive from "../assets/navbar/wallet-icon-active.svg";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import StoreProductRepository from "../repository/StoreProductRepository";
 import ProductRepository from "../repository/ProductRepository";

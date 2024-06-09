@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import TokenService from "./TokenService";
 import DatabaseRepository from "../repository/DatabaseRepository";
 
@@ -33,8 +34,8 @@ class ApiService {
             }
         };
 
-        console.log('Sending request to:', `${serverUrl}/payment/get?email=${email}&monthYear=${monthYear}`);
-        console.log('Request body:', requestOptions);
+        console.log("Sending request to:", `${serverUrl}/payment/get?email=${email}&monthYear=${monthYear}`);
+        console.log("Request body:", requestOptions);
 
         const response = 
           await fetch(
@@ -42,7 +43,7 @@ class ApiService {
             requestOptions
           );
 
-        console.log('Response status:', response.status);
+        console.log("Response status:", response.status);
 
         if (response.status == 401) {
           await this.logout(navigation);
@@ -50,10 +51,10 @@ class ApiService {
         }
 
         const responseBody = await response.json();
-        console.log('Response body:', responseBody);
+        console.log("Response body:", responseBody);
 
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error("Network response was not ok");
         }
 
         return responseBody;
@@ -75,12 +76,12 @@ class ApiService {
               }
           };
 
-          console.log('Sending request to:', `${serverUrl}/api/v1/product/get/local/info?storeId=${storeId}&page=${page}&size=${size}`);
-          console.log('Request body:', requestOptions);
+          console.log("Sending request to:", `${serverUrl}/api/v1/product/get/local/info?storeId=${storeId}&page=${page}&size=${size}`);
+          console.log("Request body:", requestOptions);
 
           const response = await fetch(`${serverUrl}/api/v1/product/get/local/info?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
-          console.log('Response status:', response.status);
+          console.log("Response status:", response.status);
           
           if (response.status == 401) {
             await this.logout(navigation);
@@ -88,10 +89,10 @@ class ApiService {
           }
 
           const responseBody = await response.json();
-          console.log('Response body:', responseBody);
+          console.log("Response body:", responseBody);
 
           if (!response.ok) {
-              throw new Error('Network response was not ok');
+              throw new Error("Network response was not ok");
           }
 
           return responseBody;
@@ -122,7 +123,7 @@ class ApiService {
         const responseBody = await response.json();
 
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error("Network response was not ok");
         }
 
         return responseBody;
@@ -144,12 +145,12 @@ class ApiService {
             }
         };
 
-        console.log('Sending request to:', `${serverUrl}/api/v1/product/get/global/info?storeId=${storeId}&page=${page}&size=${size}`);
-        console.log('Request body:', requestOptions);
+        console.log("Sending request to:", `${serverUrl}/api/v1/product/get/global/info?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log("Request body:", requestOptions);
 
         const response = await fetch(`${serverUrl}/api/v1/product/get/global/info?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
-        console.log('Response status:', response.status);
+        console.log("Response status:", response.status);
 
         if (response.status == 401) {
           await this.logout(navigation);
@@ -157,7 +158,7 @@ class ApiService {
         }
 
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error("Network response was not ok");
         }
 
         return await response.json(); // Return the parsed JSON directly
@@ -179,12 +180,12 @@ class ApiService {
             }
         };
 
-        console.log('Sending request to:', `${serverUrl}/api/v1/store/product/get/info?storeId=${storeId}&page=${page}&size=${size}`);
-        console.log('Request body:', requestOptions);
+        console.log("Sending request to:", `${serverUrl}/api/v1/store/product/get/info?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log("Request body:", requestOptions);
 
         const response = await fetch(`${serverUrl}/api/v1/store/product/get/info?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
-        console.log('Response status:', response.status);
+        console.log("Response status:", response.status);
 
         if (response.status == 401) {
           await this.logout(navigation);
@@ -192,10 +193,10 @@ class ApiService {
         }
 
         const responseBody = await response.json();
-        console.log('Response body:', responseBody);
+        console.log("Response body:", responseBody);
 
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error("Network response was not ok");
         }
 
         return responseBody;
@@ -228,7 +229,7 @@ class ApiService {
         const responseBody = await response.json();
 
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error("Network response was not ok");
         }
 
         return responseBody;
@@ -253,22 +254,22 @@ class ApiService {
             }
         };
 
-        console.log('Sending request to:', `${serverUrl}/api/v1/store/sell/group/get?storeId=${storeId}&page=${page}&size=${size}`);
-        console.log('Request body:', requestOptions);
+        console.log("Sending request to:", `${serverUrl}/api/v1/store/sell/group/get?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log("Request body:", requestOptions);
 
         const response = await fetch(`${serverUrl}/api/v1/store/sell/group/get?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
-        console.log('Response status:', response.status);
+        console.log("Response status:", response.status);
         if (response.status == 401) {
           await this.logout(navigation);
           return;
         }
 
         const responseBody = await response.json();
-        console.log('Response body:', responseBody);
+        console.log("Response body:", responseBody);
 
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error("Network response was not ok");
         }
 
         return responseBody;
@@ -290,23 +291,23 @@ class ApiService {
             }
         };
 
-        console.log('Sending request to:', `${serverUrl}/api/v1/store/sell/group/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`);
-        console.log('Request body:', requestOptions);
+        console.log("Sending request to:", `${serverUrl}/api/v1/store/sell/group/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log("Request body:", requestOptions);
 
         const response = 
           await fetch(`${serverUrl}/api/v1/store/sell/group/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
-        console.log('Response status:', response.status);
+        console.log("Response status:", response.status);
         if (response.status == 401) {
           await this.logout(navigation);
           return;
         }
 
         const responseBody = await response.json();
-        console.log('Response body:', responseBody);
+        console.log("Response body:", responseBody);
 
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error("Network response was not ok");
         }
 
         return responseBody;
@@ -328,22 +329,22 @@ class ApiService {
               }
           };
 
-          console.log('Sending request to:', `${serverUrl}/api/v1/store/sell/history/get?storeId=${storeId}&page=${page}&size=${size}`);
-          console.log('Request body:', requestOptions);
+          console.log("Sending request to:", `${serverUrl}/api/v1/store/sell/history/get?storeId=${storeId}&page=${page}&size=${size}`);
+          console.log("Request body:", requestOptions);
 
           const response = await fetch(`${serverUrl}/api/v1/store/sell/history/get?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
-          console.log('Response status:', response.status);
+          console.log("Response status:", response.status);
           if (response.status == 401) {
             await this.logout(navigation);
             return;
           }
 
           const responseBody = await response.json();
-          console.log('Response body:', responseBody);
+          console.log("Response body:", responseBody);
 
           if (!response.ok) {
-              throw new Error('Network response was not ok');
+              throw new Error("Network response was not ok");
           }
 
           return responseBody;
@@ -365,22 +366,22 @@ class ApiService {
             }
         };
 
-        console.log('Sending request to:', `${serverUrl}/api/v1/store/sell/history/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`);
-        console.log('Request body:', requestOptions);
+        console.log("Sending request to:", `${serverUrl}/api/v1/store/sell/history/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log("Request body:", requestOptions);
 
         const response = await fetch(`${serverUrl}/api/v1/store/sell/history/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
-        console.log('Response status:', response.status);
+        console.log("Response status:", response.status);
         if (response.status == 401) {
           await this.logout(navigation);
           return;
         }
 
         const responseBody = await response.json();
-        console.log('Response body:', responseBody);
+        console.log("Response body:", responseBody);
 
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error("Network response was not ok");
         }
 
         return responseBody;
@@ -402,12 +403,12 @@ class ApiService {
               }
           };
 
-          console.log('Sending request to:', `${serverUrl}/api/v1/store/sell/amount/date/get?storeId=${storeId}&page=${page}&size=${size}`);
-          console.log('Request body:', requestOptions);
+          console.log("Sending request to:", `${serverUrl}/api/v1/store/sell/amount/date/get?storeId=${storeId}&page=${page}&size=${size}`);
+          console.log("Request body:", requestOptions);
 
           const response = await fetch(`${serverUrl}/api/v1/store/sell/amount/date/get?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
-          console.log('Response status:', response.status);
+          console.log("Response status:", response.status);
 
           if (response.status == 401) {
             await this.logout(navigation);
@@ -415,10 +416,10 @@ class ApiService {
           }
 
           const responseBody = await response.json();
-          console.log('Response body:', responseBody);
+          console.log("Response body:", responseBody);
 
           if (!response.ok) {
-              throw new Error('Network response was not ok');
+              throw new Error("Network response was not ok");
           }
 
           return responseBody;
@@ -440,12 +441,12 @@ class ApiService {
             }
         };
 
-        console.log('Sending request to:', `${serverUrl}/api/v1/store/sell/amount/date/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`);
-        console.log('Request body:', requestOptions);
+        console.log("Sending request to:", `${serverUrl}/api/v1/store/sell/amount/date/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log("Request body:", requestOptions);
 
         const response = await fetch(`${serverUrl}/api/v1/store/sell/amount/date/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
-        console.log('Response status:', response.status);
+        console.log("Response status:", response.status);
 
         if (response.status == 401) {
           await this.logout(navigation);
@@ -453,10 +454,10 @@ class ApiService {
         }
 
         const responseBody = await response.json();
-        console.log('Response body:', responseBody);
+        console.log("Response body:", responseBody);
 
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error("Network response was not ok");
         }
 
         return responseBody;
@@ -478,12 +479,12 @@ class ApiService {
               }
           };
 
-          console.log('Sending request to:', `${serverUrl}/api/v1/store/sell/link/info?storeId=${storeId}&page=${page}&size=${size}`);
-          console.log('Request body:', requestOptions);
+          console.log("Sending request to:", `${serverUrl}/api/v1/store/sell/link/info?storeId=${storeId}&page=${page}&size=${size}`);
+          console.log("Request body:", requestOptions);
 
           const response = await fetch(`${serverUrl}/api/v1/store/sell/link/info?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
-          console.log('Response status:', response.status);
+          console.log("Response status:", response.status);
           
           if (response.status == 401) {
             await this.logout(navigation);
@@ -491,10 +492,10 @@ class ApiService {
           }
 
           const responseBody = await response.json();
-          console.log('Response body:', responseBody);
+          console.log("Response body:", responseBody);
 
           if (!response.ok) {
-              throw new Error('Network response was not ok');
+              throw new Error("Network response was not ok");
           }
 
           return responseBody;
@@ -516,13 +517,13 @@ class ApiService {
             }
         };
 
-        console.log('Sending request to:', `${serverUrl}/api/v1/store/sell/link/info/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`);
-        console.log('Request body:', requestOptions);
+        console.log("Sending request to:", `${serverUrl}/api/v1/store/sell/link/info/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log("Request body:", requestOptions);
 
         const response = 
           await fetch(`${serverUrl}/api/v1/store/sell/link/info/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
-        console.log('Response status:', response.status);
+        console.log("Response status:", response.status);
         
         if (response.status == 401) {
           await this.logout(navigation);
@@ -530,10 +531,10 @@ class ApiService {
         }
 
         const responseBody = await response.json();
-        console.log('Response body:', responseBody);
+        console.log("Response body:", responseBody);
 
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error("Network response was not ok");
         }
 
         return responseBody;
@@ -557,12 +558,12 @@ class ApiService {
             }
         };
 
-        console.log('Sending request to:', `${serverUrl}/api/v1/store/profit/group/get?storeId=${storeId}&page=${page}&size=${size}`);
-        console.log('Request body:', requestOptions);
+        console.log("Sending request to:", `${serverUrl}/api/v1/store/profit/group/get?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log("Request body:", requestOptions);
 
         const response = await fetch(`${serverUrl}/api/v1/store/profit/group/get?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
-        console.log('Response status:', response.status);
+        console.log("Response status:", response.status);
 
         if (response.status == 401) {
           await this.logout(navigation);
@@ -570,7 +571,7 @@ class ApiService {
         }
 
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error("Network response was not ok");
         }
 
         return await response.json(); // Return the parsed JSON directly
@@ -593,9 +594,9 @@ class ApiService {
       };
 
       console.log(
-        'Sending request to:', 
+        "Sending request to:", 
       `${serverUrl}/api/v1/store/profit/group/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`);
-      console.log('Request body:', requestOptions);
+      console.log("Request body:", requestOptions);
 
       const response = 
         await fetch(
@@ -603,7 +604,7 @@ class ApiService {
           requestOptions
         );
 
-      console.log('Response status:', response.status);
+      console.log("Response status:", response.status);
 
       if (response.status == 401) {
         await this.logout(navigation);
@@ -611,7 +612,7 @@ class ApiService {
       }
 
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error("Network response was not ok");
       }
 
       return await response.json(); // Return the parsed JSON directly
@@ -633,12 +634,12 @@ class ApiService {
             }
         };
 
-        console.log('Sending request to:', `${serverUrl}/api/v1/store/profit/history/get?storeId=${storeId}&page=${page}&size=${size}`);
-        console.log('Request body:', requestOptions);
+        console.log("Sending request to:", `${serverUrl}/api/v1/store/profit/history/get?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log("Request body:", requestOptions);
 
         const response = await fetch(`${serverUrl}/api/v1/store/profit/history/get?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
-        console.log('Response status:', response.status);
+        console.log("Response status:", response.status);
 
         if (response.status == 401) {
           await this.logout(navigation);
@@ -646,10 +647,10 @@ class ApiService {
         }
 
         const responseBody = await response.json(); // Read JSON response only once
-        console.log('Response body:', responseBody);
+        console.log("Response body:", responseBody);
 
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error("Network response was not ok");
         }
 
         return responseBody; // Return the JSON response
@@ -671,12 +672,12 @@ class ApiService {
             }
         };
 
-        console.log('Sending request to:', `${serverUrl}/api/v1/store/profit/history/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`);
-        console.log('Request body:', requestOptions);
+        console.log("Sending request to:", `${serverUrl}/api/v1/store/profit/history/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log("Request body:", requestOptions);
 
         const response = await fetch(`${serverUrl}/api/v1/store/profit/history/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
-        console.log('Response status:', response.status);
+        console.log("Response status:", response.status);
 
         if (response.status == 401) {
           await this.logout(navigation);
@@ -684,10 +685,10 @@ class ApiService {
         }
 
         const responseBody = await response.json(); // Read JSON response only once
-        console.log('Response body:', responseBody);
+        console.log("Response body:", responseBody);
 
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error("Network response was not ok");
         }
 
         return responseBody; // Return the JSON response
@@ -711,12 +712,12 @@ class ApiService {
               }
           };
 
-          console.log('Sending request to:', `${serverUrl}/api/v1/store/profit/link/info?storeId=${storeId}&page=${page}&size=${size}`);
-          console.log('Request body:', requestOptions);
+          console.log("Sending request to:", `${serverUrl}/api/v1/store/profit/link/info?storeId=${storeId}&page=${page}&size=${size}`);
+          console.log("Request body:", requestOptions);
 
           const response = await fetch(`${serverUrl}/api/v1/store/profit/link/info?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
-          console.log('Response status:', response.status);
+          console.log("Response status:", response.status);
 
           if (response.status == 401) {
             await this.logout(navigation);
@@ -724,10 +725,10 @@ class ApiService {
           }
 
           const responseBody = await response.json(); // Read JSON response only once
-          console.log('Response body:', responseBody);
+          console.log("Response body:", responseBody);
 
           if (!response.ok) {
-              throw new Error('Network response was not ok');
+              throw new Error("Network response was not ok");
           }
 
           return responseBody; // Return the JSON response
@@ -751,12 +752,12 @@ class ApiService {
             }
         };
 
-        console.log('Sending request to:', `${serverUrl}/api/v1/store/profit/link/info/not/downlaoded?storeId=${storeId}&page=${page}&size=${size}`);
-        console.log('Request body:', requestOptions);
+        console.log("Sending request to:", `${serverUrl}/api/v1/store/profit/link/info/not/downlaoded?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log("Request body:", requestOptions);
 
         const response = await fetch(`${serverUrl}/api/v1/store/profit/link/info/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
-        console.log('Response status:', response.status);
+        console.log("Response status:", response.status);
         
         if (response.status == 401) {
           await this.logout(navigation);
@@ -764,10 +765,10 @@ class ApiService {
         }
 
         const responseBody = await response.json(); // Read JSON response only once
-        console.log('Response body:', responseBody);
+        console.log("Response body:", responseBody);
 
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error("Network response was not ok");
         }
 
         return responseBody; // Return the JSON response
@@ -791,12 +792,12 @@ class ApiService {
             }
         };
 
-        console.log('Sending request to:', `${serverUrl}/api/v1/store/profit/amount/date/get?storeId=${storeId}&page=${page}&size=${size}`);
-        console.log('Request body:', requestOptions);
+        console.log("Sending request to:", `${serverUrl}/api/v1/store/profit/amount/date/get?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log("Request body:", requestOptions);
 
         const response = await fetch(`${serverUrl}/api/v1/store/profit/amount/date/get?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
-        console.log('Response status:', response.status);
+        console.log("Response status:", response.status);
 
         if (response.status == 401) {
           await this.logout(navigation);
@@ -804,10 +805,10 @@ class ApiService {
         }
 
         const responseBody = await response.json(); // Read JSON response only once
-        console.log('Response body:', responseBody);
+        console.log("Response body:", responseBody);
 
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error("Network response was not ok");
         }
 
         return responseBody; // Return the JSON response
@@ -831,12 +832,12 @@ class ApiService {
             }
         };
 
-        console.log('Sending request to:', `${serverUrl}/api/v1/store/profit/amount/date/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`);
-        console.log('Request body:', requestOptions);
+        console.log("Sending request to:", `${serverUrl}/api/v1/store/profit/amount/date/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log("Request body:", requestOptions);
 
         const response = await fetch(`${serverUrl}/api/v1/store/profit/amount/date/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
-        console.log('Response status:', response.status);
+        console.log("Response status:", response.status);
         
         if (response.status == 401) {
           await this.logout(navigation);
@@ -844,10 +845,10 @@ class ApiService {
         }
 
         const responseBody = await response.json(); // Read JSON response only once
-        console.log('Response body:', responseBody);
+        console.log("Response body:", responseBody);
 
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error("Network response was not ok");
         }
 
         return responseBody; // Return the JSON response
@@ -861,7 +862,7 @@ class ApiService {
   async sendRequest(url, requestOptions) {
     try {
         const response = await fetch(url, requestOptions);
-        console.log('Response status:', response.status);
+        console.log("Response status:", response.status);
 
         if (response.status == 401) {
           await this.logout(navigation);
@@ -869,10 +870,10 @@ class ApiService {
         }
 
         const responseBody = await response.json();
-        console.log('Response body:', responseBody);
+        console.log("Response body:", responseBody);
         
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error("Network response was not ok");
         }
         
         return responseBody;
@@ -904,8 +905,8 @@ class ApiService {
         body: JSON.stringify(requestBody)
     };
 
-    console.log('Sending request to:', `${serverUrl}/api/v1/product/create`);
-    console.log('Request body:', requestOptions);
+    console.log("Sending request to:", `${serverUrl}/api/v1/product/create`);
+    console.log("Request body:", requestOptions);
 
     return await this.sendRequest(
       `${serverUrl}/api/v1/product/create`, requestOptions, navigation
@@ -946,8 +947,8 @@ class ApiService {
         body: JSON.stringify(requestBody)
     };
 
-    console.log('Sending request to:', `${serverUrl}/api/v1/store/product/create`);
-    console.log('Request body:', requestOptions);
+    console.log("Sending request to:", `${serverUrl}/api/v1/store/product/create`);
+    console.log("Request body:", requestOptions);
 
     return await this.sendRequest(
       `${serverUrl}/api/v1/store/product/create`, 
@@ -977,8 +978,8 @@ class ApiService {
         body: JSON.stringify(requestBody)
     };
 
-    console.log('Sending request to:', `${serverUrl}/api/v1/store/sell/group/create`);
-    console.log('Request body:', requestOptions);
+    console.log("Sending request to:", `${serverUrl}/api/v1/store/sell/group/create`);
+    console.log("Request body:", requestOptions);
 
     return await this.sendRequest(
       `${serverUrl}/api/v1/store/sell/group/create`, 
@@ -1098,8 +1099,8 @@ class ApiService {
         body: JSON.stringify(requestBody)
     };
 
-    console.log('Sending request to:', `${serverUrl}/api/v1/store/profit/group/create`);
-    console.log('Request body:', requestOptions);
+    console.log("Sending request to:", `${serverUrl}/api/v1/store/profit/group/create`);
+    console.log("Request body:", requestOptions);
 
     return await this.sendRequest(
       `${serverUrl}/api/v1/store/profit/group/create`, requestOptions, navigation
@@ -1219,12 +1220,12 @@ class ApiService {
             return result; // Return the boolean value
         } else {
             // Handle non-successful responses
-            console.error('Request failed with status:', response.status);
+            console.error("Request failed with status:", response.status);
             return false; // Return false indicating failure
         }
     } catch (error) {
       // Handle fetch errors
-      console.error('Error:', error);
+      console.error("Error:", error);
       return false; // Return false indicating failure
     }
   }
@@ -1250,12 +1251,12 @@ class ApiService {
             return response.json();
         } else {
             // Handle non-successful responses
-            console.error('Request failed with status:', response.status);
+            console.error("Request failed with status:", response.status);
             return false; // Return false indicating failure
         }
     } catch (error) {
         // Handle fetch errors
-        console.error('Error:', error);
+        console.error("Error:", error);
         return false; // Return false indicating failure
     }
   }
