@@ -219,6 +219,7 @@ class Sell extends Component {
 		let storeProduct = await this.storeProductRepository.getProductInfoBySerialNumber(seriya);
 
 		if (storeProduct[0]) {
+			console.log(storeProduct[0])
 			let newSellingProducts = [...this.state.sellingProducts];
 
 			let existingProductIndex =
@@ -235,9 +236,23 @@ class Sell extends Component {
 					return;
 				}
 
-				this.setState({
-					amount: this.state.amount + newSellingProducts[existingProductIndex].selling_price
-				});
+				this.setState(prevState => ({
+					amount: prevState.amount + (
+							newSellingProducts[existingProductIndex].nds == 1 ? (
+									(() => {
+											console.log("NDS IS TRUE");
+			
+											let a = newSellingProducts[existingProductIndex].selling_price;
+											let twelvePercent = a * 0.12;
+											a += twelvePercent;
+											return a;
+									})() // Immediately invoke the function
+							) : newSellingProducts[existingProductIndex].selling_price
+					)
+				}));
+			
+			
+
 				this.setState({
 					profit: this.state.profit + (
 						newSellingProducts[existingProductIndex].selling_price -
@@ -249,9 +264,20 @@ class Sell extends Component {
 				newSellingProduct.count = 1;
 				newSellingProducts.push(newSellingProduct);
 
-				this.setState({
-					amount: this.state.amount + newSellingProduct.selling_price
-				});
+				this.setState(prevState => ({
+					amount: prevState.amount + (
+							newSellingProduct.nds === 1 
+							? (() => {
+									console.log("NDS IS TRUE");
+									let a = newSellingProduct.selling_price;
+									let twelvePercent = a * 0.12;
+									a += twelvePercent;
+									return a;
+							})() // Immediately invoke the function
+							: newSellingProduct.selling_price
+					)
+			}));			
+			
 				this.setState({
 					profit: this.state.profit + (
 						newSellingProduct.selling_price -
@@ -362,7 +388,7 @@ class Sell extends Component {
 							style={styles.footerTitle}
 						>
 							<Text style={styles.priceTitle}>Buyurtma narxi</Text>
-							<Text style={styles.price}>{this.state.amount} so"m</Text>
+							<Text style={styles.price}>{this.state.amount} so'm</Text>
 						</View>
 
 						<TouchableOpacity
@@ -698,8 +724,19 @@ class Sell extends Component {
 										selectedProduct.count = parseFloat(this.state.quantityInputValue);
 
 										this.setState({
-											amount: this.state.amount + (selectedProduct.selling_price * selectedProduct.count)
-										});
+											amount: this.state.amount + (
+													selectedProduct.nds == 1 ? (
+															(() => {
+																	let a = selectedProduct.selling_price;
+																	let twelvePercent = a * 0.12;
+																	a += twelvePercent;
+																	a *= selectedProduct.count;
+																	return a;
+															})()
+													) : selectedProduct.selling_price * selectedProduct.count
+											)
+									});
+									
 
 										this.setState({
 											profit: this.state.profit + (

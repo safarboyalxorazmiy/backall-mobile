@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import createBottomTabNavigator from "@react-navigation/bottom-tabs";
-import NavigationContainer from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { NavigationContainer } from "@react-navigation/native";
 import { StyleSheet, View, TouchableOpacity, Keyboard } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
