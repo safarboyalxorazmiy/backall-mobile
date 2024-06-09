@@ -1,5 +1,5 @@
-import React, {Component} from "react";
-import {StatusBar} from "expo-status-bar";
+import React, { Component } from "react";
+import { StatusBar } from "expo-status-bar";
 import {
 	StyleSheet,
 	Text,
@@ -8,26 +8,27 @@ import {
 	TouchableOpacity,
 	Platform
 } from "react-native";
-import {LinearGradient} from "expo-linear-gradient";
+import { LinearGradient } from "expo-linear-gradient";
 
-import ShoppingIcon from "../assets/home/shopping-icon.svg";
-import BenefitIcon from "../assets/home/benefit-icon.svg";
-import AmountDateRepository from "../repository/AmountDateRepository";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import TokenService from '../service/TokenService';
 import Modal from "react-native-modal";
-import Spinner from 'react-native-loading-spinner-overlay';
-import ApiService from "../service/ApiService";
-import ProductRepository from "../repository/ProductRepository";
+import Spinner from "react-native-loading-spinner-overlay";
 import NetInfo from "@react-native-community/netinfo";
+
 import SellHistoryRepository from "../repository/SellHistoryRepository";
 import ProfitHistoryRepository from "../repository/ProfitHistoryRepository";
 import StoreProductRepository from "../repository/StoreProductRepository";
+import DatabaseRepository from "../repository/DatabaseRepository";
+import ProductRepository from "../repository/ProductRepository";
+import AmountDateRepository from "../repository/AmountDateRepository";
+import ApiService from "../service/ApiService";
+import TokenService from '../service/TokenService';
 
 import MenuIcon from "../assets/menu-icon 2.svg";
 import LogoutIcon from "../assets/logout-icon.svg";
 import CrossIcon from "../assets/cross-icon.svg";
-import DatabaseRepository from "../repository/DatabaseRepository";
+import ShoppingIcon from "../assets/home/shopping-icon.svg";
+import BenefitIcon from "../assets/home/benefit-icon.svg";
 
 import * as Animatable from "react-native-animatable";
 

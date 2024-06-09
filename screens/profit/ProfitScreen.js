@@ -1,17 +1,25 @@
-import React, {Component} from 'react';
-import {StatusBar} from 'expo-status-bar';
-import {StyleSheet, Text, View, Dimensions, Image, TouchableOpacity, ScrollView, Animated} from 'react-native';
+import React, { Component } from 'react';
+import { StatusBar } from 'expo-status-bar';
+import {
+  StyleSheet, 
+  Text, 
+  View, 
+  Dimensions, 
+  TouchableOpacity, 
+  ScrollView, 
+} from "react-native";
+import * as Animatable from "react-native-animatable";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import Modal from "react-native-modal";
+
+import ProductRepository from "../../repository/ProductRepository";
+import AmountDateRepository from "../../repository/AmountDateRepository";
+import ProfitHistoryRepository from "../../repository/ProfitHistoryRepository";
+import ApiService from "../../service/ApiService";
 
 import CalendarIcon from "../../assets/calendar-icon.svg";
 import CrossIcon from "../../assets/cross-icon-light.svg";
 import ProfitIcon from "../../assets/profit-icon.svg";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import Modal from "react-native-modal";
-import ApiService from "../../service/ApiService";
-
-import ProductRepository from "../../repository/ProductRepository";
-import AmountDateRepository from "../../repository/AmountDateRepository";
-import ProfitHistoryRepository from '../../repository/ProfitHistoryRepository';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -29,7 +37,6 @@ class Profit extends Component {
       calendarInputContent: "--/--/----",
       thisMonthProfitAmount: 0.00,
       notAllowed: "",
-      animation: new Animated.Value(0),
       notFinished: true,
 
       lastProfitGroupsPage: 0,
@@ -561,11 +568,6 @@ class Profit extends Component {
 
   render() {
       const {navigation} = this.props;
-
-      const translateY = this.state.animation.interpolate({
-        inputRange: [0, 1],
-        outputRange: [0, -100] // Adjust the value as needed
-      });
 
       return (
       <>

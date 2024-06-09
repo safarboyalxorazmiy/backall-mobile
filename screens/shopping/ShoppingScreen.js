@@ -1,17 +1,25 @@
-import React, {Component} from "react";
-import {StatusBar} from "expo-status-bar";
-import {Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View, Animated} from "react-native";
-import CalendarIcon from "../../assets/calendar-icon.svg";
-import CrossIcon from "../../assets/cross-icon-light.svg";
+import React, { Component } from "react";
+import { StatusBar } from "expo-status-bar";
+import {
+	Dimensions,
+	ScrollView, 
+	StyleSheet, 
+	Text, 
+	TouchableOpacity, 
+	View
+} from "react-native";
+import * as Animatable from "react-native-animatable";
+import Modal from "react-native-modal";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+import SellHistoryRepository from "../../repository/SellHistoryRepository";
+import AmountDateRepository from "../../repository/AmountDateRepository";
+import ProductRepository from "../../repository/ProductRepository";
+import ApiService from "../../service/ApiService";
 
 import SellIcon from "../../assets/sell-icon.svg";
-import SellHistoryRepository from "../../repository/SellHistoryRepository";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import AmountDateRepository from "../../repository/AmountDateRepository";
-import Modal from "react-native-modal";
-
-import ApiService from "../../service/ApiService";
-import ProductRepository from "../../repository/ProductRepository";
+import CalendarIcon from "../../assets/calendar-icon.svg";
+import CrossIcon from "../../assets/cross-icon-light.svg";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -33,7 +41,6 @@ class Shopping extends Component {
 			toDate: null,
 			thisMonthSellAmount: 0.00,
 			notAllowed: "",
-			animation: new Animated.Value(0),
 
 			notFinished: true,
 			
@@ -560,11 +567,6 @@ class Shopping extends Component {
 
 	render() {
 		const {navigation} = this.props;
-		
-		const translateY = this.state.animation.interpolate({
-			inputRange: [0, 1],
-			outputRange: [0, -100] // Adjust the value as needed
-		});
 
 		return (
 			<View style={[styles.container, Platform.OS === 'web' && {width: "100%"}]}>

@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import {
 	StyleSheet,
 	Text,
@@ -7,19 +7,20 @@ import {
 	TouchableOpacity,
 	TextInput,
 	ScrollView,
+	Keyboard
 } from "react-native";
-import PlusIcon from "../../assets/plus-icon.svg";
-import SearchIcon from "../../assets/search-icon.svg";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import BasketIcon from "../../assets/basket-icon-light.svg";
-import Success from "../../assets/success.svg";
-import { Keyboard } from 'react-native';
 import Modal from "react-native-modal";
+import * as Animatable from "react-native-animatable";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import StoreProductRepository from "../../repository/StoreProductRepository";
 import ProductRepository from "../../repository/ProductRepository";
 import ApiService from "../../service/ApiService";
-import * as Animatable from "react-native-animatable";
+
+import PlusIcon from "../../assets/plus-icon.svg";
+import SearchIcon from "../../assets/search-icon.svg";
+import BasketIcon from "../../assets/basket-icon-light.svg";
+import Success from "../../assets/success.svg";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
