@@ -19,6 +19,7 @@ import Modal from "react-native-modal";
 import StoreProductRepository from "../../repository/StoreProductRepository";
 import ProductRepository from "../../repository/ProductRepository";
 import ApiService from "../../service/ApiService";
+import * as Animatable from "react-native-animatable";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -523,12 +524,14 @@ class Basket extends Component {
 							top: 0
 						}}></View>
 
-						<View style={{
-							height: screenHeight,
-							display: "flex",
-							alignItems: "center",
-							justifyContent: "center"
-						}}>
+						<Animatable.View 
+							animation="bounceInUp" delay={0} iterationCount={1} direction="alternate"
+							style={{
+								height: screenHeight,
+								display: "flex",
+								alignItems: "center",
+								justifyContent: "center"
+							}}>
 							<View style={{
 								width: screenWidth - (16 * 2),
 								maxWidth: 343,
@@ -573,7 +576,7 @@ class Basket extends Component {
 									</TouchableOpacity>
 								</View>
 							</View>
-						</View>
+						</Animatable.View>
 				</Modal>
 			</View>
 		);

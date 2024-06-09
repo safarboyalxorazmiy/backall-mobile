@@ -69,7 +69,9 @@ class Sell extends Component {
 			quantityInputValue: "",
 			priceInputValue: "",
 			quantityInputError: false,
-			isUtilizationModalVisible: false
+			isUtilizationModalVisible: false,
+
+			autoFocus: true
 		};
 
 		this.keyboardDidShowListener = Keyboard.addListener(
@@ -98,6 +100,9 @@ class Sell extends Component {
 			let role = await AsyncStorage.getItem("role");
 			
 			if (role !== "SELLER") {
+				this.setState({
+					autoFocus: false
+				})
 				await AsyncStorage.setItem("not_allowed", "true")
 
 				let from = await AsyncStorage.getItem("from");
@@ -332,7 +337,7 @@ class Sell extends Component {
 						}}
 						onFocus={this.handleFocus}
 						onBlur={this.handleBlur}
-						autoFocus={true}
+						autoFocus={this.state.autoFocus}
 						editable={true}
 						cursorColor={"#222"}
 						onChangeText={this.onChangeTextSerialInput}
