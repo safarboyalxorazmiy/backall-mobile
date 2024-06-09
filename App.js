@@ -183,13 +183,15 @@ class App extends Component {
 					const currentDate = new Date();
 
 					const year = currentDate.getFullYear();
-					const month = ("0" + (currentDate.getMonth() + 1)).slice(-2); // Adding 1 because getMonth() returns zero-based month index
+					const month = ("0" + (currentDate.getMonth() + 1)).slice(-2); 
 					const day = ("0" + currentDate.getDate()).slice(-2);
+					const hour = ("0" + currentDate.getHours()).slice(-2); // Get current hour
 
 					const dateString = `${year}-${month}-${day}`;
 
 					if (
-						await AsyncStorage.getItem("lastPaymentShownDate") != dateString
+						await AsyncStorage.getItem("lastPaymentShownDate") != dateString && 
+            ((hour >= 8 && hour <= 9) || (hour >= 20 && hour <= 22))
 					) {
 						this.setState({
 							notPayed: true
@@ -671,8 +673,11 @@ class App extends Component {
 
 										const dateString = `${year}-${month}-${day}`;
 
-										await AsyncStorage.setItem("lastPaymentShownDate", dateString);
 
+										if (await AsyncStorage.getItem("lastPaymentShownDate") != dateString) {
+											await AsyncStorage.setItem("lastPaymentShownDate", dateString);
+										}
+										
 										this.setState({
 											notPayed: false
 										});
