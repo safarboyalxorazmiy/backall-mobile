@@ -140,7 +140,6 @@ class Basket extends Component {
 		);	
 	}
 
-
 	async load() {
 		let storeProducts = 
 			await this.storeProductRepository.findTopStoreProductsInfo(this.state.lastId);
