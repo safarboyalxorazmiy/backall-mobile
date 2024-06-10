@@ -971,163 +971,177 @@ class Home extends Component {
 									justifyContent: "flex-end",
 									marginLeft: "-5.5%"
 								}}>
-									<View style={{
-										width: "100%",
-										height: 500,
-										marginBottom: (
-											screenHeight >= 750 ? 0 : 
-											screenHeight >= 600 ? 10 : 
-											10
-										),
-										display: "flex",
-										justifyContent: "space-between",
-										paddingTop: 40,
-										borderRadius: 0,
-										backgroundColor: "#fff",
-										borderTopRightRadius: 20,
-										borderTopLeftRadius: 20
-									}}>
-										<View style={{
-											height: 24,
+									<Animatable.View 
+										animation="bounceInUp" 
+										delay={2} 
+										// duration={1}
+										iterationCount={1} 
+										direction={"alternate"} 
+										// easing={"ease-in"}
+										style={{
 											width: "100%",
-											display: "flex",
-											alignItems: "flex-end",
-											justifyContent: "flex-end",
-											// marginBottom: 24,
+											marginBottom: (
+												screenHeight >= 750 ? 0 : 
+												screenHeight >= 600 ? 10 : 
+												10
+											),
+											borderRadius: 0,
+											borderTopRightRadius: 20,
+											borderTopLeftRadius: 20,
+											backgroundColor: "#FFF",
 										}}>
-										<TouchableOpacity 
-											onPressIn={() => {
-												this.setState({
-													crossFocused: true
-												})
-											}}
-
-											onPressOut={() => {
-												this.setState({
-													crossFocused: false
-												})
-											}}
-
-											activeOpacity={1}
-											
-											onPress={async() => {
-												this.setState({menuOpened: false});
+											<View style={{
+												height: 500,
+												display: "flex",
+												justifyContent: "space-between",
+												paddingTop: 40,
 											}}>
-											<View style={this.state.crossFocused ? {
-												backgroundColor: "black",
-												borderRadius: 50,
-												padding: 20
-											} : {
-												backgroundColor: "#FFF",
-												borderRadius: 50,
-												padding: 20
-											}}>
-												<CrossIcon/>
-											</View>
+												<View style={{
+													height: 24,
+													width: "100%",
+													display: "flex",
+													alignItems: "flex-end",
+													justifyContent: "flex-end",
+													// marginBottom: 24,
+												}}>
+													<TouchableOpacity 
+														onPressIn={() => {
+															this.setState({
+																crossFocused: true
+															})
+														}}
 
-										</TouchableOpacity>
-									</View>
+														onPressOut={() => {
+															this.setState({
+																crossFocused: false
+															})
+														}}
 
-										<TouchableOpacity
-											activeOpacity={1}
-											onPressIn={() => {
-												this.setState({
-													clearButtonFocused: true
-												})
-											}}
-											onPressOut={() => {
-												this.setState({
-													clearButtonFocused: false
-												})
-											}}
-											onPress={async () => {
-												if (await AsyncStorage.getItem("isFetchingNotCompleated") == "true") {
-													// Actions not saved yet
-													return;
-												}
-
-												await this.databaseRepository.clear();
-												await AsyncStorage.clear();
-
-												this.setState({
-													shoppingCardColors: ["#E59C0D", "#FDD958"],
-													profitCardColors: ["#2C8134", "#1DCB00"],
-													profitAmount: 0,
-													sellAmount: 0,
-													notAllowed: "",
-													spinner: false,
-													isConnected: null,
-													isLoading: false,
-													isDownloaded: "false",
-
-													// PRODUCT
-													lastLocalProductsPage: 0,
-													lastLocalProductsSize: 10,
-													lastGlobalProductsPage: 0,
-													lastGlobalProductsSize: 10,
-													lastStoreProductsPage: 0,
-													lastStoreProductsSize: 10,
-
-													// SELL
-													lastSellGroupsPage: 0,
-													lastSellGroupsSize: 10,
-													lastSellHistoriesPage: 0,
-													lastSellHistoriesSize: 10,
-													lastSellHistoryGroupPage: 0,
-													lastSellHistoryGroupSize: 10,	
-													lastSellAmountDatePage: 0,
-													lastSellAmountDateSize: 10,	
-
-													// PROFIT
-													lastProfitGroupsPage: 0,
-													lastProfitGroupsSize: 10,
-													lastProfitHistoriesPage: 0,
-													lastProfitHistoriesSize: 10,
-													lastProfitHistoryGroupPage: 0,
-													lastProfitHistoryGroupSize: 10,	
-													lastProfitAmountDatePage: 0,
-													lastProfitAmountDateSize: 10,	
-
-													menuOpened: false
-												})
-
-												const {navigation} = this.props;
-												let isLoggedIn = await this.tokenService.checkTokens();
-												if (!isLoggedIn) {
-													navigation.navigate("Login");
-												}
-											}}>
-												<View style={[
-													{
-														display: "flex",
-														alignItems: "center",
-														height: 55,
-														justifyContent: "center",
-														width: "100%",
-														paddingHorizontal: 30,
-														borderTopWidth: 1,
-														borderTopColor: "#F1F1F1",
-														display: "flex",
-														flexDirection: "row",
-														gap: 17
-													}, this.state.clearButtonFocused ? {
-														backgroundColor: "#FAFAFA"
-													}: {
-														backgroundColor: "#FFF"
-													}
-												]}>
-													<LogoutIcon />
-													<Text
-														style={{
-															fontFamily: "Gilroy-Bold",
-															fontSize: 18,
-															color: "#D93E3C",
+														activeOpacity={1}
+														
+														onPress={async() => {
+															this.setState({menuOpened: false});
 														}}>
-															Hammasini tozalash va chiqish
-														</Text>
+
+														<View style={this.state.crossFocused ? {
+															backgroundColor: "#FAFAFA",
+															borderRadius: 50,
+															padding: 20,
+
+															// how to add transition.
+														} : {
+															backgroundColor: "transparent",
+															borderRadius: 50,
+															padding: 20
+														}}>
+															<CrossIcon/>
+														</View>
+
+													</TouchableOpacity>
 												</View>
-										</TouchableOpacity>
-									</View>
+
+												<TouchableOpacity
+													activeOpacity={1}
+													onPressIn={() => {
+														this.setState({
+															clearButtonFocused: true
+														})
+													}}
+													onPressOut={() => {
+														this.setState({
+															clearButtonFocused: false
+														})
+													}}
+													onPress={async () => {
+														if (await AsyncStorage.getItem("isFetchingNotCompleated") == "true") {
+															// Actions not saved yet
+															return;
+														}
+
+														await this.databaseRepository.clear();
+														await AsyncStorage.clear();
+
+														this.setState({
+															shoppingCardColors: ["#E59C0D", "#FDD958"],
+															profitCardColors: ["#2C8134", "#1DCB00"],
+															profitAmount: 0,
+															sellAmount: 0,
+															notAllowed: "",
+															spinner: false,
+															isConnected: null,
+															isLoading: false,
+															isDownloaded: "false",
+
+															// PRODUCT
+															lastLocalProductsPage: 0,
+															lastLocalProductsSize: 10,
+															lastGlobalProductsPage: 0,
+															lastGlobalProductsSize: 10,
+															lastStoreProductsPage: 0,
+															lastStoreProductsSize: 10,
+
+															// SELL
+															lastSellGroupsPage: 0,
+															lastSellGroupsSize: 10,
+															lastSellHistoriesPage: 0,
+															lastSellHistoriesSize: 10,
+															lastSellHistoryGroupPage: 0,
+															lastSellHistoryGroupSize: 10,	
+															lastSellAmountDatePage: 0,
+															lastSellAmountDateSize: 10,	
+
+															// PROFIT
+															lastProfitGroupsPage: 0,
+															lastProfitGroupsSize: 10,
+															lastProfitHistoriesPage: 0,
+															lastProfitHistoriesSize: 10,
+															lastProfitHistoryGroupPage: 0,
+															lastProfitHistoryGroupSize: 10,	
+															lastProfitAmountDatePage: 0,
+															lastProfitAmountDateSize: 10,	
+
+															menuOpened: false
+														})
+
+														const {navigation} = this.props;
+														let isLoggedIn = await this.tokenService.checkTokens();
+														if (!isLoggedIn) {
+															navigation.navigate("Login");
+														}
+													}}>
+														<View style={[
+															{
+																display: "flex",
+																alignItems: "center",
+																height: 55,
+																justifyContent: "center",
+																width: "100%",
+																paddingHorizontal: 30,
+																borderTopWidth: 1,
+																borderTopColor: "#F1F1F1",
+																display: "flex",
+																flexDirection: "row",
+																gap: 17
+															}, this.state.clearButtonFocused ? {
+																backgroundColor: "#FAFAFA"
+															}: {
+																backgroundColor: "#FFF"
+															}
+														]}>
+															<LogoutIcon />
+															<Text
+																style={{
+																	fontFamily: "Gilroy-Bold",
+																	fontSize: 18,
+																	color: "#D93E3C",
+																}}>
+																	Hammasini tozalash va chiqish
+																</Text>
+														</View>
+												</TouchableOpacity>
+											</View>
+										
+									</Animatable.View>
 								</View>
 							</View>
 					</Modal>
