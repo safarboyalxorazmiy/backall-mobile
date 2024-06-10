@@ -78,12 +78,14 @@ class Sell extends Component {
 			"keyboardDidShow",
 			() => {
 				this.setState({isKeyboardOn: true});
+				console.log("Keyboard on")
 			}
 		);
 		this.keyboardDidHideListener = Keyboard.addListener(
 			"keyboardDidHide",
 			() => {
 				this.setState({isKeyboardOn: false});
+				console.log("Keyboard off")
 			}
 		);
 
@@ -417,31 +419,52 @@ class Sell extends Component {
 								backgroundColor: "#00000099"
 							}}></View>
 						</TouchableOpacity>
-						<View style={{
-							height: screenHeight,
-							display: "flex",
-							alignItems: "center",
-							justifyContent: "center"
-						}}>
-							<View style={{
-								width: screenWidth - (16 * 2),
-								maxWidth: 343,
-								marginLeft: "auto",
-								marginRight: "auto",
-								flex: 1,
+						
+						<Animatable.View 
+							animation="bounceInUp" 
+							delay={2} 
+							iterationCount={1} 
+							direction={"alternate"}
+							style={{
+								height: screenHeight,
+								display: "flex",
 								alignItems: "center",
-
-								justifyContent: (this.state.isKeybardOn ? "flex-start" : "center"),
-								marginTop: (this.state.isKeybardOn ? 120 : 0),
+								justifyContent: "center",
 							}}>
+							<View style={(this.state.isKeyboardOn) ? 
+								{
+									width: 343,
+									height: "auto",
+									marginLeft: "auto",
+									marginRight: "auto",
+									flex: 1,
+									alignItems: "flex-start",
+
+									justifyContent: "flex-start",
+									marginTop: 0,
+									paddingTop: 20,
+								} : {
+									width: screenWidth - (16 * 2),
+									maxWidth: 343,
+									height: "auto",
+									marginLeft: "auto",
+									marginRight: "auto",
+									flex: 1,
+									alignItems: "flex-start",
+									justifyContent: "center",
+									marginTop: 0,
+									paddingTop: 20,
+								}}>
 								<View style={{
 									width: "100%",
 									padding: 20,
 									borderRadius: 12,
 									backgroundColor: "#fff",
+									paddingTop: 60,
 								}}>
-									<View style={styles.crossIconWrapper}>
-										<TouchableOpacity onPress={() => {
+									<TouchableOpacity 
+										style={styles.crossIconWrapper} 
+										onPress={() => {
 											this.setState({
 												isProductNameInputFocused: false,
 												isQuantityInputFocused: false,
@@ -457,9 +480,8 @@ class Sell extends Component {
 
 											this.toggleModal()
 										}}>
-											<CrossIcon />
-										</TouchableOpacity>
-									</View>
+										<CrossIcon />
+									</TouchableOpacity>
 
 									<View>
 										<Text style={styles.modalLabel}>Mahsulot nomi</Text>
@@ -786,7 +808,7 @@ class Sell extends Component {
 									</TouchableOpacity>
 								</View>
 							</View>
-						</View>
+						</Animatable.View>
 					</Modal>
 
 					<Modal
@@ -809,27 +831,40 @@ class Sell extends Component {
 							height: screenHeight,
 							display: "flex",
 							alignItems: "center",
-							justifyContent: "center"
+							justifyContent: "center",
 						}}>
-							<View style={{
-								width: screenWidth - (16 * 2),
-								maxWidth: 343,
-								marginLeft: "auto",
-								marginRight: "auto",
-								flex: 1,
-								alignItems: "center",
+							<View style={
+								this.state.isKeyboardOn ? 
+								{
+									width: screenWidth - (16 * 2),
+									maxWidth: 343,
+									marginLeft: "auto",
+									marginRight: "auto",
+									flex: 1,
+									alignItems: "center",
 
-								justifyContent: (this.state.isKeyboardOn ? "flex-start" : "center"),
-								marginTop: (this.state.isKeyboardOn ? 120 : 0),
-							}}>
+									justifyContent: "flex-start",
+									paddingTop: 20,
+								} : {
+									width: screenWidth - (16 * 2),
+									maxWidth: 343,
+									marginLeft: "auto",
+									marginRight: "auto",
+									flex: 1,
+									alignItems: "center",
+
+									justifyContent: "center",
+								}}>
 								<View style={{
 									width: "100%",
 									padding: 20,
 									borderRadius: 12,
 									backgroundColor: "#fff",
+									paddingTop: 60,
 								}}>
-									<View style={styles.crossIconWrapper}>
-										<TouchableOpacity onPress={() => {
+									<TouchableOpacity 
+										style={styles.crossIconWrapper} 
+										onPress={() => {
 											this.setState({
 												isProductNameInputFocused: false,
 												isQuantityInputFocused: false,
@@ -847,9 +882,9 @@ class Sell extends Component {
 												isUtilizationModalVisible: !prevState.isUtilizationModalVisible,
 											}));
 										}}>
-											<CrossIcon />
-										</TouchableOpacity>
-									</View>
+										<CrossIcon />
+									</TouchableOpacity>
+								
 
 									<View>
 										<Text style={styles.modalLabel}>Mahsulot nomi</Text>
@@ -1489,13 +1524,14 @@ const styles = StyleSheet.create({
 	},
 
 	crossIconWrapper: {
-		height: 24,
-		width: "100%",
+		height: 60,
+		width: 60,
+		borderRadius: 50,
 		display: "flex",
-		alignItems: "flex-end",
-		justifyContent: "flex-end",
-		marginBottom: 24,
-		marginTop: 10
+		alignItems: "center",
+		justifyContent: "center",
+		position: "absolute",
+		right: 0
 	},
 
 	crossIcon: {
