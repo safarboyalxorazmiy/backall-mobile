@@ -45,8 +45,9 @@ class Basket extends Component {
 			lastStoreProductsSize: 10,
 
       productsLoadingIntervalId: undefined,
-      productsLoadingIntervalProccessIsFinished: true
+      productsLoadingIntervalProccessIsFinished: true,
 
+			notFinished: true,
 		}
 		
 		this.storeProductRepository = new StoreProductRepository();
@@ -137,6 +138,17 @@ class Basket extends Component {
 				
 				
 				await this.load();
+
+				while (this.state.notFinished) {
+					if (await AsyncStorage.getItem("window") != "Shopping") {
+						break;
+					}
+	
+					console.log("Loading..")
+					this.setState({
+							notFinished: await this.loadData()
+					});
+				}
 			}
 		);	
 	}
@@ -323,7 +335,10 @@ class Basket extends Component {
 	async loadData() {
 		await this.storeProductRepository.init();
 
-    const newStoreProducts = await this.storeProductRepository.findTopStoreProductsInfo(this.state.lastId);
+    const newStoreProducts = 
+			await this.storeProductRepository.findTopStoreProductsInfo(
+				this.state.lastId
+			);
 		let last = newStoreProducts[newStoreProducts.length - 1];
 		if (last != undefined) {
 			this.setState({
@@ -350,6 +365,7 @@ class Basket extends Component {
 		);
 
 		console.log("LOAD DATA ENDED")
+		return true;
 	}
 	
 	async getCreated() {
