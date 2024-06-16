@@ -421,7 +421,7 @@ class Sell extends Component {
 						</TouchableOpacity>
 						
 						<Animatable.View 
-							animation="bounceInUp" 
+							animation="slideInDown" 
 							delay={2} 
 							iterationCount={1} 
 							direction={"alternate"}
@@ -431,7 +431,11 @@ class Sell extends Component {
 								alignItems: "center",
 								justifyContent: "center",
 							}}>
-							<View style={(this.state.isKeyboardOn) ? 
+							<View style={
+								(!isModalVisible) ? {
+									marginBottom: -500
+								} :
+								(this.state.isKeyboardOn) ? 
 								{
 									width: 343,
 									height: "auto",

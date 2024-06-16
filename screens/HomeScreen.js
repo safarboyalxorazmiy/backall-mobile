@@ -939,9 +939,9 @@ class Home extends Component {
 
 					<Modal
 						visible={this.state.menuOpened}
-						animationIn={"slideInUp"}
-						animationOut={"slideInDown"}
-						animationInTiming={200}
+						// animationIn={"slideInUp"}
+						// animationOut={"slideInDown"}
+						// animationInTiming={200}
 						transparent={true}>
 							<View style={{
 								position: "absolute",
@@ -972,13 +972,15 @@ class Home extends Component {
 									marginLeft: "-5.5%"
 								}}>
 									<Animatable.View 
-										animation="bounceInUp" 
-										delay={2} 
+										animation="slideInUp" 
+										delay={0.4} 
 										// duration={1}
 										iterationCount={1} 
 										direction={"alternate"} 
 										// easing={"ease-in"}
-										style={{
+										style={ !this.state.menuOpened ? {
+											marginBottom: -500
+										} : {
 											width: "100%",
 											marginBottom: (
 												screenHeight >= 750 ? 0 : 
