@@ -667,6 +667,15 @@ class App extends Component {
 									);
 									
 									if (tryCount >= 3) {
+										let isPayed = await this.apiService.getPayment(email, monthYear, navigation);
+										console.log("Payed: ", isPayed)
+										
+										if (isPayed == true) {						
+											this.setState({
+												notPayed: false
+											})
+										}
+										
 										return;
 									} else {
 										await AsyncStorage.setItem("paymentTryCount", (tryCount + 1).toString());
