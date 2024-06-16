@@ -142,7 +142,15 @@ class Sell extends Component {
 						sellingProducts: prevState.sellingProducts.filter(product => product !== item)
 					}));
 
-					console.log(this.state.sellingProducts);
+					let a = item.selling_price;
+					if (item.nds == 1) {
+						let twelvePercent = a * 0.12;
+						a += twelvePercent;
+					}
+
+					this.setState({
+						amount: this.state.amount - a
+					})
 				}}
 				style={{
 					flex: 1,
