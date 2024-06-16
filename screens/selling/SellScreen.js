@@ -339,7 +339,13 @@ class Sell extends Component {
 
 						<TouchableOpacity
 							style={{
-								paddingRight: 8
+								backgroundColor: "#F5F5F7",
+								width: 44,
+								height: 44,
+								display: "flex",
+								alignItems: "center",
+								justifyContent: "center",
+								borderRadius: 8
 							}}
 							onPressIn={() => {
 								// OPEN UTILIZATION MODAL
@@ -831,7 +837,13 @@ class Sell extends Component {
 								backgroundColor: "#00000099"
 							}}></View>
 						</TouchableOpacity>
-						<View style={{
+
+						<Animatable.View 
+							animation="slideInDown" 
+							delay={2} 
+							iterationCount={1} 
+							direction={"alternate"}
+							style={{
 							height: screenHeight,
 							display: "flex",
 							alignItems: "center",
@@ -1204,7 +1216,7 @@ class Sell extends Component {
 									</TouchableOpacity>
 								</View>
 							</View>
-						</View>
+						</Animatable.View>
 					</Modal>
 				</View>
 			</>
@@ -1426,9 +1438,12 @@ const styles = StyleSheet.create({
 
 	backIconWrapper: {
 		backgroundColor: "#F5F5F7",
-		paddingVertical: 16,
-		paddingHorizontal: 19,
-		borderRadius: 8,
+		width: 44,
+		height: 44,
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
+		borderRadius: 8
 	},
 
 	productList: {},
