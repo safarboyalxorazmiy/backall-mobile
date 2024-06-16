@@ -38,6 +38,7 @@ const tokenService = new TokenService();
 class App extends Component {
   constructor(props) {
     super(props);
+		
     this.state = {
       fontsLoaded: false,
       isConnected: null,
@@ -189,18 +190,15 @@ class App extends Component {
 
 					const dateString = `${year}-${month}-${day}`;
 
-					if (
-						(await AsyncStorage.getItem("lastPaymentShownDate") != dateString) ||
-            ((hour >= 8 && hour <= 9) || (hour >= 20 && hour <= 22) && await AsyncStorage.getItem("lastPaymentShownHour") != hour)
-					) { 
-						/* 
-						(If)
-						 Date does not equals work
-						 Hour does not equals and morning and evening work 
-						*/
-						this.setState({
-							notPayed: true
-						})
+					// (If)
+					// Date does not equals
+					if (await AsyncStorage.getItem("lastPaymentShownDate") != dateString) { 
+						// Hour does not equals and morning and evening work 
+						if ((hour >= 8 && hour <= 9) || (hour >= 20 && hour <= 22) && await AsyncStorage.getItem("lastPaymentShownHour") != hour) { 
+							this.setState({
+								notPayed: true
+							})
+						}
 					}
 				}
 		
