@@ -173,8 +173,10 @@ class App extends Component {
 			}
 		
 			if (isNotSaved == "true") {
-				this.touchableRef.current && this.touchableRef.current.onPress();
-				Keyboard.dismiss();
+				await this.saveData();
+
+				// this.touchableRef.current && this.touchableRef.current.onPress();
+				// Keyboard.dismiss();
 
 				const {navigation} = this.props;
 				let isPayed = 
@@ -205,15 +207,13 @@ class App extends Component {
 					}
 				}
 		
-				await this.saveData();
 			}
 		}
   }
 
   async saveData() {
 		if (
-			(!this.state.isSavingStarted) && 
-			(await AsyncStorage.getItem("isFetchingNotCompleated") != "false")
+			(!this.state.isSavingStarted) 
 		) {
 			this.setState({isSavingStarted: true});
 

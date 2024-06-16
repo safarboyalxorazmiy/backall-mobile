@@ -1397,6 +1397,7 @@ class Sell extends Component {
 		await AsyncStorage.setItem("profitHistoryGroupNotSaved", "true");
 		await AsyncStorage.setItem("profitAmountDateNotSaved", "true");
 
+
 		// Navigate screen
 		const {navigation} = this.props;
 		navigation.navigate("Shopping");
