@@ -194,7 +194,10 @@ class App extends Component {
 					// Date does not equals
 					if (await AsyncStorage.getItem("lastPaymentShownDate") != dateString) { 
 						// Hour does not equals and morning and evening work 
-						if ((hour >= 8 && hour <= 9) || (hour >= 20 && hour <= 22) && await AsyncStorage.getItem("lastPaymentShownHour") != hour) { 
+						if (
+							(hour >= 8 && hour <= 9) || (hour >= 20 && hour <= 22) && 
+							await AsyncStorage.getItem("lastPaymentShownHour") != hour
+						) { 
 							this.setState({
 								notPayed: true
 							})
