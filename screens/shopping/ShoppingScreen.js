@@ -293,6 +293,8 @@ class Shopping extends Component {
 	}
 
 	async initSellingHistoryGroup() {
+		this.getDateInfo();
+
 		if (!this.state.notFinished) {
 			return;
 		}
@@ -300,7 +302,6 @@ class Shopping extends Component {
 		await this.sellHistoryRepository.init();
 		await this.amountDateRepository.init();
 
-		this.getDateInfo();
 		if (this.state.fromDate != null && this.state.toDate != null) {
 			let lastSellHistoryGroup =
 				await this.sellHistoryRepository.getLastSellHistoryGroupByDate(
@@ -458,6 +459,8 @@ class Shopping extends Component {
 		await AsyncStorage.setItem("sellLoadingIntervalProccessIsFinished", "true");
 		
 		navigation.addListener("focus", async () => {
+			this.getDateInfo();
+
 			if (await AsyncStorage.getItem("role") === "BOSS") {
 				let sellLoadingIntervalId = setInterval(async () => {
 					if (await AsyncStorage.getItem("sellLoadingIntervalProccessIsFinished") != "true") {

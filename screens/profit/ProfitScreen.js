@@ -74,6 +74,8 @@ class Profit extends Component {
   }
   
   async initProfitHistoryGroup() {
+    await this.getDateInfo();
+
     if (!this.state.notFinished) {
         return;
     }
@@ -81,16 +83,20 @@ class Profit extends Component {
     await this.profitHistoryRepository.init();
     await this.amountDateRepository.init();
 
-      await this.getDateInfo();
-
       if (this.state.fromDate != null && this.state.toDate != null) {
-          let lastProfitGroup = await this.profitHistoryRepository.getLastProfitHistoryGroupIdByDate(this.state.fromDate, this.state.toDate);
+          let lastProfitGroup = 
+            await this.profitHistoryRepository.getLastProfitHistoryGroupIdByDate(this.state.fromDate, this.state.toDate);
 
           if (lastProfitGroup == null) {
             return;
           }
 
-          profitHistories = await this.profitHistoryRepository.getTop10ProfitGroupByStartIdAndDate(lastProfitGroup.id, this.state.fromDate, this.state.toDate);
+        //   fromDate: "2024-02-19" (example)
+        //   2024-06-16T18:51:17.990Z (example)
+          profitHistories = 
+            await this.profitHistoryRepository.getTop10ProfitGroupByStartIdAndDate(
+                lastProfitGroup.id, this.state.fromDate, this.state.toDate
+            );
 
           console.log({
               profitHistories: profitHistories,
@@ -449,6 +455,8 @@ class Profit extends Component {
 		await AsyncStorage.setItem("profitLoadingIntervalProccessIsFinished", "true");
 
     navigation.addListener("focus", async () => {
+      await this.getDateInfo();
+      
       if (await AsyncStorage.getItem("role") === "BOSS") {
 				let profitLoadingIntervalId = setInterval(async () => {
 					if (await AsyncStorage.getItem("profitLoadingIntervalProccessIsFinished") != "true") {
