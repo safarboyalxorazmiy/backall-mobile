@@ -30,6 +30,10 @@ class VerificationScreen extends Component {
 		}));
 
 		if (this.state.verificationCode.length === 3) {
+			if (await AsyncStorage.getItem("isRequestInProgress") == "true") {
+				return;
+			}
+
 			const {navigation} = this.props;
 
 			let email = await AsyncStorage.getItem("email");
