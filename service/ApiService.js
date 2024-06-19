@@ -1193,12 +1193,8 @@ class ApiService {
 
   // AUTH
   async check(email, password) {
-    console.log(
-      JSON.stringify({
-        email: email,
-        password: password,
-      })
-    )
+    await AsyncStorage.setItem("isRequestInProgress", "true");
+
     try {
         const response = await fetch(serverUrl + "/api/v1/auth/check", {
             method: "POST",
@@ -1217,20 +1213,28 @@ class ApiService {
             const data = await response.json();
             // Convert the text to boolean
             const result = data;
+
+            await AsyncStorage.setItem("isRequestInProgress", "false");
             return result; // Return the boolean value
         } else {
             // Handle non-successful responses
             console.error("Request failed with status:", response.status);
+
+            await AsyncStorage.setItem("isRequestInProgress", "false");
             return false; // Return false indicating failure
         }
     } catch (error) {
       // Handle fetch errors
       console.error("Error:", error);
+
+      await AsyncStorage.setItem("isRequestInProgress", "false");
       return false; // Return false indicating failure
     }
   }
 
   async login(email, password, pinCode) {
+    await AsyncStorage.setItem("isRequestInProgress", "true");
+
     try {
         const response = await fetch(serverUrl + "/api/v1/auth/authenticate", {
             method: "POST",
@@ -1248,15 +1252,21 @@ class ApiService {
         // Check if the response is ok
         if (response.ok) {
             // Return the parsed JSON response directly
+
+            await AsyncStorage.setItem("isRequestInProgress", "false")
             return response.json();
         } else {
             // Handle non-successful responses
             console.error("Request failed with status:", response.status);
+            
+            await AsyncStorage.setItem("isRequestInProgress", "false")
             return false; // Return false indicating failure
         }
     } catch (error) {
         // Handle fetch errors
         console.error("Error:", error);
+
+        await AsyncStorage.setItem("isRequestInProgress", "false");
         return false; // Return false indicating failure
     }
   }

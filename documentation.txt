@@ -1,0 +1,6 @@
+1. Hozir bizda telefonda yoki serverda qandaydir muammo bo'sa backendga ko'p request jo'natiladigan bo'lgan shu narsani 
+AsyncStorageda isFetchingStarted degan variable ochib hal qilmoqchiman 
+true bosa boshlangan false bosa boshlanmagan boladi.
+
+
+

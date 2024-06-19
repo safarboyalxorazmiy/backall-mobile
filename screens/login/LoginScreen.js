@@ -24,6 +24,10 @@ class Login extends Component {
   }
 
   login = async () => {
+    if (await AsyncStorage.getItem("isRequestInProgress") == "true") {
+      return;
+    }
+
     const { email, password } = this.state;
     try {
       this.setState({ loading: true });
@@ -36,9 +40,9 @@ class Login extends Component {
 
           this.props.navigation.navigate("Verification");
       } else {
-          this.setState({
-              error: true
-          })
+        this.setState({
+          error: true
+        })
       }
               
     } catch (error) {
