@@ -657,7 +657,7 @@ class App extends Component {
 								fontFamily: "Gilroy-SemiBold",
 								fontSize: 38,
 								width: 280
-							}}>Oylik abonent to"lovi muddati keldi!</Text>
+							}}>Oylik abonent to'lovi muddati keldi!</Text>
 							
 							<TouchableOpacity 
 								activeOpacity={1} 

@@ -76,12 +76,33 @@ class Basket extends Component {
   };
 	
 	async componentDidMount() {
+		this.setState({
+			notFinished: true
+		});
+
 		const {navigation} = this.props;
 
 		await AsyncStorage.setItem("productsLoadingIntervalProccessIsFinished", "true");
 
+		console.log("Loading..", this.state.notFinished)
+
+		while (this.state.notFinished) {
+			if (await AsyncStorage.getItem("window") != "Basket") {
+				break;
+			}
+
+			console.log("Loading..")
+			this.setState({
+				notFinished: await this.loadData()
+			});
+		}
+
 		navigation.addListener("focus", 
 			async () => {
+				this.setState({
+					notFinished: true
+				});
+				
 				await this.storeProductRepository.init();
 				
 				if (await AsyncStorage.getItem("role") === "BOSS") {
@@ -140,13 +161,13 @@ class Basket extends Component {
 				await this.load();
 
 				while (this.state.notFinished) {
-					if (await AsyncStorage.getItem("window") != "Shopping") {
+					if (await AsyncStorage.getItem("window") != "Basket") {
 						break;
 					}
 	
 					console.log("Loading..")
 					this.setState({
-							notFinished: await this.loadData()
+						notFinished: await this.loadData()
 					});
 				}
 			}
@@ -339,6 +360,11 @@ class Basket extends Component {
 			await this.storeProductRepository.findTopStoreProductsInfo(
 				this.state.lastId
 			);
+
+		if (newStoreProducts.length === 0) {
+			return false;
+    }
+		
 		let last = newStoreProducts[newStoreProducts.length - 1];
 		if (last != undefined) {
 			this.setState({
@@ -418,12 +444,9 @@ class Basket extends Component {
 						const currentYPos = event.nativeEvent.contentOffset.y;
 						console.log("Current Y position:", currentYPos);
 
-						let basketLoaded = await AsyncStorage.getItem("BasketLoaded")
-
-						if ((currentYPos - this.state.lastYPos) > 30 || basketLoaded == "true") {
+						if ((currentYPos - this.state.lastYPos) > 30) {
 							this.setState({lastYPos: currentYPos});;
 							await this.loadData();
-							await AsyncStorage.setItem("BasketLoaded", "false")
 						}
 					}}
 				>
