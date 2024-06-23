@@ -99,9 +99,13 @@ class Basket extends Component {
 
 		navigation.addListener("focus", 
 			async () => {
-				this.setState({
-					notFinished: true
-				});
+				if (await AsyncStorage.getItem("basketFullyLoaded") != "true") {  
+					this.setState({
+						notFinished: true
+					});
+	
+					await AsyncStorage.setItem("basketFullyLoaded", "true");
+				}
 				
 				await this.storeProductRepository.init();
 				

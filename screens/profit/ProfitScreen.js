@@ -456,7 +456,7 @@ class Profit extends Component {
 		await AsyncStorage.setItem("profitLoadingIntervalProccessIsFinished", "true");
 
     navigation.addListener("focus", async () => {
-      if (await AsyncStorage.getItem("profitFullyLoaded") == "false") {  
+      if (await AsyncStorage.getItem("profitFullyLoaded") != "true") {  
         this.setState({
           notFinished: true
         });
