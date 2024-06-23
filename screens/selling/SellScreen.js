@@ -417,6 +417,7 @@ class Sell extends Component {
 
 					<StatusBar style="auto"/>
 
+					{/* Mahsulotni qo'lda kiritish oynasi */}
 					<Modal
 						visible={isModalVisible}
 						animationType="none"
@@ -719,7 +720,8 @@ class Sell extends Component {
 										onPress={() => {
 
 											let selectedProduct = this.state.selectedProduct;
-											if (!selectedProduct) {
+											console.log("CURRENT PRODUCT: ", selectedProduct)
+											if (Object.keys(selectedProduct).length === 0) {
 												// TODO RED ERROR
 												return;
 											}
@@ -1117,7 +1119,7 @@ class Sell extends Component {
 										style={styles.modalButton}
 										onPress={() => {
 											let selectedProduct = this.state.selectedProduct;
-											if (!selectedProduct) {
+											if (Object.keys(selectedProduct).length === 0) {												
 												// TODO RED ERROR
 												return;
 											}
