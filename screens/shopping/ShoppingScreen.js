@@ -459,6 +459,10 @@ class Shopping extends Component {
 		await AsyncStorage.setItem("sellLoadingIntervalProccessIsFinished", "true");
 		
 		navigation.addListener("focus", async () => {
+			this.setState({
+				notFinished: true
+			});
+			
 			this.getDateInfo();
 
 			if (await AsyncStorage.getItem("role") === "BOSS") {

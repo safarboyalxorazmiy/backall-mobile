@@ -455,6 +455,10 @@ class Profit extends Component {
 		await AsyncStorage.setItem("profitLoadingIntervalProccessIsFinished", "true");
 
     navigation.addListener("focus", async () => {
+      this.setState({
+				notFinished: true
+			});
+
       await this.getDateInfo();
       
       if (await AsyncStorage.getItem("role") === "BOSS") {
