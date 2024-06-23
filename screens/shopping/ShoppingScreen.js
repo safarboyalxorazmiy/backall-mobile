@@ -459,9 +459,13 @@ class Shopping extends Component {
 		await AsyncStorage.setItem("sellLoadingIntervalProccessIsFinished", "true");
 		
 		navigation.addListener("focus", async () => {
-			this.setState({
-				notFinished: true
-			});
+			if (await AsyncStorage.getItem("shoppingFullyLoaded") == "false") {  
+        this.setState({
+          notFinished: true
+        });
+
+        await AsyncStorage.setItem("shoppingFullyLoaded", "true");
+      }
 			
 			this.getDateInfo();
 

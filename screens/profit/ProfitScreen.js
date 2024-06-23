@@ -49,7 +49,7 @@ class Profit extends Component {
       lastProfitAmountDateSize: 10,	
     }
 
-		this.productRepository = new ProductRepository();
+    this.productRepository = new ProductRepository();
     this.profitHistoryRepository = new ProfitHistoryRepository();
     this.amountDateRepository = new AmountDateRepository();
     this.apiService = new ApiService();
@@ -58,19 +58,19 @@ class Profit extends Component {
   }
 
   async getDateInfo() {
-      this.setState({
-          fromDate: await AsyncStorage.getItem("ProfitFromDate"), toDate: await AsyncStorage.getItem("ProfitToDate")
-      });
+    this.setState({
+        fromDate: await AsyncStorage.getItem("ProfitFromDate"), toDate: await AsyncStorage.getItem("ProfitToDate")
+    });
 
-      if (this.state.fromDate != null && this.state.toDate != null) {
-          let fromDate = this.state.fromDate.replace(/-/g, "/");
-          let toDate = this.state.toDate.replace(/-/g, "/");
+    if (this.state.fromDate != null && this.state.toDate != null) {
+        let fromDate = this.state.fromDate.replace(/-/g, "/");
+        let toDate = this.state.toDate.replace(/-/g, "/");
 
-          console.log(fromDate + " - " + toDate);
-          this.setState({calendarInputContent: fromDate + " - " + toDate});
-      } else {
-          this.setState({calendarInputContent: "--/--/----"});
-      }
+        console.log(fromDate + " - " + toDate);
+        this.setState({calendarInputContent: fromDate + " - " + toDate});
+    } else {
+        this.setState({calendarInputContent: "--/--/----"});
+    }
   }
   
   async initProfitHistoryGroup() {
@@ -95,19 +95,19 @@ class Profit extends Component {
         //   2024-06-16T18:51:17.990Z (example)
           profitHistories = 
             await this.profitHistoryRepository.getTop10ProfitGroupByStartIdAndDate(
-                lastProfitGroup.id, this.state.fromDate, this.state.toDate
+              lastProfitGroup.id, this.state.fromDate, this.state.toDate
             );
 
           console.log({
-              profitHistories: profitHistories,
-              groupedHistories: await this.groupByDate(profitHistories),
-              lastGroupId: lastProfitGroup.id
+            profitHistories: profitHistories,
+            groupedHistories: await this.groupByDate(profitHistories),
+            lastGroupId: lastProfitGroup.id
           })
           
           this.setState({
-              profitHistories: profitHistories,
-              groupedHistories: await this.groupByDate(profitHistories),
-              lastGroupId: lastProfitGroup.id
+            profitHistories: profitHistories,
+            groupedHistories: await this.groupByDate(profitHistories),
+            lastGroupId: lastProfitGroup.id
           });
 
           return;
@@ -118,34 +118,35 @@ class Profit extends Component {
 
       console.log("WITHOUT DATE")
       console.log({
-          profitHistories: profitHistories,
-          groupedHistories: await this.groupByDate(profitHistories),
-          lastGroupId: lastProfitGroup.id
-      })
+        profitHistories: profitHistories,
+        groupedHistories: await this.groupByDate(profitHistories),
+        lastGroupId: lastProfitGroup.id
+      });
+
       this.setState({
-          profitHistories: profitHistories,
-          groupedHistories: await this.groupByDate(profitHistories),
-          lastGroupId: lastProfitGroup.id
+        profitHistories: profitHistories,
+        groupedHistories: await this.groupByDate(profitHistories),
+        lastGroupId: lastProfitGroup.id
       });
   }
 
   async getNextProfitHistoryGroup() {
       if (this.state.fromDate != null && this.state.toDate != null) {
-          this.setState({isCollecting: true});
-          let nextProfitHistories = await this.profitHistoryRepository.getTop10ProfitGroupByStartIdAndDate(this.state.lastGroupId - 10, this.state.fromDate, this.state.toDate);
-          let allProfitHistories = this.state.profitHistories.concat(nextProfitHistories);
+        this.setState({isCollecting: true});
+        let nextProfitHistories = await this.profitHistoryRepository.getTop10ProfitGroupByStartIdAndDate(this.state.lastGroupId - 10, this.state.fromDate, this.state.toDate);
+        let allProfitHistories = this.state.profitHistories.concat(nextProfitHistories);
 
-          console.log(this.state.profitHistories);
-          console.log(allProfitHistories);
+        console.log(this.state.profitHistories);
+        console.log(allProfitHistories);
 
-          this.setState({
-              profitHistories: allProfitHistories,
-              groupedHistories: await this.groupByDate(allProfitHistories),
-              lastGroupId: this.state.lastGroupId - 10,
-              isCollecting: false
-          });
+        this.setState({
+            profitHistories: allProfitHistories,
+            groupedHistories: await this.groupByDate(allProfitHistories),
+            lastGroupId: this.state.lastGroupId - 10,
+            isCollecting: false
+        });
 
-          return;
+        return;
       }
 
       this.setState({isCollecting: true});
@@ -153,8 +154,8 @@ class Profit extends Component {
       console.log("####### LAST ID ########")
       console.log(this.state.lastGroupId)
       if ((this.state.lastGroupId - 10) < 0) {
-          this.setState({isCollecting: false});
-          return;
+        this.setState({isCollecting: false});
+        return;
       }
 
       let nextProfitHistories = await this.profitHistoryRepository.getTop10ProfitGroupByStartId(this.state.lastGroupId - 10);
@@ -164,10 +165,10 @@ class Profit extends Component {
       console.log(allProfitHistories);
 
       this.setState({
-          profitHistories: allProfitHistories,
-          groupedHistories: await this.groupByDate(allProfitHistories),
-          lastGroupId: this.state.lastGroupId - 10,
-          isCollecting: false
+        profitHistories: allProfitHistories,
+        groupedHistories: await this.groupByDate(allProfitHistories),
+        lastGroupId: this.state.lastGroupId - 10,
+        isCollecting: false
       });
   };
 
@@ -455,9 +456,13 @@ class Profit extends Component {
 		await AsyncStorage.setItem("profitLoadingIntervalProccessIsFinished", "true");
 
     navigation.addListener("focus", async () => {
-      this.setState({
-				notFinished: true
-			});
+      if (await AsyncStorage.getItem("profitFullyLoaded") == "false") {  
+        this.setState({
+          notFinished: true
+        });
+
+        await AsyncStorage.setItem("profitFullyLoaded", "true");
+      }
 
       await this.getDateInfo();
       
