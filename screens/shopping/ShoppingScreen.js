@@ -345,6 +345,7 @@ class Shopping extends Component {
 					this.state.fromDate,
 					this.state.toDate
 				);
+			
 
 				let allSellHistories = this.state.sellingHistory.concat(nextSellHistories);
 			
@@ -355,6 +356,10 @@ class Shopping extends Component {
 				isCollecting: false
 			});
 			
+			if (nextSellHistories.length == 0) {
+				return false;
+			}
+
 			return true;
 		}
 		
@@ -383,6 +388,10 @@ class Shopping extends Component {
 			isCollecting: false
 		});
 
+		if (nextSellHistories.length == 0) {
+			return false;
+		}
+		
 		return true;
 	};
 	
@@ -532,7 +541,37 @@ class Shopping extends Component {
 				
 				await this.initSellingHistoryGroup();
 
-				while (this.state.notFinished) {
+				let intervalId = setInterval(async () => {
+					if (await AsyncStorage.getItem("window") != "Shopping" || !this.state.notFinished) {
+						clearInterval(intervalId);
+						
+						await AsyncStorage.setItem("shoppingFullyLoaded", "false");
+
+						console.log("LOADING FINISHED SUCCESSFULLY")
+					}
+
+					if (this.state.loadingProcessStarted) {
+						return;
+					}
+
+					this.setState({
+						loadingProcessStarted: true
+					});
+
+					console.log("Loading..");
+					let result = await this.getNextSellHistoryGroup();
+					
+					this.setState({
+						notFinished: result
+					});
+
+					this.setState({
+						loadingProcessStarted: false
+					});
+				}, 100);
+			
+
+				/*while (this.state.notFinished) {
 					if (await AsyncStorage.getItem("window") != "Shopping") {
 						break;
 					}
@@ -541,7 +580,7 @@ class Shopping extends Component {
 					this.setState({
 							notFinished: await this.getNextSellHistoryGroup()
 					});
-				}
+				}*/
 			}
 
 			await this.sellHistoryRepository.init();
