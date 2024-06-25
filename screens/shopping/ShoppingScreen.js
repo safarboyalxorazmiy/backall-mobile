@@ -540,7 +540,20 @@ class Shopping extends Component {
 				});
 				
 				await this.initSellingHistoryGroup();
+			
+				// #1 way of loading full pagination
+				/*while (this.state.notFinished) {
+					if (await AsyncStorage.getItem("window") != "Shopping") {
+						break;
+					}
+	
+					console.log("Loading..")
+					this.setState({
+							notFinished: await this.getNextSellHistoryGroup()
+					});
+				}*/
 
+				// #2 way of loading full pagination
 				let intervalId = setInterval(async () => {
 					if (await AsyncStorage.getItem("window") != "Shopping" || !this.state.notFinished) {
 						clearInterval(intervalId);
@@ -569,18 +582,6 @@ class Shopping extends Component {
 						loadingProcessStarted: false
 					});
 				}, 100);
-			
-
-				/*while (this.state.notFinished) {
-					if (await AsyncStorage.getItem("window") != "Shopping") {
-						break;
-					}
-	
-					console.log("Loading..")
-					this.setState({
-							notFinished: await this.getNextSellHistoryGroup()
-					});
-				}*/
 			}
 
 			await this.sellHistoryRepository.init();
