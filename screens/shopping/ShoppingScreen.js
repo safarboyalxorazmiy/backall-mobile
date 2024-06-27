@@ -609,39 +609,52 @@ class Shopping extends Component {
 			
 			await this.initSellingHistoryGroup();
 
-			let intervalId = setInterval(async () => {
-				if (this.state.loadingProcessStarted) {
-					return;
-				}
-
-				this.setState({
-					loadingProcessStarted: true
-				});
-
-				if (await AsyncStorage.getItem("window") != "Shopping" || !this.state.notFinished) {
-					clearInterval(intervalId);
-					
-					await AsyncStorage.setItem("shoppingFullyLoaded", "false");
-
+			if (this.state.notFinished == true) {
+				let intervalId = setInterval(async () => {
+					if (this.state.loadingProcessStarted) {
+						return;
+					}
+	
 					this.setState({
-            loadingProcessStarted: false
-          });
+						loadingProcessStarted: true
+					});
+	
+					if (this.state.notFinished != true) {
+						clearInterval(intervalId);
 
-					console.log("LOADING FINISHED SUCCESSFULLY");
-					return;
-				}
+						this.setState({
+							loadingProcessStarted: false
+						});
+						
+						console.log("LOADING FINISHED SUCCESSFULLY");
+						return;
+					}
 
-				console.log("Loading..");
-				let result = await this.getNextSellHistoryGroup();
-				
-				this.setState({
-					notFinished: result
-				});
-
-				this.setState({
-					loadingProcessStarted: false
-				});
-			}, 100);
+					if (await AsyncStorage.getItem("window") != "Shopping") {
+						clearInterval(intervalId);
+						
+						await AsyncStorage.setItem("shoppingFullyLoaded", "false");
+	
+						this.setState({
+							loadingProcessStarted: false
+						});
+	
+						console.log("LOADING FINISHED SUCCESSFULLY");
+						return;
+					}
+	
+					console.log("Loading..");
+					let result = await this.getNextSellHistoryGroup();
+					
+					this.setState({
+						notFinished: result
+					});
+	
+					this.setState({
+						loadingProcessStarted: false
+					});
+				}, 100);
+			}
 		});
 	}
 
