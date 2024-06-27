@@ -608,39 +608,52 @@ class Profit extends Component {
 
       await this.initProfitHistoryGroup();
 
-      let intervalId = setInterval(async () => {
-        if (this.state.loadingProcessStarted) {
-          return;
-        }
-
-        this.setState({
-          loadingProcessStarted: true
-        });
-
-        if (await AsyncStorage.getItem("window") != "Profit" || !this.state.notFinished) {
-          clearInterval(intervalId);
+      if (this.state.notFinished == true) {
+        let intervalId = setInterval(async () => {
+          if (this.state.loadingProcessStarted) {
+            return;
+          }
+  
+          this.setState({
+            loadingProcessStarted: true
+          });
+  
+          if (this.state.notFinished != true) {
+            clearInterval(intervalId);
+  
+            this.setState({
+              loadingProcessStarted: false
+            });
+            
+            console.log("LOADING FINISHED SUCCESSFULLY");
+            return;
+          }
+  
+          if (await AsyncStorage.getItem("window") != "Profit") {
+            clearInterval(intervalId);
+            
+            await AsyncStorage.setItem("profitFullyLoaded", "false");
+  
+            this.setState({
+              loadingProcessStarted: false
+            });
+            
+            console.log("LOADING FINISHED SUCCESSFULLY ", intervalId);
+            return;
+          }
+  
+          console.log("Loading..");
+          let result = await this.getNextProfitHistoryGroup();
           
-          await AsyncStorage.setItem("profitFullyLoaded", "false");
-
+          this.setState({
+            notFinished: result
+          });
+  
           this.setState({
             loadingProcessStarted: false
           });
-          
-          console.log("LOADING FINISHED SUCCESSFULLY ", intervalId);
-          return;
-        }
-
-        console.log("Loading..");
-        let result = await this.getNextProfitHistoryGroup();
-        
-        this.setState({
-          notFinished: result
-        });
-
-        this.setState({
-          loadingProcessStarted: false
-        });
-      }, 100);
+        }, 100);
+      }
     });
   }
 
