@@ -665,13 +665,13 @@ class Shopping extends Component {
 			<View style={[styles.container, Platform.OS === "web" && {width: "100%"}]}>
 				<ScrollView onScrollBeginDrag={async (event) => {
 					if (!this.state.isCollecting) {
-						console.log("Scrolling ", event.nativeEvent.contentOffset);
+						// console.log("Scrolling ", event.nativeEvent.contentOffset);
 						
 						// this.setState({
 						// 	notFinished: 
 						// });
 
-						await this.getNextSellHistoryGroup()
+						// await this.getNextSellHistoryGroup()
 					}
 				}} style={{width: "100%"}}>
 					<View style={styles.pageTitle}>

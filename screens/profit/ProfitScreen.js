@@ -666,10 +666,10 @@ class Profit extends Component {
             <ScrollView
                 onScrollBeginDrag={async (event) => {
                     if (!this.state.isCollecting) {
-                        console.log("Scrolling ", event.nativeEvent.contentOffset);
-                        this.setState({
-                            notFinished: await this.getNextProfitHistoryGroup()
-                        });
+                        // console.log("Scrolling ", event.nativeEvent.contentOffset);
+                        // this.setState({
+                        //     notFinished: await this.getNextProfitHistoryGroup()
+                        // });
                     }
                 }} style={{width: "100%"}}>
                 <View style={{
