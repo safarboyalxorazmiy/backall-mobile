@@ -155,7 +155,7 @@ class Profit extends Component {
       console.log(this.state.lastGroupId)
       if ((this.state.lastGroupId - 10) < 0) {
         this.setState({isCollecting: false});
-        return;
+        return false;
       }
 
       let nextProfitHistories = await this.profitHistoryRepository.getTop10ProfitGroupByStartId(this.state.lastGroupId - 10);
@@ -170,6 +170,12 @@ class Profit extends Component {
         lastGroupId: this.state.lastGroupId - 10,
         isCollecting: false
       });
+
+      if (nextProfitHistories.length == 0) {
+        return false;
+      }
+      
+      return true;
   };
 
   groupByDate = async (histories) => {
@@ -512,8 +518,8 @@ class Profit extends Component {
 						});
 
 						while (this.state.notFinished) {
-              if (await AsyncStorage.getItem("window") != "Shopping") {
-                  break;
+              if (await AsyncStorage.getItem("window") != "Profit") {
+                break;
               }
               
 							this.setState({
@@ -534,7 +540,8 @@ class Profit extends Component {
           
           await this.initProfitHistoryGroup();
 
-          while (this.state.notFinished) {
+          // #1 way of loading full pagination
+          /*while (this.state.notFinished) {
             if (await AsyncStorage.getItem("window") != "Shopping") {
                 break;
             }
@@ -543,7 +550,38 @@ class Profit extends Component {
             this.setState({
               notFinished: await this.getNextProfitHistoryGroup()
             });
-          }
+          }*/
+
+          // #2 way of loading full pagination
+          let intervalId = setInterval(async () => {
+            if (await AsyncStorage.getItem("window") != "Profit" || !this.state.notFinished) {
+              clearInterval(intervalId);
+                
+              await AsyncStorage.setItem("profitFullyLoaded", "false");
+    
+              console.log("LOADING FINISHED SUCCESSFULLY")
+              return;
+            }
+    
+            if (this.state.loadingProcessStarted) {
+              return;
+            }
+    
+            this.setState({
+              loadingProcessStarted: true
+            });
+    
+            console.log("Loading..");
+            let result = await this.getNextProfitHistoryGroup();
+            
+            this.setState({
+              notFinished: result
+            });
+    
+            this.setState({
+              loadingProcessStarted: false
+            });
+          }, 100);
       }
       
       await this.profitHistoryRepository.init();
@@ -552,8 +590,6 @@ class Profit extends Component {
       // ROLE ERROR
       let notAllowed = await AsyncStorage.getItem("not_allowed");
       this.setState({notAllowed: notAllowed})
-
-      await this.initProfitHistoryGroup();
 
       console.log(this.state.fromDate)
       console.log(this.state.toDate)
@@ -567,19 +603,44 @@ class Profit extends Component {
       let lastStoredMonth = parseInt(await AsyncStorage.getItem("month"));
 
       if (currentMonth === lastStoredMonth) {
-          this.setState({thisMonthProfitAmount: thisMonthProfitAmount});
+        this.setState({thisMonthProfitAmount: thisMonthProfitAmount});
       }
 
-      
-      while (this.state.notFinished) {
-        if (await AsyncStorage.getItem("window") != "Shopping") {
-					break;
-				}
-				
+      await this.initProfitHistoryGroup();
+
+      let intervalId = setInterval(async () => {
+        if (this.state.loadingProcessStarted) {
+          return;
+        }
+
         this.setState({
-          notFinished: await this.getNextProfitHistoryGroup()
+          loadingProcessStarted: true
         });
-      }
+
+        if (await AsyncStorage.getItem("window") != "Profit" || !this.state.notFinished) {
+          clearInterval(intervalId);
+          
+          await AsyncStorage.setItem("profitFullyLoaded", "false");
+
+          this.setState({
+            loadingProcessStarted: false
+          });
+          
+          console.log("LOADING FINISHED SUCCESSFULLY ", intervalId);
+          return;
+        }
+
+        console.log("Loading..");
+        let result = await this.getNextProfitHistoryGroup();
+        
+        this.setState({
+          notFinished: result
+        });
+
+        this.setState({
+          loadingProcessStarted: false
+        });
+      }, 100);
     });
   }
 
