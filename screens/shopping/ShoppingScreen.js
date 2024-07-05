@@ -480,14 +480,32 @@ class Shopping extends Component {
 
 			
 			// ISSUES FOR BREAKING THE SITUATION
-			if (await AsyncStorage.getItem("window") != "Shopping" || !this.state.notFinished) {
+
+			if (await AsyncStorage.getItem("window") != "Shopping") {
 				clearInterval(intervalId);
 
 				this.setState({
 					loadingProcessStarted: false
 				});
 
-				console.log("LOADING FINISHED SUCCESSFULLY")
+				return;
+			}
+
+			if (!this.state.notFinished) {
+				clearInterval(intervalId);
+
+				this.setState({
+					loadingProcessStarted: false
+				});
+
+				console.log("LOADING FINISHED SUCCESSFULLY");
+				console.log("WHY? await AsyncStorage.getItem(window) != Shopping", await AsyncStorage.getItem("window") != "Shopping");
+				console.log("WHY? !this.state.notFinished", !this.state.notFinished);
+
+				console.log(this.state.sellingHistory);
+
+				await AsyncStorage.setItem("sellingHistories", JSON.stringify(this.state.sellingHistory));
+
 				return;
 			}
 
@@ -502,17 +520,9 @@ class Shopping extends Component {
 				loadingProcessStarted: false
 			});
 			// LOADING PROCCESS FINISHED
-		}, 2);
+		}, 100);
 		
 		navigation.addListener("focus", async () => {
-			if (await AsyncStorage.getItem("shoppingFullyLoaded") != "true") {  
-        this.setState({
-          notFinished: true
-        });
-
-        await AsyncStorage.setItem("shoppingFullyLoaded", "true");
-      }
-			
 			this.getDateInfo();
 
 			// if (await AsyncStorage.getItem("role") === "BOSS") {
@@ -568,14 +578,85 @@ class Shopping extends Component {
 			// 	}, 2000)
 			// }
 
+			await this.initSellingHistoryGroup();
+
+			if (await AsyncStorage.getItem("shoppingFullyLoaded") != "true") {  
+        const sellingHistoriesString = await AsyncStorage.getItem("sellingHistories");
+
+				if (sellingHistoriesString == null) {
+					this.setState({
+						sellingHistory: [],
+						groupedHistories: [],
+						lastDate: new Date(),
+						currentMonthTotal: 0,
+						lastGroupId: 0,
+						
+						calendarInputContent: "--/--/----",
+						fromDate: null,
+						toDate: null,
+						thisMonthSellAmount: 0.00,
+						notAllowed: "",
+	
+						notFinished: true,
+					});
+
+					await AsyncStorage.setItem("window", "Shopping");
+					await AsyncStorage.setItem("shoppingFullyLoaded", "true");
+				} else {
+					this.setState({
+						notFinished: false
+					});
+
+					try {
+						// Fetch the top 1 selling history group
+						let top1SellingHistory = await this.sellHistoryRepository.getTop1SellGroup();
+					
+						// Get the current grouped histories from the state
+						let groupedHistories = [...this.state.groupedHistories]; // Clone the state array
+					
+						// Extract and format the date from the top-selling history
+						const date = top1SellingHistory[0].created_date.split("T")[0];
+						// const formattedDate = this.formatDate(date); // Remove if not used
+					
+						// Use a flag to check if the date was found
+						let dateFound = false;
+					
+						// Iterate through each grouped history
+						for (let i = 0; i < groupedHistories.length; i++) {
+							if (groupedHistories[i].date === date) {
+								console.log(date);
+								groupedHistories[i] = {
+									...groupedHistories[i],
+									histories: [...top1SellingHistory, ...groupedHistories[i].histories]
+								};
+								dateFound = true;
+								break; // Exit the loop early since the match is found
+							}
+						}
+					
+						// Update the state with the modified grouped histories
+						if (dateFound) {
+							this.setState({ groupedHistories: groupedHistories });
+						}
+					} catch (error) {
+						console.error('Error fetching or updating sell history:', error);
+					}					
+
+					console.log("top1SellingHistory: ", top1SellingHistory)
+
+					await AsyncStorage.setItem("sellingHistories", JSON.stringify(this.state.sellingHistory));
+
+					await AsyncStorage.setItem("window", "Shopping");
+					await AsyncStorage.setItem("shoppingFullyLoaded", "true");
+
+					return;
+				}
+      }
+
+			console.log(this.state.groupedHistories)
+
 			let isNotSaved = await AsyncStorage.getItem("isNotSaved");
-			if (isNotSaved == "true") {
-				this.setState({
-					notFinished: true,
-					sellingHistory: [],
-					groupedHistories: []
-				});
-				
+			if (isNotSaved == "true" && this.state.notFinished) {
 				await this.initSellingHistoryGroup();
 			
 				// #1 way of loading full pagination
@@ -592,37 +673,55 @@ class Shopping extends Component {
 
 				// #2 way of loading full pagination
 				let intervalId = setInterval(async () => {
-					if (await AsyncStorage.getItem("window") != "Shopping" || !this.state.notFinished) {
-						clearInterval(intervalId);
-						
-						await AsyncStorage.setItem("shoppingFullyLoaded", "false");
-
-						this.setState({
-							loadingProcessStarted: false
-						});
-
-						console.log("LOADING FINISHED SUCCESSFULLY")
-						return;
-					}
-
 					if (this.state.loadingProcessStarted) {
 						return;
 					}
-
+		
+					// LOADING PROCCESS STARTED
 					this.setState({
 						loadingProcessStarted: true
 					});
+		
+					if (await AsyncStorage.getItem("window") != "Shopping") {
+						clearInterval(intervalId);
+		
+						this.setState({
+							loadingProcessStarted: false
+						});
+						
+						return;
+					}
+					
+					// ISSUES FOR BREAKING THE SITUATION
+					if (!this.state.notFinished) {
+						clearInterval(intervalId);
+		
+						this.setState({
+							loadingProcessStarted: false
+						});
+		
+						console.log("LOADING FINISHED SUCCESSFULLY");
+						console.log("WHY? await AsyncStorage.getItem(window) != Shopping", await AsyncStorage.getItem("window") != "Shopping");
+						console.log("WHY? !this.state.notFinished", !this.state.notFinished);
 
+						console.log(this.state.sellingHistory);
+
+						await AsyncStorage.setItem("sellingHistories", JSON.stringify(this.state.sellingHistory));
+
+						return;
+					}
+		
 					console.log("Loading..");
 					let result = await this.getNextSellHistoryGroup();
 					
 					this.setState({
 						notFinished: result
 					});
-
+		
 					this.setState({
 						loadingProcessStarted: false
 					});
+					// LOADING PROCCESS FINISHED
 				}, 100);
 			}
 
@@ -643,52 +742,58 @@ class Shopping extends Component {
 				this.setState({thisMonthSellAmount: thisMonthSellAmount});
 			}
 			
-			await this.initSellingHistoryGroup();
+			console.log("Loading started");
+			if (this.state.notFinished) {
+				await this.initSellingHistoryGroup();
 
-			if (this.state.notFinished == true) {
 				let intervalId = setInterval(async () => {
 					if (this.state.loadingProcessStarted) {
 						return;
 					}
-	
+		
+					// LOADING PROCCESS STARTED
 					this.setState({
 						loadingProcessStarted: true
 					});
-	
-					if (this.state.notFinished != true) {
-						clearInterval(intervalId);
-
-						this.setState({
-							loadingProcessStarted: false
-						});
-						
-						console.log("LOADING FINISHED SUCCESSFULLY");
-						return;
-					}
-
+		
 					if (await AsyncStorage.getItem("window") != "Shopping") {
 						clearInterval(intervalId);
-						
-						await AsyncStorage.setItem("shoppingFullyLoaded", "false");
-	
+		
 						this.setState({
 							loadingProcessStarted: false
 						});
-	
-						console.log("LOADING FINISHED SUCCESSFULLY");
+						
 						return;
 					}
-	
+
+					// ISSUES FOR BREAKING THE SITUATION
+					if (!this.state.notFinished) {
+						clearInterval(intervalId);
+		
+						this.setState({
+							loadingProcessStarted: false
+						});
+		
+						console.log("LOADING FINISHED SUCCESSFULLY")
+						console.log("WHY? await AsyncStorage.getItem(window) != Shopping", await AsyncStorage.getItem("window") != "Shopping");
+						console.log("WHY? !this.state.notFinished", !this.state.notFinished);
+
+						await AsyncStorage.setItem("sellingHistories", JSON.stringify(this.state.sellingHistory));
+						
+						return;
+					}
+		
 					console.log("Loading..");
 					let result = await this.getNextSellHistoryGroup();
 					
 					this.setState({
 						notFinished: result
 					});
-	
+		
 					this.setState({
 						loadingProcessStarted: false
 					});
+					// LOADING PROCCESS FINISHED
 				}, 100);
 			}
 		});

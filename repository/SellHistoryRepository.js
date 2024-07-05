@@ -591,6 +591,40 @@ class SellHistoryRepository {
     }
   }
 
+  async getTop1SellGroup() {
+    try {
+        const query = `
+            SELECT * FROM sell_group 
+            WHERE id >= 0
+            ORDER BY id DESC
+            LIMIT 1;
+        `;
+
+        const result = await new Promise((resolve, reject) => {
+            this.db.transaction((tx) => {
+                tx.executeSql(
+                    query,
+                    [],
+                    (_, resultSet) => resolve(resultSet),
+                    (_, error) => reject(error)
+                );
+            });
+        });
+
+        if (!result || !result.rows || !result.rows._array) {
+            throw new Error("Unexpected result structure");
+        }
+
+        const rows = result.rows._array;
+
+        console.log(rows)
+        return rows;
+    } catch (error) {
+        console.error("Error getTop10SellGroupByDate:", error);
+        throw error;
+    }
+  }
+
   async findSellHistoryById(id) {
     try {
       const query = `
