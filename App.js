@@ -147,6 +147,10 @@ class App extends Component {
     );
 
     if (this.state.isConnected) {
+			if (await AsyncStorage.getItem("isRequestInProgress") == "true") {
+				return;
+			}
+
 			// Internet is available, perform actions
 			let isNotSaved = await AsyncStorage.getItem("isNotSaved");
 			console.log("Is not saved", isNotSaved);
