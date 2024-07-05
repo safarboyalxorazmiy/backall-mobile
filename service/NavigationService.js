@@ -124,33 +124,6 @@ class NavigationService extends Component {
     this.setState({ navbarStyle: styles.navbar });
   };
 
-  async clearIntervalIfNeeded(routeName, flagKey, intervalIdKey) {
-    let checking = true;
-
-    while (checking) {
-        // Get the flag indicating if the process is finished
-        let intervalProcessIsFinished = await AsyncStorage.getItem(flagKey);
-
-        if (intervalProcessIsFinished === "true") {
-            console.log("CLEARING");
-
-            // Get the interval ID to clear
-            let intervalId = await AsyncStorage.getItem(intervalIdKey);
-
-            if (intervalId !== "undefined") {
-                clearInterval(parseInt(intervalId));
-                await AsyncStorage.setItem(intervalIdKey, "undefined");
-                console.log("CLEARED " + intervalId);
-            }
-
-            checking = false;
-        }
-
-        // Adding a sleep delay of 2 seconds
-        await new Promise(resolve => setTimeout(resolve, 2000));
-    }
-  }
-
   render() {
     return (
       <NavigationContainer>
@@ -278,8 +251,7 @@ class NavigationService extends Component {
             const event = navigation.emit({
               type: "tabPress",
               target: route.key,
-              canPreventDefault: true,
-
+              canPreventDefault: true
             });
 
             if (!isFocused && !event.defaultPrevented) {

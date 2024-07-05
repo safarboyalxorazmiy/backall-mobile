@@ -34,7 +34,6 @@ class Shopping extends Component {
 			lastDate: new Date(),
 			currentMonthTotal: 0,
 			lastGroupId: 0,
-			isCollecting: false,
 			
 			calendarInputContent: "--/--/----",
 			fromDate: null,
@@ -337,7 +336,6 @@ class Shopping extends Component {
 	
 	async getNextSellHistoryGroup() {
 		if (this.state.fromDate != null && this.state.toDate) {
-			this.setState({isCollecting: true});
 			
 			let nextSellHistories = 
 				await this.sellHistoryRepository.getTop10SellGroupByDate(
@@ -346,16 +344,14 @@ class Shopping extends Component {
 					this.state.toDate
 				);
 			
+			let allSellHistories = this.state.sellingHistory.concat(nextSellHistories);
 
-				let allSellHistories = this.state.sellingHistory.concat(nextSellHistories);
-			
 			this.setState({
 				sellingHistory: allSellHistories,
 				groupedHistories: await this.groupByDate(allSellHistories),
-				lastGroupId: this.state.lastGroupId - 10,
-				isCollecting: false
+				lastGroupId: this.state.lastGroupId - 10
 			});
-			
+
 			if (nextSellHistories.length == 0) {
 				return false;
 			}
@@ -366,14 +362,11 @@ class Shopping extends Component {
 		// PROBLEM:
 		// 	Bu yerda oxirgi da qolib ketgan 10 dan keyingi 5-4 larini 
 		// 	ola olmay qolishi mumkin...
-		// 	tekshirib agar muammo bo"lsa hal qilish kerak
-		
-		this.setState({isCollecting: true});
+		// 	tekshirib agar muammo bo"lsa hal qilish kerak.
 		
 		console.log("####### LAST ID ########");
 		console.log(this.state.lastGroupId);
 		if ((this.state.lastGroupId - 10) < 0) {
-			this.setState({isCollecting: false});
 			return false;
 		}
 		
@@ -386,7 +379,6 @@ class Shopping extends Component {
 			sellingHistory: allSellHistories,
 			groupedHistories: await this.groupByDate(allSellHistories),
 			lastGroupId: this.state.lastGroupId - 10,
-			isCollecting: false
 		});
 
 		if (nextSellHistories.length == 0) {
@@ -467,6 +459,50 @@ class Shopping extends Component {
 		const {navigation} = this.props;
 
 		await AsyncStorage.setItem("sellLoadingIntervalProccessIsFinished", "true");
+
+		this.setState({
+			notFinished: true,
+			sellingHistory: [],
+			groupedHistories: []
+		});
+		
+		await this.initSellingHistoryGroup();
+		
+		let intervalId = setInterval(async () => {
+			if (this.state.loadingProcessStarted) {
+				return;
+			}
+
+			// LOADING PROCCESS STARTED
+			this.setState({
+				loadingProcessStarted: true
+			});
+
+			
+			// ISSUES FOR BREAKING THE SITUATION
+			if (await AsyncStorage.getItem("window") != "Shopping" || !this.state.notFinished) {
+				clearInterval(intervalId);
+
+				this.setState({
+					loadingProcessStarted: false
+				});
+
+				console.log("LOADING FINISHED SUCCESSFULLY")
+				return;
+			}
+
+			console.log("Loading..");
+			let result = await this.getNextSellHistoryGroup();
+			
+			this.setState({
+				notFinished: result
+			});
+
+			this.setState({
+				loadingProcessStarted: false
+			});
+			// LOADING PROCCESS FINISHED
+		}, 2);
 		
 		navigation.addListener("focus", async () => {
 			if (await AsyncStorage.getItem("shoppingFullyLoaded") != "true") {  
@@ -479,58 +515,58 @@ class Shopping extends Component {
 			
 			this.getDateInfo();
 
-			if (await AsyncStorage.getItem("role") === "BOSS") {
-				let sellLoadingIntervalId = setInterval(async () => {
-					if (await AsyncStorage.getItem("sellLoadingIntervalProccessIsFinished") != "true") {
-						return;
-					}
+			// if (await AsyncStorage.getItem("role") === "BOSS") {
+			// 	let sellLoadingIntervalId = setInterval(async () => {
+			// 		if (await AsyncStorage.getItem("sellLoadingIntervalProccessIsFinished") != "true") {
+			// 			return;
+			// 		}
 
-					console.log("INTERNAL STARTED SUCCESSFULLY! \n We are on: ");
-					console.log(await AsyncStorage.getItem("window"));
-					if (await AsyncStorage.getItem("window") != "Shopping") {
-            if (sellLoadingIntervalId !== undefined) {
-							clearInterval(sellLoadingIntervalId);
-							console.log("CLEARED " + sellLoadingIntervalId);
-							return;
-            }
-					}
+			// 		console.log("INTERNAL STARTED SUCCESSFULLY! \n We are on: ");
+			// 		console.log(await AsyncStorage.getItem("window"));
+			// 		if (await AsyncStorage.getItem("window") != "Shopping") {
+      //       if (sellLoadingIntervalId !== undefined) {
+			// 				clearInterval(sellLoadingIntervalId);
+			// 				console.log("CLEARED " + sellLoadingIntervalId);
+			// 				return;
+      //       }
+			// 		}
 
-					await AsyncStorage.setItem("sellLoadingIntervalProccessIsFinished", "false")
+			// 		await AsyncStorage.setItem("sellLoadingIntervalProccessIsFinished", "false")
 					
-					let isSellGroupEmpty = 
-						await this.getSellGroupNotDownloaded();
+			// 		let isSellGroupEmpty = 
+			// 			await this.getSellGroupNotDownloaded();
 
-					let isSellHistoryEmpty = 
-						await this.getSellHistoryNotDownloaded();
+			// 		let isSellHistoryEmpty = 
+			// 			await this.getSellHistoryNotDownloaded();
 
-					let isSellHistoryGroupEmpty = 
-						await this.getSellHistoryGroupNotDownloaded();
+			// 		let isSellHistoryGroupEmpty = 
+			// 			await this.getSellHistoryGroupNotDownloaded();
 
-					let isSellAmountDateEmpty = 
-						await this.getSellAmountDateNotDownloaded();
+			// 		let isSellAmountDateEmpty = 
+			// 			await this.getSellAmountDateNotDownloaded();
 
-					await AsyncStorage.setItem(
-						"sellLoadingIntervalProccessIsFinished", 
-						"true"
-					);
+			// 		await AsyncStorage.setItem(
+			// 			"sellLoadingIntervalProccessIsFinished", 
+			// 			"true"
+			// 		);
 
-					if (isSellGroupEmpty || isSellHistoryEmpty || isSellHistoryGroupEmpty || isSellAmountDateEmpty) {
-						this.setState({
-							notFinished: true
-						});
+			// 		if (isSellGroupEmpty || isSellHistoryEmpty || isSellHistoryGroupEmpty || isSellAmountDateEmpty) {
+			// 			this.setState({
+			// 				notFinished: true
+			// 			});
 
-						while (this.state.notFinished) {
-							if (await AsyncStorage.getItem("window") != "Shopping") {
-								break;
-							}
+			// 			while (this.state.notFinished) {
+			// 				if (await AsyncStorage.getItem("window") != "Shopping") {
+			// 					break;
+			// 				}
 			
-							this.setState({
-								notFinished: await this.getNextSellHistoryGroup()
-							});
-						}
-					}
-				}, 2000)
-			}
+			// 				this.setState({
+			// 					notFinished: await this.getNextSellHistoryGroup()
+			// 				});
+			// 			}
+			// 		}
+			// 	}, 2000)
+			// }
 
 			let isNotSaved = await AsyncStorage.getItem("isNotSaved");
 			if (isNotSaved == "true") {
@@ -663,17 +699,7 @@ class Shopping extends Component {
 
 		return (
 			<View style={[styles.container, Platform.OS === "web" && {width: "100%"}]}>
-				<ScrollView onScrollBeginDrag={async (event) => {
-					if (!this.state.isCollecting) {
-						// console.log("Scrolling ", event.nativeEvent.contentOffset);
-						
-						// this.setState({
-						// 	notFinished: 
-						// });
-
-						// await this.getNextSellHistoryGroup()
-					}
-				}} style={{width: "100%"}}>
+				<ScrollView onScrollBeginDrag={async (event) => {}} style={{width: "100%"}}>
 					<View style={styles.pageTitle}>
 						<Text style={styles.pageTitleText}>Sotuv tarixi</Text>
 					</View>

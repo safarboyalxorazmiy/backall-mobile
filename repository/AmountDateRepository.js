@@ -200,7 +200,7 @@ class AmountDateRepository {
     try {
       await this.db.transaction((tx) => {
         tx.executeSql(
-          "UPDATE profit_amount_date SET saved = 1, global_id = ? WHERsE id = ?",
+          "UPDATE profit_amount_date SET saved = 1, global_id = ? WHERE id = ?",
           [global_id, local_id]  // Use prepared statement for security
         );
       });
