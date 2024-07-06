@@ -749,55 +749,54 @@ class Shopping extends Component {
 			if (this.state.notFinished) {
 				await this.initSellingHistoryGroup();
 
-				let intervalId = setInterval(async () => {
+				let loadingLoop = async () => {
 					if (this.state.loadingProcessStarted) {
+						requestAnimationFrame(loadingLoop);
 						return;
 					}
-		
-					// LOADING PROCCESS STARTED
-					this.setState({
-						loadingProcessStarted: true
-					});
-		
-					if (await AsyncStorage.getItem("window") != "Shopping") {
-						clearInterval(intervalId);
-		
+				
+					// LOADING PROCESS STARTED
+					this.setState({ loadingProcessStarted: true });
+				
+					const window = await AsyncStorage.getItem("window");
+				
+					if (window !== "Shopping") {
 						this.setState({
-							loadingProcessStarted: false
+							loadingProcessStarted: false,
 						});
-						
+				
 						return;
 					}
-
+				
 					// ISSUES FOR BREAKING THE SITUATION
 					if (!this.state.notFinished) {
-						clearInterval(intervalId);
-		
 						this.setState({
-							loadingProcessStarted: false
+							loadingProcessStarted: false,
 						});
-		
-						console.log("LOADING FINISHED SUCCESSFULLY")
-						console.log("WHY? await AsyncStorage.getItem(window) != Shopping", await AsyncStorage.getItem("window") != "Shopping");
+				
+						console.log("LOADING FINISHED SUCCESSFULLY");
+						console.log("WHY? await AsyncStorage.getItem(window) != Shopping", window !== "Shopping");
 						console.log("WHY? !this.state.notFinished", !this.state.notFinished);
-
+				
 						await AsyncStorage.setItem("sellingHistories", JSON.stringify(this.state.sellingHistory));
-						
+				
 						return;
 					}
-		
+				
 					console.log("Loading..");
+				
 					let result = await this.getNextSellHistoryGroup();
-					
+				
 					this.setState({
-						notFinished: result
+						notFinished: result,
+						loadingProcessStarted: false,
 					});
-		
-					this.setState({
-						loadingProcessStarted: false
-					});
-					// LOADING PROCCESS FINISHED
-				}, 100);
+				
+					requestAnimationFrame(loadingLoop);
+				};
+				
+				requestAnimationFrame(loadingLoop);
+				
 			}
 		});
 	}
