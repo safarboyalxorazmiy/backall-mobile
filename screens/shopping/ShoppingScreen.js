@@ -616,12 +616,11 @@ class Shopping extends Component {
 					
 						// Extract and format the date from the top-selling history
 						const date = top1SellingHistory[0].created_date.split("T")[0];
-						// const formattedDate = this.formatDate(date); // Remove if not used
 					
-						// Use a flag to check if the date was found
+						// Flag to check if date exists
 						let dateFound = false;
 					
-						// Iterate through each grouped history
+						// Iterate through each grouped history to find matching date
 						for (let i = 0; i < groupedHistories.length; i++) {
 							if (groupedHistories[i].date === date) {
 								console.log(date);
@@ -634,22 +633,26 @@ class Shopping extends Component {
 							}
 						}
 					
-						// Update the state with the modified grouped histories
-						if (dateFound) {
-							this.setState({ groupedHistories: groupedHistories });
+						if (!dateFound) {
+							// If date is not found, fetch and group by date, then update state
+							let top1SellingHistoryGr = await this.groupByDate(top1SellingHistory);
+							groupedHistories = [...top1SellingHistoryGr, ...groupedHistories];
 						}
+					
+						// Update the state with the modified grouped histories
+						this.setState({ groupedHistories }, async () => {
+							// Store the updated state in AsyncStorage
+							await AsyncStorage.setItem("sellingHistories", JSON.stringify(this.state.groupedHistories));
+							await AsyncStorage.setItem("window", "Shopping");
+							await AsyncStorage.setItem("shoppingFullyLoaded", "true");
+						});
+					
+						return;
 					} catch (error) {
 						console.error('Error fetching or updating sell history:', error);
-					}					
-
-					console.log("top1SellingHistory: ", top1SellingHistory)
-
-					await AsyncStorage.setItem("sellingHistories", JSON.stringify(this.state.sellingHistory));
-
-					await AsyncStorage.setItem("window", "Shopping");
-					await AsyncStorage.setItem("shoppingFullyLoaded", "true");
-
-					return;
+					}
+					
+					
 				}
       }
 
