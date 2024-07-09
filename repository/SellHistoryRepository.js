@@ -139,7 +139,7 @@ class SellHistoryRepository {
         throw new Error("Unexpected result structure");
       }
   
-      const rows = result.rows._array[0];
+      const rows = result.rows._array[0].id;
   
       return rows;
     } catch (error) {
@@ -402,7 +402,50 @@ class SellHistoryRepository {
   async getAllSellGroup(lastHistoryId) {
     try {
       const query = `
-        SELECT * FROM sell_group where id <= ${lastHistoryId} ORDER BY id DESC limit 10;
+        SELECT * FROM sell_group where id <= ${lastHistoryId} ORDER BY id DESC limit 11;
+      `;
+
+      const result = await new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+          tx.executeSql(
+            query,
+            [],
+            (_, resultSet) => resolve(resultSet),
+            (_, error) => reject(error)
+          );
+        });
+      });
+  
+      if (!result || !result.rows || !result.rows._array) {
+        throw new Error("Unexpected result structure");
+      }
+  
+      const rows = result.rows._array;
+      return rows;
+    } catch (error) {
+      console.error("Error getAllSellGroup:", error);
+      throw error;
+    }
+  }
+
+  async findAll(lastHistoryId) {
+    try {
+      const query = `
+        SELECT
+          DATE(created_date) AS date_key,
+          strftime('%B %d, %Y', created_date) AS date_info,
+          SUM(amount) AS total_amount,
+          GROUP_CONCAT(id) AS history_ids,
+          GROUP_CONCAT(amount) AS history_amounts,
+          GROUP_CONCAT(created_date) AS history_created_dates
+      FROM
+          sell_group
+      GROUP BY
+          date_key
+      ORDER BY
+          date_key DESC
+      LIMIT 10; -- Limiting results to 10 for example
+      ;
       `;
 
       const result = await new Promise((resolve, reject) => {

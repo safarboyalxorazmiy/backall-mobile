@@ -6,7 +6,8 @@ import {
 	StyleSheet, 
 	Text, 
 	TouchableOpacity, 
-	View
+	View,
+	FlatList
 } from "react-native";
 import * as Animatable from "react-native-animatable";
 import Modal from "react-native-modal";
@@ -17,9 +18,10 @@ import AmountDateRepository from "../../repository/AmountDateRepository";
 import ProductRepository from "../../repository/ProductRepository";
 import ApiService from "../../service/ApiService";
 
-import SellIcon from "../../assets/sell-icon.svg";
 import CalendarIcon from "../../assets/calendar-icon.svg";
 import CrossIcon from "../../assets/cross-icon-light.svg";
+import HistoryItem from "./HistoryItem";
+
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -51,15 +53,15 @@ class Shopping extends Component {
 			lastSellHistoryGroupPage: 0,
 			lastSellHistoryGroupSize: 10,	
 			lastSellAmountDatePage: 0,
-			lastSellAmountDateSize: 10
+			lastSellAmountDateSize: 10,
+
+			refreshing: false
 		};
 		
 		this.sellHistoryRepository = new SellHistoryRepository();
 		this.amountDateRepository = new AmountDateRepository();
 		this.productRepository = new ProductRepository();
 		this.apiService = new ApiService();
-		
-		this.initSellingHistoryGroup();
 	}
 
 	async getSellGroupNotDownloaded() {
@@ -359,11 +361,6 @@ class Shopping extends Component {
 			return true;
 		}
 		
-		// PROBLEM:
-		// 	Bu yerda oxirgi da qolib ketgan 10 dan keyingi 5-4 larini 
-		// 	ola olmay qolishi mumkin...
-		// 	tekshirib agar muammo bo"lsa hal qilish kerak.
-		
 		console.log("####### LAST ID ########");
 		console.log(this.state.lastGroupId);
 		if ((this.state.lastGroupId - 10) < 0) {
@@ -388,43 +385,88 @@ class Shopping extends Component {
 		return true;
 	};
 	
-	getFormattedTime = (created_date) => {
-		let date = new Date(created_date);
-		let hours = date.getHours();
-		let minutes = date.getMinutes();
-		
-		minutes = minutes + "";
-		if (minutes.length !== 2) {
-			minutes = "0" + minutes;
-		}
-		return `${hours}:${minutes}`;
-	};
 	
 	groupByDate = async (histories) => {
-		const grouped = {};
-		for (const history of histories) {
-			console.log(history);
-			
-			const date = history.created_date.split("T")[0];
-			const formattedDate = this.formatDate(date);
-			if (!grouped[date]) {
-				grouped[date] = { date, dateInfo: formattedDate, histories: [], totalAmount: 0 };
-			}
-			grouped[date].histories.push(history);
-			
-			let currentDate = new Date(date);
-			const year = currentDate.getFullYear();
-			const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Month is zero-indexed, so add 1
-			const day = String(currentDate.getDate()).padStart(2, "0");
-			
-			// Format the date as yyyy-mm-dd
-			const currentFormattedDate = `${year}-${month}-${day}`;
-			grouped[date].totalAmount = await this.amountDateRepository.getSellAmountInfoByDate(currentFormattedDate);
-		}
+    // console.log("STARTED");
+
+    const grouped = {}; // Use a plain object for grouping
+    const uniqueDates = new Set();
+
+    // Single loop to gather unique dates and group histories
+    for (const history of histories) {
+        const date = history.created_date.split("T")[0];
+        if (!grouped[date]) {
+            uniqueDates.add(date);
+            const formattedDate = this.formatDate(date);
+            grouped[date] = { date, dateInfo: formattedDate, histories: [], totalAmount: 0 };
+        }
+        grouped[date].histories.push(history);
+    }
+
+    // Fetch total amounts in batch for all unique dates
+    const totalAmounts = await this.amountDateRepository.getSellAmountInfoByDates([...uniqueDates]);
+
+    // Loop through unique dates to set total amounts
+    for (const date of uniqueDates) {
+        grouped[date].totalAmount = totalAmounts[date] || 0;
+    }
+
 		
-		console.log(grouped);
-		return Object.values(grouped);
-	};
+    return Object.values(grouped);
+};
+
+
+
+
+	/*groupByDate = async (histories) => {
+		console.log("Started")
+    const startTime = performance.now(); // Start measuring time
+
+    const grouped = new Map();
+    const uniqueDates = new Set();
+
+    // First loop to gather unique dates and group histories by date
+    for (const history of histories) {
+        const date = history.created_date.split("T")[0];
+        if (!grouped.has(date)) {
+            const formattedDate = this.formatDate(date);
+            grouped.set(date, { date, dateInfo: formattedDate, histories: [], totalAmount: 0 });
+        }
+        grouped.get(date).histories.push(history);
+        uniqueDates.add(date);
+    }
+
+    // Batch fetch total amounts asynchronously
+    const fetchAmountPromises = Array.from(uniqueDates).map(date =>
+        this.amountDateRepository.getSellAmountInfoByDate(date)
+            .then(amount => ({ date, amount }))
+            .catch(error => {
+                console.error(`Error fetching amount for date ${date}:`, error);
+                return { date, amount: 0 }; // Handle error gracefully
+            })
+    );
+
+    // Wait for all fetch operations to complete
+    const totalAmountsArray = await Promise.all(fetchAmountPromises);
+    const totalAmounts = totalAmountsArray.reduce((acc, { date, amount }) => {
+        acc[date] = amount;
+        return acc;
+    }, {});
+
+    // Set total amounts in the grouped data
+    for (const [date, data] of grouped) {
+        data.totalAmount = totalAmounts[date] || 0;
+    }
+
+    const endTime = performance.now(); // Stop measuring time
+    const executionTime = endTime - startTime; // Calculate execution time in milliseconds
+    console.log(`Execution time: ${executionTime} milliseconds`);
+
+    return Array.from(grouped.values());
+	};*/
+
+
+
 	
 	formatDate = (dateString) => {
 		const date = new Date(dateString);
@@ -456,129 +498,130 @@ class Shopping extends Component {
 	};
 
 	async componentDidMount() {
-		const {navigation} = this.props;
+		let lastSellHistoryGroupID = await this.sellHistoryRepository.getLastSellHistoryGroupId();
 
-		await AsyncStorage.setItem("sellLoadingIntervalProccessIsFinished", "true");
+		let lastGroupId = lastSellHistoryGroupID;
 
-		this.setState({
-			notFinished: true,
-			sellingHistory: [],
-			groupedHistories: []
-		});
-		
-		await this.initSellingHistoryGroup();
-		
-		let intervalId = setInterval(async () => {
-			if (this.state.loadingProcessStarted) {
+		const allSellHistories = [];
+
+		while(true) {
+			if (lastGroupId <= 0) {
+				break;
+			}
+	
+			console.log("LAST GROUP ID: ", lastGroupId);
+	
+			try {
+				let sellHistories = await this.sellHistoryRepository.getAllSellGroup(lastGroupId - 11);
+	
+				if (sellHistories.length === 0) {
+					break;
+				}
+	
+				allSellHistories.push(...sellHistories);
+	
+				lastGroupId -= 11;
+	
+				await new Promise(resolve => setTimeout(resolve, 100)); // Adding delay to manage UI thread load
+			} catch (error) {
+				console.error('Error fetching sell histories:', error);
+				break;
+			}
+	
+			const startTime = performance.now();
+	
+			const grouped = {};
+			const uniqueDates = new Set();
+	
+			for (const history of allSellHistories) {
+				const date = history.created_date.split("T")[0];
+				if (!grouped[date]) {
+						uniqueDates.add(date);
+						const formattedDate = this.formatDate(date);
+						grouped[date] = { date, dateInfo: formattedDate, histories: [], totalAmount: 0 };
+				}
+				grouped[date].histories.push(history);
+			}
+	
+			const totalAmounts = await this.amountDateRepository.getSellAmountInfoByDates([...uniqueDates]);
+	
+			for (const date of uniqueDates) {
+					grouped[date].totalAmount = totalAmounts[date] || 0;
+			}
+	
+			this.setState({
+				sellingHistory: allSellHistories,
+				groupedHistories: Object.values(grouped),
+				lastGroupId: lastGroupId,
+				refreshing: true
+			});
+	
+			const endTime = performance.now();
+			const executionTime = endTime - startTime;
+			console.log(`Execution time: ${executionTime} milliseconds`);
+
+		}
+
+		this.props.navigation.addListener("focus", async () => {
+			await this.getDateInfo();
+			
+			const allSellHistories = this.state.sellingHistory;
+			
+			if (this.state.lastGroupId <= 0) {
 				return;
 			}
 
-			// LOADING PROCCESS STARTED
-			this.setState({
-				loadingProcessStarted: true
-			});
+			console.log("LAST GROUP ID: ", this.state.lastGroupId);
 
-			
-			// ISSUES FOR BREAKING THE SITUATION
+			try {
+				let sellHistories = await this.sellHistoryRepository.getAllSellGroup(this.state.lastGroupId - 11);
 
-			if (await AsyncStorage.getItem("window") != "Shopping") {
-				clearInterval(intervalId);
+				if (sellHistories.length === 0) {
+					return;
+				}
 
-				this.setState({
-					loadingProcessStarted: false
-				});
+				allSellHistories.push(...sellHistories);
 
+				this.setState({ lastGroupId: this.state.lastGroupId - 11 });
+
+				await new Promise(resolve => setTimeout(resolve, 100)); // Adding delay to manage UI thread load
+			} catch (error) {
+				console.error('Error fetching sell histories:', error);
 				return;
 			}
 
-			if (!this.state.notFinished) {
-				clearInterval(intervalId);
+			const startTime = performance.now();
 
-				this.setState({
-					loadingProcessStarted: false
-				});
+			const grouped = {};
+			const uniqueDates = new Set();
 
-				console.log("LOADING FINISHED SUCCESSFULLY");
-				console.log("WHY? await AsyncStorage.getItem(window) != Shopping", await AsyncStorage.getItem("window") != "Shopping");
-				console.log("WHY? !this.state.notFinished", !this.state.notFinished);
-
-				console.log(this.state.sellingHistory);
-
-				await AsyncStorage.setItem("sellingHistories", JSON.stringify(this.state.sellingHistory));
-
-				return;
+			for (const history of allSellHistories) {
+				const date = history.created_date.split("T")[0];
+				if (!grouped[date]) {
+						uniqueDates.add(date);
+						const formattedDate = this.formatDate(date);
+						grouped[date] = { date, dateInfo: formattedDate, histories: [], totalAmount: 0 };
+				}
+				grouped[date].histories.push(history);
 			}
 
-			console.log("Loading..");
-			let result = await this.getNextSellHistoryGroup();
-			
-			this.setState({
-				notFinished: result
-			});
+			const totalAmounts = await this.amountDateRepository.getSellAmountInfoByDates([...uniqueDates]);
+
+			for (const date of uniqueDates) {
+					grouped[date].totalAmount = totalAmounts[date] || 0;
+			}
 
 			this.setState({
-				loadingProcessStarted: false
+				sellingHistory: allSellHistories,
+				groupedHistories: Object.values(grouped),
+				refreshing: true
 			});
-			// LOADING PROCCESS FINISHED
-		}, 100);
+
+			const endTime = performance.now();
+			const executionTime = endTime - startTime;
+			console.log(`Execution time: ${executionTime} milliseconds`);
+
 		
-		navigation.addListener("focus", async () => {
-			this.getDateInfo();
-
-			// if (await AsyncStorage.getItem("role") === "BOSS") {
-			// 	let sellLoadingIntervalId = setInterval(async () => {
-			// 		if (await AsyncStorage.getItem("sellLoadingIntervalProccessIsFinished") != "true") {
-			// 			return;
-			// 		}
-
-			// 		console.log("INTERNAL STARTED SUCCESSFULLY! \n We are on: ");
-			// 		console.log(await AsyncStorage.getItem("window"));
-			// 		if (await AsyncStorage.getItem("window") != "Shopping") {
-      //       if (sellLoadingIntervalId !== undefined) {
-			// 				clearInterval(sellLoadingIntervalId);
-			// 				console.log("CLEARED " + sellLoadingIntervalId);
-			// 				return;
-      //       }
-			// 		}
-
-			// 		await AsyncStorage.setItem("sellLoadingIntervalProccessIsFinished", "false")
-					
-			// 		let isSellGroupEmpty = 
-			// 			await this.getSellGroupNotDownloaded();
-
-			// 		let isSellHistoryEmpty = 
-			// 			await this.getSellHistoryNotDownloaded();
-
-			// 		let isSellHistoryGroupEmpty = 
-			// 			await this.getSellHistoryGroupNotDownloaded();
-
-			// 		let isSellAmountDateEmpty = 
-			// 			await this.getSellAmountDateNotDownloaded();
-
-			// 		await AsyncStorage.setItem(
-			// 			"sellLoadingIntervalProccessIsFinished", 
-			// 			"true"
-			// 		);
-
-			// 		if (isSellGroupEmpty || isSellHistoryEmpty || isSellHistoryGroupEmpty || isSellAmountDateEmpty) {
-			// 			this.setState({
-			// 				notFinished: true
-			// 			});
-
-			// 			while (this.state.notFinished) {
-			// 				if (await AsyncStorage.getItem("window") != "Shopping") {
-			// 					break;
-			// 				}
-			
-			// 				this.setState({
-			// 					notFinished: await this.getNextSellHistoryGroup()
-			// 				});
-			// 			}
-			// 		}
-			// 	}, 2000)
-			// }
-
-			await this.initSellingHistoryGroup();
 
 			if (await AsyncStorage.getItem("shoppingFullyLoaded") != "true") {  
         const sellingHistoriesString = await AsyncStorage.getItem("sellingHistories");
@@ -656,82 +699,9 @@ class Shopping extends Component {
 				}
       }
 
-			console.log(this.state.groupedHistories)
-
-			let isNotSaved = await AsyncStorage.getItem("isNotSaved");
-			if (isNotSaved == "true" && this.state.notFinished) {
-				await this.initSellingHistoryGroup();
-			
-				// #1 way of loading full pagination
-				/*while (this.state.notFinished) {
-					if (await AsyncStorage.getItem("window") != "Shopping") {
-						break;
-					}
-	
-					console.log("Loading..")
-					this.setState({
-							notFinished: await this.getNextSellHistoryGroup()
-					});
-				}*/
-
-				// #2 way of loading full pagination
-				let intervalId = setInterval(async () => {
-					if (this.state.loadingProcessStarted) {
-						return;
-					}
-		
-					// LOADING PROCCESS STARTED
-					this.setState({
-						loadingProcessStarted: true
-					});
-		
-					if (await AsyncStorage.getItem("window") != "Shopping") {
-						clearInterval(intervalId);
-		
-						this.setState({
-							loadingProcessStarted: false
-						});
-						
-						return;
-					}
-					
-					// ISSUES FOR BREAKING THE SITUATION
-					if (!this.state.notFinished) {
-						clearInterval(intervalId);
-		
-						this.setState({
-							loadingProcessStarted: false
-						});
-		
-						console.log("LOADING FINISHED SUCCESSFULLY");
-						console.log("WHY? await AsyncStorage.getItem(window) != Shopping", await AsyncStorage.getItem("window") != "Shopping");
-						console.log("WHY? !this.state.notFinished", !this.state.notFinished);
-
-						console.log(this.state.sellingHistory);
-
-						await AsyncStorage.setItem("sellingHistories", JSON.stringify(this.state.sellingHistory));
-
-						return;
-					}
-		
-					console.log("Loading..");
-					let result = await this.getNextSellHistoryGroup();
-					
-					this.setState({
-						notFinished: result
-					});
-		
-					this.setState({
-						loadingProcessStarted: false
-					});
-					// LOADING PROCCESS FINISHED
-				}, 100);
-			}
-
 			await this.sellHistoryRepository.init();
 			await this.amountDateRepository.init();
 
-			// ROLE ERROR
 			let notAllowed = await AsyncStorage.getItem("not_allowed");
 			this.setState({notAllowed: notAllowed})
 
@@ -744,61 +714,67 @@ class Shopping extends Component {
 			if (currentMonth === lastStoredMonth) {
 				this.setState({thisMonthSellAmount: thisMonthSellAmount});
 			}
-			
-			console.log("Loading started");
-			if (this.state.notFinished) {
-				await this.initSellingHistoryGroup();
-
-				let loadingLoop = async () => {
-					if (this.state.loadingProcessStarted) {
-						requestAnimationFrame(loadingLoop);
-						return;
-					}
-				
-					// LOADING PROCESS STARTED
-					this.setState({ loadingProcessStarted: true });
-				
-					const window = await AsyncStorage.getItem("window");
-				
-					if (window !== "Shopping") {
-						this.setState({
-							loadingProcessStarted: false,
-						});
-				
-						return;
-					}
-				
-					// ISSUES FOR BREAKING THE SITUATION
-					if (!this.state.notFinished) {
-						this.setState({
-							loadingProcessStarted: false,
-						});
-				
-						console.log("LOADING FINISHED SUCCESSFULLY");
-						console.log("WHY? await AsyncStorage.getItem(window) != Shopping", window !== "Shopping");
-						console.log("WHY? !this.state.notFinished", !this.state.notFinished);
-				
-						await AsyncStorage.setItem("sellingHistories", JSON.stringify(this.state.sellingHistory));
-				
-						return;
-					}
-				
-					console.log("Loading..");
-				
-					let result = await this.getNextSellHistoryGroup();
-				
-					this.setState({
-						notFinished: result,
-						loadingProcessStarted: false,
-					});
-				
-					requestAnimationFrame(loadingLoop);
-				};
-				
-				requestAnimationFrame(loadingLoop);
-				
-			}
 		});
+	}
+
+	async loadMore() {
+		console.log("loadMore() called");
+
+		const allSellHistories = this.state.sellingHistory;
+
+		if (this.state.lastGroupId <= 0) {
+			return;
+		}
+
+		console.log("LAST GROUP ID: ", this.state.lastGroupId);
+
+		try {
+			let sellHistories = await this.sellHistoryRepository.getAllSellGroup(this.state.lastGroupId - 11);
+
+			if (sellHistories.length === 0) {
+				return;
+			}
+
+			allSellHistories.push(...sellHistories);
+
+			this.setState({ lastGroupId: this.state.lastGroupId - 11 });
+
+			await new Promise(resolve => setTimeout(resolve, 100)); // Adding delay to manage UI thread load
+		} catch (error) {
+			console.error('Error fetching sell histories:', error);
+			return;
+		}
+
+		const startTime = performance.now();
+
+		const grouped = {};
+		const uniqueDates = new Set();
+
+		for (const history of allSellHistories) {
+			const date = history.created_date.split("T")[0];
+			if (!grouped[date]) {
+					uniqueDates.add(date);
+					const formattedDate = this.formatDate(date);
+					grouped[date] = { date, dateInfo: formattedDate, histories: [], totalAmount: 0 };
+			}
+			grouped[date].histories.push(history);
+		}
+
+		const totalAmounts = await this.amountDateRepository.getSellAmountInfoByDates([...uniqueDates]);
+
+		for (const date of uniqueDates) {
+				grouped[date].totalAmount = totalAmounts[date] || 0;
+		}
+
+		this.setState({
+			sellingHistory: allSellHistories,
+			groupedHistories: Object.values(grouped),
+			refreshing: true
+		});
+
+		const endTime = performance.now();
+		const executionTime = endTime - startTime;
+		console.log(`Execution time: ${executionTime} milliseconds`);
 	}
 
 	render() {
@@ -806,7 +782,27 @@ class Shopping extends Component {
 
 		return (
 			<View style={[styles.container, Platform.OS === "web" && {width: "100%"}]}>
-				<ScrollView onScrollBeginDrag={async (event) => {}} style={{width: "100%"}}>
+				<ScrollView onScrollBeginDrag={async (event) => {
+					// await this.loadMore();
+				}} style={{width: "100%"}}>
+					
+
+					
+
+				</ScrollView>
+
+				<View style={{width: "100%", height: "100%"}}>
+					<FlatList
+						data={this.state.groupedHistories}
+						extraData={this.state.groupedHistories}
+						keyExtractor={(item) => item.date}
+						estimatedItemSize={200}
+						onEndReachedThreshold={2}
+						onEndReached={async () => {
+							// await this.loadMore();
+						}}
+						ListHeaderComponent={() => (
+							<>
 					<View style={styles.pageTitle}>
 						<Text style={styles.pageTitleText}>Sotuv tarixi</Text>
 					</View>
@@ -879,49 +875,28 @@ class Shopping extends Component {
 						)}
 					
 					</View>
-					
-					<View>
-						{this.state.groupedHistories.map((group) => (
-							<View key={group.date}>
-								{/* Amount Calculation */}
-								{
-									<View style={styles.historyTitleWrapper}>
-										<Text style={styles.historyTitleText}>{group.dateInfo}</Text>
-										
-										<Text style={styles.historyTitleText}>//</Text>
-										
-										<Text style={styles.historyTitleText}>{`${group.totalAmount} so’m`}</Text>
-									</View>
-								}
-								
-								{group.histories.map((history) => (
-									<TouchableOpacity
-										key={history.id}
-										style={styles.history}
-										onPress={async () => {
-											
-											let historyId = history.id + "";
-											
-											console.log(historyId);
-											try {
-												await AsyncStorage.setItem("sell_history_id", historyId);
-											} catch (error) {}
-											
-											navigation.navigate("ShoppingDetail", {history})
-										}}>
-										<View style={styles.historyAmountWrapper}>
-											<SellIcon/>
-											<Text style={styles.historyAmount}>{`${history.amount.toLocaleString()} so’m`}</Text>
-										</View>
-										
-										<Text style={styles.historyTime}>{this.getFormattedTime(history.created_date)}</Text>
-									</TouchableOpacity>
+				</>
+						)}
+						renderItem={({ item }) => (
+							<>
+								<View style={styles.historyTitleWrapper}>
+									<Text style={styles.historyTitleText}>{item.dateInfo}</Text>
+
+									<Text style={styles.historyTitleText}>//</Text>
+
+									<Text style={styles.historyTitleText}>{`${item.totalAmount} so’m`}</Text>
+								</View> 
+
+								{item.histories.map((history) => (
+									<HistoryItem key={history.id} history={history} />
 								))}
-							</View>
-						))}
-					</View>
-				</ScrollView>
+							</>
+						)}
+					/>
+				</View>
 				
+				
+		
 				{/* Role error */}
 				<Modal
 						visible={this.state.notAllowed === "true"}
@@ -1194,7 +1169,7 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		marginBottom: 4
 	},
-	
+
 	historyTitleWrapper: {
 		marginTop: 12,
 		display: "flex",
