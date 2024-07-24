@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import {
 	View,
 	Text,
@@ -6,7 +6,7 @@ import {
 	StyleSheet,
 	Dimensions
 } from "react-native";
-import {ScrollView} from "react-native-gesture-handler";
+import { ScrollView } from "react-native-gesture-handler";
 
 import BackIcon from "../../assets/arrow-left-icon.svg";
 import SellHistoryRepository from "../../repository/SellHistoryRepository";
@@ -31,7 +31,7 @@ class ShoppingDetail extends Component {
 		this.sellHistoryRepository = new SellHistoryRepository();
 		this.getDetails();
 	}
-	
+
 	async componentDidMount() {
 		const {navigation} = this.props;
 		

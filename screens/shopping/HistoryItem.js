@@ -5,8 +5,7 @@ import {
   StyleSheet,
 	Dimensions,
 	TouchableOpacity, 
-  AsyncStorage,
-  
+  AsyncStorage
  } from "react-native";
 import { memo } from 'react';
 import SellIcon from "../../assets/sell-icon.svg";
@@ -21,6 +20,7 @@ const HistoryItem = ({ history }) => {
 		let minutes = date.getMinutes();
 		
 		minutes = minutes + "";
+
 		if (minutes.length !== 2) {
 			minutes = "0" + minutes;
 		}
@@ -29,27 +29,27 @@ const HistoryItem = ({ history }) => {
 	
   
     return (
-		<TouchableOpacity
-      key={history.id}
-      style={styles.history}
-      onPress={async () => {
-        let historyId = history.id + "";
+			<TouchableOpacity
+				key={history.id}
+				style={styles.history}
+				onPress={async () => {
+					let historyId = history.id + "";
 
-        console.log(historyId);
-        try {
-          await AsyncStorage.setItem("sell_history_id", historyId);
-        } catch (error) {}
+					console.log(historyId);
+					try {
+						await AsyncStorage.setItem("sell_history_id", historyId);
+					} catch (error) {}
 
-        this.props.navigation.navigate("ShoppingDetail", { item });
-      }}>
-      <View style={styles.historyAmountWrapper}>
-        <SellIcon/>
-        <Text style={styles.historyAmount}>{`${history.amount.toLocaleString()} so’m`}</Text>
-      </View>
+					this.props.navigation.navigate("ShoppingDetail", { item });
+				}}>
+				<View style={styles.historyAmountWrapper}>
+					<SellIcon/>
+					<Text style={styles.historyAmount}>{`${history.amount.toLocaleString()} so’m`}</Text>
+				</View>
 
-      <Text style={styles.historyTime}>{getFormattedTime(history.created_date)}</Text>
-    </TouchableOpacity>
-	);
+				<Text style={styles.historyTime}>{getFormattedTime(history.created_date)}</Text>
+			</TouchableOpacity>
+		);
 };
 
 const styles = StyleSheet.create({
