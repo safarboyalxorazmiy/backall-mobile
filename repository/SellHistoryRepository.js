@@ -71,9 +71,8 @@ class SellHistoryRepository {
 
       let lastSellHistoryGroup = await this.getLastSellHistoryGroupId();
       console.log(lastSellHistoryGroup);
-      console.log(lastSellHistoryGroup.id);
       console.log("&&&&&&&&&&&&&&");
-      return lastSellHistoryGroup.id;
+      return lastSellHistoryGroup;
     } catch (error) {
       console.error("Error createSellHistoryGroup:", error);
       throw error;
@@ -746,7 +745,7 @@ class SellHistoryRepository {
       if (!result || !result.rows || !result.rows._array) {
         throw new Error("Unexpected result structure");
       }
-  
+      
       const rows = result.rows._array;
       return rows;
     } catch (error) {

@@ -463,9 +463,6 @@ class Shopping extends Component {
 
     return Array.from(grouped.values());
 	};*/
-
-
-
 	
 	formatDate = (dateString) => {
 		const date = new Date(dateString);
@@ -566,6 +563,7 @@ class Shopping extends Component {
 
 			// New history created load new items **
 			if (await AsyncStorage.getItem("shoppingFullyLoaded") != "true") {  
+				// When new item created we load one item then we add it to the top selling history right there
 				this.setState({
 					notFinished: false
 				});
@@ -764,15 +762,6 @@ class Shopping extends Component {
 
 		return (
 			<View style={[styles.container, Platform.OS === "web" && {width: "100%"}]}>
-				<ScrollView onScrollBeginDrag={async (event) => {
-					// await this.loadMore();
-				}} style={{width: "100%"}}>
-					
-
-					
-
-				</ScrollView>
-
 				<View style={{width: "100%", height: "100%"}}>
 					<FlatList
 						data={this.state.groupedHistories}
@@ -783,82 +772,84 @@ class Shopping extends Component {
 						onEndReached={async () => {
 							// await this.loadMore();
 						}}
+
 						ListHeaderComponent={() => (
 							<>
-					<View style={styles.pageTitle}>
-						<Text style={styles.pageTitleText}>Sotuv tarixi</Text>
-					</View>
-					
-					<View style={styles.calendarWrapper}>
-						<Text style={styles.calendarLabel}>
-							Muddatni tanlang
-						</Text>
-						
-						<View>
-							<TouchableOpacity
-								onPress={async () => {
-									await AsyncStorage.setItem("calendarFromPage", "Shopping");
-									navigation.navigate("Calendar");
-								}}
-								style={[
-									this.state.calendarInputContent === "--/--/----" ? 
-										styles.calendarInput : 
-										styles.calendarInputActive
-								]}>
-								<Text
-									style={[
-										this.state.calendarInputContent === "--/--/----" ? 
-											styles.calendarInputPlaceholder : 
-											styles.calendarInputPlaceholderActive
-									]}>{this.state.calendarInputContent}</Text>
-							</TouchableOpacity>
-							
-							{this.state.calendarInputContent === "--/--/----" ? (
-									<CalendarIcon
-										style={styles.calendarIcon}
-										resizeMode="cover"/>
-								)
-								: (
-									<CrossIcon
-										style={styles.calendarIcon}
-										resizeMode="cover"/>
-								)}
-						</View>
-					</View>
-					
-					<View style={{
-						marginTop: 12,
-						width: screenWidth - (16 * 2),
-						marginLeft: "auto",
-						marginRight: "auto",
-						display: "flex",
-						flexDirection: "row",
-						justifyContent: "space-between",
-						paddingHorizontal: 16,
-						paddingVertical: 14,
-						backgroundColor: "#4F579F",
-						borderRadius: 8
-					}}>
-						<Text style={{
-							fontFamily: "Gilroy-Medium",
-							fontWeight: "500",
-							fontSize: 16,
-							lineHeight: 24,
-							color: "#FFF"
-						}}>Oylik aylanma</Text>
-						{(
-							<Text style={{
-								fontFamily: "Gilroy-Medium",
-								fontWeight: "500",
-								fontSize: 16,
-								lineHeight: 24,
-								color: "#FFF"
-							}}>{`${this.state.thisMonthSellAmount} so’m`}</Text>
+								<View style={styles.pageTitle}>
+									<Text style={styles.pageTitleText}>Sotuv tarixi</Text>
+								</View>
+								
+								<View style={styles.calendarWrapper}>
+									<Text style={styles.calendarLabel}>
+										Muddatni tanlang
+									</Text>
+									
+									<View>
+										<TouchableOpacity
+											onPress={async () => {
+												await AsyncStorage.setItem("calendarFromPage", "Shopping");
+												navigation.navigate("Calendar");
+											}}
+											style={[
+												this.state.calendarInputContent === "--/--/----" ? 
+													styles.calendarInput : 
+													styles.calendarInputActive
+											]}>
+											<Text
+												style={[
+													this.state.calendarInputContent === "--/--/----" ? 
+														styles.calendarInputPlaceholder : 
+														styles.calendarInputPlaceholderActive
+												]}>{this.state.calendarInputContent}</Text>
+										</TouchableOpacity>
+										
+										{this.state.calendarInputContent === "--/--/----" ? (
+												<CalendarIcon
+													style={styles.calendarIcon}
+													resizeMode="cover"/>
+											)
+											: (
+												<CrossIcon
+													style={styles.calendarIcon}
+													resizeMode="cover"/>
+											)}
+									</View>
+								</View>
+								
+								<View style={{
+									marginTop: 12,
+									width: screenWidth - (16 * 2),
+									marginLeft: "auto",
+									marginRight: "auto",
+									display: "flex",
+									flexDirection: "row",
+									justifyContent: "space-between",
+									paddingHorizontal: 16,
+									paddingVertical: 14,
+									backgroundColor: "#4F579F",
+									borderRadius: 8
+								}}>
+									<Text style={{
+										fontFamily: "Gilroy-Medium",
+										fontWeight: "500",
+										fontSize: 16,
+										lineHeight: 24,
+										color: "#FFF"
+									}}>Oylik aylanma</Text>
+									{(
+										<Text style={{
+											fontFamily: "Gilroy-Medium",
+											fontWeight: "500",
+											fontSize: 16,
+											lineHeight: 24,
+											color: "#FFF"
+										}}>{`${this.state.thisMonthSellAmount} so’m`}</Text>
+									)}
+								
+								</View>
+							</>
 						)}
-					
-					</View>
-				</>
-						)}
+
 						renderItem={({ item }) => (
 							<>
 								<View style={styles.historyTitleWrapper}>

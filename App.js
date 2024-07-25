@@ -379,6 +379,7 @@ class App extends Component {
 					let sellHistoryGroups = 
 						await this.sellHistoryRepository.getSellHistoryGroupSavedFalse();
 					for (const sellHistoryGroup of sellHistoryGroups) {
+						console.log(sellHistoryGroup);
 						try {
 							let sellHistory = await this.sellHistoryRepository.findSellHistoryById(
 								sellHistoryGroup.history_id
