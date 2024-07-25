@@ -21,6 +21,7 @@ import ApiService from "../../service/ApiService";
 import CalendarIcon from "../../assets/calendar-icon.svg";
 import CrossIcon from "../../assets/cross-icon-light.svg";
 import HistoryItem from "./HistoryItem";
+import HistoryGroup from "./HistoryGroup";
 
 
 const screenWidth = Dimensions.get("window").width;
@@ -851,19 +852,7 @@ class Shopping extends Component {
 						)}
 
 						renderItem={({ item }) => (
-							<>
-								<View style={styles.historyTitleWrapper}>
-									<Text style={styles.historyTitleText}>{item.dateInfo}</Text>
-
-									<Text style={styles.historyTitleText}>//</Text>
-
-									<Text style={styles.historyTitleText}>{`${item.totalAmount} so’m`}</Text>
-								</View>
-
-								{item.histories.map((history) => (
-									<HistoryItem key={history.id} history={history} />
-								))}
-							</>
+							<HistoryGroup key={item.date} item={item} />
 						)}
 					/>
 				</View>
