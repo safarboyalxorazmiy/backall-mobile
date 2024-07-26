@@ -122,7 +122,7 @@ class ProfitHistoryRepository {
         throw new Error("Unexpected result structure");
       }
   
-      const rows = result.rows._array[0];
+      const rows = result.rows._array[0].id;
   
       return rows;
     } catch (error) {
@@ -161,6 +161,40 @@ class ProfitHistoryRepository {
         return row;
     } catch (error) {
         console.error("Error retrieving profit history group:", error);
+        throw error;
+    }
+  }
+
+  async getTop1ProfitGroup() {
+    try {
+        const query = `
+            SELECT * FROM profit_group 
+            WHERE id >= 0
+            ORDER BY id DESC
+            LIMIT 1;
+        `;
+
+        const result = await new Promise((resolve, reject) => {
+            this.db.transaction((tx) => {
+                tx.executeSql(
+                    query,
+                    [],
+                    (_, resultSet) => resolve(resultSet),
+                    (_, error) => reject(error)
+                );
+            });
+        });
+
+        if (!result || !result.rows || !result.rows._array) {
+            throw new Error("Unexpected result structure");
+        }
+
+        const rows = result.rows._array;
+
+        console.log(rows)
+        return rows;
+    } catch (error) {
+        console.error("Error getTop10SellGroupByDate:", error);
         throw error;
     }
   }

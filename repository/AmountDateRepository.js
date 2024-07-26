@@ -302,7 +302,7 @@ class AmountDateRepository {
 	}
 
 
-	async getSellAmountInfoByDates(dates) {
+	async getProfitAmountInfoByDates(dates) {
 		const selectQuery = `SELECT date, amount FROM sell_amount_date WHERE date IN (${dates.map(() => '?').join(',')});`;
 		
 		try {
@@ -334,6 +334,40 @@ class AmountDateRepository {
 		}
 	}
 
+	async getSellAmountInfoByDates(dates) {
+		const selectQuery = 
+			`SELECT date, amount 
+			FROM profit_amount_date 
+			WHERE date IN (${dates.map(() => '?').join(',')});`;
+		
+		try {
+				const results = await new Promise((resolve, reject) => {
+						this.db.transaction(tx => {
+								tx.executeSql(
+									selectQuery,
+									dates,
+									(tx, results) => {
+										resolve(results);
+									},
+									error => {
+										reject(error);
+									}
+								);
+						});
+				});
+
+				// Process results and organize them into an object with date as key and amount as value
+				const amountsByDate = {};
+				for (let i = 0; i < results.rows.length; i++) {
+						const row = results.rows.item(i);
+						amountsByDate[row.date] = row.amount;
+				}
+
+				return amountsByDate;
+		} catch (error) {
+				throw new Error(`Error retrieving sell amounts: ${error.message}`);
+		}
+	}
 }
 
 export default AmountDateRepository;

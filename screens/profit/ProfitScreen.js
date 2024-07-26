@@ -7,6 +7,7 @@ import {
   Dimensions, 
   TouchableOpacity, 
   ScrollView, 
+  FlatList
 } from "react-native";
 import * as Animatable from "react-native-animatable";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -19,7 +20,7 @@ import ApiService from "../../service/ApiService";
 
 import CalendarIcon from "../../assets/calendar-icon.svg";
 import CrossIcon from "../../assets/cross-icon-light.svg";
-import ProfitIcon from "../../assets/profit-icon.svg";
+import ProfitGroup from "./ProfitGroup";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -29,7 +30,7 @@ class Profit extends Component {
     super(props);
 
     this.state = {
-      profitHistories: [],
+      profitHistory: [],
       groupedHistories: [],
       currentMonthTotal: 0,
       lastGroupId: 0,
@@ -53,8 +54,6 @@ class Profit extends Component {
     this.profitHistoryRepository = new ProfitHistoryRepository();
     this.amountDateRepository = new AmountDateRepository();
     this.apiService = new ApiService();
-
-    this.initProfitHistoryGroup();
   }
 
   async getDateInfo() {
@@ -131,51 +130,51 @@ class Profit extends Component {
   }
 
   async getNextProfitHistoryGroup() {
-      if (this.state.fromDate != null && this.state.toDate != null) {
-        this.setState({isCollecting: true});
-        let nextProfitHistories = await this.profitHistoryRepository.getTop10ProfitGroupByStartIdAndDate(this.state.lastGroupId - 10, this.state.fromDate, this.state.toDate);
-        let allProfitHistories = this.state.profitHistories.concat(nextProfitHistories);
-
-        console.log(this.state.profitHistories);
-        console.log(allProfitHistories);
-
-        this.setState({
-            profitHistories: allProfitHistories,
-            groupedHistories: await this.groupByDate(allProfitHistories),
-            lastGroupId: this.state.lastGroupId - 10,
-            isCollecting: false
-        });
-
-        return;
-      }
-
+    if (this.state.fromDate != null && this.state.toDate != null) {
       this.setState({isCollecting: true});
-
-      console.log("####### LAST ID ########")
-      console.log(this.state.lastGroupId)
-      if ((this.state.lastGroupId - 10) < 0) {
-        this.setState({isCollecting: false});
-        return false;
-      }
-
-      let nextProfitHistories = await this.profitHistoryRepository.getTop10ProfitGroupByStartId(this.state.lastGroupId - 10);
+      let nextProfitHistories = await this.profitHistoryRepository.getTop10ProfitGroupByStartIdAndDate(this.state.lastGroupId - 10, this.state.fromDate, this.state.toDate);
       let allProfitHistories = this.state.profitHistories.concat(nextProfitHistories);
 
       console.log(this.state.profitHistories);
       console.log(allProfitHistories);
 
       this.setState({
-        profitHistories: allProfitHistories,
-        groupedHistories: await this.groupByDate(allProfitHistories),
-        lastGroupId: this.state.lastGroupId - 10,
-        isCollecting: false
+          profitHistories: allProfitHistories,
+          groupedHistories: await this.groupByDate(allProfitHistories),
+          lastGroupId: this.state.lastGroupId - 10,
+          isCollecting: false
       });
 
-      if (nextProfitHistories.length == 0) {
-        return false;
-      }
-      
-      return true;
+      return;
+    }
+
+    this.setState({isCollecting: true});
+
+    console.log("####### LAST ID ########")
+    console.log(this.state.lastGroupId)
+    if ((this.state.lastGroupId - 10) < 0) {
+      this.setState({isCollecting: false});
+      return false;
+    }
+
+    let nextProfitHistories = await this.profitHistoryRepository.getTop10ProfitGroupByStartId(this.state.lastGroupId - 10);
+    let allProfitHistories = this.state.profitHistories.concat(nextProfitHistories);
+
+    console.log(this.state.profitHistories);
+    console.log(allProfitHistories);
+
+    this.setState({
+      profitHistories: allProfitHistories,
+      groupedHistories: await this.groupByDate(allProfitHistories),
+      lastGroupId: this.state.lastGroupId - 10,
+      isCollecting: false
+    });
+
+    if (nextProfitHistories.length == 0) {
+      return false;
+    }
+    
+    return true;
   };
 
   groupByDate = async (histories) => {
@@ -456,146 +455,199 @@ class Profit extends Component {
   async componentDidMount() {
     const {navigation} = this.props;
 
-    await this.profitHistoryRepository.init();
-    await this.amountDateRepository.init();
+    let lastProfitHistoryGroupID = await this.profitHistoryRepository.getLastProfitHistoryGroupId();
 
-		await AsyncStorage.setItem("profitLoadingIntervalProccessIsFinished", "true");
+		let lastGroupId = lastProfitHistoryGroupID;
+
+		const allProfitHistories = [];
+
+		while (true) {
+			if (lastGroupId <= 0 || await AsyncStorage.getItem("window") != "Profit") {
+				break;
+			}
+	
+			console.log("LAST GROUP ID: ", lastGroupId);
+	
+			try {
+				let profitHistories = await this.profitHistoryRepository.getTop10ProfitGroupByStartId(lastGroupId - 11);
+	
+				if (profitHistories.length === 0) {
+					break;
+				}
+	
+				allProfitHistories.push(...profitHistories);
+	
+				lastGroupId -= 11;
+	
+				await new Promise(resolve => setTimeout(resolve, 100)); // Adding delay to manage UI thread load
+			} catch (error) {
+				console.error('Error fetching profit histories:', error);
+				break;
+			}
+	
+			const startTime = performance.now();
+	
+			const grouped = {};
+			const uniqueDates = new Set();
+	
+			for (const profit of allProfitHistories) {
+				const date = profit.created_date.split("T")[0];
+				if (!grouped[date]) {
+						uniqueDates.add(date);
+						const formattedDate = this.formatDate(date);
+						grouped[date] = { date, dateInfo: formattedDate, histories: [], totalAmount: 0 };
+				}
+				grouped[date].histories.push(profit);
+			}
+	
+			const totalAmounts = await this.amountDateRepository.getProfitAmountInfoByDates([...uniqueDates]);
+	
+			for (const date of uniqueDates) {
+					grouped[date].totalAmount = totalAmounts[date] || 0;
+			}
+	
+			this.setState({
+				profitHistory: allProfitHistories,
+				groupedHistories: Object.values(grouped),
+				lastGroupId: lastGroupId,
+				refreshing: true
+			});
+	
+			const endTime = performance.now();
+			const executionTime = endTime - startTime;
+			console.log(`Execution time: ${executionTime} milliseconds`);
+		}
 
     navigation.addListener("focus", async () => {
+      await this.getDateInfo();
+
       if (await AsyncStorage.getItem("profitFullyLoaded") != "true") {  
-        this.setState({
-          notFinished: true
-        });
+        // When new item created we load one item then we add it to the top profit history right there
+				this.setState({
+					notFinished: false
+				});
+
+				const startTime = performance.now();
+
+				try {
+					// Fetch the top 1 profit history group
+					let top1ProfitHistory = await this.profitHistoryRepository.getTop1ProfitGroup();
+				
+					// Get the current grouped histories from the state
+					let groupedHistories = [...this.state.groupedHistories]; // Clone the state array
+				
+					// Extract and format the date from the top-profit history
+					const date = top1ProfitHistory[0].created_date.split("T")[0];
+				
+					// Flag to check if date exists
+					let dateFound = false;
+				
+					// Iterate through each grouped history to find matching date
+					for (let i = 0; i < groupedHistories.length; i++) {
+						if (groupedHistories[i].date === date) {
+							console.log(date);
+							groupedHistories[i] = {
+								...groupedHistories[i],
+								histories: [...top1ProfitHistory, ...groupedHistories[i].histories]
+							};
+							dateFound = true;
+							break; // Exit the loop early since the match is found
+						}
+					}
+				
+					if (!dateFound) {
+						// If date is not found, fetch and group by date, then update state
+						let top1ProfitHistoryGr = await this.groupByDate(top1ProfitHistory);
+						groupedHistories = [...top1ProfitHistoryGr, ...groupedHistories];
+					}
+				
+					// Update the state with the modified grouped histories
+					this.setState({ groupedHistories }, async () => {
+						// Store the updated state in AsyncStorage
+						await AsyncStorage.setItem("window", "Profit");
+						await AsyncStorage.setItem("profitFullyLoaded", "true");
+					});
+				
+					const endTime = performance.now();
+					const executionTime = endTime - startTime;
+					console.log(`Execution time: ${executionTime} milliseconds`);
+				
+					return;
+				} catch (error) {
+					console.error('Error fetching or updating profit history:', error);
+				}
 
         await AsyncStorage.setItem("profitFullyLoaded", "true");
       }
 
-      await this.getDateInfo();
-      
-      if (await AsyncStorage.getItem("role") === "BOSS") {
-				let profitLoadingIntervalId = setInterval(async () => {
-					if (await AsyncStorage.getItem("profitLoadingIntervalProccessIsFinished") != "true") {
-						return;
+
+      // Load rest of items if exists **
+			let lastGroupId = this.state.lastGroupId;
+			let allProfitHistories = this.state.profitHistory;
+			
+			while (true) {
+				if (lastGroupId <= 0 || await AsyncStorage.getItem("window") != "Profit") {
+					break;
+				}
+		
+				console.log("LAST GROUP ID: ", lastGroupId);
+		
+				try {
+					let profitHistories = await this.profitHistoryRepository.getAllProfitGroup(lastGroupId - 11);
+		
+					if (profitHistories.length === 0) {
+						break;
 					}
-
-					console.log("INTERNAL STARTED SUCCESSFULLY! \n We are on: ");
-					console.log(await AsyncStorage.getItem("window"));
-					if (await AsyncStorage.getItem("window") != "Profit") {
-            if (profitLoadingIntervalId !== undefined) {
-							clearInterval(profitLoadingIntervalId);
-							console.log("CLEARED " + profitLoadingIntervalId);
-							return;
-            }
+		
+					allProfitHistories.push(...profitHistories);
+		
+					lastGroupId -= 11;
+		
+					await new Promise(resolve => setTimeout(resolve, 100)); // Adding delay to manage UI thread load
+				} catch (error) {
+					console.error('Error fetching profit histories:', error);
+					break;
+				}
+		
+				const startTime = performance.now();
+		
+				const grouped = {};
+				const uniqueDates = new Set();
+		
+				for (const history of allProfitHistories) {
+					const date = history.created_date.split("T")[0];
+					if (!grouped[date]) {
+            uniqueDates.add(date);
+            const formattedDate = this.formatDate(date);
+            grouped[date] = { date, dateInfo: formattedDate, histories: [], totalAmount: 0 };
 					}
-
-					await AsyncStorage.setItem("profitLoadingIntervalProccessIsFinished", "false")
-					
-					let isProfitGroupEmpty = 
-						await this.getProfitGroupNotDownloaded();
-
-					let isProfitHistoryEmpty = 
-						await this.getProfitHistoriesNotDownloaded();
-
-					let isProfitHistoryGroupEmpty = 
-						await this.getProfitHistoryGroupNotDownloaded();
-
-					let isProfitAmountDateEmpty = 
-						await this.getProfitAmountDateNotDownloaded();
-
-					await AsyncStorage.setItem(
-						"profitLoadingIntervalProccessIsFinished", 
-						"true"
-					);
-
-					if (
-            isProfitGroupEmpty || 
-            isProfitHistoryEmpty || 
-            isProfitHistoryGroupEmpty || 
-            isProfitAmountDateEmpty
-          ) {
-						this.setState({
-							notFinished: true
-						});
-
-						while (this.state.notFinished) {
-              if (await AsyncStorage.getItem("window") != "Profit") {
-                break;
-              }
-              
-							this.setState({
-								notFinished: await this.getNextProfitHistoryGroup()
-							});
-						}
-					}
-				}, 2000)
+					grouped[date].histories.push(history);
+				}
+		
+				const totalAmounts = 
+          await this.amountDateRepository.getProfitAmountInfoByDates([...uniqueDates]);
+		
+				for (const date of uniqueDates) {
+          grouped[date].totalAmount = totalAmounts[date] || 0;
+				}
+		
+				this.setState({
+					profitHistory: allProfitHistories,
+					groupedHistories: Object.values(grouped),
+					lastGroupId: lastGroupId,
+					refreshing: true
+				});
+		
+				const endTime = performance.now();
+				const executionTime = endTime - startTime;
+				console.log(`Execution time: ${executionTime} milliseconds`);
 			}
-
-      let isNotSaved = await AsyncStorage.getItem("isNotSaved");
-      if (isNotSaved == "true") {
-          this.setState({
-            notFinished: true,
-            profitHistories: [],
-            groupedHistories: []
-          });
-          
-          await this.initProfitHistoryGroup();
-
-          // #1 way of loading full pagination
-          /*while (this.state.notFinished) {
-            if (await AsyncStorage.getItem("window") != "Shopping") {
-                break;
-            }
-
-            console.log("Loading..")
-            this.setState({
-              notFinished: await this.getNextProfitHistoryGroup()
-            });
-          }*/
-
-          // #2 way of loading full pagination
-          let intervalId = setInterval(async () => {
-            if (await AsyncStorage.getItem("window") != "Profit" || !this.state.notFinished) {
-              clearInterval(intervalId);
-                
-              await AsyncStorage.setItem("profitFullyLoaded", "false");
-    
-              console.log("LOADING FINISHED SUCCESSFULLY")
-              return;
-            }
-    
-            if (this.state.loadingProcessStarted) {
-              return;
-            }
-    
-            this.setState({
-              loadingProcessStarted: true
-            });
-    
-            console.log("Loading..");
-            let result = await this.getNextProfitHistoryGroup();
             
-            this.setState({
-              notFinished: result
-            });
-    
-            this.setState({
-              loadingProcessStarted: false
-            });
-          }, 100);
-      }
-      
-      await this.profitHistoryRepository.init();
-      await this.amountDateRepository.init();
-      
-      // ROLE ERROR
-      let notAllowed = await AsyncStorage.getItem("not_allowed");
-      this.setState({notAllowed: notAllowed})
+      /* FOR BOSS (MODAL) **
+			let notAllowed = await AsyncStorage.getItem("not_allowed");
+			this.setState({notAllowed: notAllowed}) */
 
-      console.log(this.state.fromDate)
-      console.log(this.state.toDate)
-
-      console.log(this.state.profitHistories);
-
+			/* Month profit amount setting value ** */
       let thisMonthProfitAmount = parseInt(await AsyncStorage.getItem("month_profit_amount"));
 
       let currentDate = new Date();
@@ -605,189 +657,105 @@ class Profit extends Component {
       if (currentMonth === lastStoredMonth) {
         this.setState({thisMonthProfitAmount: thisMonthProfitAmount});
       }
-
-      await this.initProfitHistoryGroup();
-
-      if (this.state.notFinished == true) {
-        let intervalId = setInterval(async () => {
-          if (this.state.loadingProcessStarted) {
-            return;
-          }
-  
-          this.setState({
-            loadingProcessStarted: true
-          });
-  
-          if (this.state.notFinished != true) {
-            clearInterval(intervalId);
-  
-            this.setState({
-              loadingProcessStarted: false
-            });
-            
-            console.log("LOADING FINISHED SUCCESSFULLY");
-            return;
-          }
-  
-          if (await AsyncStorage.getItem("window") != "Profit") {
-            clearInterval(intervalId);
-            
-            await AsyncStorage.setItem("profitFullyLoaded", "false");
-  
-            this.setState({
-              loadingProcessStarted: false
-            });
-            
-            console.log("LOADING FINISHED SUCCESSFULLY ", intervalId);
-            return;
-          }
-  
-          console.log("Loading..");
-          let result = await this.getNextProfitHistoryGroup();
-          
-          this.setState({
-            notFinished: result
-          });
-  
-          this.setState({
-            loadingProcessStarted: false
-          });
-        }, 100);
-      }
     });
   }
 
   render() {
-      const {navigation} = this.props;
+    const {navigation} = this.props;
 
-      return (
-      <>
-        <View style={styles.container}>
-            <ScrollView
-                onScrollBeginDrag={async (event) => {
-                    if (!this.state.isCollecting) {
-                        // console.log("Scrolling ", event.nativeEvent.contentOffset);
-                        // this.setState({
-                        //     notFinished: await this.getNextProfitHistoryGroup()
-                        // });
-                    }
-                }} style={{width: "100%"}}>
-                <View style={{
-                    borderBottomColor: "#AFAFAF",
-                    borderBottomWidth: 1,
-                    width: screenWidth - (16 * 2),
-                    marginLeft: "auto",
-                    marginRight: "auto",
-                    height: 44,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center"
-                }}>
-                    <Text style={{
-                        fontFamily: "Gilroy-SemiBold", fontWeight: "600", fontSize: 18, lineHeight: 24
-                    }}>Foyda tarixi</Text>
-                </View>
+    return (
+      <View style={styles.container}>
+        <FlatList
+          data={this.state.groupedHistories}
+          extraData={this.state.groupedHistories}
+          keyExtractor={(item) => item.date}
+          estimatedItemSize={200}
+          onEndReachedThreshold={2}
+          onEndReached={async () => {
+            // await this.loadMore();
+          }}
 
-                <View style={{
-                    marginTop: 24, width: screenWidth - (16 * 2), marginRight: "auto", marginLeft: "auto"
-                }}>
-                    <Text
-                        style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16, marginBottom: 4}}>
-                        Muddatni tanlang
-                    </Text>
+          ListHeaderComponent={() => (
+            <>
+              <View style={{
+                  borderBottomColor: "#AFAFAF",
+                  borderBottomWidth: 1,
+                  width: screenWidth - (16 * 2),
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                  height: 44,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center"
+              }}>
+                  <Text style={{
+                      fontFamily: "Gilroy-SemiBold", fontWeight: "600", fontSize: 18, lineHeight: 24
+                  }}>Foyda tarixi</Text>
+              </View>
 
-                    <View>
-                        <TouchableOpacity
-                            onPress={async () => {
-                                await AsyncStorage.setItem("calendarFromPage", "Profit");
-                                navigation.navigate("Calendar")
-                            }}
-                            style={[this.state.calendarInputContent === "--/--/----" ? styles.calendarInput : styles.calendarInputActive]}>
-                            <Text
-                                style={[this.state.calendarInputContent === "--/--/----" ? styles.calendarInputPlaceholder : styles.calendarInputPlaceholderActive]}>{this.state.calendarInputContent}</Text>
-                        </TouchableOpacity>
+              <View style={{
+                  marginTop: 24, width: screenWidth - (16 * 2), marginRight: "auto", marginLeft: "auto"
+              }}>
+                  <Text
+                      style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16, marginBottom: 4}}>
+                      Muddatni tanlang
+                  </Text>
 
-                        {this.state.calendarInputContent === "--/--/----" ? (<CalendarIcon
-                            style={styles.calendarIcon}
-                            resizeMode="cover"/>) : (<CrossIcon
-                            style={styles.calendarIcon}
-                            resizeMode="cover"/>)}
-                    </View>
-                </View>
+                  <View>
+                      <TouchableOpacity
+                          onPress={async () => {
+                              await AsyncStorage.setItem("calendarFromPage", "Profit");
+                              navigation.navigate("Calendar")
+                          }}
+                          style={[this.state.calendarInputContent === "--/--/----" ? styles.calendarInput : styles.calendarInputActive]}>
+                          <Text
+                              style={[this.state.calendarInputContent === "--/--/----" ? styles.calendarInputPlaceholder : styles.calendarInputPlaceholderActive]}>{this.state.calendarInputContent}</Text>
+                      </TouchableOpacity>
 
-                <View style={{
-                    marginTop: 12,
-                    width: screenWidth - (16 * 2),
-                    marginRight: "auto",
-                    marginLeft: "auto",
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    paddingHorizontal: 16,
-                    paddingVertical: 14,
-                    backgroundColor: "#4F579F",
-                    borderRadius: 8
-                }}>
-                    <Text style={{
-                        fontFamily: "Gilroy-Medium",
-                        fontWeight: "500",
-                        fontSize: 16,
-                        lineHeight: 24,
-                        color: "#FFF"
-                    }}>Oylik foyda</Text>
-                    <Text style={{
-                        fontFamily: "Gilroy-Medium",
-                        fontWeight: "500",
-                        fontSize: 16,
-                        lineHeight: 24,
-                        color: "#FFF"
-                    }}>{this.state.thisMonthProfitAmount} so’m</Text>
-                </View>
+                      {this.state.calendarInputContent === "--/--/----" ? (<CalendarIcon
+                          style={styles.calendarIcon}
+                          resizeMode="cover"/>) : (<CrossIcon
+                          style={styles.calendarIcon}
+                          resizeMode="cover"/>)}
+                  </View>
+              </View>
 
-                <View style={{
-                    width: "100%", paddingLeft: 16, paddingRight: 16
-                }}>
-                    {this.state.groupedHistories.map((group) => (<View key={group.date}>
-                        {(<View style={styles.historyTitleWrapper}>
-                            <Text style={styles.historyTitleText}>{group.dateInfo}</Text>
+              <View style={{
+                  marginTop: 12,
+                  width: screenWidth - (16 * 2),
+                  marginRight: "auto",
+                  marginLeft: "auto",
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  paddingHorizontal: 16,
+                  paddingVertical: 14,
+                  backgroundColor: "#4F579F",
+                  borderRadius: 8
+              }}>
+                  <Text style={{
+                      fontFamily: "Gilroy-Medium",
+                      fontWeight: "500",
+                      fontSize: 16,
+                      lineHeight: 24,
+                      color: "#FFF"
+                  }}>Oylik foyda</Text>
+                  <Text style={{
+                      fontFamily: "Gilroy-Medium",
+                      fontWeight: "500",
+                      fontSize: 16,
+                      lineHeight: 24,
+                      color: "#FFF"
+                  }}>{this.state.thisMonthProfitAmount} so’m</Text>
+              </View>
+            </>
+          )}
 
-                            <Text style={styles.historyTitleText}>//</Text>
-
-                            <Text style={styles.historyTitleText}>{`${group.totalProfit} so’m`}</Text>
-                        </View>)}
-
-                        {group.histories.map((history) => (<TouchableOpacity
-                            key={history.id}
-                            style={styles.history}
-                            onPress={async () => {
-                                let historyId = history.id + "";
-
-                                console.log(historyId);
-                                try {
-                                    await AsyncStorage.setItem("profit_history_id", historyId);
-                                } catch (error) {
-                                    console.error("Error profit_history_id:", error);
-                                }
-
-                                navigation.navigate("ProfitDetail", {history});
-                            }}
-                        >
-                            <View style={styles.historyProfitWrapper}>
-                                <ProfitIcon style={{marginLeft: -4}}/>
-                                <Text
-                                    style={styles.historyProfit}>{`${history.profit.toLocaleString()} so’m`}</Text>
-                            </View>
-
-                            <Text
-                                style={styles.historyTime}>{this.getFormattedTime(history.created_date)}</Text>
-                        </TouchableOpacity>))}
-                    </View>))}
-                </View>
-            </ScrollView>
-
-            <StatusBar style="auto"/>
-        </View>
-
+          renderItem={({ item }) => (
+            <ProfitGroup key={item.date} item={item} />
+          )}
+        />
+          
         {/* Role error */}
         <Modal
           visible={this.state.notAllowed === "true"}
@@ -862,7 +830,10 @@ class Profit extends Component {
               </View>
             </Animatable.View>
         </Modal>
-      </>);
+
+        <StatusBar style="auto"/>
+      </View>
+    );
   }
 }
 
