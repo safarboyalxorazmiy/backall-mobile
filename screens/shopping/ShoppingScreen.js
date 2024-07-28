@@ -20,7 +20,6 @@ import ApiService from "../../service/ApiService";
 
 import CalendarIcon from "../../assets/calendar-icon.svg";
 import CrossIcon from "../../assets/cross-icon-light.svg";
-import HistoryItem from "./HistoryItem";
 import HistoryGroup from "./HistoryGroup";
 
 

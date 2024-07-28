@@ -13,7 +13,7 @@ const screenHeight = Dimensions.get("window").height;
 
 const ProfitGroup = ({ item }) => {
     return (
-      <View key={item.date}>
+      <View>
         {(<View style={styles.historyTitleWrapper}>
             <Text style={styles.historyTitleText}>{item.dateInfo}</Text>
 
