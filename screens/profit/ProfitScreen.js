@@ -6,7 +6,6 @@ import {
   View, 
   Dimensions, 
   TouchableOpacity, 
-  ScrollView, 
   FlatList
 } from "react-native";
 import * as Animatable from "react-native-animatable";
@@ -579,7 +578,6 @@ class Profit extends Component {
 
         await AsyncStorage.setItem("profitFullyLoaded", "true");
       }
-
 
       // Load rest of items if exists **
 			let lastGroupId = this.state.lastGroupId;

@@ -21,6 +21,7 @@ import PlusIcon from "../../assets/plus-icon.svg";
 import SearchIcon from "../../assets/search-icon.svg";
 import BasketIcon from "../../assets/basket-icon-light.svg";
 import Success from "../../assets/success.svg";
+import BasketItem from "./BasketItem";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -64,7 +65,6 @@ class Basket extends Component {
     );
 
 		this.textInputRef = React.createRef();
-		this.loadData();
 	}
 
 	keyboardDidShow = () => {
@@ -76,29 +76,55 @@ class Basket extends Component {
   };
 	
 	async componentDidMount() {
-		this.setState({
-			notFinished: true
-		});
-
 		const {navigation} = this.props;
 
-		await AsyncStorage.setItem("productsLoadingIntervalProccessIsFinished", "true");
+		const allProducts = [];
 
-		console.log("Loading..", this.state.notFinished)
-
-		while (this.state.notFinished) {
-			if (await AsyncStorage.getItem("window") != "Basket") {
+		while (true) {
+			if (
+				this.lastId <= 0 || 
+				await AsyncStorage.getItem("window") != "Basket"
+			) {
 				break;
 			}
 
-			console.log("Loading..")
-			this.setState({
-				notFinished: await this.loadData()
-			});
+			try {
+				const newStoreProducts = 
+					await this.storeProductRepository.findTopStoreProductsInfo(
+						this.state.lastId
+					);
+
+				if (newStoreProducts.length === 0) {
+					break;
+				}
+
+				allProducts.push(...newStoreProducts);
+
+				let last = newStoreProducts[newStoreProducts.length - 1];
+				if (last != undefined) {
+					this.setState({
+						lastId: last.id
+					});
+				}
+
+				this.setState({
+					storeProducts: allProducts,
+					searchInputValue: "",
+					role: await AsyncStorage.getItem("role")
+				});
+
+				await new Promise(resolve => setTimeout(resolve, 100)); // Adding delay to manage UI thread load
+			} catch (error) {
+				console.error("Error fetching global products:", error);
+				break;
+			}
 		}
 
 		navigation.addListener("focus", 
 			async () => {
+				await this.getCreated();
+				this.setState({role: await AsyncStorage.getItem("role")});
+
 				if (await AsyncStorage.getItem("basketFullyLoaded") != "true") {  
 					this.setState({
 						notFinished: true
@@ -107,8 +133,7 @@ class Basket extends Component {
 					await AsyncStorage.setItem("basketFullyLoaded", "true");
 				}
 				
-				await this.storeProductRepository.init();
-				
+				/* FOR BOSS SMTH
 				if (await AsyncStorage.getItem("role") === "BOSS") {
 					let productsLoadingIntervalId = setInterval(async () => {
 						if (await AsyncStorage.getItem("productsLoadingIntervalProccessIsFinished") != "true") {
@@ -138,20 +163,16 @@ class Basket extends Component {
 							await this.loadData();
 						}
 					}, 2000)
-				}
+				}*/
 
-				// ROLE ERROR
+				/* FOR BOSS (MODAL) **
 				let notAllowed = await AsyncStorage.getItem("not_allowed");
-				this.setState({notAllowed: notAllowed});
+				this.setState({notAllowed: notAllowed}) */
+
 
 				this.setState(
-					{role: await AsyncStorage.getItem("role")}
-				);
-
-				this.setState(
-					{
+					{	
 						isCreated: "false",
-						storeProducts: [],
 						addButtonStyle: styles.addButton,
 						searchInputValue: "",
 						lastId: 0,
@@ -159,50 +180,49 @@ class Basket extends Component {
 					}
 				);
 
-				await this.getCreated();
-				
-				
-				await this.load();
+				const allProducts = this.state.storeProducts;
 
-				while (this.state.notFinished) {
-					if (await AsyncStorage.getItem("window") != "Basket") {
+				while (true) {
+					if (
+						this.lastId <= 0 || 
+						await AsyncStorage.getItem("window") != "Basket"
+					) {
 						break;
 					}
-	
-					console.log("Loading..")
-					this.setState({
-						notFinished: await this.loadData()
-					});
+
+					try {
+						const newStoreProducts = 
+							await this.storeProductRepository.findTopStoreProductsInfo(
+								this.state.lastId
+							);
+
+						if (newStoreProducts.length === 0) {
+							break;
+						}
+
+						allProducts.push(...newStoreProducts);
+
+						let last = newStoreProducts[newStoreProducts.length - 1];
+						if (last != undefined) {
+							this.setState({
+								lastId: last.id
+							});
+						}
+
+						this.setState({
+							storeProducts: allProducts,
+							searchInputValue: "",
+							role: await AsyncStorage.getItem("role")
+						});
+
+						await new Promise(resolve => setTimeout(resolve, 100)); // Adding delay to manage UI thread load
+					} catch (error) {
+						console.error("Error fetching global products:", error);
+						break;
+					}
 				}
 			}
 		);	
-	}
-
-	async load() {
-		let storeProducts = 
-			await this.storeProductRepository.findTopStoreProductsInfo(this.state.lastId);
-		let last = storeProducts[storeProducts.length - 1];
-		if (last != undefined) {
-			this.setState({
-				lastId: last.id
-			})
-
-			console.log("LAST ID::", last.id)
-		};
-
-		this.setState({
-			storeProducts: storeProducts,
-			searchInputValue: ""
-		});
-
-		console.log("Hello world!")
-		this.setState(
-			{role: await AsyncStorage.getItem("role")}
-		);
-
-		console.log(this.state.role === "SELLER");
-
-		await this.storeProductRepository.init();
 	}
 
 	async getNotDownloadedLocalProducts() {
@@ -356,47 +376,6 @@ class Basket extends Component {
       return true;
 		}
 	}
-
-	async loadData() {
-		await this.storeProductRepository.init();
-
-    const newStoreProducts = 
-			await this.storeProductRepository.findTopStoreProductsInfo(
-				this.state.lastId
-			);
-
-		if (newStoreProducts.length === 0) {
-			return false;
-    }
-		
-		let last = newStoreProducts[newStoreProducts.length - 1];
-		if (last != undefined) {
-			this.setState({
-				lastId: last.id
-			});
-
-			console.log("LAST ID::", last.id)
-		}
-
-		console.log(newStoreProducts);
-
-		let allProducts = this.state.storeProducts.concat(newStoreProducts);
-
-		this.setState({
-			storeProducts: allProducts,
-			searchInputValue: ""
-		});
-
-		await this.getCreated();
-		await this.storeProductRepository.init();
-
-		this.setState(
-			{role: await AsyncStorage.getItem("role")}
-		);
-
-		console.log("LOAD DATA ENDED")
-		return true;
-	}
 	
 	async getCreated() {
 		let isCreated = await AsyncStorage.getItem("isCreated");
@@ -450,15 +429,11 @@ class Basket extends Component {
 
 						if ((currentYPos - this.state.lastYPos) > 30) {
 							this.setState({lastYPos: currentYPos});;
-							await this.loadData();
 						}
 					}}
 				>
 					{this.state.storeProducts.map((product, index) => (
-						<View key={index} style={index % 2 === 0 ? styles.product : styles.productOdd}>
-							<Text style={styles.productTitle}>{product.brand_name} {product.name}</Text>
-							<Text style={styles.productCount}>{product.count} {product.count_type}</Text>
-						</View>
+						<BasketItem key={index} product={product} index={index} />
 					))}
 				</ScrollView>
 
