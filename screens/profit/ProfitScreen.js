@@ -663,7 +663,7 @@ class Profit extends Component {
 
     return (
       <View style={styles.container}>
-        <FlatList
+        <FlatList style={{width: "100%"}}
           data={this.state.groupedHistories}
           extraData={this.state.groupedHistories}
           keyExtractor={(item) => item.date}
@@ -674,13 +674,13 @@ class Profit extends Component {
           }}
 
           ListHeaderComponent={() => (
-            <>
+            <View style={{width: "100%"}}>
               <View style={{
                   borderBottomColor: "#AFAFAF",
                   borderBottomWidth: 1,
-                  width: screenWidth - (16 * 2),
-                  marginLeft: "auto",
+                  width: screenWidth - (16 * 2), 
                   marginRight: "auto",
+                  marginLeft: "auto",
                   height: 44,
                   display: "flex",
                   alignItems: "center",
@@ -692,7 +692,10 @@ class Profit extends Component {
               </View>
 
               <View style={{
-                  marginTop: 24, width: screenWidth - (16 * 2), marginRight: "auto", marginLeft: "auto"
+                  marginTop: 24, 
+                  width: screenWidth - (16 * 2), 
+                  marginRight: "auto", 
+                  marginLeft: "auto"
               }}>
                   <Text
                       style={{fontFamily: "Gilroy-Medium", fontWeight: "500", fontSize: 16, marginBottom: 4}}>
@@ -723,6 +726,7 @@ class Profit extends Component {
                   width: screenWidth - (16 * 2),
                   marginRight: "auto",
                   marginLeft: "auto",
+                  
                   display: "flex",
                   flexDirection: "row",
                   justifyContent: "space-between",
@@ -746,7 +750,7 @@ class Profit extends Component {
                       color: "#FFF"
                   }}>{this.state.thisMonthProfitAmount} so’m</Text>
               </View>
-            </>
+            </View>
           )}
 
           renderItem={({ item }) => (
@@ -783,7 +787,10 @@ class Profit extends Component {
                 justifyContent: "center"
               }}>
               <View style={{
-                width: screenWidth - (16 * 2),
+                // width: screenWidth - (16 * 2),
+                width: "100%",
+                paddingRight: 16,
+                paddingLeft: 16,
                 maxWidth: 343,
                 marginLeft: "auto",
                 marginRight: "auto",
@@ -837,7 +844,7 @@ class Profit extends Component {
 
 const styles = StyleSheet.create({
     container: {
-        width: "100%", flex: 1, backgroundColor: "#fff", alignItems: "center", paddingTop: 50
+      width: "100%", flex: 1, backgroundColor: "#fff", alignItems: "center", paddingTop: 50
     },
 
     navbar: {
@@ -891,7 +898,10 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        width: screenWidth - (17 + 17),
+        // width: screenWidth - (17 + 17),
+        width: "100%",
+        paddingRight: 16,
+        paddingLeft: 16,
         paddingVertical: 15,
         paddingHorizontal: 6,
         borderTopWidth: 1,
@@ -915,7 +925,10 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-between",
-        width: screenWidth - (17 + 17),
+        // width: screenWidth - (17 + 17),
+        width: "100%",
+        paddingRight: 17,
+        paddingLeft: 17,
         marginBottom: 40
     },
 
@@ -974,7 +987,13 @@ const styles = StyleSheet.create({
     },
 
     calendarWrapper: {
-        marginTop: 24, width: screenWidth - (16 * 2), marginLeft: "auto", marginRight: "auto",
+        marginTop: 24, 
+        // width: screenWidth - (16 * 2), 
+        width: "100%",
+        paddingRight: 16,
+        paddingLeft: 16,
+        marginLeft: "auto", 
+        marginRight: "auto",
     },
 
     calendarIcon: {
@@ -982,7 +1001,11 @@ const styles = StyleSheet.create({
     },
 
     calendarInput: {
-        width: screenWidth - (16 * 2),
+        // width: screenWidth - (16 * 2),
+        width: "100%",
+        paddingRight: 16,
+        paddingLeft: 16,
+
         position: "relative",
         paddingHorizontal: 16,
         paddingVertical: 14,
@@ -992,7 +1015,11 @@ const styles = StyleSheet.create({
     },
 
     calendarInputActive: {
-        width: screenWidth - (16 * 2),
+        // width: screenWidth - (16 * 2),
+        width: "100%",
+        paddingRight: 16,
+        paddingLeft: 16,
+
         position: "relative",
         paddingHorizontal: 16,
         paddingVertical: 14,

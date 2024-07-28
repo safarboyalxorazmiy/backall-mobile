@@ -161,7 +161,9 @@ const styles = StyleSheet.create({
       height: 42,
       borderRadius: 4,
       paddingHorizontal: 10,
-      paddingVertical: 10
+      paddingVertical: 10,
+      marginLeft: 16,
+      marginRight: 16
   },
 
   historyTitleText: {
@@ -169,7 +171,10 @@ const styles = StyleSheet.create({
   },
 
   calendarWrapper: {
-      marginTop: 24, width: screenWidth - (16 * 2), marginLeft: "auto", marginRight: "auto",
+      marginTop: 24, 
+      width: screenWidth - (16 * 2), 
+      marginLeft: "auto", 
+      marginRight: "auto",
   },
 
   calendarIcon: {
@@ -177,7 +182,7 @@ const styles = StyleSheet.create({
   },
 
   calendarInput: {
-      width: screenWidth - (16 * 2),
+      width: screenWidth - (16 * 2),    
       position: "relative",
       paddingHorizontal: 16,
       paddingVertical: 14,

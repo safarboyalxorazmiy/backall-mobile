@@ -163,7 +163,9 @@ const styles = StyleSheet.create({
 			height: 50,
 			marginTop: 4,
 			paddingHorizontal: 4,
-			paddingVertical: 6
+			paddingVertical: 6,
+			marginLeft: 16,
+			marginRight: 16
 	},
 
 	historyProfitWrapper: {
