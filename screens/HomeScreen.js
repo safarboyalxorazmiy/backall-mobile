@@ -6,7 +6,8 @@ import {
 	View,
 	Dimensions,
 	TouchableOpacity,
-	Platform
+	Platform,
+	ActivityIndicator
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -138,47 +139,29 @@ class Home extends Component {
 			if (isLoggedIn) {
 				console.log("isDownloaded??", isDownloaded);
 				if (isDownloaded !== "true" || isDownloaded == null) {
-						// LOAD..
-						console.log("ABOUT TO LOAD...");
+					// LOAD..
+					console.log("ABOUT TO LOAD...");
 
-						console.log("Initial isConnected:", this.state.isConnected);
+					console.log("Initial isConnected:", this.state.isConnected);
 
-						// Check if setInterval callback is reached
-						console.log("Setting up setInterval...");
+					// Check if setInterval callback is reached
+					console.log("Setting up setInterval...");
 
-						let intervalId;
+					if (!this.state.isConnected) {
+						this.setState({spinner: false});
+						navigation.navigate("Login");
+						return;
+					}
 
-						intervalId = setInterval(async () => {
-							console.log("Interval internet is connected:", this.state.isConnected);
-
-							// Ensure proper context binding
-							console.log("this state in setInterval:", this.state);
-
-							if (this.state.isConnected) {
-								if (this.state.isDownloaded === "true") {
-									await AsyncStorage.setItem("paymentTryCount", "0")
-									console.log("Downloaded")
-									clearInterval(intervalId);
-									console.log("CLEARED ", intervalId);
-
-									this.setState({spinner: false});
-									await this.getAmountInfo();
-									return;
-								}
-
-								try {
-									// Has internet connection
-									await this.loadProducts();
-
-									this.setState({spinner: false});
-								} catch (error) {
-									console.error("Error loading products:", error);
-									this.setState({spinner: false});
-								}
-							}
-						}, 5000);
-				} else {
-					this.setState({spinner: false});
+					try {
+						// Has internet connection
+						await this.loadProducts();
+						
+					} catch (error) {
+						console.error("Error loading products:", error);
+					} finally {
+						this.setState({spinner: false});
+					}	
 				}
 
 				await this.getAmountInfo();
@@ -198,56 +181,70 @@ class Home extends Component {
 	}
 
 	async loadProducts() {
-		await this.storeProductRepository.init();
-		await this.sellHistoryRepository.init();
-		await this.profitHistoryRepository.init();
-		await this.amountDateRepository.init();
-
-		if (!this.state.isLoading) { // is loadring don"t load again
+		await Promise.all([
+			this.storeProductRepository.init(),
+			this.sellHistoryRepository.init(),
+			this.profitHistoryRepository.init(),
+			this.amountDateRepository.init()
+		]);
+	
+		if (!this.state.isLoading) {
 			try {
-				console.log("LOADING STARTED")
-				this.setState({ // loading started
-					isLoading: true
-				})
-				
-				let isDownloaded = 
-					await this.getLocalProducts() && 
-					await this.getGlobalProducts() && 
-					await this.getStoreProducts() &&
-					await this.getSellGroups() &&
-					await this.getSellHistories() &&
-					await this.getSellHistoryGroup() &&
-					await this.getSellAmountDate() &&
-					await this.getProfitGroups() &&
-					await this.getProfitHistories() &&
-					await this.getProfitHistoryGroup() &&
-					await this.getProfitAmountDate();
-
+				console.log("LOADING STARTED");
+	
+				this.setState({ isLoading: true }); // loading started
+	
+				let isDownloaded = true;
+	
+				isDownloaded = isDownloaded && await this.getLocalProducts();
+				this.setState({spinner: true})
+				isDownloaded = isDownloaded && await this.getGlobalProducts();
+				this.setState({spinner: true})
+				isDownloaded = isDownloaded && await this.getStoreProducts();
+				this.setState({spinner: true})
+				isDownloaded = isDownloaded && await this.getSellGroups();
+				this.setState({spinner: true})
+				isDownloaded = isDownloaded && await this.getSellHistories();
+				this.setState({spinner: true})
+				isDownloaded = isDownloaded && await this.getSellHistoryGroup();
+				this.setState({spinner: true})
+				isDownloaded = isDownloaded && await this.getSellAmountDate();
+				this.setState({spinner: true})
+				isDownloaded = isDownloaded && await this.getProfitGroups();
+				this.setState({spinner: true})
+				isDownloaded = isDownloaded && await this.getProfitHistories();
+				this.setState({spinner: true})
+				isDownloaded = isDownloaded && await this.getProfitHistoryGroup();
+				this.setState({spinner: true})
+				isDownloaded = isDownloaded && await this.getProfitAmountDate();
+				this.setState({spinner: true})
+	
 				// storing result of product storing
 				await AsyncStorage.setItem("isDownloaded", isDownloaded.toString());
-				console.log("LOADING ", isDownloaded.toString());
-
-				this.setState({ // loading finished
-					isLoading: false,
+				console.log("LOADING", isDownloaded.toString());
+	
+				this.setState({
+					isLoading: false, // loading finished
 					isDownloaded: isDownloaded.toString()
 				});
 				console.log("LOADING FINISHED");
+	
 			} catch (e) {
 				console.log("LOADING ERRORED");
-
 				console.error(e);
-
-				// storing result of product storing
-				await AsyncStorage.setItem("isDownloaded", isDownloaded.toString());
-
-				this.setState({ // loading finished
+	
+				this.setState({
 					isLoading: false,
-					isDownloaded: isDownloaded.toString()
+					isDownloaded: "false"
 				});
 				console.log("LOADING FINISHED");
+	
+				// Storing result of product storing
+				await AsyncStorage.setItem("isDownloaded", "false");
 			}
 		}
 	}
+		
 
 	// PRODUCT PAGINATION
 	async getLocalProducts() {
@@ -815,6 +812,7 @@ class Home extends Component {
 			<>
 				<Spinner
 						visible={this.state.spinner}
+						cancelable={false}
 						textContent={"Yuklanyapti 10%"}
 						textStyle={{
 							fontFamily: "Gilroy-Bold",
@@ -1228,6 +1226,17 @@ class Home extends Component {
 }
 
 const styles = StyleSheet.create({
+	loaderContainer: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center'
+	},
+	loaderText: {
+		fontFamily: "Gilroy-Bold",
+		color: "#FFF",
+		marginTop: 10
+	},
+
 	container: {
 		flex: 1,
 		backgroundColor: "#fff",
