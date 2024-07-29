@@ -6,7 +6,7 @@ import {
 	Dimensions,
 	TouchableOpacity,
 	TextInput,
-	ScrollView,
+  FlatList,
 	Keyboard
 } from "react-native";
 import Modal from "react-native-modal";
@@ -47,8 +47,6 @@ class Basket extends Component {
 
       productsLoadingIntervalId: undefined,
       productsLoadingIntervalProccessIsFinished: true,
-
-			notFinished: true,
 		}
 		
 		this.storeProductRepository = new StoreProductRepository();
@@ -76,19 +74,30 @@ class Basket extends Component {
   };
 	
 	async componentDidMount() {
+		console.log("Loaded..")
 		const {navigation} = this.props;
 
-		const allProducts = [];
+		this.setState(
+			{	
+				addButtonStyle: styles.addButton,
+				searchInputValue: "",
+				lastId: 0,
+				lastYPos: 0,
+				storeProducts: [],
+			}
+		);
+
+		const allProducts = this.state.storeProducts;
 
 		while (true) {
 			if (
-				this.lastId <= 0 || 
 				await AsyncStorage.getItem("window") != "Basket"
 			) {
 				break;
 			}
 
 			try {
+				console.log("It's here")
 				const newStoreProducts = 
 					await this.storeProductRepository.findTopStoreProductsInfo(
 						this.state.lastId
@@ -126,10 +135,58 @@ class Basket extends Component {
 				this.setState({role: await AsyncStorage.getItem("role")});
 
 				if (await AsyncStorage.getItem("basketFullyLoaded") != "true") {  
-					this.setState({
-						notFinished: true
-					});
+					
+					this.setState(
+						{	
+							addButtonStyle: styles.addButton,
+							searchInputValue: "",
+							lastYPos: 0,
+							lastId: 0,
+							storeProducts: []
+						}
+					);
 	
+					const allProducts = this.state.storeProducts;
+	
+					while (true) {
+						if (
+							await AsyncStorage.getItem("window") != "Basket"
+						) {
+							break;
+						}
+	
+						try {
+							const newStoreProducts = 
+								await this.storeProductRepository.findTopStoreProductsInfo(
+									this.state.lastId
+								);
+	
+							if (newStoreProducts.length === 0) {
+								break;
+							}
+	
+							allProducts.push(...newStoreProducts);
+	
+							let last = newStoreProducts[newStoreProducts.length - 1];
+							if (last != undefined) {
+								this.setState({
+									lastId: last.id
+								});
+							}
+	
+							this.setState({
+								storeProducts: allProducts,
+								searchInputValue: "",
+								role: await AsyncStorage.getItem("role")
+							});
+	
+							await new Promise(resolve => setTimeout(resolve, 100)); // Adding delay to manage UI thread load
+						} catch (error) {
+							console.error("Error fetching global products:", error);
+							break;
+						}
+					}
+
 					await AsyncStorage.setItem("basketFullyLoaded", "true");
 				}
 				
@@ -172,10 +229,8 @@ class Basket extends Component {
 
 				this.setState(
 					{	
-						isCreated: "false",
 						addButtonStyle: styles.addButton,
 						searchInputValue: "",
-						lastId: 0,
 						lastYPos: 0
 					}
 				);
@@ -184,7 +239,6 @@ class Basket extends Component {
 
 				while (true) {
 					if (
-						this.lastId <= 0 || 
 						await AsyncStorage.getItem("window") != "Basket"
 					) {
 						break;
@@ -422,7 +476,7 @@ class Basket extends Component {
 				</TouchableOpacity>
 				
 				{/* Store products */}
-				<ScrollView style={styles.productList}
+				{/* <ScrollView style={styles.productList}
 					onScrollBeginDrag={async (event) => {
 						const currentYPos = event.nativeEvent.contentOffset.y;
 						console.log("Current Y position:", currentYPos);
@@ -435,7 +489,24 @@ class Basket extends Component {
 					{this.state.storeProducts.map((product, index) => (
 						<BasketItem key={index} product={product} index={index} />
 					))}
-				</ScrollView>
+				</ScrollView> */}
+
+
+
+				<FlatList
+					style={styles.productList}
+					data={this.state.storeProducts}
+					keyExtractor={(item, index) => index.toString()}
+					renderItem={({ item, index }) => (
+						<BasketItem product={item} index={index} />
+					)}
+					onScrollBeginDrag={this.handleScroll}
+					horizontal={false}
+					scrollEnabled={true}
+					contentContainerStyle={{}} 
+				/>
+
+				
 
 				{/* Add Button */}
 				{this.state.role === "SELLER" ? (
@@ -475,7 +546,7 @@ class Basket extends Component {
 							justifyContent: "center"
 						}}
 					>
-						<Success/>
+						<Success />
 					</View>
 					
 					<View style={{
@@ -635,7 +706,8 @@ const styles = StyleSheet.create({
 	
 	productList: {
 		marginTop: 20,
-		height: screenHeight - 93
+		height: screenHeight - 93,
+		overflow: 'hidden',
 	},
 	
 	product: {
