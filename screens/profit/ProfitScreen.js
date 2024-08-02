@@ -383,7 +383,7 @@ class Profit extends Component {
 			 	let profitHistoryId = await this.profitHistoryRepository.findProfitHistoryByGlobalId(profitHistoryGroup.profitHistoryId);
 
 				try {
-					await this.profitHistoryRepository.createProfitHistoryGroup(
+					await this.profitHistoryRepository.createProfitHistoryGroupWithAllValues(
 						profitHistoryId[0].id,
 						profitGroupId[0].id,
 						profitHistoryGroup.id,

@@ -368,6 +368,8 @@ class AmountDateRepository {
 				throw new Error(`Error retrieving sell amounts: ${error.message}`);
 		}
 	}
+
+	
 }
 
 export default AmountDateRepository;

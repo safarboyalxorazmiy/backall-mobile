@@ -291,8 +291,7 @@ class ProfitHistoryRepository {
     }
   }
 
-  async createProfitHistoryAndLinkWithGroup(product_id, count, count_type, profit, group_id) {
-    let historyId = await this.createProfitHistory(product_id, count, count_type, profit);
+  async createProfitHistoryGroup(history_id, group_id) {
 
     const insert = `
       INSERT INTO profit_history_group(
@@ -306,12 +305,12 @@ class ProfitHistoryRepository {
     await this.db.transaction(async (tx) => {
       await tx.executeSql(
         insert,
-        [historyId, group_id]
+        [history_id, group_id]
       );
     });
   }
   
-  async createProfitHistoryGroup(
+  async createProfitHistoryGroupWithAllValues(
     history_id, group_id, global_id, saved
   ) {
     const insert = `

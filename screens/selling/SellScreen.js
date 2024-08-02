@@ -142,15 +142,7 @@ class Sell extends Component {
 						sellingProducts: prevState.sellingProducts.filter(product => product !== item)
 					}));
 
-					let a = item.selling_price;
-					if (item.nds == 1) {
-						let twelvePercent = a * 0.12;
-						a += twelvePercent;
-					}
-
-					this.setState({
-						amount: this.state.amount - a
-					})
+					console.log(this.state.sellingProducts);
 				}}
 				style={{
 					flex: 1,
@@ -347,13 +339,7 @@ class Sell extends Component {
 
 						<TouchableOpacity
 							style={{
-								backgroundColor: "#F5F5F7",
-								width: 44,
-								height: 44,
-								display: "flex",
-								alignItems: "center",
-								justifyContent: "center",
-								borderRadius: 8
+								paddingRight: 8
 							}}
 							onPressIn={() => {
 								// OPEN UTILIZATION MODAL
@@ -417,7 +403,6 @@ class Sell extends Component {
 
 					<StatusBar style="auto"/>
 
-					{/* Mahsulotni qo'lda kiritish oynasi */}
 					<Modal
 						visible={isModalVisible}
 						animationType="none"
@@ -436,7 +421,7 @@ class Sell extends Component {
 						</TouchableOpacity>
 						
 						<Animatable.View 
-							animation="slideInDown" 
+							animation="bounceInUp" 
 							delay={2} 
 							iterationCount={1} 
 							direction={"alternate"}
@@ -446,11 +431,7 @@ class Sell extends Component {
 								alignItems: "center",
 								justifyContent: "center",
 							}}>
-							<View style={
-								(!isModalVisible) ? {
-									marginBottom: -500
-								} :
-								(this.state.isKeyboardOn) ? 
+							<View style={(this.state.isKeyboardOn) ? 
 								{
 									width: 343,
 									height: "auto",
@@ -720,8 +701,7 @@ class Sell extends Component {
 										onPress={() => {
 
 											let selectedProduct = this.state.selectedProduct;
-											console.log("CURRENT PRODUCT: ", selectedProduct)
-											if (Object.keys(selectedProduct).length === 0) {
+											if (!selectedProduct) {
 												// TODO RED ERROR
 												return;
 											}
@@ -847,13 +827,7 @@ class Sell extends Component {
 								backgroundColor: "#00000099"
 							}}></View>
 						</TouchableOpacity>
-
-						<Animatable.View 
-							animation="slideInDown" 
-							delay={2} 
-							iterationCount={1} 
-							direction={"alternate"}
-							style={{
+						<View style={{
 							height: screenHeight,
 							display: "flex",
 							alignItems: "center",
@@ -1119,7 +1093,7 @@ class Sell extends Component {
 										style={styles.modalButton}
 										onPress={() => {
 											let selectedProduct = this.state.selectedProduct;
-											if (Object.keys(selectedProduct).length === 0) {												
+											if (!selectedProduct) {
 												// TODO RED ERROR
 												return;
 											}
@@ -1226,7 +1200,7 @@ class Sell extends Component {
 									</TouchableOpacity>
 								</View>
 							</View>
-						</Animatable.View>
+						</View>
 					</Modal>
 				</View>
 			</>
@@ -1250,19 +1224,18 @@ class Sell extends Component {
 
 		console.log("PROFIT ", profitGroupId);
 
-		this.state.sellingProducts.forEach(
-			async (sellingProduct) => {
-				console.log(sellingProduct);
-
-				await this.sellHistoryRepository.createSellHistoryAndLinkWithGroup(
-					sellingProduct.product_id,
-					sellingProduct.count,
-					sellingProduct.count_type,
-					sellingProduct.selling_price,
-					sellGroupId
-				)
-			});
-
+		for (const sellingProduct of this.state.sellingProducts) {
+			console.log(sellingProduct);
+		
+			let historyId = await this.sellHistoryRepository.createSellHistory(
+				sellingProduct.product_id,
+				sellingProduct.count,
+				sellingProduct.count_type,
+				sellingProduct.selling_price
+			);
+		
+			await this.sellHistoryRepository.createSellHistoryGroup(historyId, sellGroupId);
+		}
 
 		console.log("PROFIT GROUP:::", profitGroupId);
 		console.log("SELL GROUP:::", sellGroupId);
@@ -1291,42 +1264,46 @@ class Sell extends Component {
 		]
 		*/
 
-
-
-
 		// price and selling_price
 
-		this.state.sellingProducts.forEach(
-			async (sellingProduct) => {
-				if (sellingProduct.selling_price > 0) {
-					if (sellingProduct.count > 0) {
-						await this.profitHistoryRepository.createProfitHistoryAndLinkWithGroup(
-							sellingProduct.product_id,
-							sellingProduct.count,
-							sellingProduct.count_type,
-							sellingProduct.selling_price - sellingProduct.price,
-							profitGroupId
-						);
-					} else {
-						await this.profitHistoryRepository.createProfitHistoryAndLinkWithGroup(
-							sellingProduct.product_id,
-							sellingProduct.count,
-							sellingProduct.count_type,
-							0,
-							profitGroupId
-						);
-					}
+		for (const sellingProduct of this.state.sellingProducts) {
+			if (sellingProduct.selling_price > 0) {
+				let historyId;
+				if (sellingProduct.count > 0) {
+					historyId = await this.createProfitHistory(
+						sellingProduct.product_id,
+						sellingProduct.count,
+						sellingProduct.count_type,
+						sellingProduct.selling_price - sellingProduct.price
+					);
+		
+					await this.profitHistoryRepository.createProfitHistoryGroup(
+						historyId,
+						profitGroupId
+					);
+				} else {
+					historyId = await this.createProfitHistory(
+						sellingProduct.product_id,
+						sellingProduct.count,
+						sellingProduct.count_type,
+						0
+					);
+		
+					await this.profitHistoryRepository.createProfitHistoryAndLinkWithGroup(
+						historyId,
+						profitGroupId
+					);
 				}
-
+		
 				// sellingProduct.count is -5 make it 5 and run this method
 				sellingProduct.count = Math.abs(sellingProduct.count);
-
-				this.storeProductRepository.updateCount(
+		
+				await this.storeProductRepository.updateCount(
 					sellingProduct.product_id,
 					sellingProduct.count
 				);
-			});
-
+			}
+		}
 
 		// oylik foyda bilan kirimni localStorageda saqlash.
 		// + bugungi oyni sonini ham
@@ -1452,12 +1429,9 @@ const styles = StyleSheet.create({
 
 	backIconWrapper: {
 		backgroundColor: "#F5F5F7",
-		width: 44,
-		height: 44,
-		display: "flex",
-		alignItems: "center",
-		justifyContent: "center",
-		borderRadius: 8
+		paddingVertical: 16,
+		paddingHorizontal: 19,
+		borderRadius: 8,
 	},
 
 	productList: {},

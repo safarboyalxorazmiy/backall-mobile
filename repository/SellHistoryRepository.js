@@ -52,7 +52,7 @@ class SellHistoryRepository {
     });
   }
 
-  async createSellHistoryGroup(amount) {
+  async createSellGroup(amount) {
     let currentDate = new Date();
     try {
       const query = `
@@ -181,15 +181,9 @@ class SellHistoryRepository {
     }
   }
 
-  async createSellHistory(
-    product_id, 
-    count, 
-    count_type, 
-    selling_price
-  ) {
+  async createSellHistory(product_id, count, count_type, selling_price) {
     try {
       let created_date = new Date();
-
       const query = `
         INSERT INTO sell_history (
           product_id, 
@@ -202,27 +196,35 @@ class SellHistoryRepository {
         )
         VALUES (?, ?, ?, ?, ?, null, 0);
       `;
-
-      await this.db.transaction(async (tx) => {
-        await tx.executeSql(query, [
-            product_id, 
-            count, 
-            count_type, 
-            selling_price,
-            created_date.toISOString()
-          ]);
+  
+      return new Promise((resolve, reject) => {
+        this.db.transaction(tx => {
+          tx.executeSql(
+            query, 
+            [
+              product_id, 
+              count, 
+              count_type, 
+              selling_price,
+              created_date.toISOString()
+            ],
+            async (_, result) => {
+              console.log('Sell history created successfully.');
+              console.log("=================");
+              console.log(await this.getAll());
+              console.log("=================");
+  
+              let lastIdOfSellHistory = await this.getLastIdOfSellHistory(product_id, created_date.toISOString());
+              console.log(lastIdOfSellHistory);
+              resolve(lastIdOfSellHistory.id);
+            },
+            (_, error) => {
+              console.error("Transaction error:", error);
+              reject(error);
+            }
+          );
+        });
       });
-
-      // TODO BIRLASHTIRISH
-      
-      console.log('Sell group created successfully.');
-      console.log("=================");
-      console.log(await this.getAll());
-      console.log("=================");
-
-      let lastIdOfSellHistory = await this.getLastIdOfSellHistory(product_id, created_date.toISOString());
-      console.log(lastIdOfSellHistory);
-      return lastIdOfSellHistory.id;
     } catch (error) {
       console.error("Error createSellHistory:", error);
       throw error;
@@ -273,20 +275,8 @@ class SellHistoryRepository {
     }
   }
 
-  async createSellHistoryAndLinkWithGroup(
-    product_id, 
-    count, 
-    count_type, 
-    selling_price, 
-    group_id
-  ) {
-    let historyId = await this.createSellHistory(
-      product_id, 
-      count, 
-      count_type, 
-      selling_price
-    );
-
+  
+  async createSellHistoryGroup(history_id, group_id) {  
     const insert = `
       INSERT INTO sell_history_group(
         group_id, 
@@ -296,17 +286,25 @@ class SellHistoryRepository {
       ) 
       VALUES (?, ?, null, 0);
     `;
-
-    await this.db.transaction(async (tx) => {
-      await tx.executeSql(
-        insert,
-        [group_id, historyId]
-      );
+  
+    return new Promise((resolve, reject) => {
+      this.db.transaction(tx => {
+        tx.executeSql(
+          insert,
+          [group_id, history_id],
+          (_, result) => {
+            console.log("SELL HISTORY LINKED");
+            console.log("History Id: " + history_id + " Group Id: " + group_id);
+            resolve(result);
+          },
+          (_, error) => {
+            console.error("Transaction error:", error);
+            reject(error);
+          }
+        );
+      });
     });
-
-    console.log("SELL HISTORY LINKED");
-    console.log("History Id: " + historyId + " Group Id: " + group_id);
-  }
+  }  
 
   async createSellHistoryGroupWithAllValues( 
     history_id,
