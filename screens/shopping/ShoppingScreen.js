@@ -508,7 +508,7 @@ class Shopping extends Component {
 			console.log("LAST GROUP ID: ", lastGroupId);
 	
 			try {
-				let sellHistories = await this.sellHistoryRepository.getAllSellGroup(lastGroupId - 11);
+				let sellHistories = await this.sellHistoryRepository.getAllSellGroup(lastGroupId);
 	
 				if (sellHistories.length === 0) {
 					break;
@@ -631,7 +631,7 @@ class Shopping extends Component {
 				console.log("LAST GROUP ID: ", lastGroupId);
 		
 				try {
-					let sellHistories = await this.sellHistoryRepository.getAllSellGroup(lastGroupId - 11);
+					let sellHistories = await this.sellHistoryRepository.getAllSellGroup(lastGroupId);
 		
 					if (sellHistories.length === 0) {
 						break;
