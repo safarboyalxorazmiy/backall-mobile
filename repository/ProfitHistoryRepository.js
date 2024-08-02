@@ -64,7 +64,7 @@ class ProfitHistoryRepository {
       });
 
       let lastProfitHistoryGroup = await this.getLastProfitHistoryGroupId();
-      return lastProfitHistoryGroup.id;
+      return lastProfitHistoryGroup;
     } catch (error) {
       console.error("Error creating profit group:", error);
       throw error;
@@ -93,7 +93,7 @@ class ProfitHistoryRepository {
       });
 
       let lastProfitHistoryGroup = await this.getLastProfitHistoryGroupId();
-      return lastProfitHistoryGroup.id;
+      return lastProfitHistoryGroup;
     } catch (error) {
       console.error("Error creating profit group:", error);
       throw error;

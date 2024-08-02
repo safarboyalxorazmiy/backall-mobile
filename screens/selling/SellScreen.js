@@ -1217,7 +1217,7 @@ class Sell extends Component {
 			this.state.sellingProducts
 		);
 
-		let sellGroupId = await this.sellHistoryRepository.createSellHistoryGroup(this.state.amount);
+		let sellGroupId = await this.sellHistoryRepository.createSellGroup(this.state.amount);
 		console.log(this.state.profit);
 		
 		let profitGroupId = await this.profitHistoryRepository.createProfitGroup(this.state.profit);
@@ -1270,7 +1270,7 @@ class Sell extends Component {
 			if (sellingProduct.selling_price > 0) {
 				let historyId;
 				if (sellingProduct.count > 0) {
-					historyId = await this.createProfitHistory(
+					historyId = await this.profitHistoryRepository.createProfitHistory(
 						sellingProduct.product_id,
 						sellingProduct.count,
 						sellingProduct.count_type,
@@ -1282,14 +1282,14 @@ class Sell extends Component {
 						profitGroupId
 					);
 				} else {
-					historyId = await this.createProfitHistory(
+					historyId = await this.profitHistoryRepository.createProfitHistory(
 						sellingProduct.product_id,
 						sellingProduct.count,
 						sellingProduct.count_type,
 						0
 					);
 		
-					await this.profitHistoryRepository.createProfitHistoryAndLinkWithGroup(
+					await this.profitHistoryRepository.createProfitHistoryGroup(
 						historyId,
 						profitGroupId
 					);

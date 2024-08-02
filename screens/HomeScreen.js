@@ -1053,10 +1053,10 @@ class Home extends Component {
 														})
 													}}
 													onPress={async () => {
-														if (await AsyncStorage.getItem("isFetchingNotCompleated") == "true") {
-															// Actions not saved yet
-															return;
-														}
+														// if (await AsyncStorage.getItem("isFetchingNotCompleated") == "true") {
+														// 	// Actions not saved yet
+														// 	return;
+														// }
 
 														await this.databaseRepository.clear();
 														await AsyncStorage.clear();
