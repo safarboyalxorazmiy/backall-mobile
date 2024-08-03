@@ -501,6 +501,8 @@ class Profit extends Component {
 	
 			const totalAmounts = await this.amountDateRepository.getProfitAmountInfoByDates([...uniqueDates]);
 	
+      console.log(totalAmounts)
+
 			for (const date of uniqueDates) {
 					grouped[date].totalAmount = totalAmounts[date] || 0;
 			}

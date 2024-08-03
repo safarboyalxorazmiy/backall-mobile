@@ -21,7 +21,7 @@ const HistoryGroup = ({ item }) => {
 
           <Text style={styles.historyTitleText}>//</Text>
 
-          <Text style={styles.historyTitleText}>{`${item.totalAmount} so’m`}</Text>
+          <Text style={styles.historyTitleText}>{`${item.totalAmount.toLocaleString()} so’m`}</Text>
         </View>
 
         {item.histories.map((history) => (

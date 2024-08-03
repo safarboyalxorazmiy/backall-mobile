@@ -19,11 +19,11 @@ const ProfitGroup = ({ item }) => {
 
             <Text style={styles.historyTitleText}>//</Text>
 
-            <Text style={styles.historyTitleText}>{`${item.totalProfit} so’m`}</Text>
+            <Text style={styles.historyTitleText}>{`${item.totalAmount.toLocaleString()} so’m`}</Text>
         </View>)}
 
         {item.histories.map((history) => (
-          <ProfitItem history={history} />
+          <ProfitItem key={history.id} history={history} />
         ))}
       </View>
   );

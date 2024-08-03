@@ -105,7 +105,7 @@ class AmountDateRepository {
 							error => {
 								// If no record with the given date exists, insert a new record
 								const insertQuery = `INSERT INTO profit_amount_date (date, amount, global_id, saved)
-                                     VALUES (?, ?);`;
+                                     VALUES (?, ?, ?, ?);`;
 								tx.executeSql(insertQuery, [date, profitAmount, null, 0], (tx, insertResults) => {
 										if (insertResults.rowsAffected > 0) {
 											console.log(`Profit amount inserted successfully`);

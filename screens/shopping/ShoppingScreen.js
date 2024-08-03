@@ -541,6 +541,8 @@ class Shopping extends Component {
 	
 			const totalAmounts = await this.amountDateRepository.getSellAmountInfoByDates([...uniqueDates]);
 	
+			console.log(totalAmounts)
+
 			for (const date of uniqueDates) {
 					grouped[date].totalAmount = totalAmounts[date] || 0;
 			}
