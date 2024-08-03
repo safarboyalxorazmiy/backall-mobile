@@ -468,7 +468,7 @@ class Profit extends Component {
 			console.log("LAST GROUP ID: ", lastGroupId);
 	
 			try {
-				let profitHistories = await this.profitHistoryRepository.getTop10ProfitGroupByStartId(lastGroupId - 11);
+				let profitHistories = await this.profitHistoryRepository.getTop10ProfitGroupByStartId(lastGroupId);
 	
 				if (profitHistories.length === 0) {
 					break;
@@ -476,7 +476,7 @@ class Profit extends Component {
 	
 				allProfitHistories.push(...profitHistories);
 	
-				lastGroupId -= 11;
+				lastGroupId -= 10;
 	
 				await new Promise(resolve => setTimeout(resolve, 100)); // Adding delay to manage UI thread load
 			} catch (error) {
@@ -591,7 +591,7 @@ class Profit extends Component {
 				console.log("LAST GROUP ID: ", lastGroupId);
 		
 				try {
-					let profitHistories = await this.profitHistoryRepository.getAllProfitGroup(lastGroupId - 11);
+					let profitHistories = await this.profitHistoryRepository.getTop10ProfitGroupByStartId(lastGroupId);
 		
 					if (profitHistories.length === 0) {
 						break;
@@ -599,7 +599,7 @@ class Profit extends Component {
 		
 					allProfitHistories.push(...profitHistories);
 		
-					lastGroupId -= 11;
+					lastGroupId -= 10;
 		
 					await new Promise(resolve => setTimeout(resolve, 100)); // Adding delay to manage UI thread load
 				} catch (error) {
