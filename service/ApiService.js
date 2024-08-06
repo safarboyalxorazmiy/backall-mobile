@@ -247,7 +247,174 @@ class ApiService {
 
 
   // GET SELL PAGINATION 
-  async getSellGroups(page, size, navigation) {
+	async getSellGroups(lastId, page, size, navigation) {
+		try {
+			const accessToken = await this.tokenService.retrieveAccessToken();
+			const storeId = parseInt(await this.getStoreId(), 10);
+
+			const requestOptions = {
+				method: "GET",
+				headers: {
+					"Authorization": `Bearer ${accessToken}`,
+					"Accept": "*/*"
+				}
+			};
+
+			const url = `${serverUrl}/api/v1/store/sell/group/get?storeId=${storeId}&page=${page}&size=${size}&lastId=${lastId}`;
+			console.log("Sending request to:", url);
+			console.log("Request options:", requestOptions);
+
+			const response = await fetch(url, requestOptions);
+
+			console.log("Response status:", response.status);
+
+			if (response.status === 401) {
+				await this.logout(navigation);
+				return;
+			}
+
+			const responseBody = await response.json();
+			console.log("Response body:", responseBody);
+
+			if (!response.ok) {
+				throw new Error(`Network response was not ok: ${responseBody.message || response.statusText}`);
+			}
+
+			return responseBody;
+		} catch (error) {
+			console.error("Error occurred:", error);
+			throw error; // Re-throwing the error for handling in the calling code
+		}
+	}
+
+	async getSellGroupsNotDownloaded(lastId, page, size, navigation) {
+		try {
+			const accessToken = await this.tokenService.retrieveAccessToken();
+			const storeId = parseInt(await this.getStoreId(), 10);
+
+			const requestOptions = {
+				method: "GET",
+				headers: {
+					"Authorization": `Bearer ${accessToken}`,
+					"Accept": "*/*"
+				}
+			};
+
+			const url = `${serverUrl}/api/v1/store/sell/group/get/not/downloaded?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`;
+			console.log("Sending request to:", url);
+			console.log("Request options:", requestOptions);
+
+			const response = await fetch(url, requestOptions);
+
+			console.log("Response status:", response.status);
+
+			if (response.status === 401) {
+				await this.logout(navigation);
+				return;
+			}
+
+			const responseBody = await response.json();
+			console.log("Response body:", responseBody);
+
+			if (!response.ok) {
+				throw new Error(`Network response was not ok: ${responseBody.message || response.statusText}`);
+			}
+
+			return responseBody;
+		} catch (error) {
+			console.error("Error occurred:", error);
+			throw error; // Re-throwing the error for handling in the calling code
+		}
+	}
+
+  async getLastSellGroupGlobalId(navigation) {
+    try {
+        // Retrieve the access token and store ID
+        const accessToken = await this.tokenService.retrieveAccessToken();
+        const storeId = parseInt(await this.getStoreId(), 10);
+
+        // Define request options
+        const requestOptions = {
+            method: "GET",
+            headers: {
+                "accept": "*/*",
+                "Authorization": `Bearer ${accessToken}`
+            }
+        };
+
+        // Construct the request URL
+        const url = `http://api.backall.uz/api/v1/store/sell/group/get/lastId?storeId=${storeId}`;
+        console.log("Sending request to:", url);
+        console.log("Request options:", requestOptions);
+
+        // Send the request
+        const response = await fetch(url, requestOptions);
+        console.log("Response status:", response.status);
+
+        // Handle 401 Unauthorized response
+        if (response.status === 401) {
+            await this.logout(navigation);
+            return;
+        }
+
+        // Check if the response is not OK
+        if (!response.ok) {
+            throw new Error(`Network response was not ok: ${response.statusText}`);
+        }
+
+        // Parse and log the response body
+        const responseBody = await response.text();
+        console.log("Response body:", responseBody);
+
+        // Return the response body as an integer
+        return parseInt(responseBody, 10);
+    } catch (error) {
+        console.error("Error occurred:", error);
+        throw error; // Re-throw the error for handling in the calling code
+    }
+  }
+
+	async getSellHistories(lastId, page, size, navigation) {
+		try {
+			const accessToken = await this.tokenService.retrieveAccessToken();
+			const storeId = parseInt(await this.getStoreId(), 10);
+
+			const requestOptions = {
+				method: "GET",
+				headers: {
+					"Authorization": `Bearer ${accessToken}`,
+					"Accept": "*/*"
+				}
+			};
+
+			const url = `${serverUrl}/api/v1/store/sell/history/get?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`;
+			console.log("Sending request to:", url);
+			console.log("Request options:", requestOptions);
+
+			const response = await fetch(url, requestOptions);
+
+			console.log("Response status:", response.status);
+
+			if (response.status === 401) {
+				await this.logout(navigation);
+				return;
+			}
+
+			const responseBody = await response.json();
+			console.log("Response body:", responseBody);
+
+			if (!response.ok) {
+				throw new Error(`Network response was not ok: ${responseBody.message || response.statusText}`);
+			}
+
+			return responseBody;
+		} catch (error) {
+			console.error("Error occurred:", error);
+			throw error; // Re-throwing the error for handling in the calling code
+		}
+	}
+
+  async getSellHistoriesNotDownloaded(lastId, page, size, navigation) {
     try {
         const accessToken = await this.tokenService.retrieveAccessToken();
         const storeId = parseInt(await this.getStoreId());
@@ -259,10 +426,10 @@ class ApiService {
             }
         };
 
-        console.log("Sending request to:", `${serverUrl}/api/v1/store/sell/group/get?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log("Sending request to:", `${serverUrl}/api/v1/store/sell/history/get/not/downloaded?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
         console.log("Request body:", requestOptions);
 
-        const response = await fetch(`${serverUrl}/api/v1/store/sell/group/get?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
+        const response = await fetch(`${serverUrl}/api/v1/store/sell/history/get/not/downloaded?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
         console.log("Response status:", response.status);
         if (response.status == 401) {
@@ -284,45 +451,54 @@ class ApiService {
     }
   }
 
-  async getSellGroupsNotDownloaded(page, size, navigation) {
+  async getLastSellHistoryGlobalId(navigation) {
     try {
+        // Retrieve the access token and store ID
         const accessToken = await this.tokenService.retrieveAccessToken();
-        const storeId = parseInt(await this.getStoreId());
+        const storeId = parseInt(await this.getStoreId(), 10);
 
+        // Define request options
         const requestOptions = {
             method: "GET",
             headers: {
+                "accept": "*/*",
                 "Authorization": `Bearer ${accessToken}`
             }
         };
 
-        console.log("Sending request to:", `${serverUrl}/api/v1/store/sell/group/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`);
-        console.log("Request body:", requestOptions);
+        // Construct the request URL
+        const url = `http://api.backall.uz/api/v1/store/sell/history/get/lastId?storeId=${storeId}`;
+        console.log("Sending request to:", url);
+        console.log("Request options:", requestOptions);
 
-        const response = 
-          await fetch(`${serverUrl}/api/v1/store/sell/group/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
-
+        // Send the request
+        const response = await fetch(url, requestOptions);
         console.log("Response status:", response.status);
-        if (response.status == 401) {
-          await this.logout(navigation);
-          return;
+
+        // Handle 401 Unauthorized response
+        if (response.status === 401) {
+            await this.logout(navigation);
+            return;
         }
 
-        const responseBody = await response.json();
+        // Check if the response is not OK
+        if (!response.ok) {
+            throw new Error(`Network response was not ok: ${response.statusText}`);
+        }
+
+        // Parse and log the response body
+        const responseBody = await response.text();
         console.log("Response body:", responseBody);
 
-        if (!response.ok) {
-            throw new Error("Network response was not ok");
-        }
-
-        return responseBody;
+        // Return the response body as an integer
+        return parseInt(responseBody, 10);
     } catch (error) {
-        console.log("Error occurred: ", error);
-        throw error; // Re-throwing the error for handling in the calling code
+        console.error("Error occurred:", error);
+        throw error; // Re-throw the error for handling in the calling code
     }
   }
 
-  async getSellHistories(page, size, navigation) {
+  async getSellAmountDate(lastId, page, size, navigation) {
       try {
           const accessToken = await this.tokenService.retrieveAccessToken();
           const storeId = parseInt(await this.getStoreId());
@@ -334,12 +510,13 @@ class ApiService {
               }
           };
 
-          console.log("Sending request to:", `${serverUrl}/api/v1/store/sell/history/get?storeId=${storeId}&page=${page}&size=${size}`);
+          console.log("Sending request to:", `${serverUrl}/api/v1/store/sell/amount/date/get?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
           console.log("Request body:", requestOptions);
 
-          const response = await fetch(`${serverUrl}/api/v1/store/sell/history/get?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
+          const response = await fetch(`${serverUrl}/api/v1/store/sell/amount/date/get?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
           console.log("Response status:", response.status);
+
           if (response.status == 401) {
             await this.logout(navigation);
             return;
@@ -359,7 +536,7 @@ class ApiService {
       }
   }
 
-  async getSellHistoriesNotDownloaded(page, size, navigation) {
+  async getSellAmountDateNotDownloaded(lastId, page, size, navigation) {
     try {
         const accessToken = await this.tokenService.retrieveAccessToken();
         const storeId = parseInt(await this.getStoreId());
@@ -371,82 +548,7 @@ class ApiService {
             }
         };
 
-        console.log("Sending request to:", `${serverUrl}/api/v1/store/sell/history/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`);
-        console.log("Request body:", requestOptions);
-
-        const response = await fetch(`${serverUrl}/api/v1/store/sell/history/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
-
-        console.log("Response status:", response.status);
-        if (response.status == 401) {
-          await this.logout(navigation);
-          return;
-        }
-
-        const responseBody = await response.json();
-        console.log("Response body:", responseBody);
-
-        if (!response.ok) {
-            throw new Error("Network response was not ok");
-        }
-
-        return responseBody;
-    } catch (error) {
-        console.log("Error occurred: ", error);
-        throw error; // Re-throwing the error for handling in the calling code
-    }
-  }
-
-  async getSellAmountDate(page, size, navigation) {
-      try {
-          const accessToken = await this.tokenService.retrieveAccessToken();
-          const storeId = parseInt(await this.getStoreId());
-
-          const requestOptions = {
-              method: "GET",
-              headers: {
-                  "Authorization": `Bearer ${accessToken}`
-              }
-          };
-
-          console.log("Sending request to:", `${serverUrl}/api/v1/store/sell/amount/date/get?storeId=${storeId}&page=${page}&size=${size}`);
-          console.log("Request body:", requestOptions);
-
-          const response = await fetch(`${serverUrl}/api/v1/store/sell/amount/date/get?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
-
-          console.log("Response status:", response.status);
-
-          if (response.status == 401) {
-            await this.logout(navigation);
-            return;
-          }
-
-          const responseBody = await response.json();
-          console.log("Response body:", responseBody);
-
-          if (!response.ok) {
-              throw new Error("Network response was not ok");
-          }
-
-          return responseBody;
-      } catch (error) {
-          console.log("Error occurred: ", error);
-          throw error; // Re-throwing the error for handling in the calling code
-      }
-  }
-
-  async getSellAmountDateNotDownloaded(page, size, navigation) {
-    try {
-        const accessToken = await this.tokenService.retrieveAccessToken();
-        const storeId = parseInt(await this.getStoreId());
-
-        const requestOptions = {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer ${accessToken}`
-            }
-        };
-
-        console.log("Sending request to:", `${serverUrl}/api/v1/store/sell/amount/date/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log("Sending request to:", `${serverUrl}/api/v1/store/sell/amount/date/get/not/downloaded?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
         console.log("Request body:", requestOptions);
 
         const response = await fetch(`${serverUrl}/api/v1/store/sell/amount/date/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
@@ -472,7 +574,53 @@ class ApiService {
     }
   }
 
-  async getSellHistoryGroup(page, size, navigation) {
+  async getLastSellAmountDateGlobalId(navigation) {
+    try {
+        // Retrieve the access token and store ID
+        const accessToken = await this.tokenService.retrieveAccessToken();
+        const storeId = parseInt(await this.getStoreId(), 10);
+
+        // Define request options
+        const requestOptions = {
+          method: "GET",
+          headers: {
+            "accept": "*/*",
+            "Authorization": `Bearer ${accessToken}`
+          }
+        };
+
+        // Construct the request URL
+        const url = `http://api.backall.uz/api/v1/store/sell/amount/date/get/lastId?storeId=${storeId}`;
+        console.log("Sending request to:", url);
+        console.log("Request options:", requestOptions);
+
+        // Send the request
+        const response = await fetch(url, requestOptions);
+        console.log("Response status:", response.status);
+
+        // Handle 401 Unauthorized response
+        if (response.status === 401) {
+          await this.logout(navigation);
+          return;
+        }
+
+        // Check if the response is not OK
+        if (!response.ok) {
+          throw new Error(`Network response was not ok: ${response.statusText}`);
+        }
+
+        const responseBody = await response.text();
+        console.log("Response body:", responseBody);
+
+        // Return the response body
+        return parseInt(responseBody, 10);
+    } catch (error) {
+        console.error("Error occurred:", error);
+        throw error; // Re-throw the error for handling in the calling code
+    }
+  }
+
+  async getSellHistoryGroup(lastId, page, size, navigation) {
       try {
           const accessToken = await this.tokenService.retrieveAccessToken();
           const storeId = parseInt(await this.getStoreId());
@@ -484,10 +632,10 @@ class ApiService {
               }
           };
 
-          console.log("Sending request to:", `${serverUrl}/api/v1/store/sell/link/info?storeId=${storeId}&page=${page}&size=${size}`);
+          console.log("Sending request to:", `${serverUrl}/api/v1/store/sell/link/info?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
           console.log("Request body:", requestOptions);
 
-          const response = await fetch(`${serverUrl}/api/v1/store/sell/link/info?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
+          const response = await fetch(`${serverUrl}/api/v1/store/sell/link/info?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
           console.log("Response status:", response.status);
           
@@ -510,7 +658,7 @@ class ApiService {
       }
   }
 
-  async getSellHistoryGroupNotDownloaded(page, size, navigation) {
+  async getSellHistoryGroupNotDownloaded(lastId, page, size, navigation) {
     try {
         const accessToken = await this.tokenService.retrieveAccessToken();
         const storeId = parseInt(await this.getStoreId());
@@ -522,11 +670,11 @@ class ApiService {
             }
         };
 
-        console.log("Sending request to:", `${serverUrl}/api/v1/store/sell/link/info/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log("Sending request to:", `${serverUrl}/api/v1/store/sell/link/info/not/downloaded?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
         console.log("Request body:", requestOptions);
 
         const response = 
-          await fetch(`${serverUrl}/api/v1/store/sell/link/info/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
+          await fetch(`${serverUrl}/api/v1/store/sell/link/info/not/downloaded?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
         console.log("Response status:", response.status);
         
@@ -549,9 +697,55 @@ class ApiService {
     }
   }
 
+  async getLastSellHistoryGroupGlobalId(navigation) {
+    try {
+        // Retrieve the access token and store ID
+        const accessToken = await this.tokenService.retrieveAccessToken();
+        const storeId = parseInt(await this.getStoreId(), 10);
+
+        // Define request options
+        const requestOptions = {
+            method: "GET",
+            headers: {
+                "accept": "*/*",
+                "Authorization": `Bearer ${accessToken}`
+            }
+        };
+
+        // Construct the request URL
+        const url = `http://api.backall.uz/api/v1/store/sell/link/get/lastId?storeId=${storeId}`;
+        console.log("Sending request to:", url);
+        console.log("Request options:", requestOptions);
+
+        // Send the request
+        const response = await fetch(url, requestOptions);
+        console.log("Response status:", response.status);
+
+        // Handle 401 Unauthorized response
+        if (response.status === 401) {
+            await this.logout(navigation);
+            return;
+        }
+
+        // Check if the response is not OK
+        if (!response.ok) {
+            throw new Error(`Network response was not ok: ${response.statusText}`);
+        }
+
+        const responseBody = await response.text();
+        console.log("Response body:", responseBody);
+
+        // Return the response body
+        return parseInt(responseBody, 10);
+    } catch (error) {
+        console.error("Error occurred:", error);
+        throw error; // Re-throw the error for handling in the calling code
+    }
+  }
+
 
   // GET PROFIT PAGINATION
-  async getProfitGroups(page, size, navigation) {
+  async getProfitGroups(lastId, page, size, navigation) {
     try {
         const accessToken = await this.tokenService.retrieveAccessToken();
         const storeId = parseInt(await this.getStoreId());
@@ -563,7 +757,7 @@ class ApiService {
             }
         };
 
-        console.log("Sending request to:", `${serverUrl}/api/v1/store/profit/group/get?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log("Sending request to:", `${serverUrl}/api/v1/store/profit/group/get?lastId=${lastId}?storeId=${storeId}&page=${page}&size=${size}`);
         console.log("Request body:", requestOptions);
 
         const response = await fetch(`${serverUrl}/api/v1/store/profit/group/get?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
@@ -586,7 +780,9 @@ class ApiService {
     }
   }
 
-  async getProfitGroupsNotDownloaded(page, size, navigation) {
+  async getProfitGroupsNotDownloaded(
+		lastId, page, size, navigation
+  ) {
     try {
       const accessToken = await this.tokenService.retrieveAccessToken();
       const storeId = parseInt(await this.getStoreId());
@@ -600,7 +796,7 @@ class ApiService {
 
       console.log(
         "Sending request to:", 
-      `${serverUrl}/api/v1/store/profit/group/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`);
+      `${serverUrl}/api/v1/store/profit/group/get/not/downloaded?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
       console.log("Request body:", requestOptions);
 
       const response = 
@@ -627,7 +823,56 @@ class ApiService {
     }
   }
 
-  async getProfitHistories(page, size, navigation) {
+  async getLastProfitGroupId(navigation) {
+    try {
+        // Retrieve the access token and store ID
+        const accessToken = await this.tokenService.retrieveAccessToken();
+        const storeId = parseInt(await this.getStoreId(), 10);
+
+        // Define request options
+        const requestOptions = {
+            method: "GET",
+            headers: {
+                "accept": "*/*",
+                "Authorization": `Bearer ${accessToken}`
+            }
+        };
+
+        // Construct the request URL
+        const url = `http://api.backall.uz/api/v1/store/profit/group/lastId?storeId=${storeId}`;
+        console.log("Sending request to:", url);
+        console.log("Request options:", requestOptions);
+
+        // Send the request
+        const response = await fetch(url, requestOptions);
+        console.log("Response status:", response.status);
+
+        // Handle 401 Unauthorized response
+        if (response.status === 401) {
+            await this.logout(navigation);
+            return;
+        }
+
+        // Check if the response is not OK
+        if (!response.ok) {
+            throw new Error(`Network response was not ok: ${response.statusText}`);
+        }
+
+        // Parse and log the response body
+        const responseBody = await response.text();
+        console.log("Response body:", responseBody);
+
+        // Return the response body as an integer
+        return parseInt(responseBody, 10);
+    } catch (error) {
+        console.error("Error occurred:", error);
+        throw error; // Re-throw the error for handling in the calling code
+    }
+  }
+
+  async getProfitHistories(
+		lastId, page, size, navigation
+  ) {
     try {
         const accessToken = await this.tokenService.retrieveAccessToken();
         const storeId = parseInt(await this.getStoreId());
@@ -639,10 +884,10 @@ class ApiService {
             }
         };
 
-        console.log("Sending request to:", `${serverUrl}/api/v1/store/profit/history/get?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log("Sending request to:", `${serverUrl}/api/v1/store/profit/history/get?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
         console.log("Request body:", requestOptions);
 
-        const response = await fetch(`${serverUrl}/api/v1/store/profit/history/get?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
+        const response = await fetch(`${serverUrl}/api/v1/store/profit/history/get?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
         console.log("Response status:", response.status);
 
@@ -665,7 +910,9 @@ class ApiService {
     }
   }
 
-  async getProfitHistoriesNotDownloaded(page, size, navigation) {
+  async getProfitHistoriesNotDownloaded(
+		lastId, page, size, navigation
+  ) {
     try {
         const accessToken = await this.tokenService.retrieveAccessToken();
         const storeId = parseInt(await this.getStoreId());
@@ -677,10 +924,10 @@ class ApiService {
             }
         };
 
-        console.log("Sending request to:", `${serverUrl}/api/v1/store/profit/history/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log("Sending request to:", `${serverUrl}/api/v1/store/profit/history/get/not/downloaded?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
         console.log("Request body:", requestOptions);
 
-        const response = await fetch(`${serverUrl}/api/v1/store/profit/history/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
+        const response = await fetch(`${serverUrl}/api/v1/store/profit/history/get/not/downloaded?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
         console.log("Response status:", response.status);
 
@@ -699,12 +946,52 @@ class ApiService {
         return responseBody; // Return the JSON response
     } catch (error) {
         console.log("Error occurred: ", error);
+        throw error; // Re-throwing the error for handling in the calling code
+    }
+  }
+
+  async getLastProfitHistoryId(navigation) {
+    try {
+        const accessToken = await this.tokenService.retrieveAccessToken();
+        const storeId = parseInt(await this.getStoreId(), 10);
+
+        const requestOptions = {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${accessToken}`,
+                "Accept": "*/*"
+            }
+        };
+
+        // Updated URL to match the new API endpoint
+        const url = `${serverUrl}/api/v1/store/profit/history/lastId?storeId=${storeId}`;
+        
+        console.log("Sending request to:", url);
+        console.log("Request options:", requestOptions);
+
+        const response = await fetch(url, requestOptions);
+
+        console.log("Response status:", response.status);
+
+        if (response.status === 401) {
+            await this.logout(navigation);
+            return;
+        }
+
+        // Read the response body as text
+        const responseBody = await response.text();
+        console.log("Response body:", responseBody);
+
+        // Return the response body as an integer
+        return parseInt(responseBody, 10);
+    } catch (error) {
+        console.log("Error occurred:", error);
         throw error; // Re-throwing the error for handling in the calling code
     }
   }
 
   async getProfitHistoryGroup(
-    page, size, navigation
+	  lastId, page, size, navigation
   ) {
       try {
           const accessToken = await this.tokenService.retrieveAccessToken();
@@ -717,10 +1004,10 @@ class ApiService {
               }
           };
 
-          console.log("Sending request to:", `${serverUrl}/api/v1/store/profit/link/info?storeId=${storeId}&page=${page}&size=${size}`);
+          console.log("Sending request to:", `${serverUrl}/api/v1/store/profit/link/info?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
           console.log("Request body:", requestOptions);
 
-          const response = await fetch(`${serverUrl}/api/v1/store/profit/link/info?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
+          const response = await fetch(`${serverUrl}/api/v1/store/profit/link/info?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
           console.log("Response status:", response.status);
 
@@ -744,7 +1031,7 @@ class ApiService {
   }
 
   async getProfitHistoryGroupNotDownloaded(
-    page, size, navigation
+	  lastId, page, size, navigation
   ) {
     try {
         const accessToken = await this.tokenService.retrieveAccessToken();
@@ -757,10 +1044,10 @@ class ApiService {
             }
         };
 
-        console.log("Sending request to:", `${serverUrl}/api/v1/store/profit/link/info/not/downlaoded?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log("Sending request to:", `${serverUrl}/api/v1/store/profit/link/info/not/downloaded?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
         console.log("Request body:", requestOptions);
 
-        const response = await fetch(`${serverUrl}/api/v1/store/profit/link/info/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
+        const response = await fetch(`${serverUrl}/api/v1/store/profit/link/info/not/downloaded?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
         console.log("Response status:", response.status);
         
@@ -781,10 +1068,50 @@ class ApiService {
         console.log("Error occurred: ", error);
         throw error; // Re-throwing the error for handling in the calling code
     }
-}
+  }
+
+  async getLastProfitHistoryGroupId(navigation) {
+    try {
+        const accessToken = await this.tokenService.retrieveAccessToken();
+        const storeId = parseInt(await this.getStoreId(), 10);
+
+        const requestOptions = {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${accessToken}`,
+                "Accept": "*/*"
+            }
+        };
+
+        // Updated URL to match the new API endpoint
+        const url = `${serverUrl}/api/v1/store/profit/link/get/lastId?storeId=${storeId}`;
+        
+        console.log("Sending request to:", url);
+        console.log("Request options:", requestOptions);
+
+        const response = await fetch(url, requestOptions);
+
+        console.log("Response status:", response.status);
+
+        if (response.status === 401) {
+            await this.logout(navigation);
+            return;
+        }
+
+        // Read the response body as text
+        const responseBody = await response.text();
+        console.log("Response body:", responseBody);
+
+        // Return the response body as an integer
+        return parseInt(responseBody, 10);
+    } catch (error) {
+        console.log("Error occurred:", error);
+        throw error; // Re-throwing the error for handling in the calling code
+    }
+  }
 
   async getProfitAmountDate(
-    page, size, navigation
+    lastId, page, size, navigation
   ) {
     try {
         const accessToken = await this.tokenService.retrieveAccessToken();
@@ -797,10 +1124,10 @@ class ApiService {
             }
         };
 
-        console.log("Sending request to:", `${serverUrl}/api/v1/store/profit/amount/date/get?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log("Sending request to:", `${serverUrl}/api/v1/store/profit/amount/date/get?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
         console.log("Request body:", requestOptions);
 
-        const response = await fetch(`${serverUrl}/api/v1/store/profit/amount/date/get?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
+        const response = await fetch(`${serverUrl}/api/v1/store/profit/amount/date/get?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
         console.log("Response status:", response.status);
 
@@ -824,7 +1151,7 @@ class ApiService {
   }
 
   async getProfitAmountDateNotDownloaded(
-    page, size, navigation
+    lastId, page, size, navigation
   ) {
     try {
         const accessToken = await this.tokenService.retrieveAccessToken();
@@ -837,7 +1164,7 @@ class ApiService {
             }
         };
 
-        console.log("Sending request to:", `${serverUrl}/api/v1/store/profit/amount/date/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log("Sending request to:", `${serverUrl}/api/v1/store/profit/amount/date/get/not/downloaded?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
         console.log("Request body:", requestOptions);
 
         const response = await fetch(`${serverUrl}/api/v1/store/profit/amount/date/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
@@ -862,6 +1189,48 @@ class ApiService {
         throw error; // Re-throwing the error for handling in the calling code
     }
   }
+
+  async getLastProfitAmountDateId(navigation) {
+    try {
+        const accessToken = await this.tokenService.retrieveAccessToken();
+        const storeId = parseInt(await this.getStoreId(), 10);
+
+        const requestOptions = {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${accessToken}`,
+                "Accept": "*/*"
+            }
+        };
+
+        // Updated URL to match the new API endpoint
+        const url = `${serverUrl}/api/v1/store/profit/amount/date/lastId?storeId=${storeId}`;
+        
+        console.log("Sending request to:", url);
+        console.log("Request options:", requestOptions);
+
+        const response = await fetch(url, requestOptions);
+
+        console.log("Response status:", response.status);
+
+        if (response.status === 401) {
+            await this.logout(navigation);
+            return;
+        }
+
+        // Read the response body as text
+        const responseBody = await response.text();
+        console.log("Response body:", responseBody);
+
+        // Return the response body as an integer
+        return parseInt(responseBody, 10);
+    } catch (error) {
+        console.log("Error occurred:", error);
+        throw error; // Re-throwing the error for handling in the calling code
+    }
+  }
+
+
 
   // Function to handle common request logic
   async sendRequest(url, requestOptions) {
