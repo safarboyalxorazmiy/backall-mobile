@@ -454,7 +454,7 @@ class Home extends Component {
 
 		let sellHistories = [];
 		let page = 0;
-		let size = 100;
+		let size = 1000;
 
 		let response;
 		try {
@@ -509,7 +509,7 @@ class Home extends Component {
 
 		let sellHistoryGroup = [];
 		let page = 0;
-		let size = 100;
+		let size = 1000;
 
 		let response;
 		try {
@@ -560,7 +560,7 @@ class Home extends Component {
 
 		let sellAmountDate = [];
 		let page = 0;
-		let size = 100;
+		let size = 1000;
 
 		let response;
 		try {
@@ -611,7 +611,7 @@ class Home extends Component {
 
 		let profitGroups = [];
 		let page = 0;
-		let size = 100;
+		let size = 1000;
 
 		let response;
 		try {
@@ -661,7 +661,7 @@ class Home extends Component {
 
 		let profitHistories = [];
 		let page = 0;
-		let size = 100;
+		let size = 1000;
 
 		let response;
 		try {
@@ -719,7 +719,7 @@ class Home extends Component {
 
 		let profitHistoryGroup = [];
 		let page = 0;
-		let size = 100;
+		let size = 1000;
 
 		let response;
 		try {
@@ -771,7 +771,7 @@ class Home extends Component {
 
 		let profitAmountDate = [];
 		let page = 0;
-		let size = 100;
+		let size = 1000;
 
 		let response;
 		try {
