@@ -67,12 +67,7 @@ class SellHistoryRepository {
 
       console.log("Sell group created successfully.");
 
-      console.log(this.getAll());
-
-      let lastSellHistoryGroup = await this.getLastSellHistoryGroupId();
-      console.log(lastSellHistoryGroup);
-      console.log("&&&&&&&&&&&&&&");
-      return lastSellHistoryGroup;
+      return await this.getLastSellHistoryGroupId();
     } catch (error) {
       console.error("Error createSellHistoryGroup:", error);
       throw error;
@@ -103,13 +98,7 @@ class SellHistoryRepository {
 
       console.log("Sell group created successfully.");
 
-      console.log(this.getAll());
-
-      let lastSellHistoryGroup = await this.getLastSellHistoryGroupId();
-      console.log(lastSellHistoryGroup);
-      console.log(lastSellHistoryGroup.id);
-      console.log("&&&&&&&&&&&&&&");
-      return lastSellHistoryGroup.id;
+      return await this.getLastSellHistoryGroupId();
     } catch (error) {
       console.error("Error createSellHistoryGroupWithAllValues:", error);
       throw error;

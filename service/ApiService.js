@@ -757,10 +757,10 @@ class ApiService {
             }
         };
 
-        console.log("Sending request to:", `${serverUrl}/api/v1/store/profit/group/get?lastId=${lastId}?storeId=${storeId}&page=${page}&size=${size}`);
+        console.log("Sending request to:", `${serverUrl}/api/v1/store/profit/group/get?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
         console.log("Request body:", requestOptions);
 
-        const response = await fetch(`${serverUrl}/api/v1/store/profit/group/get?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
+        const response = await fetch(`${serverUrl}/api/v1/store/profit/group/get?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
         console.log("Response status:", response.status);
 
@@ -823,7 +823,7 @@ class ApiService {
     }
   }
 
-  async getLastProfitGroupId(navigation) {
+  async getLastProfitGroupGlobalId(navigation) {
     try {
         // Retrieve the access token and store ID
         const accessToken = await this.tokenService.retrieveAccessToken();

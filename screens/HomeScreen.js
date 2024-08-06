@@ -248,7 +248,6 @@ class Home extends Component {
 	async getLocalProducts() {
 		console.log("GETTING LOCAL PRODUCTS ⏳⏳⏳");
 
-		let products = [];
 		let size = this.state.lastLocalProductsSize;
 		let page = this.state.lastLocalProductsPage;
 
@@ -261,7 +260,6 @@ class Home extends Component {
 				!downloadedProducts.content ||
 				downloadedProducts.content.length === 0
 			) {
-				console.log(products);
 				break;
 			}
 
@@ -281,7 +279,6 @@ class Home extends Component {
 			}
 
 			page++;
-			products.push(downloadedProducts);
 		}
 
 		return true;
@@ -290,7 +287,6 @@ class Home extends Component {
 	async getGlobalProducts() {
 		console.log("GETTING GLOBAL PRODUCTS ⏳⏳⏳")
 
-		let products = [];
 		let size = this.state.lastGlobalProductsSize;
 		let page = this.state.lastGlobalProductsPage;
 
@@ -310,7 +306,6 @@ class Home extends Component {
 			}
 
 			if (!response || !response.content || response.content.length === 0) {
-				console.log(products);
 				return true; // Indicate success and exit the loop
 			}
 
@@ -335,14 +330,12 @@ class Home extends Component {
 			}
 
 			page++;
-			products.push(response);
 		}
 	}
 
 	async getStoreProducts() {
 		console.log("GETTING STORE PRODUCTS ⏳⏳⏳");
 
-		let storeProducts = [];
 		let size = this.state.lastStoreProductsSize;
 		let page = this.state.lastStoreProductsPage;
 
@@ -361,13 +354,14 @@ class Home extends Component {
 			}
 
 			if (!response || !response.content || response.content.length === 0) {
-				console.log(storeProducts);
 				return true; // Indicate success and exit the loop
 			}
 
 			for (const storeProduct of response.content) {
 				try {
-					let products = await this.productRepository.findProductsByGlobalId(storeProduct.productId)
+					let products = await this.productRepository.findProductsByGlobalId(storeProduct.productId);
+					console.log("Bug:")
+					console.log(products);
 					await this.storeProductRepository.createStoreProductWithAllValues(
 						products[0].id,
 						storeProduct.nds,
@@ -387,7 +381,6 @@ class Home extends Component {
 			}
 
 			page++;
-			storeProducts.push(response);
 		}
 	}
 
@@ -400,7 +393,6 @@ class Home extends Component {
 
 		console.log("GETTING SELL GROUPS ⏳⏳⏳");
 
-		let sellGroups = [];
 		let page = 0;
 		let size = 1000;
 
@@ -424,7 +416,6 @@ class Home extends Component {
 		}
 
 		if (!response || !response.content || response.content.length === 0) {
-			console.log(sellGroups);
 			return true; // Indicate success and exit the loop
 		}
 
@@ -441,7 +432,6 @@ class Home extends Component {
 			}
 		}
 
-		sellGroups.push(response);
 		return true;
 	}
 
@@ -451,8 +441,6 @@ class Home extends Component {
 		let lastSellHistoryGlobalId =
 			await this.apiService.getLastSellHistoryGlobalId(this.props.navigation);
 
-
-		let sellHistories = [];
 		let page = 0;
 		let size = 1000;
 
@@ -472,7 +460,6 @@ class Home extends Component {
 		}
 
 		if (!response || !response.content || response.content.length === 0) {
-			console.log(sellHistories);
 			return true; // Indicate success and exit the loop
 		}
 
@@ -493,12 +480,9 @@ class Home extends Component {
 				// Continue with next product
 				continue;
 			}
-
-
-			page++;
-			sellHistories.push(response);
-			return true;
 		}
+
+		return true;
 	}
 
 	async getSellHistoryGroup() {
@@ -507,7 +491,6 @@ class Home extends Component {
 		let lastSellHistoryGroupGlobalId =
 			await this.apiService.getLastSellHistoryGroupGlobalId(this.props.navigation);
 
-		let sellHistoryGroup = [];
 		let page = 0;
 		let size = 1000;
 
@@ -525,7 +508,6 @@ class Home extends Component {
 		}
 
 		if (!response || !response.content || response.content.length === 0) {
-			console.log(sellHistoryGroup);
 			return true; // Indicate success and exit the loop
 		}
 
@@ -545,12 +527,9 @@ class Home extends Component {
 				// Continue with next product
 				continue;
 			}
-
-
-			page++;
-			sellHistoryGroup.push(response);
-			return true;
 		}
+
+		return true;
 	}
 
 	async getSellAmountDate() {
@@ -558,7 +537,6 @@ class Home extends Component {
 		let lastSellAmountGlobalId =
 			await this.apiService.getLastSellAmountDateGlobalId(this.props.navigation);
 
-		let sellAmountDate = [];
 		let page = 0;
 		let size = 1000;
 
@@ -578,7 +556,6 @@ class Home extends Component {
 		}
 
 		if (!response || !response.content || response.content.length === 0) {
-			console.log(sellAmountDate);
 			return true; // Indicate success and exit the loop
 		}
 
@@ -595,21 +572,17 @@ class Home extends Component {
 				// Continue with next product
 				continue;
 			}
-
-
-			page++;
-			sellAmountDate.push(response);
-			return true;
 		}
+
+		return true;
 	}
 
 	// PROFIT
 	async getProfitGroups() {
 		console.log("GETTING PROFIT GROUPS ⏳⏳⏳");
 		let lastProfitGroupGlobalId =
-			await this.apiService.getLastProfitGroupId(this.props.navigation);
+			await this.apiService.getLastProfitGroupGlobalId(this.props.navigation);
 
-		let profitGroups = [];
 		let page = 0;
 		let size = 1000;
 
@@ -629,29 +602,31 @@ class Home extends Component {
 		}
 
 		if (!response || !response.content || response.content.length === 0) {
-			console.log(profitGroups);
 			return true; // Indicate success and exit the loop
 		}
 
+		console.log("getProfitGroups()")
+		console.log(response.content.length);
+
+
 		for (const profitGroup of response.content) {
 			try {
-				await this.profitHistoryRepository.createProfitGroupWithAllValues(
+				let createdGroupId = await this.profitHistoryRepository.createProfitGroupWithAllValues(
 					profitGroup.createdDate,
 					profitGroup.profit,
 					profitGroup.id,
 					true
 				);
+
+				console.log("Group created with id: ", createdGroupId);
 			} catch (error) {
 				console.error("Error getProfitGroups:", error);
 				// Continue with next product
 				continue;
 			}
-
-
-			page++;
-			profitGroups.push(response);
-			return true;
 		}
+
+		return true;
 	}
 
 	async getProfitHistories() {
@@ -659,7 +634,6 @@ class Home extends Component {
 		let lastProfitHistoryGlobalId =
 			await this.apiService.getLastProfitHistoryId(this.props.navigation);
 
-		let profitHistories = [];
 		let page = 0;
 		let size = 1000;
 
@@ -679,9 +653,10 @@ class Home extends Component {
 		}
 
 		if (!response || !response.content || response.content.length === 0) {
-			console.log(profitHistories);
 			return true; // Indicate success and exit the loop
 		}
+
+		console.log(response.content);
 
 		for (const profitHistory of response.content) {
 			console.log("PROFIT HISTORY FROM BACKEND::", profitHistory);
@@ -703,12 +678,9 @@ class Home extends Component {
 				console.error("Error getProfitHistories:", error);
 				continue;
 			}
-
-
-			page++;
-			profitHistories.push(response);
-			return true;
 		}
+
+		return true;
 	}
 
 	async getProfitHistoryGroup() {
@@ -717,7 +689,6 @@ class Home extends Component {
 		let lastProfitHistoryGroupGlobalId =
 			await this.apiService.getLastProfitHistoryGroupId(this.props.navigation);
 
-		let profitHistoryGroup = [];
 		let page = 0;
 		let size = 1000;
 
@@ -737,13 +708,17 @@ class Home extends Component {
 		}
 
 		if (!response || !response.content || response.content.length === 0) {
-			console.log(profitHistoryGroup);
 			return true; // Indicate success and exit the loop
 		}
 
 		for (const profitHistoryGroup of response.content) {
 			let profitGroupId = await this.profitHistoryRepository.findProfitGroupByGlobalId(profitHistoryGroup.profitGroupId);
 			let profitHistoryId = await this.profitHistoryRepository.findProfitHistoryByGlobalId(profitHistoryGroup.profitHistoryId);
+
+			console.log("Bug: ");
+			console.log("profitGroupId: ", profitGroupId);
+			console.log("profitHistoryId: ", profitHistoryId);
+			console.log("profitHistoryGroup", profitHistoryGroup);
 
 			try {
 				await this.profitHistoryRepository.createProfitHistoryGroupWithAllValues(
@@ -758,8 +733,6 @@ class Home extends Component {
 			}
 		}
 
-		page++;
-		profitHistoryGroup.push(response);
 		return true;
 	}
 
@@ -769,7 +742,6 @@ class Home extends Component {
 		let lastProfitAmountDateGlobalId =
 			await this.apiService.getLastProfitAmountDateId(this.props.navigation);
 
-		let profitAmountDate = [];
 		let page = 0;
 		let size = 1000;
 
@@ -789,7 +761,6 @@ class Home extends Component {
 		}
 
 		if (!response || !response.content || response.content.length === 0) {
-			console.log(profitAmountDate);
 			return true; // Indicate success and exit the loop
 		}
 
@@ -806,11 +777,9 @@ class Home extends Component {
 				// Continue with next product
 				continue;
 			}
-
-			page++;
-			profitAmountDate.push(response);
-			return true;
 		}
+
+		return true;
 	}
 
 	async getAmountInfo() {
