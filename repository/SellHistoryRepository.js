@@ -67,7 +67,8 @@ class SellHistoryRepository {
 
       console.log("Sell group created successfully.");
 
-      return await this.getLastSellHistoryGroupId();
+	    const lastSellHistoryGroup = await this.getLastSellGroup();
+	    return lastSellHistoryGroup.id;
     } catch (error) {
       console.error("Error createSellHistoryGroup:", error);
       throw error;
@@ -98,14 +99,15 @@ class SellHistoryRepository {
 
       console.log("Sell group created successfully.");
 
-      return await this.getLastSellHistoryGroupId();
+	    const lastSellHistoryGroup = await this.getLastSellGroup();
+	    return lastSellHistoryGroup.id;
     } catch (error) {
       console.error("Error createSellHistoryGroupWithAllValues:", error);
       throw error;
     }
   }
 
-  async getLastSellHistoryGroupId() {
+  async getLastSellGroup() {
     try {
       const query = `
         SELECT * FROM sell_group ORDER BY ID DESC LIMIT 1;
@@ -127,8 +129,38 @@ class SellHistoryRepository {
         throw new Error("Unexpected result structure");
       }
   
-      const rows = result.rows._array[0].id;
+      const rows = result.rows._array[0];
   
+      return rows;
+    } catch (error) {
+      console.error("Error getLastSellHistoryGroupId:", error);
+      throw error;
+    }
+  }
+  async getFirstSellGroup() {
+    try {
+      const query = `
+        SELECT * FROM sell_group ORDER BY ID ASC LIMIT 1;
+      `;
+
+      const result = await new Promise((resolve, reject) => {
+        this.db.transaction((tx) => {
+          tx.executeSql(
+            query,
+            [],
+            (_, resultSet) => resolve(resultSet),
+            (_, error) => reject(error)
+          );
+        });
+      });
+
+      if (!result || !result.rows || !result.rows._array) {
+        console.error("Unexpected result structure:", result);
+        throw new Error("Unexpected result structure");
+      }
+
+      const rows = result.rows._array[0];
+
       return rows;
     } catch (error) {
       console.error("Error getLastSellHistoryGroupId:", error);
