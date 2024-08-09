@@ -25,7 +25,6 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-
       "jsEngine": "jsc",
       "supportsTablet": true,
       "bundleIdentifier": "com.safarboyalkhwarizmi.Backallmobile"
@@ -35,7 +34,6 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-
       "package": "com.safarboyalkhwarizmi.Backallmobile"
     },
     "web": {

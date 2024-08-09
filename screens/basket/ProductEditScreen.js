@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import DropDownPicker from "react-native-dropdown-picker";
 import {
-	Dimensions, 
+	Dimensions,
 	StyleSheet,
 	Text,
 	TextInput,
@@ -64,7 +64,7 @@ class ProductEdit extends Component {
 
 		return (
 			<View style={{
-				backgroundColor: "white", 
+				backgroundColor: "white",
 				paddingTop: 200
 			}}>
 				<View style={styles.inputWrapper}>
@@ -84,7 +84,7 @@ class ProductEdit extends Component {
 									this.setState({selected: val});
 								}}
 								defaultOption={{
-									key: "2", 
+									key: "2",
 									value: "SUM"
 								}}
 								data={this.state.data}
@@ -170,8 +170,8 @@ class ProductEdit extends Component {
 									backgroundColor: "#444444",
 								}}
 								onPressIn={() => {
-										this.setState({dropdownStyle: styles.dropdownActiveStyle})
-									}
+									this.setState({dropdownStyle: styles.dropdownActiveStyle})
+								}
 								}
 							/>
 						</View>

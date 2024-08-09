@@ -1,24 +1,24 @@
 import React from "react";
-import { 
-  View, 
-  Text, 
-  StyleSheet,
+import {
+	View,
+	Text,
+	StyleSheet,
 	Dimensions,
-	TouchableOpacity, 
-  AsyncStorage
- } from "react-native";
-import { memo } from 'react';
+	TouchableOpacity,
+	AsyncStorage
+} from "react-native";
+import {memo} from 'react';
 import SellIcon from "../../assets/sell-icon.svg";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
-const HistoryItem = ({ history }) => {
-  getFormattedTime = (created_date) => {
+const HistoryItem = ({history}) => {
+	getFormattedTime = (created_date) => {
 		let date = new Date(created_date);
 		let hours = date.getHours();
 		let minutes = date.getMinutes();
-		
+
 		minutes = minutes + "";
 
 		if (minutes.length !== 2) {
@@ -26,30 +26,31 @@ const HistoryItem = ({ history }) => {
 		}
 		return `${hours}:${minutes}`;
 	};
-	
-  
-    return (
-			<TouchableOpacity
-				key={history.id}
-				style={styles.history}
-				onPress={async () => {
-					let historyId = history.id + "";
 
-					console.log(historyId);
-					try {
-						await AsyncStorage.setItem("sell_history_id", historyId);
-					} catch (error) {}
 
-					this.props.navigation.navigate("ShoppingDetail", { item });
-				}}>
-				<View style={styles.historyAmountWrapper}>
-					<SellIcon/>
-					<Text style={styles.historyAmount}>{`${history.amount.toLocaleString()} so’m`}</Text>
-				</View>
+	return (
+		<TouchableOpacity
+			key={history.id}
+			style={styles.history}
+			onPress={async () => {
+				let historyId = history.id + "";
 
-				<Text style={styles.historyTime}>{getFormattedTime(history.created_date)}</Text>
-			</TouchableOpacity>
-		);
+				console.log(historyId);
+				try {
+					await AsyncStorage.setItem("sell_history_id", historyId);
+				} catch (error) {
+				}
+
+				this.props.navigation.navigate("ShoppingDetail", {item});
+			}}>
+			<View style={styles.historyAmountWrapper}>
+				<SellIcon/>
+				<Text style={styles.historyAmount}>{`${history.amount.toLocaleString()} so’m`}</Text>
+			</View>
+
+			<Text style={styles.historyTime}>{getFormattedTime(history.created_date)}</Text>
+		</TouchableOpacity>
+	);
 };
 
 const styles = StyleSheet.create({
@@ -68,14 +69,14 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 10,
 		paddingVertical: 10
 	},
-	
+
 	historyTitleText: {
 		fontFamily: "Gilroy-Medium",
 		fontWeight: "500",
 		fontSize: 14,
 		lineHeight: 22
 	},
-	
+
 	history: {
 		display: "flex",
 		flexDirection: "row",
@@ -87,20 +88,20 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 16,
 		paddingVertical: 6
 	},
-	
+
 	historyAmountWrapper: {
 		display: "flex",
 		flexDirection: "row",
 		alignItems: "center"
 	},
-	
+
 	historyAmount: {
 		marginLeft: 10,
 		fontFamily: "Gilroy-Medium",
 		fontWeight: "500",
 		fontSize: 16
 	},
-	
+
 	historyTime: {
 		fontFamily: "Gilroy-Medium",
 		fontWeight: "500",

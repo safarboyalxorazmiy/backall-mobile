@@ -28,7 +28,7 @@ class ProfitDetail extends Component {
 
 	async componentDidMount() {
 		const {navigation} = this.props;
-		
+
 		navigation.addListener("focus", async () => {
 			this.setState({
 				groupId: null,
@@ -45,15 +45,15 @@ class ProfitDetail extends Component {
 
 	async getDetails() {
 		await this.setState(
-			{ groupId: parseInt(await AsyncStorage.getItem("profit_history_id")) }
+			{groupId: parseInt(await AsyncStorage.getItem("profit_history_id"))}
 		);
 
 		let profitHistoryDetail = await this.profitHistoryRepository.getProfitHistoryDetailByGroupIdTop6(this.state.groupId, parseInt(this.state.lastId));
 		let last = profitHistoryDetail[profitHistoryDetail.length - 1];
 
 		await this.setState(
-			{ 
-				profitHistoryDetail:  profitHistoryDetail,
+			{
+				profitHistoryDetail: profitHistoryDetail,
 				lastId: last.id
 			}
 		);
@@ -65,9 +65,9 @@ class ProfitDetail extends Component {
 		})
 
 		// GROUP.. 
-		let groupDetail = 
+		let groupDetail =
 			await this.profitHistoryRepository.getProfitGroupInfoById(this.state.groupId);
-		this.setState({ groupDetail: groupDetail[0] });
+		this.setState({groupDetail: groupDetail[0]});
 	}
 
 	async getNextDetails() {
@@ -75,7 +75,7 @@ class ProfitDetail extends Component {
 			return;
 		}
 
-		let nextProfitHistoryDetail = 
+		let nextProfitHistoryDetail =
 			await this.profitHistoryRepository.getProfitHistoryDetailByGroupIdTop6(
 				this.state.groupId, this.state.lastId
 			);
@@ -88,7 +88,7 @@ class ProfitDetail extends Component {
 				});
 			}
 
-			let allProfitHistoryDetail = 
+			let allProfitHistoryDetail =
 				this.state.profitHistoryDetail.concat(nextProfitHistoryDetail);
 			await this.setState({
 				profitHistoryDetail: allProfitHistoryDetail,
@@ -103,13 +103,13 @@ class ProfitDetail extends Component {
 		let hours = parsedDate.getHours();
 		let minutes = parsedDate.getMinutes();
 		let formattedTime = (hours < 10 ? "0" : "") + hours + ":" + (minutes < 10 ? "0" : "") + minutes;
-	
+
 		return formattedTime;
 	}
 
 	getDay(isoString) {
 		var parsedDate = new Date(isoString);
-	
+
 		var monthNames = [
 			"yanvar",
 			"fevral",
@@ -124,26 +124,27 @@ class ProfitDetail extends Component {
 			"noyabr",
 			"dekabr"
 		];
-	
+
 		var day = parsedDate.getDate();
 		var monthIndex = parsedDate.getMonth();
 		var monthName = monthNames[monthIndex];
-	
+
 		var formattedResult = day + "-" + monthName;
-	
+
 		return formattedResult;
 	}
 
 	render() {
 		const {navigation} = this.props;
-		
+
 		return (
 			<ScrollView
 				onScrollBeginDrag={async (event) => {
 					const currentYPos = event.nativeEvent.contentOffset.y;
 
 					if ((currentYPos - this.state.lastYPos) > 138) {
-						this.setState({lastYPos: currentYPos});;
+						this.setState({lastYPos: currentYPos});
+						;
 						await this.getNextDetails();
 					}
 				}}
@@ -158,18 +159,18 @@ class ProfitDetail extends Component {
 							style={styles.backButton}>
 							<BackIcon/>
 						</TouchableOpacity>
-						
+
 						<Text style={styles.title}>Mahsulotdan qolgan foyda</Text>
 					</View>
 
 					<View style={styles.infoBar}>
-						<Text style={styles.infoText}>{ this.state.groupDetail.profit } so’m</Text>
+						<Text style={styles.infoText}>{this.state.groupDetail.profit} so’m</Text>
 						<Text style={styles.infoDivider}>//</Text>
-						<Text style={styles.infoText}>{ this.getTime(this.state.groupDetail.created_date) }</Text>
+						<Text style={styles.infoText}>{this.getTime(this.state.groupDetail.created_date)}</Text>
 						<Text style={styles.infoDivider}>//</Text>
-						<Text style={styles.infoText}>{ this.getDay(this.state.groupDetail.created_date) }</Text>
+						<Text style={styles.infoText}>{this.getDay(this.state.groupDetail.created_date)}</Text>
 					</View>
-					
+
 					{/*
 						this.state.profitHistoryDetail = 
 						[{
@@ -185,9 +186,9 @@ class ProfitDetail extends Component {
 						{/* FOR EACH ROW */}
 						{
 							this.state.profitHistoryDetail.map((item, index) => (
-								<View 
-                                    style={styles.profitContainer} 
-                                    key={index}>
+								<View
+									style={styles.profitContainer}
+									key={index}>
 									<Text style={styles.profitTitle}>{item.productName}</Text>
 
 									<View style={styles.profitRow}>
@@ -213,7 +214,7 @@ const styles = StyleSheet.create({
 	body: {
 		backgroundColor: "#FFF"
 	},
-	
+
 	container: {
 		marginTop: 52,
 		width: screenWidth - 32,
@@ -222,21 +223,21 @@ const styles = StyleSheet.create({
 		flex: 1,
 		alignItems: "center"
 	},
-	
+
 	header: {
 		width: screenWidth - 34,
 		flexDirection: "row",
 		alignItems: "center",
 		marginBottom: 16,
 	},
-	
+
 	backButton: {
 		backgroundColor: "#F5F5F7",
 		paddingVertical: 16,
 		paddingHorizontal: 19,
 		borderRadius: 8,
 	},
-	
+
 	title: {
 		width: 299,
 		textAlign: "center",
@@ -244,7 +245,7 @@ const styles = StyleSheet.create({
 		fontFamily: "Gilroy-SemiBold",
 		fontWeight: "600",
 	},
-	
+
 	infoBar: {
 		flexDirection: "row",
 		alignItems: "center",
@@ -254,15 +255,15 @@ const styles = StyleSheet.create({
 		backgroundColor: "#272727",
 		padding: 10,
 	},
-	
+
 	infoText: {
 		color: "#FFF",
 	},
-	
+
 	infoDivider: {
 		color: "#FFF",
 	},
-	
+
 	profitContainer: {
 		marginTop: 8,
 		width: screenWidth - 32,
@@ -278,20 +279,20 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 12,
 		paddingVertical: 16,
 	},
-	
+
 	profitTitle: {
 		fontFamily: "Gilroy-SemiBold",
 		fontWeight: "600",
 		fontSize: 16,
 		marginBottom: 12,
 	},
-	
+
 	profitRow: {
 		flexDirection: "row",
 		justifyContent: "space-between",
 		marginBottom: 12,
 	},
-	
+
 	profitText: {
 		color: "#777",
 		fontSize: 16,
@@ -299,7 +300,7 @@ const styles = StyleSheet.create({
 		fontWeight: "500",
 		lineHeight: 24,
 	},
-	
+
 	profitPrice: {
 		color: "#0EBA2C",
 		fontSize: 16,

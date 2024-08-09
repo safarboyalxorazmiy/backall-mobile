@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
 import {
 	StyleSheet,
 	Text,
@@ -6,7 +6,7 @@ import {
 	Dimensions,
 	TouchableOpacity,
 	TextInput,
-  FlatList,
+	FlatList,
 	Keyboard
 } from "react-native";
 import Modal from "react-native-modal";
@@ -29,7 +29,7 @@ const screenHeight = Dimensions.get("window").height;
 class Basket extends Component {
 	constructor(props) {
 		super(props);
-		
+
 		this.state = {
 			isCreated: "false",
 			storeProducts: [],
@@ -42,43 +42,43 @@ class Basket extends Component {
 
 			lastNotDownloadedProductsPage: 0,
 			lastNotDownloadedProductsSize: 10,
-      lastStoreProductsPage: 0,
+			lastStoreProductsPage: 0,
 			lastStoreProductsSize: 10,
 
-      productsLoadingIntervalId: undefined,
-      productsLoadingIntervalProccessIsFinished: true,
+			productsLoadingIntervalId: undefined,
+			productsLoadingIntervalProccessIsFinished: true,
 		}
-		
+
 		this.storeProductRepository = new StoreProductRepository();
 		this.apiService = new ApiService();
 		this.productRepository = new ProductRepository();
 
 		this.keyboardDidShowListener = Keyboard.addListener(
-      "keyboardDidShow",
-      this.keyboardDidShow
-    );
-    this.keyboardDidHideListener = Keyboard.addListener(
-      "keyboardDidHide",
-      this.keyboardDidHide
-    );
+			"keyboardDidShow",
+			this.keyboardDidShow
+		);
+		this.keyboardDidHideListener = Keyboard.addListener(
+			"keyboardDidHide",
+			this.keyboardDidHide
+		);
 
 		this.textInputRef = React.createRef();
 	}
 
 	keyboardDidShow = () => {
-    this.setState({ addButtonStyle: { display: "none" } });
-  };
+		this.setState({addButtonStyle: {display: "none"}});
+	};
 
-  keyboardDidHide = () => {
-    this.setState({ addButtonStyle: styles.addButton });
-  };
-	
+	keyboardDidHide = () => {
+		this.setState({addButtonStyle: styles.addButton});
+	};
+
 	async componentDidMount() {
 		console.log("Loaded..")
 		const {navigation} = this.props;
 
 		this.setState(
-			{	
+			{
 				addButtonStyle: styles.addButton,
 				searchInputValue: "",
 				lastId: 0,
@@ -98,7 +98,7 @@ class Basket extends Component {
 
 			try {
 				console.log("It's here")
-				const newStoreProducts = 
+				const newStoreProducts =
 					await this.storeProductRepository.findTopStoreProductsInfo(
 						this.state.lastId
 					);
@@ -129,15 +129,15 @@ class Basket extends Component {
 			}
 		}
 
-		navigation.addListener("focus", 
+		navigation.addListener("focus",
 			async () => {
 				await this.getCreated();
 				this.setState({role: await AsyncStorage.getItem("role")});
 
-				if (await AsyncStorage.getItem("basketFullyLoaded") != "true") {  
-					
+				if (await AsyncStorage.getItem("basketFullyLoaded") != "true") {
+
 					this.setState(
-						{	
+						{
 							addButtonStyle: styles.addButton,
 							searchInputValue: "",
 							lastYPos: 0,
@@ -145,41 +145,41 @@ class Basket extends Component {
 							storeProducts: []
 						}
 					);
-	
+
 					const allProducts = this.state.storeProducts;
-	
+
 					while (true) {
 						if (
 							await AsyncStorage.getItem("window") != "Basket"
 						) {
 							break;
 						}
-	
+
 						try {
-							const newStoreProducts = 
+							const newStoreProducts =
 								await this.storeProductRepository.findTopStoreProductsInfo(
 									this.state.lastId
 								);
-	
+
 							if (newStoreProducts.length === 0) {
 								break;
 							}
-	
+
 							allProducts.push(...newStoreProducts);
-	
+
 							let last = newStoreProducts[newStoreProducts.length - 1];
 							if (last != undefined) {
 								this.setState({
 									lastId: last.id
 								});
 							}
-	
+
 							this.setState({
 								storeProducts: allProducts,
 								searchInputValue: "",
 								role: await AsyncStorage.getItem("role")
 							});
-	
+
 							await new Promise(resolve => setTimeout(resolve, 100)); // Adding delay to manage UI thread load
 						} catch (error) {
 							console.error("Error fetching global products:", error);
@@ -189,7 +189,7 @@ class Basket extends Component {
 
 					await AsyncStorage.setItem("basketFullyLoaded", "true");
 				}
-				
+
 				/* FOR BOSS SMTH
 				if (await AsyncStorage.getItem("role") === "BOSS") {
 					let productsLoadingIntervalId = setInterval(async () => {
@@ -228,7 +228,7 @@ class Basket extends Component {
 
 
 				this.setState(
-					{	
+					{
 						addButtonStyle: styles.addButton,
 						searchInputValue: "",
 						lastYPos: 0
@@ -245,7 +245,7 @@ class Basket extends Component {
 					}
 
 					try {
-						const newStoreProducts = 
+						const newStoreProducts =
 							await this.storeProductRepository.findTopStoreProductsInfo(
 								this.state.lastId
 							);
@@ -276,7 +276,7 @@ class Basket extends Component {
 					}
 				}
 			}
-		);	
+		);
 	}
 
 	async getNotDownloadedLocalProducts() {
@@ -285,17 +285,17 @@ class Basket extends Component {
 		let products = [];
 		let size = this.state.lastNotDownloadedProductsSize;
 		let page = this.state.lastNotDownloadedProductsPage;
-	
+
 		while (true) {
 			let downloadedProducts;
-			downloadedProducts = 
+			downloadedProducts =
 				await this.apiService.getNotDownloadedLocalProducts(
 					page, size, this.props.navigation
 				);
-	
+
 			if (
-				!downloadedProducts || 
-				!downloadedProducts.content || 
+				!downloadedProducts ||
+				!downloadedProducts.content ||
 				downloadedProducts.content.length === 0
 			) {
 				console.log(products);
@@ -312,32 +312,31 @@ class Basket extends Component {
 						"LOCAL",
 						true
 					);
-				} 
-        catch (error) {
+				} catch (error) {
 					console.error("Error creating local products:", error);
-          
-          this.setState({
-            lastNotDownloadedProductsSize: size,
-            lastNotDownloadedProductsPage: page
-          });
-          
-          break; 
+
+					this.setState({
+						lastNotDownloadedProductsSize: size,
+						lastNotDownloadedProductsPage: page
+					});
+
+					break;
 				}
 			}
 
 			page++;
 			products.push(downloadedProducts);
-      return true;
-    }
+			return true;
+		}
 	}
 
-  async getNotDownloadedStoreProducts() {
+	async getNotDownloadedStoreProducts() {
 		console.log("GETTING NOT DOWNLOADED STORE PRODUCTS ⏳⏳⏳");
 
 		let storeProducts = [];
 		let size = this.state.lastStoreProductsSize;
 		let page = this.state.lastStoreProductsPage;
-	
+
 		while (true) {
 			let response;
 			try {
@@ -350,14 +349,14 @@ class Basket extends Component {
 					lastStoreProductsSize: size,
 					lastStoreProductsPage: page
 				});
-				
+
 				return false; // Indicate failure
 			}
 
 			if (!response || !response.content || response.content.length === 0) {
-				return false; 
+				return false;
 			}
-	
+
 			for (const storeProduct of response.content) {
 
 				console.log("Accepted response: ", response.content)
@@ -365,7 +364,7 @@ class Basket extends Component {
 				try {
 					const updatedStoreProducts = this.state.storeProducts.map((product) => {
 						const storeProduct = response.content.find(p => p.id === product.global_id);
-						
+
 						if (storeProduct) {
 							console.log("Log the updated product")
 							console.log({
@@ -375,7 +374,7 @@ class Basket extends Component {
 								id: product.id,
 								name: product.name,
 							});
-		
+
 							return {
 								brand_name: product.brand_name,
 								count: storeProduct.count,
@@ -387,28 +386,25 @@ class Basket extends Component {
 
 						return product; // Return the original product if no update is needed
 					});
-		
+
 					console.log("⏳⏳⏳⏳⏳⏳");
 					console.log(updatedStoreProducts);
-		
-					this.setState({ storeProducts: updatedStoreProducts });
-		
 
-						
+					this.setState({storeProducts: updatedStoreProducts});
+
 
 					// console.log(
 					// 	updatedStoreProducts
 					// )
 
-					
-					
-					let products = 
+
+					let products =
 						await this.productRepository.findProductsByGlobalId(
 							storeProduct.productId
 						);
 
 					await this.storeProductRepository.createStoreProductWithAllValues(
-						products[0].id, 
+						products[0].id,
 						storeProduct.nds,
 						storeProduct.price,
 						storeProduct.sellingPrice,
@@ -424,13 +420,13 @@ class Basket extends Component {
 					continue;
 				}
 			}
-	
+
 			page++;
 			storeProducts.push(response);
-      return true;
+			return true;
 		}
 	}
-	
+
 	async getCreated() {
 		let isCreated = await AsyncStorage.getItem("isCreated");
 		this.setState({isCreated: isCreated});
@@ -442,7 +438,7 @@ class Basket extends Component {
 		this.setState({storeProducts: storeProducts})
 		console.log(storeProducts);
 	}
-	
+
 	handlePressSearchInput = () => {
 		if (this.textInputRef.current) {
 			this.textInputRef.current.blur();
@@ -461,7 +457,7 @@ class Basket extends Component {
 					style={styles.inputWrapper}
 					onPress={this.handlePressSearchInput}>
 					<SearchIcon/>
-					
+
 					<TextInput
 						autoCapitalize="none"
 						ref={this.textInputRef}
@@ -474,7 +470,7 @@ class Basket extends Component {
 						cursorColor={"black"}
 					/>
 				</TouchableOpacity>
-				
+
 				{/* Store products */}
 				{/* <ScrollView style={styles.productList}
 					onScrollBeginDrag={async (event) => {
@@ -492,21 +488,19 @@ class Basket extends Component {
 				</ScrollView> */}
 
 
-
 				<FlatList
 					style={styles.productList}
 					data={this.state.storeProducts}
 					keyExtractor={(item, index) => index.toString()}
-					renderItem={({ item, index }) => (
-						<BasketItem product={item} index={index} />
+					renderItem={({item, index}) => (
+						<BasketItem product={item} index={index}/>
 					)}
 					onScrollBeginDrag={this.handleScroll}
 					horizontal={false}
 					scrollEnabled={true}
-					contentContainerStyle={{}} 
+					contentContainerStyle={{}}
 				/>
 
-				
 
 				{/* Add Button */}
 				{this.state.role === "SELLER" ? (
@@ -515,7 +509,7 @@ class Basket extends Component {
 						onPress={() => {
 							navigation.navigate("ProductAdd");
 						}}>
-						<PlusIcon />
+						<PlusIcon/>
 					</TouchableOpacity>
 				) : null}
 
@@ -546,9 +540,9 @@ class Basket extends Component {
 							justifyContent: "center"
 						}}
 					>
-						<Success />
+						<Success/>
 					</View>
-					
+
 					<View style={{
 						width: screenWidth - (15 * 2),
 						marginLeft: "auto",
@@ -568,7 +562,7 @@ class Basket extends Component {
 						>
 							Mahsulot muvafaqqiyatli yaratildi!
 						</Text>
-						
+
 						<TouchableOpacity style={{
 							width: 343,
 							backgroundColor: "#222222",
@@ -600,72 +594,72 @@ class Basket extends Component {
 					animationOut={"slideOutDown"}
 					animationInTiming={200}
 					transparent={true}>
-						<View style={{
-							position: "absolute",
-							width: "150%",
+					<View style={{
+						position: "absolute",
+						width: "150%",
+						height: screenHeight,
+						flex: 1,
+						alignItems: "center",
+						justifyContent: "center",
+						backgroundColor: "#00000099",
+						left: -50,
+						right: -50,
+						top: 0
+					}}></View>
+
+					<Animatable.View
+						animation="bounceInUp" delay={0} iterationCount={1} direction="alternate"
+						style={{
 							height: screenHeight,
+							display: "flex",
+							alignItems: "center",
+							justifyContent: "center"
+						}}>
+						<View style={{
+							width: screenWidth - (16 * 2),
+							maxWidth: 343,
+							marginLeft: "auto",
+							marginRight: "auto",
 							flex: 1,
 							alignItems: "center",
-							justifyContent: "center",
-							backgroundColor: "#00000099",
-							left: -50,
-							right: -50,
-							top: 0
-						}}></View>
-
-						<Animatable.View 
-							animation="bounceInUp" delay={0} iterationCount={1} direction="alternate"
-							style={{
-								height: screenHeight,
-								display: "flex",
-								alignItems: "center",
-								justifyContent: "center"
-							}}>
+							justifyContent: "flex-end",
+							marginBottom: 120
+						}}>
 							<View style={{
-								width: screenWidth - (16 * 2),
-								maxWidth: 343,
-								marginLeft: "auto",
-								marginRight: "auto",
-								flex: 1,
-								alignItems: "center",
-								justifyContent: "flex-end",
-								marginBottom: 120
+								width: "100%",
+								padding: 20,
+								borderRadius: 12,
+								backgroundColor: "#fff",
 							}}>
-								<View style={{
-									width: "100%",
-									padding: 20,
-									borderRadius: 12,
-									backgroundColor: "#fff",
-								}}>
-									<Text style={{
-										fontFamily: "Gilroy-Regular",
-										fontSize: 18
-									}}>Siz sotuvchi emassiz..</Text>
-									<TouchableOpacity
+								<Text style={{
+									fontFamily: "Gilroy-Regular",
+									fontSize: 18
+								}}>Siz sotuvchi emassiz..</Text>
+								<TouchableOpacity
+									style={{
+										display: "flex",
+										alignItems: "center",
+										height: 55,
+										justifyContent: "center",
+										backgroundColor: "#222",
+										width: "100%",
+										borderRadius: 12,
+										marginTop: 22
+									}}
+									onPress={async () => {
+										this.setState({notAllowed: "false"});
+										await AsyncStorage.setItem("not_allowed", "false")
+									}}>
+									<Text
 										style={{
-											display: "flex",
-											alignItems: "center",
-											height: 55,
-											justifyContent: "center",
-											backgroundColor: "#222",
-											width: "100%",
-											borderRadius: 12,
-											marginTop: 22
-										}}
-										onPress={async () => {
-											this.setState({notAllowed: "false"});
-											await AsyncStorage.setItem("not_allowed", "false")
-										}}>
-										<Text
-											style={{
-												fontFamily: "Gilroy-Bold",
-												fontSize: 18,
-												color: "#fff",
-											}}>Tushunarli</Text>
-									</TouchableOpacity>
-								</View>
+											fontFamily: "Gilroy-Bold",
+											fontSize: 18,
+											color: "#fff",
+										}}>Tushunarli</Text>
+								</TouchableOpacity>
 							</View>
-						</Animatable.View>
+						</View>
+					</Animatable.View>
 				</Modal>
 			</View>
 		);
@@ -679,7 +673,7 @@ const styles = StyleSheet.create({
 		paddingTop: 65,
 		position: "relative"
 	},
-	
+
 	inputWrapper: {
 		display: "flex",
 		alignItems: "center",
@@ -693,7 +687,7 @@ const styles = StyleSheet.create({
 		paddingVertical: 14,
 		borderRadius: 8,
 	},
-	
+
 	input: {
 		backgroundColor: "white",
 		color: "black",
@@ -703,13 +697,13 @@ const styles = StyleSheet.create({
 		fontWeight: "500",
 		borderWidth: 0,
 	},
-	
+
 	productList: {
 		marginTop: 20,
 		height: screenHeight - 93,
 		overflow: 'hidden',
 	},
-	
+
 	product: {
 		display: "flex",
 		flexDirection: "row",
@@ -721,7 +715,7 @@ const styles = StyleSheet.create({
 		paddingVertical: 13,
 		paddingHorizontal: 4
 	},
-	
+
 	productOdd: {
 		display: "flex",
 		flexDirection: "row",
@@ -734,20 +728,20 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 4,
 		backgroundColor: "#F1F1F1"
 	},
-	
+
 	productTitle: {
 		fontSize: 16,
 		fontFamily: "Gilroy-Medium",
 		fontWeight: "500"
 	},
-	
+
 	productCount: {
 		fontFamily: "Gilroy-Medium",
 		fontSize: 16,
 		lineHeight: 24,
 		fontWeight: "500"
 	},
-	
+
 	addButton: {
 		width: 60,
 		height: 60,
@@ -760,7 +754,7 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "center"
 	}
-	
+
 });
 
 export default Basket;

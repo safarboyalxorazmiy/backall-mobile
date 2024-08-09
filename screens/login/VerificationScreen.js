@@ -40,13 +40,13 @@ class VerificationScreen extends Component {
 			let password = await AsyncStorage.getItem("password");
 
 			let result = await this.apiService.login(
-				email, 
+				email,
 				password,
 				this.state.verificationCode
 			);
 
 			console.log(
-				email, 
+				email,
 				password,
 				this.state.verificationCode
 			)
@@ -62,7 +62,7 @@ class VerificationScreen extends Component {
 				const accessToken = await this.tokenService.retrieveAccessToken();
 				console.log(accessToken);
 				console.log(await this.tokenService.retrieveRefreshToken());
-				
+
 				this.setState({
 					verificationCode: "",
 					error: false
@@ -120,7 +120,7 @@ class VerificationScreen extends Component {
 								this.handleKeyPress(key);
 							}
 						}}
-						
+
 						onPressOut={() => {
 							this.setState({focusedKey: null});
 						}}
@@ -134,27 +134,27 @@ class VerificationScreen extends Component {
 	}
 
 	renderCircles() {
-    const { verificationCode, error } = this.state;
-    const circles = [];
+		const {verificationCode, error} = this.state;
+		const circles = [];
 
-    // Iterate through verification code and render green circles or text accordingly
-    for (let i = 0; i < 4; i++) {
-        if (verificationCode.length > i) {
-            // If verification code has more than 4 characters, display first 4 characters
-            circles.push(
-                <View key={i}>
-                    <Text style={styles.codeText}>{verificationCode[i]}</Text>
-                </View>
-            );
-        } else {
-            // Render GreenCircle or RedCircle based on the value of error
-            circles.push(
-                error ? <RedCircle key={i} /> : <GreenCircle key={i} />
-            );
-        }
-    }
+		// Iterate through verification code and render green circles or text accordingly
+		for (let i = 0; i < 4; i++) {
+			if (verificationCode.length > i) {
+				// If verification code has more than 4 characters, display first 4 characters
+				circles.push(
+					<View key={i}>
+						<Text style={styles.codeText}>{verificationCode[i]}</Text>
+					</View>
+				);
+			} else {
+				// Render GreenCircle or RedCircle based on the value of error
+				circles.push(
+					error ? <RedCircle key={i}/> : <GreenCircle key={i}/>
+				);
+			}
+		}
 
-    return circles;
+		return circles;
 	}
 
 	render() {
@@ -232,9 +232,9 @@ const styles = StyleSheet.create({
 		fontFamily: "Gilroy-Bold",
 		marginLeft: 20,
 		marginTop: (
-			screenHeight >= 750 ? 100 : 
-			screenHeight >= 600 ? 50 : 
-			20
+			screenHeight >= 750 ? 100 :
+				screenHeight >= 600 ? 50 :
+					20
 		)
 	},
 
@@ -250,9 +250,9 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		position: "absolute",
 		bottom: (
-			screenHeight >= 750 ? 0 : 
-			screenHeight >= 600 ? -40 : 
-			-50
+			screenHeight >= 750 ? 0 :
+				screenHeight >= 600 ? -40 :
+					-50
 		),
 		left: 0,
 		right: 0,

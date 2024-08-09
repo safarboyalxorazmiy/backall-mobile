@@ -7,13 +7,13 @@ import {
 	Dimensions,
 	TouchableOpacity,
 	TextInput,
-	Pressable, 
+	Pressable,
 	Keyboard,
 } from "react-native";
-import { Dropdown } from "react-native-element-dropdown";
+import {Dropdown} from "react-native-element-dropdown";
 import ToggleSwitch from "toggle-switch-react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import {TouchableWithoutFeedback} from "react-native-gesture-handler";
 import * as Animatable from "react-native-animatable";
 
 import ProductRepository from "../../repository/ProductRepository";
@@ -853,7 +853,7 @@ class ProductAdd extends Component {
 			await AsyncStorage.setItem("isNotSaved", "true")
 			await AsyncStorage.setItem("productNotSaved", "true");
 			await AsyncStorage.setItem("storeProductNotSaved", "true");
-			
+
 			this.setState({
 				seriyaInputValue: "",
 				brandInputValue: "",

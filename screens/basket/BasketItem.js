@@ -1,24 +1,24 @@
 import React from "react";
-import { 
-  View, 
-  Text, 
-  StyleSheet,
+import {
+	View,
+	Text,
+	StyleSheet,
 	Dimensions,
-	TouchableOpacity, 
-  AsyncStorage
- } from "react-native";
-import { memo } from 'react';
+	TouchableOpacity,
+	AsyncStorage
+} from "react-native";
+import {memo} from 'react';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
-const BasketItem = ({ product, index }) => {
-  return (
-    <View key={index} style={index % 2 === 0 ? styles.product : styles.productOdd}>
-      <Text style={styles.productTitle}>{product.brand_name} {product.name}</Text>
-      <Text style={styles.productCount}>{product.count} {product.count_type}</Text>
-    </View>
-  );
+const BasketItem = ({product, index}) => {
+	return (
+		<View key={index} style={index % 2 === 0 ? styles.product : styles.productOdd}>
+			<Text style={styles.productTitle}>{product.brand_name} {product.name}</Text>
+			<Text style={styles.productCount}>{product.count} {product.count_type}</Text>
+		</View>
+	);
 };
 
 const styles = StyleSheet.create({
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
 		paddingTop: 65,
 		position: "relative"
 	},
-	
+
 	inputWrapper: {
 		display: "flex",
 		alignItems: "center",
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
 		paddingVertical: 14,
 		borderRadius: 8,
 	},
-	
+
 	input: {
 		backgroundColor: "white",
 		color: "black",
@@ -52,12 +52,12 @@ const styles = StyleSheet.create({
 		fontWeight: "500",
 		borderWidth: 0,
 	},
-	
+
 	productList: {
 		marginTop: 20,
 		height: screenHeight - 93
 	},
-	
+
 	product: {
 		display: "flex",
 		flexDirection: "row",
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
 		paddingVertical: 13,
 		paddingHorizontal: 4
 	},
-	
+
 	productOdd: {
 		display: "flex",
 		flexDirection: "row",
@@ -82,20 +82,20 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 4,
 		backgroundColor: "#F1F1F1"
 	},
-	
+
 	productTitle: {
 		fontSize: 16,
 		fontFamily: "Gilroy-Medium",
 		fontWeight: "500"
 	},
-	
+
 	productCount: {
 		fontFamily: "Gilroy-Medium",
 		fontSize: 16,
 		lineHeight: 24,
 		fontWeight: "500"
 	},
-	
+
 	addButton: {
 		width: 60,
 		height: 60,
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "center"
 	}
-	
+
 });
 
 export default memo(BasketItem, (prevProps, nextProps) => prevProps.product.id === nextProps.product.id);

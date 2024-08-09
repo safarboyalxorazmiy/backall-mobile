@@ -1,22 +1,22 @@
-import React, { Component, createRef } from "react";
-import { 
-	Appearance, 
-	Text, 
-	TouchableOpacity, 
-	View, 
-	Image, 
-	Linking, 
+import React, {Component, createRef} from "react";
+import {
+	Appearance,
+	Text,
+	TouchableOpacity,
+	View,
+	Image,
+	Linking,
 	StyleSheet,
 	AppRegistry,
 	Modal,
 	Keyboard
 } from "react-native";
-import { Platform } from "react-native";
+import {Platform} from "react-native";
 import NetInfo from "@react-native-community/netinfo";
 import NavigationService from "./service/NavigationService";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import {GestureHandlerRootView} from "react-native-gesture-handler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Asset } from "expo-asset";
+import {Asset} from "expo-asset";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import * as SystemUI from "expo-system-ui";
@@ -36,117 +36,117 @@ import RightArrowLight from "./assets/right-arrow-light.svg"
 const tokenService = new TokenService();
 
 class App extends Component {
-  constructor(props) {
-    super(props);
-		
-    this.state = {
-      fontsLoaded: false,
-      isConnected: null,
-      isSavingStarted: false,
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			fontsLoaded: false,
+			isConnected: null,
+			isSavingStarted: false,
 			notPayed: false,
 
 			theme: Appearance.getColorScheme(),
-      splashLoaded: false,
-    };
+			splashLoaded: false,
+		};
 
-    if (this.props.navigation) {
-      let isLoggedIn = tokenService.checkTokens();
+		if (this.props.navigation) {
+			let isLoggedIn = tokenService.checkTokens();
 
 			if (!isLoggedIn) {
 				this.props.navigation.navigate("Login");
-			} 
-    } 
+			}
+		}
 
-    this.productRepository = new ProductRepository();
-    this.storeProductRepository = new StoreProductRepository();
-    this.sellHistoryRepository = new SellHistoryRepository();
-    this.profitHistoryRepository = new ProfitHistoryRepository();
-    this.amountDateRepository = new AmountDateRepository();
-    this.apiService = new ApiService();
+		this.productRepository = new ProductRepository();
+		this.storeProductRepository = new StoreProductRepository();
+		this.sellHistoryRepository = new SellHistoryRepository();
+		this.profitHistoryRepository = new ProfitHistoryRepository();
+		this.amountDateRepository = new AmountDateRepository();
+		this.apiService = new ApiService();
 
-    // Bind methods to maintain correct context
-    this.loadCustomFonts = this.loadCustomFonts.bind(this);
-    this.checkInternetStatus = this.checkInternetStatus.bind(this);
-    this.saveData = this.saveData.bind(this);
+		// Bind methods to maintain correct context
+		this.loadCustomFonts = this.loadCustomFonts.bind(this);
+		this.checkInternetStatus = this.checkInternetStatus.bind(this);
+		this.saveData = this.saveData.bind(this);
 
 		this.touchableRef = createRef();
-  }
+	}
 
-  async loadCustomFonts() {
-    try {
-      await Font.loadAsync({
-        "Gilroy-Light": require("./assets/fonts/gilroy/Gilroy-Light.ttf"),
-        "Gilroy-Regular": require("./assets/fonts/gilroy/Gilroy-Regular.ttf"),
-        "Gilroy-Medium": require("./assets/fonts/gilroy/Gilroy-Medium.ttf"),
-        "Gilroy-SemiBold": require("./assets/fonts/gilroy/Gilroy-SemiBold.ttf"),
-        "Gilroy-Bold": require("./assets/fonts/gilroy/Gilroy-Bold.ttf"),
-        "Gilroy-Black": require("./assets/fonts/gilroy/Gilroy-Black.ttf"),
-      });
+	async loadCustomFonts() {
+		try {
+			await Font.loadAsync({
+				"Gilroy-Light": require("./assets/fonts/gilroy/Gilroy-Light.ttf"),
+				"Gilroy-Regular": require("./assets/fonts/gilroy/Gilroy-Regular.ttf"),
+				"Gilroy-Medium": require("./assets/fonts/gilroy/Gilroy-Medium.ttf"),
+				"Gilroy-SemiBold": require("./assets/fonts/gilroy/Gilroy-SemiBold.ttf"),
+				"Gilroy-Bold": require("./assets/fonts/gilroy/Gilroy-Bold.ttf"),
+				"Gilroy-Black": require("./assets/fonts/gilroy/Gilroy-Black.ttf"),
+			});
 
-      this.setState({ fontsLoaded: true });
-    } catch (error) {
-      console.error("Error loading custom fonts:", error);
-    }
-  }
+			this.setState({fontsLoaded: true});
+		} catch (error) {
+			console.error("Error loading custom fonts:", error);
+		}
+	}
 
-  async componentDidMount() {
+	async componentDidMount() {
 		SplashScreen.preventAutoHideAsync();
-    await this.loadResources();
-    SplashScreen.hideAsync();
+		await this.loadResources();
+		SplashScreen.hideAsync();
 
-    await this.loadCustomFonts();
+		await this.loadCustomFonts();
 
-    if (Platform.OS == "android" || Platform.OS == "ios") {
-      const databaseRepository = new DatabaseRepository();
-      try {
-        // await databaseRepository.init();
-        // console.log("Database initialized successfully");
-      } catch (error) {
-        console.error("Error initializing database:", error);
-      }
+		if (Platform.OS == "android" || Platform.OS == "ios") {
+			const databaseRepository = new DatabaseRepository();
+			try {
+				// await databaseRepository.init();
+				// console.log("Database initialized successfully");
+			} catch (error) {
+				console.error("Error initializing database:", error);
+			}
 
-      this.unsubscribe = NetInfo.addEventListener((state) => {
-        this.setState({ isConnected: state.isConnected });
-      });
+			this.unsubscribe = NetInfo.addEventListener((state) => {
+				this.setState({isConnected: state.isConnected});
+			});
 
-      this.logInternetStatusInterval = setInterval(
-        this.checkInternetStatus,
-        5000
-      );
-    }
-  }
+			this.logInternetStatusInterval = setInterval(
+				this.checkInternetStatus,
+				5000
+			);
+		}
+	}
 
 	loadResources = async () => {
-    try {
-      const { theme } = this.state;
-      let splashImage;
-      if (theme === "dark") {
-        splashImage = require("./assets/splash-dark.png");
-        SystemUI.setBackgroundColorAsync("#000000");
-      } else {
-        splashImage = require("./assets/splash.png");
-        SystemUI.setBackgroundColorAsync("#ffffff");
-      }
+		try {
+			const {theme} = this.state;
+			let splashImage;
+			if (theme === "dark") {
+				splashImage = require("./assets/splash-dark.png");
+				SystemUI.setBackgroundColorAsync("#000000");
+			} else {
+				splashImage = require("./assets/splash.png");
+				SystemUI.setBackgroundColorAsync("#ffffff");
+			}
 
-      // Preload splash image
-      await Asset.loadAsync(splashImage);
-      this.setState({ splashLoaded: true });
-    } catch (e) {
-      console.warn(e);
-    }
-  };
+			// Preload splash image
+			await Asset.loadAsync(splashImage);
+			this.setState({splashLoaded: true});
+		} catch (e) {
+			console.warn(e);
+		}
+	};
 
-  async checkInternetStatus() {
-    console.log(
-      "Is connected?",
-      this.state.isConnected === null
-        ? "Loading..."
-        : this.state.isConnected
-        ? "Yes"
-        : "No"
-    );
+	async checkInternetStatus() {
+		console.log(
+			"Is connected?",
+			this.state.isConnected === null
+				? "Loading..."
+				: this.state.isConnected
+					? "Yes"
+					: "No"
+		);
 
-    if (this.state.isConnected) {
+		if (this.state.isConnected) {
 			if (await AsyncStorage.getItem("isRequestInProgress") == "true") {
 				return;
 			}
@@ -155,27 +155,27 @@ class App extends Component {
 			let isNotSaved = await AsyncStorage.getItem("isNotSaved");
 			console.log("Is not saved", isNotSaved);
 			let email = await AsyncStorage.getItem("email");
-			
+
 			// Get the current date
 			let currentDate = new Date();
 			// Extract month and year
 			let month = String(currentDate.getMonth() + 1).padStart(2, "0"); // getMonth() returns 0-based month
 			let year = currentDate.getFullYear();
 			let monthYear = `${month}/${year}`;
-			
+
 			if (this.state.notPayed) {
 				const {navigation} = this.props;
-				
+
 				let isPayed = await this.apiService.getPayment(email, monthYear, navigation);
 				console.log("Payed: ", isPayed)
-				
-				if (isPayed == true) {						
+
+				if (isPayed == true) {
 					this.setState({
 						notPayed: false
 					})
 				}
 			}
-		
+
 			if (isNotSaved == "true") {
 				await this.saveData();
 
@@ -183,14 +183,14 @@ class App extends Component {
 				// Keyboard.dismiss();
 
 				const {navigation} = this.props;
-				let isPayed = 
+				let isPayed =
 					await this.apiService.getPayment(email, monthYear, navigation);
 				console.log("Payed: ", isPayed)
 				if (isPayed == false) {
 					const currentDate = new Date();
 
 					const year = currentDate.getFullYear();
-					const month = ("0" + (currentDate.getMonth() + 1)).slice(-2); 
+					const month = ("0" + (currentDate.getMonth() + 1)).slice(-2);
 					const day = ("0" + currentDate.getDate()).slice(-2);
 					const hour = ("0" + currentDate.getHours()).slice(-2); // Get current hour
 
@@ -198,26 +198,26 @@ class App extends Component {
 
 					// (If)
 					// Date does not equals
-					if (await AsyncStorage.getItem("lastPaymentShownDate") != dateString) { 
+					if (await AsyncStorage.getItem("lastPaymentShownDate") != dateString) {
 						// Hour does not equals and morning and evening work 
 						if (
-							(hour >= 8 && hour <= 9) || (hour >= 20 && hour <= 22) && 
+							(hour >= 8 && hour <= 9) || (hour >= 20 && hour <= 22) &&
 							await AsyncStorage.getItem("lastPaymentShownHour") != hour
-						) { 
+						) {
 							this.setState({
 								notPayed: true
 							})
 						}
 					}
 				}
-		
+
 			}
 		}
-  }
+	}
 
-  async saveData() {
+	async saveData() {
 		if (
-			(!this.state.isSavingStarted) 
+			(!this.state.isSavingStarted)
 		) {
 			this.setState({isSavingStarted: true});
 
@@ -228,14 +228,14 @@ class App extends Component {
 				let productNotSaved = await AsyncStorage.getItem("productNotSaved");
 				if (productNotSaved == "true") {
 					console.log("Product creating ⏳⏳⏳")
-					let notSavedProducts = 
+					let notSavedProducts =
 						await this.productRepository.findProductsBySavedFalse();
 					for (const product of notSavedProducts) {
 						try {
 							let response = await this.apiService.createLocalProduct(
-								product.serial_number, 
-								product.name, 
-								product.brand_name, 
+								product.serial_number,
+								product.name,
+								product.brand_name,
 								this.props.navigation
 							);
 
@@ -247,7 +247,7 @@ class App extends Component {
 
 							await this.productRepository.updateSavedTrueByProductId(product.id, response.id);
 						} catch (e) {
-							console.error(e);	
+							console.error(e);
 							await AsyncStorage.setItem("isFetchingNotCompleated", "true");
 							await AsyncStorage.setItem("isNotSaved", "true");
 							this.setState({isSavingStarted: false});
@@ -277,7 +277,7 @@ class App extends Component {
 								storeProduct.selling_price,
 								null,
 								storeProduct.count,
-								storeProduct.count_type, 
+								storeProduct.count_type,
 								this.props.navigation
 							);
 
@@ -288,7 +288,7 @@ class App extends Component {
 							console.log("Response: ", response);
 							await this.storeProductRepository.updateSavedTrueById(storeProduct.id, response.id);
 						} catch (e) {
-							console.error(e);	
+							console.error(e);
 							await AsyncStorage.setItem("isFetchingNotCompleated", "true");
 							await AsyncStorage.setItem("isNotSaved", "true");
 							this.setState({isSavingStarted: false});
@@ -307,8 +307,8 @@ class App extends Component {
 						console.log("Group: ", sellGroup)
 						try {
 							let response = await this.apiService.createSellGroup(
-								sellGroup.created_date, 
-								sellGroup.amount, 
+								sellGroup.created_date,
+								sellGroup.amount,
 								this.props.navigation
 							);
 
@@ -317,11 +317,11 @@ class App extends Component {
 							}
 
 							await this.sellHistoryRepository.updateSellGroupSavedTrueById(
-								sellGroup.id, 
+								sellGroup.id,
 								response.id
 							);
 						} catch (e) {
-							console.error(e);	
+							console.error(e);
 							await AsyncStorage.setItem("isFetchingNotCompleated", "true");
 							await AsyncStorage.setItem("isNotSaved", "true");
 							this.setState({isSavingStarted: false});
@@ -334,7 +334,7 @@ class App extends Component {
 				let sellHistoryNotSaved = await AsyncStorage.getItem("sellHistoryNotSaved");
 				if (sellHistoryNotSaved == "true") {
 					console.log("Sell history creating started. ⏳⏳⏳");
-					
+
 					let sellHistories = await this.sellHistoryRepository.getSellHistorySavedFalse();
 					for (const sellHistory of sellHistories) {
 						console.log("SellHistory: ", sellHistory);
@@ -349,7 +349,7 @@ class App extends Component {
 								sellHistory.count,
 								sellHistory.count_type,
 								sellHistory.selling_price,
-								sellHistory.created_date, 
+								sellHistory.created_date,
 								this.props.navigation
 							);
 
@@ -358,11 +358,11 @@ class App extends Component {
 							}
 
 							await this.sellHistoryRepository.updateSellHistorySavedTrueById(
-								sellHistory.id, 
+								sellHistory.id,
 								response.id
 							);
 						} catch (e) {
-							console.error(e);	
+							console.error(e);
 							await AsyncStorage.setItem("isFetchingNotCompleated", "true");
 							await AsyncStorage.setItem("isNotSaved", "true");
 							this.setState({isSavingStarted: false});
@@ -376,7 +376,7 @@ class App extends Component {
 				if (sellHistoryGroupNotSaved == "true") {
 					console.log("Sell history group creating started. ⏳⏳⏳");
 
-					let sellHistoryGroups = 
+					let sellHistoryGroups =
 						await this.sellHistoryRepository.getSellHistoryGroupSavedFalse();
 					for (const sellHistoryGroup of sellHistoryGroups) {
 						console.log(sellHistoryGroup);
@@ -387,10 +387,10 @@ class App extends Component {
 							let sellGroup = await this.sellHistoryRepository.findSellGroupById(
 								sellHistoryGroup.group_id
 							);
-							
+
 							let response = await this.apiService.createSellHistoryGroup(
 								sellHistory[0].global_id,
-								sellGroup[0].global_id, 
+								sellGroup[0].global_id,
 								this.props.navigation
 							);
 
@@ -403,7 +403,7 @@ class App extends Component {
 								response.id
 							)
 						} catch (e) {
-							console.error(e);	
+							console.error(e);
 							await AsyncStorage.setItem("isFetchingNotCompleated", "true");
 							await AsyncStorage.setItem("isNotSaved", "true");
 							this.setState({isSavingStarted: false});
@@ -417,28 +417,28 @@ class App extends Component {
 				if (sellAmountDateNotSaved == "true") {
 					console.log("Sell amount date creating started. ⏳⏳⏳");
 
-					let notSavedSellAmountDates = 
+					let notSavedSellAmountDates =
 						await this.amountDateRepository.getSellAmountDateSavedFalse();
 					for (const sellAmountDate of notSavedSellAmountDates) {
 						try {
-							
-							let response = 
+
+							let response =
 								await this.apiService.createSellAmountDate(
 									sellAmountDate.date,
-									sellAmountDate.amount, 
+									sellAmountDate.amount,
 									this.props.navigation
 								);
 
-								if (!response) {
-									return;
-								}
+							if (!response) {
+								return;
+							}
 
 							this.amountDateRepository.updateSellAmountDateSavedTrueById(
 								sellAmountDate.id,
 								response.id
 							);
 						} catch (e) {
-							console.error(e);	
+							console.error(e);
 							await AsyncStorage.setItem("isFetchingNotCompleated", "true");
 							await AsyncStorage.setItem("isNotSaved", "true");
 							this.setState({isSavingStarted: false});
@@ -456,8 +456,8 @@ class App extends Component {
 					for (const profitGroup of profitGroups) {
 						try {
 							let response = await this.apiService.createProfitGroup(
-								profitGroup.created_date, 
-								profitGroup.profit, 
+								profitGroup.created_date,
+								profitGroup.profit,
 								this.props.navigation
 							);
 
@@ -466,11 +466,11 @@ class App extends Component {
 							}
 
 							await this.profitHistoryRepository.updateProfitGroupSavedTrueById(
-								profitGroup.id, 
+								profitGroup.id,
 								response.id
 							);
 						} catch (e) {
-							console.error(e);	
+							console.error(e);
 							await AsyncStorage.setItem("isFetchingNotCompleated", "true");
 							await AsyncStorage.setItem("isNotSaved", "true");
 							this.setState({isSavingStarted: false});
@@ -496,7 +496,7 @@ class App extends Component {
 								profitHistory.count,
 								profitHistory.count_type,
 								profitHistory.profit,
-								profitHistory.created_date, 
+								profitHistory.created_date,
 								this.props.navigation
 							);
 
@@ -505,11 +505,11 @@ class App extends Component {
 							}
 
 							await this.profitHistoryRepository.updateProfitHistorySavedTrueById(
-								profitHistory.id, 
+								profitHistory.id,
 								response.id
 							);
 						} catch (e) {
-							console.error(e);	
+							console.error(e);
 							await AsyncStorage.setItem("isFetchingNotCompleated", "true");
 							await AsyncStorage.setItem("isNotSaved", "true");
 							this.setState({isSavingStarted: false});
@@ -523,24 +523,24 @@ class App extends Component {
 				if (profitHistoryGroupNotSaved == "true") {
 					console.log("Profit history group creating started. ⏳⏳⏳");
 
-					let profitHistoryGroups = 
+					let profitHistoryGroups =
 						await this.profitHistoryRepository.getProfitHistoryGroupSavedFalse();
 					for (const profitHistoryGroup of profitHistoryGroups) {
 						try {
-							let profitHistory = 
+							let profitHistory =
 								await this.profitHistoryRepository.findProfitHistoryById(
 									profitHistoryGroup.history_id
 								);
 
-							let profitGroup = 
+							let profitGroup =
 								await this.profitHistoryRepository.findProfitGroupById(
 									profitHistoryGroup.group_id
 								);
 
-							let response = 
+							let response =
 								await this.apiService.createProfitHistoryGroup(
 									profitHistory[0].global_id,
-									profitGroup[0].global_id, 
+									profitGroup[0].global_id,
 									this.props.navigation
 								);
 
@@ -553,7 +553,7 @@ class App extends Component {
 								response.id
 							);
 						} catch (e) {
-							console.error(e);	
+							console.error(e);
 							await AsyncStorage.setItem("isFetchingNotCompleated", "true");
 							await AsyncStorage.setItem("isNotSaved", "true");
 							this.setState({isSavingStarted: false});
@@ -566,16 +566,16 @@ class App extends Component {
 				if (profitAmountDateNotSaved == "true") {
 					console.log("Profit amount date creating started. ⏳⏳⏳");
 
-					let notSavedProfitAmountDates = 
+					let notSavedProfitAmountDates =
 						await this.amountDateRepository.getProfitAmountDateSavedFalse();
 					for (const profitAmountDate of notSavedProfitAmountDates) {
 						try {
 							console.log("PROFIT AMOUNT::", profitAmountDate);
-							
-							let response = 
+
+							let response =
 								await this.apiService.createProfitAmountDate(
 									profitAmountDate.date,
-									profitAmountDate.amount, 
+									profitAmountDate.amount,
 									this.props.navigation
 								);
 
@@ -584,7 +584,7 @@ class App extends Component {
 								response.id
 							);
 						} catch (e) {
-							console.error(e);	
+							console.error(e);
 							await AsyncStorage.setItem("isFetchingNotCompleated", "true");
 							await AsyncStorage.setItem("isNotSaved", "true");
 							this.setState({isSavingStarted: false});
@@ -597,26 +597,26 @@ class App extends Component {
 				await AsyncStorage.setItem("isFetchingNotCompleated", "false");
 				this.setState({isSavingStarted: false});
 			} catch (e) {
-				console.error(e);	
+				console.error(e);
 				await AsyncStorage.setItem("isNotSaved", "true");
 				this.setState({isSavingStarted: false});
 			}
 		}
 	}
 
-  componentWillUnmount() {
-    if (this.unsubscribe) {
-      this.unsubscribe();
-    }
-    if (this.logInternetStatusInterval) {
-      clearInterval(this.logInternetStatusInterval);
-    }
-  }
+	componentWillUnmount() {
+		if (this.unsubscribe) {
+			this.unsubscribe();
+		}
+		if (this.logInternetStatusInterval) {
+			clearInterval(this.logInternetStatusInterval);
+		}
+	}
 
-  render() {
-		const { theme, splashLoaded } = this.state;
-    if (!splashLoaded) {
-      return (
+	render() {
+		const {theme, splashLoaded} = this.state;
+		if (!splashLoaded) {
+			return (
 				<View style={styles.container}>
 					<Image
 						source={theme === "dark" ? require("./assets/splash-dark.png") : require("./assets/splash.png")}
@@ -625,35 +625,35 @@ class App extends Component {
 					/>
 				</View>
 			); // Or a loading indicator if preferred
-    }
+		}
 
-    const { fontsLoaded } = this.state;
+		const {fontsLoaded} = this.state;
 
-    if (!fontsLoaded) {
-      return (
+		if (!fontsLoaded) {
+			return (
 				<View style={styles.container}>
 					<Image
 						source={
-							theme === "dark" ? 
-							require("./assets/splash-dark.png") : 
-							require("./assets/splash.png")
+							theme === "dark" ?
+								require("./assets/splash-dark.png") :
+								require("./assets/splash.png")
 						}
 						style={styles.splashImage}
 						resizeMode="contain"
 					/>
 				</View>
 			);
-    }
+		}
 
-    return (
-      <GestureHandlerRootView style={{ flex: 1 }}>
+		return (
+			<GestureHandlerRootView style={{flex: 1}}>
 				{
-					this.state.notPayed && 
+					this.state.notPayed &&
 					(<Modal visible={this.state.notPayed}>
 						<View style={{
-							width: "100%", 
-							height: "100%", 
-							backgroundColor: "#181926", 
+							width: "100%",
+							height: "100%",
+							backgroundColor: "#181926",
 							paddingTop: 60,
 							paddingHorizontal: 16
 						}}>
@@ -663,28 +663,28 @@ class App extends Component {
 								fontSize: 38,
 								width: 280
 							}}>Oylik abonent to'lovi muddati keldi!</Text>
-							
-							<TouchableOpacity 
-								activeOpacity={1} 
+
+							<TouchableOpacity
+								activeOpacity={1}
 								onPress={async () => {
 									let tryCount = parseInt(
 										await AsyncStorage.getItem("paymentTryCount")
 									);
-									
+
 									if (tryCount >= 3) {
 										let isPayed = await this.apiService.getPayment(email, monthYear, navigation);
 										console.log("Payed: ", isPayed)
-										
-										if (isPayed == true) {						
+
+										if (isPayed == true) {
 											this.setState({
 												notPayed: false
 											})
 										}
-										
+
 										return;
 									} else {
 										await AsyncStorage.setItem("paymentTryCount", (tryCount + 1).toString());
-										
+
 										const currentDate = new Date();
 
 										const year = currentDate.getFullYear();
@@ -702,7 +702,7 @@ class App extends Component {
 										if (await AsyncStorage.getItem("lastPaymentShownHour") != hour.toString()) {
 											await AsyncStorage.setItem("lastPaymentShownHour", hour.toString());
 										}
-										
+
 										this.setState({
 											notPayed: false
 										});
@@ -720,7 +720,7 @@ class App extends Component {
 									top: 32,
 									right: 19
 								}}>
-								<RightArrowLight />
+								<RightArrowLight/>
 							</TouchableOpacity>
 
 							<Image
@@ -743,7 +743,7 @@ class App extends Component {
 									fontFamily: "Gilroy-Bold",
 									fontSize: 24
 								}}>JAMI</Text>
-		
+
 								<View style={{
 									display: "flex",
 									flexDirection: "row",
@@ -754,7 +754,7 @@ class App extends Component {
 										fontFamily: "Gilroy-Regular",
 										fontSize: 24
 									}}>126,529.30 </Text>
-		
+
 									<Text style={{
 										color: "white",
 										fontFamily: "Gilroy-Regular",
@@ -762,8 +762,8 @@ class App extends Component {
 									}}>so’m</Text>
 								</View>
 							</View>
-		
-							<TouchableOpacity 
+
+							<TouchableOpacity
 								style={{
 									backgroundColor: "black",
 									display: "flex",
@@ -783,28 +783,28 @@ class App extends Component {
 									fontFamily: "Gilroy-Black",
 									color: "white"
 								}}>TO"LASH</Text>
-								<RightArrow />
+								<RightArrow/>
 							</TouchableOpacity>
 						</View>
 					</Modal>)
 				}
 
-        <NavigationService />
-      </GestureHandlerRootView>
-    );
-  }
+				<NavigationService/>
+			</GestureHandlerRootView>
+		);
+	}
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  splashImage: {
-    width: "100%",
-    height: "100%",
-  },
+	container: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+	},
+	splashImage: {
+		width: "100%",
+		height: "100%",
+	},
 });
 
 AppRegistry.registerComponent("Backall", () => App);

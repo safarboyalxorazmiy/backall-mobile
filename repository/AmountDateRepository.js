@@ -9,79 +9,80 @@ class AmountDateRepository {
 		return new Promise((resolve, reject) => {
 			this.db.transaction(tx => {
 				tx.executeSql(
-					`CREATE TABLE IF NOT EXISTS profit_amount_date (
-						id INTEGER PRIMARY KEY AUTOINCREMENT,
-						date TEXT NOT NULL,
-						amount DOUBLE NOT NULL,
-						global_id INTEGER, 
-						saved boolean
-					);`
+					`CREATE TABLE IF NOT EXISTS profit_amount_date
+           (
+               id        INTEGER PRIMARY KEY AUTOINCREMENT,
+               date      TEXT   NOT NULL,
+               amount    DOUBLE NOT NULL,
+               global_id INTEGER,
+               saved     boolean
+           );`
 				);
 
 				tx.executeSql(
-					`CREATE TABLE IF NOT EXISTS sell_amount_date (
-						id INTEGER PRIMARY KEY AUTOINCREMENT,
-						date TEXT NOT NULL,              
-						amount DOUBLE NOT NULL,
-						global_id INTEGER,
-						saved boolean
-					);`
+					`CREATE TABLE IF NOT EXISTS sell_amount_date
+           (
+               id        INTEGER PRIMARY KEY AUTOINCREMENT,
+               date      TEXT   NOT NULL,
+               amount    DOUBLE NOT NULL,
+               global_id INTEGER,
+               saved     boolean
+           );`
 				);
 			})
 
 			resolve(true)
-    });
-  }
+		});
+	}
 
 	async createProfitAmountWithAllValues(profitAmount, date, global_id, saved) {
 		const insertQuery = `
-		INSERT INTO profit_amount_date (
-			date, 
-			amount,
-			global_id, 
-			saved
-		) VALUES (?, ?, ?, ?);`;
+        INSERT INTO profit_amount_date (date,
+                                        amount,
+                                        global_id,
+                                        saved)
+        VALUES (?, ?, ?, ?);`;
 		await this.db.transaction(async (tx) => {
-      await tx.executeSql(insertQuery, [
-					date, 
-					profitAmount, 
-					global_id, 
+			await tx.executeSql(insertQuery, [
+					date,
+					profitAmount,
+					global_id,
 					saved ? 1 : 0
 				], (tx, insertResults) => {
 					if (insertResults.rowsAffected > 0) {
-					console.log(`Profit amount inserted successfully`);
-				} else {
-					console.log(`Failed to insert profit amount`);
-				}
-			},
-			error => {
-				console.error(`Error inserting profit amount: ${error.message}`);
-			});
-    });
+						console.log(`Profit amount inserted successfully`);
+					} else {
+						console.log(`Failed to insert profit amount`);
+					}
+				},
+				error => {
+					console.error(`Error inserting profit amount: ${error.message}`);
+				});
+		});
 	}
 
 	async createSellAmountWithAllValues(sellAmount, date, global_id, saved) {
-		const insertQuery = 
-		`INSERT INTO sell_amount_date (date, amount, global_id, saved)
-			VALUES (?, ?, ?, ?);`;
+		const insertQuery =
+			`INSERT INTO sell_amount_date (date, amount, global_id, saved)
+       VALUES (?, ?, ?, ?);`;
 
-			await this.db.transaction(async (tx) => {
-				await tx.executeSql(
-					insertQuery, [date, sellAmount, global_id, saved ? 1 : 0], 
-					(tx, insertResults) => {
-						if (insertResults.rowsAffected > 0) {
-							console.log(`Sell amount inserted successfully`);
-						} else {
-							console.log(`Failed to insert sell amount`);
-						}
-					},
-					error => {
-						console.error("Error on createSellAmountWithAllValues: ", error)
+		await this.db.transaction(async (tx) => {
+			await tx.executeSql(
+				insertQuery, [date, sellAmount, global_id, saved ? 1 : 0],
+				(tx, insertResults) => {
+					if (insertResults.rowsAffected > 0) {
+						console.log(`Sell amount inserted successfully`);
+					} else {
+						console.log(`Failed to insert sell amount`);
 					}
-				);
+				},
+				error => {
+					console.error("Error on createSellAmountWithAllValues: ", error)
+				}
+			);
 		})
 	}
-	
+
 	async setProfitAmount(profitAmount, date) {
 		const selectQuery = `SELECT amount
                          FROM profit_amount_date
@@ -93,7 +94,8 @@ class AmountDateRepository {
 						const currentProfit = results.rows.item(0).amount;
 						const updatedProfit = currentProfit + profitAmount;
 						const updateQuery = `UPDATE profit_amount_date
-                                 SET amount = ?, saved = 0
+                                 SET amount = ?,
+                                     saved = 0
                                  WHERE date = ?;`;
 						tx.executeSql(updateQuery, [updatedProfit, date], (tx, updateResults) => {
 								if (updateResults.rowsAffected > 0) {
@@ -115,7 +117,7 @@ class AmountDateRepository {
 									},
 									error => {
 										console.error(`Error inserting profit amount: ${error.message}`);
-								});
+									});
 							});
 					} else {
 						const insertQuery = `INSERT INTO profit_amount_date (date, amount, global_id, saved)
@@ -134,11 +136,11 @@ class AmountDateRepository {
 				},
 				error => {
 					// If no record with the given date exists, insert a new record
-					
+
 				});
 		});
 	}
-	
+
 	async setSellAmount(sellAmount, date) {
 		const selectQuery = `SELECT amount
                          FROM sell_amount_date
@@ -150,7 +152,8 @@ class AmountDateRepository {
 						const currentSell = results.rows.item(0).amount;
 						const updatedSell = currentSell + sellAmount;
 						const updateQuery = `UPDATE sell_amount_date
-                                 SET amount = ?, saved = 0
+                                 SET amount = ?,
+                                     saved = 0
                                  WHERE date = ?;`;
 						tx.executeSql(updateQuery, [updatedSell, date], (tx, updateResults) => {
 								if (updateResults.rowsAffected > 0) {
@@ -197,36 +200,38 @@ class AmountDateRepository {
 	}
 
 	async updateProfitAmountDateSavedTrueById(local_id, global_id) {
-    try {
-      await this.db.transaction((tx) => {
-        tx.executeSql(
-          "UPDATE profit_amount_date SET saved = 1, global_id = ? WHERE id = ?",
-          [global_id, local_id]  // Use prepared statement for security
-        );
-      });
-    } catch (error) {
-      console.error(`Error updating product: ${error}`);
-      throw error; // Re-throw to handle the error in the calling code
-    }
-  }
+		try {
+			await this.db.transaction((tx) => {
+				tx.executeSql(
+					"UPDATE profit_amount_date SET saved = 1, global_id = ? WHERE id = ?",
+					[global_id, local_id]  // Use prepared statement for security
+				);
+			});
+		} catch (error) {
+			console.error(`Error updating product: ${error}`);
+			throw error; // Re-throw to handle the error in the calling code
+		}
+	}
 
 	async updateSellAmountDateSavedTrueById(local_id, global_id) {
-    try {
-      await this.db.transaction((tx) => {
-        tx.executeSql(
-          "UPDATE sell_amount_date SET saved = 1, global_id = ? WHERE id = ?",
-          [global_id, local_id]  // Use prepared statement for security
-        );
-      });
-    } catch (error) {
-      console.error(`Error updating product: ${error}`);
-      throw error; // Re-throw to handle the error in the calling code
-    }
-  }
-	
+		try {
+			await this.db.transaction((tx) => {
+				tx.executeSql(
+					"UPDATE sell_amount_date SET saved = 1, global_id = ? WHERE id = ?",
+					[global_id, local_id]  // Use prepared statement for security
+				);
+			});
+		} catch (error) {
+			console.error(`Error updating product: ${error}`);
+			throw error; // Re-throw to handle the error in the calling code
+		}
+	}
+
 	async getProfitAmountDateSavedFalse() {
 		return new Promise((resolve, reject) => {
-			const selectQuery = `SELECT * FROM profit_amount_date WHERE saved = 0;`;
+			const selectQuery = `SELECT *
+                           FROM profit_amount_date
+                           WHERE saved = 0;`;
 			this.db.transaction(tx => {
 				tx.executeSql(selectQuery, [], (tx, results) => {
 						if (results.rows.length > 0) {
@@ -244,7 +249,9 @@ class AmountDateRepository {
 
 	async getSellAmountDateSavedFalse() {
 		return new Promise((resolve, reject) => {
-			const selectQuery = `SELECT * FROM sell_amount_date WHERE saved = 0;`;
+			const selectQuery = `SELECT *
+                           FROM sell_amount_date
+                           WHERE saved = 0;`;
 			this.db.transaction(tx => {
 				tx.executeSql(selectQuery, [], (tx, results) => {
 						if (results.rows.length > 0) {
@@ -279,7 +286,7 @@ class AmountDateRepository {
 			});
 		});
 	}
-	
+
 	async getSellAmountInfoByDate(date) {
 		return new Promise((resolve, reject) => {
 			const selectQuery =
@@ -303,73 +310,75 @@ class AmountDateRepository {
 
 
 	async getProfitAmountInfoByDates(dates) {
-		const selectQuery = `SELECT date, amount FROM sell_amount_date WHERE date IN (${dates.map(() => '?').join(',')});`;
-		
+		const selectQuery = `SELECT date, amount
+                         FROM sell_amount_date
+                         WHERE date IN (${dates.map(() => '?').join(',')});`;
+
 		try {
-				const results = await new Promise((resolve, reject) => {
-						this.db.transaction(tx => {
-								tx.executeSql(
-										selectQuery,
-										dates,
-										(tx, results) => {
-												resolve(results);
-										},
-										error => {
-												reject(error);
-										}
-								);
-						});
+			const results = await new Promise((resolve, reject) => {
+				this.db.transaction(tx => {
+					tx.executeSql(
+						selectQuery,
+						dates,
+						(tx, results) => {
+							resolve(results);
+						},
+						error => {
+							reject(error);
+						}
+					);
 				});
+			});
 
-				// Process results and organize them into an object with date as key and amount as value
-				const amountsByDate = {};
-				for (let i = 0; i < results.rows.length; i++) {
-						const row = results.rows.item(i);
-						amountsByDate[row.date] = row.amount;
-				}
+			// Process results and organize them into an object with date as key and amount as value
+			const amountsByDate = {};
+			for (let i = 0; i < results.rows.length; i++) {
+				const row = results.rows.item(i);
+				amountsByDate[row.date] = row.amount;
+			}
 
-				return amountsByDate;
+			return amountsByDate;
 		} catch (error) {
-				throw new Error(`Error retrieving sell amounts: ${error.message}`);
+			throw new Error(`Error retrieving sell amounts: ${error.message}`);
 		}
 	}
 
 	async getSellAmountInfoByDates(dates) {
-		const selectQuery = 
-			`SELECT date, amount 
-			FROM profit_amount_date 
-			WHERE date IN (${dates.map(() => '?').join(',')});`;
-		
+		const selectQuery =
+			`SELECT date, amount
+       FROM profit_amount_date
+       WHERE date IN (${dates.map(() => '?').join(',')});`;
+
 		try {
-				const results = await new Promise((resolve, reject) => {
-						this.db.transaction(tx => {
-								tx.executeSql(
-									selectQuery,
-									dates,
-									(tx, results) => {
-										resolve(results);
-									},
-									error => {
-										reject(error);
-									}
-								);
-						});
+			const results = await new Promise((resolve, reject) => {
+				this.db.transaction(tx => {
+					tx.executeSql(
+						selectQuery,
+						dates,
+						(tx, results) => {
+							resolve(results);
+						},
+						error => {
+							reject(error);
+						}
+					);
 				});
+			});
 
-				// Process results and organize them into an object with date as key and amount as value
-				const amountsByDate = {};
-				for (let i = 0; i < results.rows.length; i++) {
-						const row = results.rows.item(i);
-						amountsByDate[row.date] = row.amount;
-				}
+			// Process results and organize them into an object with date as key and amount as value
+			const amountsByDate = {};
+			for (let i = 0; i < results.rows.length; i++) {
+				const row = results.rows.item(i);
+				amountsByDate[row.date] = row.amount;
+			}
 
-				return amountsByDate;
+			return amountsByDate;
 		} catch (error) {
-				throw new Error(`Error retrieving sell amounts: ${error.message}`);
+			throw new Error(`Error retrieving sell amounts: ${error.message}`);
 		}
 	}
 
-	
+
 }
 
 export default AmountDateRepository;

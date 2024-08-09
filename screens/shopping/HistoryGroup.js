@@ -1,34 +1,34 @@
 import React from "react";
-import { 
-  View, 
-  Text, 
-  StyleSheet,
+import {
+	View,
+	Text,
+	StyleSheet,
 	Dimensions,
-	TouchableOpacity, 
-  AsyncStorage
- } from "react-native";
-import { memo } from 'react';
+	TouchableOpacity,
+	AsyncStorage
+} from "react-native";
+import {memo} from 'react';
 import HistoryItem from "./HistoryItem";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
-const HistoryGroup = ({ item }) => {
-    return (
-			<>
-        <View style={styles.historyTitleWrapper}>
-          <Text style={styles.historyTitleText}>{item.dateInfo}</Text>
+const HistoryGroup = ({item}) => {
+	return (
+		<>
+			<View style={styles.historyTitleWrapper}>
+				<Text style={styles.historyTitleText}>{item.dateInfo}</Text>
 
-          <Text style={styles.historyTitleText}>//</Text>
+				<Text style={styles.historyTitleText}>//</Text>
 
-          <Text style={styles.historyTitleText}>{`${item.totalAmount.toLocaleString()} so’m`}</Text>
-        </View>
+				<Text style={styles.historyTitleText}>{`${item.totalAmount.toLocaleString()} so’m`}</Text>
+			</View>
 
-        {item.histories.map((history) => (
-          <HistoryItem key={history.id} history={history} />
-        ))}
-      </>
-		);
+			{item.histories.map((history) => (
+				<HistoryItem key={history.id} history={history}/>
+			))}
+		</>
+	);
 };
 
 const styles = StyleSheet.create({
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		paddingTop: 50
 	},
-	
+
 	pageTitle: {
 		borderBottomColor: "#AFAFAF",
 		borderBottomWidth: 1,
@@ -51,14 +51,14 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "center"
 	},
-	
+
 	pageTitleText: {
 		fontFamily: "Gilroy-SemiBold",
 		fontWeight: "600",
 		fontSize: 18,
 		lineHeight: 24
 	},
-	
+
 	navbar: {
 		borderTopWidth: 1,
 		borderTopColor: "#EFEFEF",
@@ -71,17 +71,17 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		alignItems: "flex-start"
 	},
-	
+
 	navbarWeb: {
 		width: "100%" - 20
 	},
-	
+
 	navItem: {
 		display: "flex",
 		alignItems: "center",
 		justifyContent: "center"
 	},
-	
+
 	activeBorder: {
 		marginBottom: 30,
 		width: 47,
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
 		borderBottomRightRadius: 2,
 		backgroundColor: "black"
 	},
-	
+
 	inactiveBorder: {
 		marginBottom: 30,
 		width: 47,
@@ -98,18 +98,18 @@ const styles = StyleSheet.create({
 		borderBottomLeftRadius: 2,
 		borderBottomRightRadius: 2,
 	},
-	
+
 	scan: {
 		backgroundColor: "black",
 		padding: 21,
 		borderRadius: 50,
 		marginTop: 10
 	},
-	
+
 	productList: {
 		marginTop: 0
 	},
-	
+
 	product: {
 		display: "flex",
 		flexDirection: "row",
@@ -121,24 +121,24 @@ const styles = StyleSheet.create({
 		borderTopWidth: 1,
 		borderColor: "#D9D9D9"
 	},
-	
+
 	productTitle: {
 		fontSize: 24,
 		fontWeight: "bold",
 		width: 150
 	},
-	
+
 	productCount: {
 		fontFamily: "Roboto-Bold",
 		fontSize: 24,
 		fontWeight: "semibold"
 	},
-	
+
 	hour: {
 		color: "#6D7696",
 		fontSize: 12
 	},
-	
+
 	buttons: {
 		width: screenWidth - (17 + 17),
 		marginTop: 22,
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		marginBottom: 40
 	},
-	
+
 	button: {
 		backgroundColor: "black",
 		paddingVertical: 10,
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		gap: 12
 	},
-	
+
 	buttonText: {
 		color: "white",
 		fontSize: 16,
@@ -165,20 +165,20 @@ const styles = StyleSheet.create({
 		fontFamily: "Roboto-Bold",
 		textTransform: "uppercase"
 	},
-	
+
 	calendarWrapper: {
 		marginTop: 24,
 		width: screenWidth - (16 * 2),
 		marginLeft: "auto",
 		marginRight: "auto",
 	},
-	
+
 	calendarIcon: {
 		position: "absolute",
 		right: 16,
 		top: 14
 	},
-	
+
 	calendarInput: {
 		width: screenWidth - (16 * 2),
 		position: "relative",
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		borderRadius: 8
 	},
-	
+
 	calendarInputActive: {
 		width: screenWidth - (16 * 2),
 		position: "relative",
@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		borderRadius: 8
 	},
-	
+
 	calendarInputPlaceholderActive: {
 		fontSize: 16,
 		lineHeight: 24,
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
 		fontWeight: "500",
 		color: "#FFFFFF"
 	},
-	
+
 	calendarInputPlaceholder: {
 		fontSize: 16,
 		lineHeight: 24,
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
 		fontWeight: "500",
 		color: "#AAAAAA"
 	},
-	
+
 	calendarLabel: {
 		fontFamily: "Gilroy-Medium",
 		fontWeight: "500",
@@ -238,14 +238,14 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 10,
 		paddingVertical: 10
 	},
-	
+
 	historyTitleText: {
 		fontFamily: "Gilroy-Medium",
 		fontWeight: "500",
 		fontSize: 14,
 		lineHeight: 22
 	},
-	
+
 	history: {
 		display: "flex",
 		flexDirection: "row",
@@ -257,20 +257,20 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 16,
 		paddingVertical: 6
 	},
-	
+
 	historyAmountWrapper: {
 		display: "flex",
 		flexDirection: "row",
 		alignItems: "center"
 	},
-	
+
 	historyAmount: {
 		marginLeft: 10,
 		fontFamily: "Gilroy-Medium",
 		fontWeight: "500",
 		fontSize: 16
 	},
-	
+
 	historyTime: {
 		fontFamily: "Gilroy-Medium",
 		fontWeight: "500",

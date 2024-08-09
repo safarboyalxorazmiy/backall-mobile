@@ -405,8 +405,7 @@ class Home extends Component {
 					100,
 					this.props.navigation
 				);
-		}
-		catch (error) {
+		} catch (error) {
 			console.error("Error fetching global products:", error);
 			this.setState({
 				lastSize: size,
