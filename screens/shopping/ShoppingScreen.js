@@ -533,9 +533,7 @@ class Shopping extends Component {
         const {navigation} = this.props;
 
         navigation.addListener("focus", async () => {
-            console.log("FOCUSED")
             await this.getDateInfo();
-
 
             // New history created load new items **
             if (await AsyncStorage.getItem("shoppingFullyLoaded") != "true") {
