@@ -620,6 +620,44 @@ class ApiService {
 		}
 	}
 
+	async getSellAmountByDate(date, navigation) {
+		try {
+			const accessToken = await this.tokenService.retrieveAccessToken();
+			const storeId = parseInt(await this.getStoreId());
+
+			const requestOptions = {
+				method: "GET",
+				headers: {
+					"Authorization": `Bearer ${accessToken}`
+				}
+			};
+
+			console.log("Sending request to:", `${serverUrl}/api/v1/store/sell/amount/date/get/by?date=${date}&storeId=${storeId}`);
+			console.log("Request body:", requestOptions);
+
+			const response = await fetch(`${serverUrl}/api/v1/store/sell/amount/date/get/by?date=${date}&storeId=${storeId}`, requestOptions);
+
+			console.log("Response status:", response.status);
+
+			if (response.status == 401) {
+				await this.logout(navigation);
+				return;
+			}
+
+			const responseBody = await response.json();
+			console.log("Response body:", responseBody);
+
+			if (!response.ok) {
+				throw new Error("Network response was not ok");
+			}
+
+			return responseBody;
+		} catch (error) {
+			console.log("Error occurred: ", error);
+			throw error; // Re-throwing the error for handling in the calling code
+		}
+	}
+
 	async getSellHistoryGroup(lastId, page, size, navigation) {
 		try {
 			const accessToken = await this.tokenService.retrieveAccessToken();

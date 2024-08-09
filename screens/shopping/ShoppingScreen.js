@@ -352,6 +352,8 @@ class Shopping extends Component {
 		let allSellHistories = response.content;
 		let grouped = [...this.state.groupedHistories];  // Shallow copy of the array
 
+		let lastAmount;
+		let lastDate;
 		for (const history of allSellHistories) {
 			const date = history.createdDate.split("T")[0];
 			let groupIndex = grouped.findIndex(group => group.date === date);
@@ -374,9 +376,18 @@ class Shopping extends Component {
 				saved: false
 			});
 
-			// Update totalAmount if needed
-			grouped[groupIndex].totalAmount += history.amount;  // Assuming totalAmount is a sum of the amounts
+			if (lastDate !== date) {
+				try {
+					let response = await this.apiService.getSellAmountByDate(date, this.props.navigation);
+					lastAmount = response.amount;
+				} catch(e) {
+					lastAmount = 0;
+				}
 
+				lastDate = date;
+			}
+
+			grouped[groupIndex].totalAmount = lastAmount;
 			lastGroupId++;
 		}
 
@@ -467,7 +478,8 @@ class Shopping extends Component {
 			console.log("LAST GROUP ID: ", lastGroupId);
 
 			try {
-				let sellHistories = await this.sellHistoryRepository.getAllSellGroup(lastGroupId);
+				let sellHistories =
+					await this.sellHistoryRepository.getAllSellGroup(lastGroupId);
 
 				if (sellHistories.length === 0) {
 					this.setState({
@@ -492,32 +504,22 @@ class Shopping extends Component {
 			const startTime = performance.now();
 
 			const grouped = {};
-			const uniqueDates = new Set();
 
 			for (const history of allSellHistories) {
 				const date = history.created_date.split("T")[0];
 				if (!grouped[date]) {
-					uniqueDates.add(date);
 					const formattedDate = this.formatDate(date);
 					grouped[date] = {date, dateInfo: formattedDate, histories: [], totalAmount: 0};
 				}
+
+				grouped[date].totalAmount += history.amount;
 				grouped[date].histories.push(history);
-			}
-
-			const totalAmounts =
-				await this.amountDateRepository.getSellAmountInfoByDates([...uniqueDates]);
-
-			console.log(totalAmounts)
-
-			for (const date of uniqueDates) {
-				grouped[date].totalAmount = totalAmounts[date] || 0;
 			}
 
 			this.setState({
 				sellingHistory: allSellHistories,
 				groupedHistories: Object.values(grouped),
-				lastGroupId: lastGroupId,
-
+				lastGroupId: lastGroupId
 			});
 
 			const endTime = performance.now();
