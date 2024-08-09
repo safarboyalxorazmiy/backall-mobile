@@ -394,7 +394,7 @@ class Home extends Component {
 		console.log("GETTING SELL GROUPS ⏳⏳⏳");
 
 		let page = 0;
-		let size = 1000;
+		let size = 100;
 
 		let response;
 		try {
@@ -402,7 +402,7 @@ class Home extends Component {
 				await this.apiService.getSellGroups(
 					lastSellGroupGlobalId,
 					0,
-					1000,
+					100,
 					this.props.navigation
 				);
 		}
@@ -443,7 +443,7 @@ class Home extends Component {
 			await this.apiService.getLastSellHistoryGlobalId(this.props.navigation);
 
 		let page = 0;
-		let size = 1000;
+		let size = 100;
 
 		let response;
 		try {
@@ -493,7 +493,7 @@ class Home extends Component {
 			await this.apiService.getLastSellHistoryGroupGlobalId(this.props.navigation);
 
 		let page = 0;
-		let size = 1000;
+		let size = 100;
 
 		let response;
 		try {
@@ -539,7 +539,7 @@ class Home extends Component {
 			await this.apiService.getLastSellAmountDateGlobalId(this.props.navigation);
 
 		let page = 0;
-		let size = 1000;
+		let size = 100;
 
 		let response;
 		try {
@@ -585,7 +585,7 @@ class Home extends Component {
 			await this.apiService.getLastProfitGroupGlobalId(this.props.navigation);
 
 		let page = 0;
-		let size = 1000;
+		let size = 100;
 
 		let response;
 		try {
@@ -636,7 +636,7 @@ class Home extends Component {
 			await this.apiService.getLastProfitHistoryId(this.props.navigation);
 
 		let page = 0;
-		let size = 1000;
+		let size = 100;
 
 		let response;
 		try {
@@ -691,7 +691,7 @@ class Home extends Component {
 			await this.apiService.getLastProfitHistoryGroupId(this.props.navigation);
 
 		let page = 0;
-		let size = 1000;
+		let size = 100;
 
 		let response;
 		try {
@@ -744,7 +744,7 @@ class Home extends Component {
 			await this.apiService.getLastProfitAmountDateId(this.props.navigation);
 
 		let page = 0;
-		let size = 1000;
+		let size = 100;
 
 		let response;
 		try {

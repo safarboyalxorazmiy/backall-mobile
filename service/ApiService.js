@@ -1569,6 +1569,7 @@ class ApiService {
   async check(email, password) {
     await AsyncStorage.setItem("isRequestInProgress", "true");
 
+		console.log(serverUrl + "/api/v1/auth/check")
     try {
         const response = await fetch(serverUrl + "/api/v1/auth/check", {
             method: "POST",
