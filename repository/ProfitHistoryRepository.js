@@ -132,7 +132,7 @@ class ProfitHistoryRepository {
 
 			return rows;
 		} catch (error) {
-			console.error("Error retrieving sell history:", error);
+			console.error("Error retrieving profit history:", error);
 			throw error;
 		}
 	}
@@ -202,7 +202,7 @@ class ProfitHistoryRepository {
 			console.log(rows)
 			return rows;
 		} catch (error) {
-			console.error("Error getTop10SellGroupByDate:", error);
+			console.error("Error getTop10ProfitGroupByDate:", error);
 			throw error;
 		}
 	}
@@ -359,7 +359,7 @@ class ProfitHistoryRepository {
 			const rows = result.rows._array;
 			return rows;
 		} catch (error) {
-			console.error("Error retrieving sell history:", error);
+			console.error("Error retrieving profit history:", error);
 			throw error;
 		}
 	}
@@ -392,7 +392,7 @@ class ProfitHistoryRepository {
 			const rows = result.rows._array;
 			return rows;
 		} catch (error) {
-			console.error("Error retrieving sell history:", error);
+			console.error("Error retrieving profit history:", error);
 			throw error;
 		}
 	}
@@ -424,7 +424,7 @@ class ProfitHistoryRepository {
 			const rows = result.rows._array;
 			return rows;
 		} catch (error) {
-			console.error("Error retrieving sell history:", error);
+			console.error("Error retrieving profit history:", error);
 			throw error;
 		}
 	}
@@ -456,7 +456,7 @@ class ProfitHistoryRepository {
 			const rows = result.rows._array;
 			return rows;
 		} catch (error) {
-			console.error("Error retrieving sell history:", error);
+			console.error("Error retrieving profit history:", error);
 			throw error;
 		}
 	}
@@ -537,7 +537,7 @@ class ProfitHistoryRepository {
 			const rows = result.rows._array;
 			return rows;
 		} catch (error) {
-			console.error("Error retrieving sell history:", error);
+			console.error("Error retrieving profit history:", error);
 			throw error;
 		}
 	}
@@ -569,7 +569,7 @@ class ProfitHistoryRepository {
 			const rows = result.rows._array;
 			return rows;
 		} catch (error) {
-			console.error("Error retrieving sell history:", error);
+			console.error("Error retrieving profit history:", error);
 			throw error;
 		}
 	}
@@ -604,7 +604,7 @@ class ProfitHistoryRepository {
 			const rows = result.rows._array;
 			return rows;
 		} catch (error) {
-			console.error("Error retrieving sell history:", error);
+			console.error("Error retrieving profit history:", error);
 			throw error;
 		}
 	}
@@ -636,7 +636,7 @@ class ProfitHistoryRepository {
 			const rows = result.rows._array;
 			return rows;
 		} catch (error) {
-			console.error("Error retrieving sell history:", error);
+			console.error("Error retrieving profit history:", error);
 			throw error;
 		}
 	}
@@ -668,7 +668,7 @@ class ProfitHistoryRepository {
 			const rows = result.rows._array;
 			return rows;
 		} catch (error) {
-			console.error("Error retrieving sell history:", error);
+			console.error("Error retrieving profit history:", error);
 			throw error;
 		}
 	}
@@ -700,7 +700,7 @@ class ProfitHistoryRepository {
 			const rows = result.rows._array;
 			return rows;
 		} catch (error) {
-			console.error("Error retrieving sell history:", error);
+			console.error("Error retrieving profit history:", error);
 			throw error;
 		}
 	}
@@ -739,7 +739,7 @@ class ProfitHistoryRepository {
 
 			return rows;
 		} catch (error) {
-			console.error("Error retrieving sell history:", error);
+			console.error("Error retrieving profit history:", error);
 			throw error;
 		}
 	}
@@ -807,7 +807,7 @@ class ProfitHistoryRepository {
 			const rows = result.rows._array;
 			return rows;
 		} catch (error) {
-			console.error("Error retrieving sell history:", error);
+			console.error("Error retrieving profit history:", error);
 			throw error;
 		}
 	}
@@ -1001,7 +1001,7 @@ class ProfitHistoryRepository {
 			});
 
 			if (!result || !result.rows || result.rows.length === 0) {
-				console.log('No sell history found for groupId:', groupId);
+				console.log('No profit history found for groupId:', groupId);
 				return [];
 			}
 
@@ -1065,7 +1065,7 @@ class ProfitHistoryRepository {
 
 			return result.rows._array;
 		} catch (error) {
-			console.error("Error retrieving sell history:", error);
+			console.error("Error retrieving profit history:", error);
 			throw error;
 		}
 	}
@@ -1098,7 +1098,141 @@ class ProfitHistoryRepository {
 			const rows = result.rows._array;
 			return rows;
 		} catch (error) {
-			console.error("Error retrieving sell history:", error);
+			console.error("Error retrieving profit history:", error);
+			throw error;
+		}
+	}
+
+	async getLastProfitGroup() {
+		try {
+			const query = `
+          SELECT *
+          FROM profit_group
+          ORDER BY ID DESC
+          LIMIT 1;
+			`;
+
+			const result = await new Promise((resolve, reject) => {
+				this.db.transaction((tx) => {
+					tx.executeSql(
+						query,
+						[],
+						(_, resultSet) => resolve(resultSet),
+						(_, error) => reject(error)
+					);
+				});
+			});
+
+			if (!result || !result.rows || !result.rows._array) {
+				console.error("Unexpected result structure:", result);
+				throw new Error("Unexpected result structure");
+			}
+
+			const rows = result.rows._array[0];
+
+			return rows;
+		} catch (error) {
+			console.error("Error getLastProfitHistoryGroupId:", error);
+			throw error;
+		}
+	}
+
+	async getFirstProfitGroup() {
+		try {
+			const query = `
+          SELECT *
+          FROM profit_group
+          ORDER BY ID ASC
+          LIMIT 1;
+			`;
+
+			const result = await new Promise((resolve, reject) => {
+				this.db.transaction((tx) => {
+					tx.executeSql(
+						query,
+						[],
+						(_, resultSet) => resolve(resultSet),
+						(_, error) => reject(error)
+					);
+				});
+			});
+
+			if (!result || !result.rows || !result.rows._array) {
+				console.error("Unexpected result structure:", result);
+				throw new Error("Unexpected result structure");
+			}
+
+			const rows = result.rows._array[0];
+
+			return rows;
+		} catch (error) {
+			console.error("Error getLastProfitHistoryGroupId:", error);
+			throw error;
+		}
+	}
+
+	async deleteByIdLessThan(id) {
+		try {
+			const query = `
+          DELETE
+          FROM profit_group
+          WHERE id <= ?;
+			`;
+
+			const result = await new Promise((resolve, reject) => {
+				this.db.transaction((tx) => {
+					tx.executeSql(
+						query,
+						[id],
+						(_, resultSet) => resolve(resultSet),
+						(_, error) => reject(error)
+					);
+				});
+			});
+
+			// Check if any rows were affected by the deletion
+			if (result && result.rowsAffected > 0) {
+				console.log("Rows deleted:", result.rowsAffected);
+				return true; // Deletion was successful
+			} else {
+				console.log("No rows were deleted.");
+				return false; // No rows were deleted
+			}
+		} catch (error) {
+			console.error("Error in deleteByIdGreaterThan:", error);
+			return false; // Return false in case of an error
+		}
+	}
+
+	async getAllProfitGroup(lastHistoryId) {
+		try {
+			const query = `
+          SELECT *
+          FROM profit_group
+          where id <= ${lastHistoryId}
+          ORDER BY id DESC
+          limit 11;
+			`;
+
+			const result = await new Promise((resolve, reject) => {
+				this.db.transaction((tx) => {
+					tx.executeSql(
+						query,
+						[],
+						(_, resultSet) => resolve(resultSet),
+						(_, error) => reject(error)
+					);
+				});
+			});
+
+			if (!result || !result.rows || !result.rows._array) {
+				throw new Error("Unexpected result structure");
+			}
+
+			const rows = result.rows._array;
+			return rows;
+		} catch (error) {
+			console.error("Error getAllProfitGroup:", error);
 			throw error;
 		}
 	}
