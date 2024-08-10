@@ -352,8 +352,8 @@ class Shopping extends Component {
 		let allSellHistories = response.content;
 		let grouped = [...this.state.groupedHistories];  // Shallow copy of the array
 
-		let lastAmount;
 		let lastDate;
+		let lastAmount;
 		for (const history of allSellHistories) {
 			const date = history.createdDate.split("T")[0];
 			let groupIndex = grouped.findIndex(group => group.date === date);
@@ -505,6 +505,8 @@ class Shopping extends Component {
 
 			const grouped = {};
 
+			let lastDate;
+			let lastAmount;
 			for (const history of allSellHistories) {
 				const date = history.created_date.split("T")[0];
 				if (!grouped[date]) {
@@ -512,7 +514,13 @@ class Shopping extends Component {
 					grouped[date] = {date, dateInfo: formattedDate, histories: [], totalAmount: 0};
 				}
 
-				grouped[date].totalAmount += history.amount;
+
+				if (lastDate !== date) {
+					lastAmount = await this.amountDateRepository.getSellAmountInfoByDate(date);
+					lastDate = date;
+				}
+
+				grouped[date].totalAmount = lastAmount;
 				grouped[date].histories.push(history);
 			}
 
@@ -595,6 +603,8 @@ class Shopping extends Component {
 
 					const grouped = {};
 
+					let lastDate;
+					let lastAmount;
 					for (const history of allSellHistories) {
 						const date = history.created_date.split("T")[0];
 						if (!grouped[date]) {
@@ -602,7 +612,12 @@ class Shopping extends Component {
 							grouped[date] = {date, dateInfo: formattedDate, histories: [], totalAmount: 0};
 						}
 
-						grouped[date].totalAmount += history.amount;
+						if (lastDate !== date) {
+							lastAmount = await this.amountDateRepository.getSellAmountInfoByDate(date);
+							lastDate = date;
+						}
+
+						grouped[date].totalAmount = lastAmount;
 						grouped[date].histories.push(history);
 					}
 
@@ -672,6 +687,8 @@ class Shopping extends Component {
 				const grouped = {};
 				const uniqueDates = new Set();
 
+				let lastDate;
+				let lastAmount;
 				for (const history of allSellHistories) {
 					const date = history.created_date.split("T")[0];
 					if (!grouped[date]) {
@@ -679,6 +696,13 @@ class Shopping extends Component {
 						const formattedDate = this.formatDate(date);
 						grouped[date] = {date, dateInfo: formattedDate, histories: [], totalAmount: 0};
 					}
+
+					if (lastDate !== date) {
+						lastAmount = await this.amountDateRepository.getSellAmountInfoByDate(date);
+						lastDate = date;
+					}
+
+					grouped[date].totalAmount = lastAmount;
 					grouped[date].histories.push(history);
 				}
 
