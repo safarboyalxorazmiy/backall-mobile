@@ -54,7 +54,8 @@ class Shopping extends Component {
 			lastSellAmountDatePage: 0,
 			lastSellAmountDateSize: 10,
 
-			loading: false
+			loading: false,
+			globalFullyLoaded: false
 		};
 
 		this.sellHistoryRepository = new SellHistoryRepository();
@@ -323,7 +324,7 @@ class Shopping extends Component {
 	};
 
 	async loadMore() {
-		if (this.state.loading) {
+		if (this.state.loading || this.state.globalFullyLoaded) {
 			return;
 		}
 
@@ -344,7 +345,11 @@ class Shopping extends Component {
 		}
 
 		if (!response || !response.content || response.content.length === 0) {
-			this.setState({loading: false});
+
+			this.setState({
+				loading: false,
+				globalFullyLoaded: true
+			});
 			return;
 		}
 
@@ -512,7 +517,6 @@ class Shopping extends Component {
 					grouped[date] = {date, dateInfo: formattedDate, histories: [], totalAmount: 0};
 				}
 
-
 				if (lastDate !== date) {
 					lastAmount = await this.amountDateRepository.getSellAmountInfoByDate(date);
 					lastDate = date;
@@ -550,10 +554,7 @@ class Shopping extends Component {
 				let lastGroupId = lastSellGroup.id;
 
 				if ((lastGroupId - 100) > 0) {
-					let isDeleted =
-						await this.sellHistoryRepository.deleteByIdLessThan(lastGroupId - 100);
-
-					console.log("DELETED SUCCESSFULLY.")
+					await this.sellHistoryRepository.deleteByIdLessThan(lastGroupId - 100);
 				}
 
 				// Explanation for firstSellGroup. We need it for getting rest of rows from global.
@@ -561,6 +562,7 @@ class Shopping extends Component {
 				let firstSellGroup = await this.sellHistoryRepository.getFirstSellGroup();
 				this.setState({
 					firstGroupGlobalId: firstSellGroup.global_id,
+					globalFullyLoaded: false,
 					loading: true
 				});
 
