@@ -674,9 +674,54 @@ class Shopping extends Component {
 						break;
 					}
 
-					allSellHistories.push(...sellHistories);
-
 					lastGroupId -= 11;
+
+					let grouped = [...this.state.groupedHistories];  // Shallow copy of the array
+
+					let lastDate;
+					let lastAmount;
+					for (const history of sellHistories) {
+						const date = history.created_date.split("T")[0];
+						let groupIndex = grouped.findIndex(group => group.date === date);
+
+						if (groupIndex === -1) {
+							const formattedDate = this.formatDate(date);
+							grouped.push({
+								date,
+								dateInfo: formattedDate,
+								histories: [],
+								totalAmount: 0
+							});
+							groupIndex = grouped.length - 1;
+						}
+
+						grouped[groupIndex].histories.push({
+							id: history.id,
+							created_date: history.created_date,
+							amount: history.amount,
+							saved: false
+						});
+
+						if (lastDate !== date) {
+							try {
+								let response = await this.apiService.getSellAmountByDate(date, this.props.navigation);
+								lastAmount = response.amount;
+							} catch (e) {
+								lastAmount = 0;
+							}
+
+							lastDate = date;
+						}
+
+						grouped[groupIndex].totalAmount = lastAmount;
+					}
+
+					this.setState(prevState => ({
+						sellingHistory: [...prevState.sellingHistory, ...sellHistories],
+						groupedHistories: grouped,
+						lastGroupId: lastGroupId,
+						loading: false
+					}));
 
 					await new Promise(resolve => setTimeout(resolve, 100)); // Adding delay to manage UI thread load
 				} catch (error) {
@@ -688,64 +733,21 @@ class Shopping extends Component {
 					break;
 				}
 
-				const startTime = performance.now();
 
-				const grouped = {};
-				const uniqueDates = new Set();
+				/* FOR BOSS (MODAL) **
+				let notAllowed = await AsyncStorage.getItem("not_allowed");
+				this.setState({notAllowed: notAllowed}) */
 
-				let lastDate;
-				let lastAmount;
-				for (const history of allSellHistories) {
-					const date = history.created_date.split("T")[0];
-					if (!grouped[date]) {
-						uniqueDates.add(date);
-						const formattedDate = this.formatDate(date);
-						grouped[date] = {date, dateInfo: formattedDate, histories: [], totalAmount: 0};
-					}
+				/* Month sell amount setting value ** */
+				let thisMonthSellAmount = parseInt(await AsyncStorage.getItem("month_sell_amount"));
 
-					if (lastDate !== date) {
-						lastAmount = await this.amountDateRepository.getSellAmountInfoByDate(date);
-						lastDate = date;
-					}
+				let currentDate = new Date();
+				let currentMonth = currentDate.getMonth();
+				let lastStoredMonth = parseInt(await AsyncStorage.getItem("month"));
 
-					grouped[date].totalAmount = lastAmount;
-					grouped[date].histories.push(history);
+				if (currentMonth === lastStoredMonth) {
+					this.setState({thisMonthSellAmount: thisMonthSellAmount});
 				}
-
-				const totalAmounts = await this.amountDateRepository.getSellAmountInfoByDates([...uniqueDates]);
-
-				for (const date of uniqueDates) {
-					grouped[date].totalAmount = totalAmounts[date] || 0;
-				}
-
-				this.setState({
-					sellingHistory: allSellHistories,
-					groupedHistories: Object.values(grouped),
-					lastGroupId: lastGroupId
-				});
-
-				const endTime = performance.now();
-				const executionTime = endTime - startTime;
-				console.log(`Execution time: ${executionTime} milliseconds`);
-			}
-
-			this.setState({
-				loading: false
-			});
-
-			/* FOR BOSS (MODAL) **
-			let notAllowed = await AsyncStorage.getItem("not_allowed");
-			this.setState({notAllowed: notAllowed}) */
-
-			/* Month sell amount setting value ** */
-			let thisMonthSellAmount = parseInt(await AsyncStorage.getItem("month_sell_amount"));
-
-			let currentDate = new Date();
-			let currentMonth = currentDate.getMonth();
-			let lastStoredMonth = parseInt(await AsyncStorage.getItem("month"));
-
-			if (currentMonth === lastStoredMonth) {
-				this.setState({thisMonthSellAmount: thisMonthSellAmount});
 			}
 		});
 	}
@@ -932,251 +934,252 @@ class Shopping extends Component {
 	}
 }
 
-const styles = StyleSheet.create({
-	container: {
-		width: "100%",
-		flex: 1,
-		backgroundColor: "#fff",
-		alignItems: "center",
-		paddingTop: 50
-	},
+const
+	styles = StyleSheet.create({
+		container: {
+			width: "100%",
+			flex: 1,
+			backgroundColor: "#fff",
+			alignItems: "center",
+			paddingTop: 50
+		},
 
-	pageTitle: {
-		borderBottomColor: "#AFAFAF",
-		borderBottomWidth: 1,
-		width: screenWidth - (16 * 2),
-		marginLeft: "auto",
-		marginRight: "auto",
-		height: 44,
-		display: "flex",
-		alignItems: "center",
-		justifyContent: "center"
-	},
+		pageTitle: {
+			borderBottomColor: "#AFAFAF",
+			borderBottomWidth: 1,
+			width: screenWidth - (16 * 2),
+			marginLeft: "auto",
+			marginRight: "auto",
+			height: 44,
+			display: "flex",
+			alignItems: "center",
+			justifyContent: "center"
+		},
 
-	pageTitleText: {
-		fontFamily: "Gilroy-SemiBold",
-		fontWeight: "600",
-		fontSize: 18,
-		lineHeight: 24
-	},
+		pageTitleText: {
+			fontFamily: "Gilroy-SemiBold",
+			fontWeight: "600",
+			fontSize: 18,
+			lineHeight: 24
+		},
 
-	navbar: {
-		borderTopWidth: 1,
-		borderTopColor: "#EFEFEF",
-		paddingHorizontal: 30,
-		width: "100%",
-		backgroundColor: "white",
-		height: 93,
-		display: "flex",
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "flex-start"
-	},
+		navbar: {
+			borderTopWidth: 1,
+			borderTopColor: "#EFEFEF",
+			paddingHorizontal: 30,
+			width: "100%",
+			backgroundColor: "white",
+			height: 93,
+			display: "flex",
+			flexDirection: "row",
+			justifyContent: "space-between",
+			alignItems: "flex-start"
+		},
 
-	navbarWeb: {
-		width: "100%" - 20
-	},
+		navbarWeb: {
+			width: "100%" - 20
+		},
 
-	navItem: {
-		display: "flex",
-		alignItems: "center",
-		justifyContent: "center"
-	},
+		navItem: {
+			display: "flex",
+			alignItems: "center",
+			justifyContent: "center"
+		},
 
-	activeBorder: {
-		marginBottom: 30,
-		width: 47,
-		height: 4,
-		borderBottomLeftRadius: 2,
-		borderBottomRightRadius: 2,
-		backgroundColor: "black"
-	},
+		activeBorder: {
+			marginBottom: 30,
+			width: 47,
+			height: 4,
+			borderBottomLeftRadius: 2,
+			borderBottomRightRadius: 2,
+			backgroundColor: "black"
+		},
 
-	inactiveBorder: {
-		marginBottom: 30,
-		width: 47,
-		height: 4,
-		borderBottomLeftRadius: 2,
-		borderBottomRightRadius: 2,
-	},
+		inactiveBorder: {
+			marginBottom: 30,
+			width: 47,
+			height: 4,
+			borderBottomLeftRadius: 2,
+			borderBottomRightRadius: 2,
+		},
 
-	scan: {
-		backgroundColor: "black",
-		padding: 21,
-		borderRadius: 50,
-		marginTop: 10
-	},
+		scan: {
+			backgroundColor: "black",
+			padding: 21,
+			borderRadius: 50,
+			marginTop: 10
+		},
 
-	productList: {
-		marginTop: 0
-	},
+		productList: {
+			marginTop: 0
+		},
 
-	product: {
-		display: "flex",
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "center",
-		width: screenWidth - (17 + 17),
-		paddingVertical: 15,
-		paddingHorizontal: 6,
-		borderTopWidth: 1,
-		borderColor: "#D9D9D9"
-	},
+		product: {
+			display: "flex",
+			flexDirection: "row",
+			justifyContent: "space-between",
+			alignItems: "center",
+			width: screenWidth - (17 + 17),
+			paddingVertical: 15,
+			paddingHorizontal: 6,
+			borderTopWidth: 1,
+			borderColor: "#D9D9D9"
+		},
 
-	productTitle: {
-		fontSize: 24,
-		fontWeight: "bold",
-		width: 150
-	},
+		productTitle: {
+			fontSize: 24,
+			fontWeight: "bold",
+			width: 150
+		},
 
-	productCount: {
-		fontFamily: "Roboto-Bold",
-		fontSize: 24,
-		fontWeight: "semibold"
-	},
+		productCount: {
+			fontFamily: "Roboto-Bold",
+			fontSize: 24,
+			fontWeight: "semibold"
+		},
 
-	hour: {
-		color: "#6D7696",
-		fontSize: 12
-	},
+		hour: {
+			color: "#6D7696",
+			fontSize: 12
+		},
 
-	buttons: {
-		width: screenWidth - (17 + 17),
-		marginTop: 22,
-		display: "flex",
-		flexDirection: "row",
-		justifyContent: "space-between",
-		marginBottom: 40
-	},
+		buttons: {
+			width: screenWidth - (17 + 17),
+			marginTop: 22,
+			display: "flex",
+			flexDirection: "row",
+			justifyContent: "space-between",
+			marginBottom: 40
+		},
 
-	button: {
-		backgroundColor: "black",
-		paddingVertical: 10,
-		paddingHorizontal: 14,
-		borderRadius: 10,
-		display: "flex",
-		flexDirection: "row",
-		gap: 12
-	},
+		button: {
+			backgroundColor: "black",
+			paddingVertical: 10,
+			paddingHorizontal: 14,
+			borderRadius: 10,
+			display: "flex",
+			flexDirection: "row",
+			gap: 12
+		},
 
-	buttonText: {
-		color: "white",
-		fontSize: 16,
-		textAlign: "center",
-		fontFamily: "Roboto-Bold",
-		textTransform: "uppercase"
-	},
+		buttonText: {
+			color: "white",
+			fontSize: 16,
+			textAlign: "center",
+			fontFamily: "Roboto-Bold",
+			textTransform: "uppercase"
+		},
 
-	calendarWrapper: {
-		marginTop: 24,
-		width: screenWidth - (16 * 2),
-		marginLeft: "auto",
-		marginRight: "auto",
-	},
+		calendarWrapper: {
+			marginTop: 24,
+			width: screenWidth - (16 * 2),
+			marginLeft: "auto",
+			marginRight: "auto",
+		},
 
-	calendarIcon: {
-		position: "absolute",
-		right: 16,
-		top: 14
-	},
+		calendarIcon: {
+			position: "absolute",
+			right: 16,
+			top: 14
+		},
 
-	calendarInput: {
-		width: screenWidth - (16 * 2),
-		position: "relative",
-		paddingHorizontal: 16,
-		paddingVertical: 14,
-		borderColor: "#AFAFAF",
-		borderWidth: 1,
-		borderRadius: 8
-	},
+		calendarInput: {
+			width: screenWidth - (16 * 2),
+			position: "relative",
+			paddingHorizontal: 16,
+			paddingVertical: 14,
+			borderColor: "#AFAFAF",
+			borderWidth: 1,
+			borderRadius: 8
+		},
 
-	calendarInputActive: {
-		width: screenWidth - (16 * 2),
-		position: "relative",
-		paddingHorizontal: 16,
-		paddingVertical: 14,
-		borderColor: "#AFAFAF",
-		backgroundColor: "#272727",
-		borderWidth: 1,
-		borderRadius: 8
-	},
+		calendarInputActive: {
+			width: screenWidth - (16 * 2),
+			position: "relative",
+			paddingHorizontal: 16,
+			paddingVertical: 14,
+			borderColor: "#AFAFAF",
+			backgroundColor: "#272727",
+			borderWidth: 1,
+			borderRadius: 8
+		},
 
-	calendarInputPlaceholderActive: {
-		fontSize: 16,
-		lineHeight: 24,
-		fontFamily: "Gilroy-Medium",
-		fontWeight: "500",
-		color: "#FFFFFF"
-	},
+		calendarInputPlaceholderActive: {
+			fontSize: 16,
+			lineHeight: 24,
+			fontFamily: "Gilroy-Medium",
+			fontWeight: "500",
+			color: "#FFFFFF"
+		},
 
-	calendarInputPlaceholder: {
-		fontSize: 16,
-		lineHeight: 24,
-		fontFamily: "Gilroy-Medium",
-		fontWeight: "500",
-		color: "#AAAAAA"
-	},
+		calendarInputPlaceholder: {
+			fontSize: 16,
+			lineHeight: 24,
+			fontFamily: "Gilroy-Medium",
+			fontWeight: "500",
+			color: "#AAAAAA"
+		},
 
-	calendarLabel: {
-		fontFamily: "Gilroy-Medium",
-		fontWeight: "500",
-		fontSize: 16,
-		marginBottom: 4
-	},
+		calendarLabel: {
+			fontFamily: "Gilroy-Medium",
+			fontWeight: "500",
+			fontSize: 16,
+			marginBottom: 4
+		},
 
-	historyTitleWrapper: {
-		marginTop: 12,
-		display: "flex",
-		alignItems: "center",
-		flexDirection: "row",
-		justifyContent: "space-between",
-		width: screenWidth - (16 * 2),
-		marginLeft: "auto",
-		marginRight: "auto",
-		backgroundColor: "#EEEEEE",
-		height: 42,
-		borderRadius: 4,
-		paddingHorizontal: 10,
-		paddingVertical: 10
-	},
+		historyTitleWrapper: {
+			marginTop: 12,
+			display: "flex",
+			alignItems: "center",
+			flexDirection: "row",
+			justifyContent: "space-between",
+			width: screenWidth - (16 * 2),
+			marginLeft: "auto",
+			marginRight: "auto",
+			backgroundColor: "#EEEEEE",
+			height: 42,
+			borderRadius: 4,
+			paddingHorizontal: 10,
+			paddingVertical: 10
+		},
 
-	historyTitleText: {
-		fontFamily: "Gilroy-Medium",
-		fontWeight: "500",
-		fontSize: 14,
-		lineHeight: 22
-	},
+		historyTitleText: {
+			fontFamily: "Gilroy-Medium",
+			fontWeight: "500",
+			fontSize: 14,
+			lineHeight: 22
+		},
 
-	history: {
-		display: "flex",
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "center",
-		height: 50,
-		marginTop: 4,
-		width: "100%",
-		paddingHorizontal: 16,
-		paddingVertical: 6
-	},
+		history: {
+			display: "flex",
+			flexDirection: "row",
+			justifyContent: "space-between",
+			alignItems: "center",
+			height: 50,
+			marginTop: 4,
+			width: "100%",
+			paddingHorizontal: 16,
+			paddingVertical: 6
+		},
 
-	historyAmountWrapper: {
-		display: "flex",
-		flexDirection: "row",
-		alignItems: "center"
-	},
+		historyAmountWrapper: {
+			display: "flex",
+			flexDirection: "row",
+			alignItems: "center"
+		},
 
-	historyAmount: {
-		marginLeft: 10,
-		fontFamily: "Gilroy-Medium",
-		fontWeight: "500",
-		fontSize: 16
-	},
+		historyAmount: {
+			marginLeft: 10,
+			fontFamily: "Gilroy-Medium",
+			fontWeight: "500",
+			fontSize: 16
+		},
 
-	historyTime: {
-		fontFamily: "Gilroy-Medium",
-		fontWeight: "500",
-		fontSize: 14
-	}
-});
+		historyTime: {
+			fontFamily: "Gilroy-Medium",
+			fontWeight: "500",
+			fontSize: 14
+		}
+	});
 
 export default Shopping;
