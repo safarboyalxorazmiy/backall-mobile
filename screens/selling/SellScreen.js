@@ -1387,6 +1387,8 @@ class Sell extends Component {
 		await AsyncStorage.setItem("profitFullyLoaded", "false");
 		await AsyncStorage.setItem("basketFullyLoaded", "false");
 
+		await AsyncStorage.setItem("window", "Shopping");
+
 		// Navigate screen
 		const {navigation} = this.props;
 		navigation.navigate("Shopping");

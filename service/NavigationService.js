@@ -255,13 +255,12 @@ class NavigationService extends Component {
 						});
 
 						if (!isFocused && !event.defaultPrevented) {
-							await AsyncStorage.setItem("window", route.name);
-
 							if (route.name === "Sell") {
 								const currentRouteName = navigation.getState().routes[navigation.getState().index].name;
 								await AsyncStorage.setItem("from", currentRouteName);
 							}
 
+							await AsyncStorage.setItem("window", route.name);
 							navigation.navigate(route.name);
 						}
 					};

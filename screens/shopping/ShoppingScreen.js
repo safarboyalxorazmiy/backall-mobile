@@ -380,7 +380,7 @@ class Shopping extends Component {
 				try {
 					let response = await this.apiService.getSellAmountByDate(date, this.props.navigation);
 					lastAmount = response.amount;
-				} catch(e) {
+				} catch (e) {
 					lastAmount = 0;
 				}
 
@@ -555,7 +555,10 @@ class Shopping extends Component {
 				});
 
 				while (true) {
-					if (lastGroupId <= 0 || await AsyncStorage.getItem("window") != "Shopping") {
+					console.log("While started()")
+					if (lastGroupId <= 0 || await AsyncStorage.getItem("window") !== "Shopping") {
+						console.log("await AsyncStorage.getItem(\"window\") != \"Shopping\"::", await AsyncStorage.getItem("window") !== "Shopping");
+
 						this.setState({
 							loading: false
 						});
@@ -565,7 +568,8 @@ class Shopping extends Component {
 					console.log("LAST GROUP ID: ", lastGroupId);
 
 					try {
-						let sellHistories = await this.sellHistoryRepository.getAllSellGroup(lastGroupId);
+						let sellHistories =
+							await this.sellHistoryRepository.getAllSellGroup(lastGroupId);
 
 						if (sellHistories.length === 0) {
 							this.setState({
@@ -590,32 +594,22 @@ class Shopping extends Component {
 					const startTime = performance.now();
 
 					const grouped = {};
-					const uniqueDates = new Set();
 
 					for (const history of allSellHistories) {
 						const date = history.created_date.split("T")[0];
 						if (!grouped[date]) {
-							uniqueDates.add(date);
 							const formattedDate = this.formatDate(date);
 							grouped[date] = {date, dateInfo: formattedDate, histories: [], totalAmount: 0};
 						}
+
+						grouped[date].totalAmount += history.amount;
 						grouped[date].histories.push(history);
-					}
-
-					const totalAmounts =
-						await this.amountDateRepository.getSellAmountInfoByDates([...uniqueDates]);
-
-					console.log(totalAmounts)
-
-					for (const date of uniqueDates) {
-						grouped[date].totalAmount = totalAmounts[date] || 0;
 					}
 
 					this.setState({
 						sellingHistory: allSellHistories,
 						groupedHistories: Object.values(grouped),
-						lastGroupId: lastGroupId,
-
+						lastGroupId: lastGroupId
 					});
 
 					const endTime = performance.now();
@@ -626,6 +620,8 @@ class Shopping extends Component {
 				this.setState({
 					loading: false
 				});
+
+				await AsyncStorage.setItem("shoppingFullyLoaded", "true");
 			}
 
 			// Load rest of items if exists **
