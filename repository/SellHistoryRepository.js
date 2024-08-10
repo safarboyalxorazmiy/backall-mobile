@@ -1104,6 +1104,40 @@ class SellHistoryRepository {
 			throw error;
 		}
 	}
+
+	async deleteByIdLessThan(id) {
+		try {
+			const query = `
+          DELETE
+          FROM sell_group
+          WHERE id <= ?;
+			`;
+
+			const result = await new Promise((resolve, reject) => {
+				this.db.transaction((tx) => {
+					tx.executeSql(
+						query,
+						[id],
+						(_, resultSet) => resolve(resultSet),
+						(_, error) => reject(error)
+					);
+				});
+			});
+
+			// Check if any rows were affected by the deletion
+			if (result && result.rowsAffected > 0) {
+				console.log("Rows deleted:", result.rowsAffected);
+				return true; // Deletion was successful
+			} else {
+				console.log("No rows were deleted.");
+				return false; // No rows were deleted
+			}
+		} catch (error) {
+			console.error("Error in deleteByIdGreaterThan:", error);
+			return false; // Return false in case of an error
+		}
+	}
+
 }
 
 export default SellHistoryRepository;

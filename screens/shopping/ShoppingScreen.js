@@ -457,15 +457,13 @@ class Shopping extends Component {
 
 		let firstSellGroup = await this.sellHistoryRepository.getFirstSellGroup();
 
-		console.log(firstSellGroup);
-
-		const allSellHistories = [];
-
-		console.log(lastSellGroup.global_id);
 		this.setState({
 			firstGroupGlobalId: firstSellGroup.global_id,
 			loading: true
 		});
+
+		const allSellHistories = [];
+
 
 		while (true) {
 			if (lastGroupId <= 0 || await AsyncStorage.getItem("window") != "Shopping") {
@@ -547,20 +545,26 @@ class Shopping extends Component {
 
 			// New history created load new items **
 			if (await AsyncStorage.getItem("shoppingFullyLoaded") != "true") {
+
 				let lastSellGroup = await this.sellHistoryRepository.getLastSellGroup();
 				let lastGroupId = lastSellGroup.id;
 
+				if ((lastGroupId - 100) > 0) {
+					let isDeleted =
+						await this.sellHistoryRepository.deleteByIdLessThan(lastGroupId - 100);
+
+					console.log("DELETED SUCCESSFULLY.")
+				}
+
+				// Explanation for firstSellGroup. We need it for getting rest of rows from global.
+				// Right here we update it again cause we deleted rows which ids higher then 1000
 				let firstSellGroup = await this.sellHistoryRepository.getFirstSellGroup();
-
-				console.log(firstSellGroup);
-
-				const allSellHistories = [];
-
-				console.log(lastSellGroup.global_id);
 				this.setState({
 					firstGroupGlobalId: firstSellGroup.global_id,
 					loading: true
 				});
+
+				const allSellHistories = [];
 
 				while (true) {
 					console.log("While started()")
