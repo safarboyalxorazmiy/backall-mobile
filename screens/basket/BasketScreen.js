@@ -131,7 +131,7 @@ class Basket extends Component {
 
 		navigation.addListener("focus",
 			async () => {
-			console.log("FOCUSED")
+				console.log("FOCUSED")
 				await this.getCreated();
 				this.setState({role: await AsyncStorage.getItem("role")});
 

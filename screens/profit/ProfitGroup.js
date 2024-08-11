@@ -26,7 +26,7 @@ const ProfitGroup = ({item, navigation}) => {
 				<ProfitItem
 					key={history.id}
 					history={history}
-					navigation={navigation} />
+					navigation={navigation}/>
 			))}
 		</View>
 	);

@@ -25,7 +25,7 @@ const HistoryGroup = ({item, navigation}) => {
 			</View>
 
 			{item.histories.map((history) => (
-				<HistoryItem key={history.id} history={history} navigation={navigation} />
+				<HistoryItem key={history.id} history={history} navigation={navigation}/>
 			))}
 		</>
 	);

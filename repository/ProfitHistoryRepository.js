@@ -55,7 +55,7 @@ class ProfitHistoryRepository {
 
 	async createProfitGroup(profit) {
 		let current_date = new Date();
-        const localDate = new Date(current_date.getTime() - (current_date.getTimezoneOffset() * 60000)).toISOString();
+		const localDate = new Date(current_date.getTime() - (current_date.getTimezoneOffset() * 60000)).toISOString();
 
 		try {
 			const query = `
@@ -215,7 +215,7 @@ class ProfitHistoryRepository {
 		profit
 	) {
 		let created_date = new Date();
-        const localDate = new Date(created_date.getTime() - (created_date.getTimezoneOffset() * 60000)).toISOString();
+		const localDate = new Date(created_date.getTime() - (created_date.getTimezoneOffset() * 60000)).toISOString();
 
 		try {
 			const insertProfitHistoryQuery = `
@@ -261,15 +261,15 @@ class ProfitHistoryRepository {
 
 		try {
 			const insertProfitHistoryQuery = `
-                INSERT INTO profit_history (product_id,
-                                            count,
-                                            count_type,
-                                            profit,
-                                            created_date,
-                                            global_id,
-                                            saved)
-                VALUES (?, ?, ?, ?, ?, ?, ?);
-            `;
+          INSERT INTO profit_history (product_id,
+                                      count,
+                                      count_type,
+                                      profit,
+                                      created_date,
+                                      global_id,
+                                      saved)
+          VALUES (?, ?, ?, ?, ?, ?, ?);
+			`;
 
 			await this.db.transaction(async (tx) => {
 				await tx.executeSql(

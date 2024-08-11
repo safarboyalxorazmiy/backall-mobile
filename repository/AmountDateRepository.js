@@ -95,7 +95,7 @@ class AmountDateRepository {
 						const updatedProfit = currentProfit + profitAmount;
 						const updateQuery = `UPDATE profit_amount_date
                                  SET amount = ?,
-                                     saved = 0
+                                     saved  = 0
                                  WHERE date = ?;`;
 						tx.executeSql(updateQuery, [updatedProfit, date], (tx, updateResults) => {
 								if (updateResults.rowsAffected > 0) {
@@ -148,14 +148,14 @@ class AmountDateRepository {
 		this.db.transaction(tx => {
 			tx.executeSql(selectQuery, [date], (tx, results) => {
 					if (results.rows.length > 0) {
-                        console.log(results.rows.item(0))
+						console.log(results.rows.item(0))
 						// If record with the given date exists, add the new sell amount to the existing one
 						const currentSell = results.rows.item(0).amount;
 						const updatedSell = currentSell + sellAmount;
 
 						const updateQuery = `UPDATE sell_amount_date
                                  SET amount = ?,
-                                     saved = 0
+                                     saved  = 0
                                  WHERE date = ?;`;
 						tx.executeSql(updateQuery, [updatedSell, date], (tx, updateResults) => {
 								if (updateResults.rowsAffected > 0) {

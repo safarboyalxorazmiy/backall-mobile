@@ -3,8 +3,8 @@ import DatabaseRepository from "../repository/DatabaseRepository";
 class DatabaseService {
 	constructor() {
 		this.db = new DatabaseRepository().getDatabase();
-	}	
-	
+	}
+
 	async getAllProducts() {
 		try {
 			const result = await new Promise((resolve, reject) => {
@@ -31,14 +31,14 @@ class DatabaseService {
 					);
 				});
 			});
-			
+
 			return result; // Return the products fetched from the database
 		} catch (error) {
 			console.error(`Error selecting product: ${error}`);
 			throw error; // Re-throw the error to handle it elsewhere if needed
 		}
 	}
-	
+
 	async addProductToStore(productId, price, sellingPrice, percentage, count, countType) {
 		try {
 			const result = await new Promise((resolve, reject) => {
@@ -59,13 +59,13 @@ class DatabaseService {
 					);
 				});
 			});
-			
+
 			return result;
 		} catch (error) {
 			throw error;
 		}
 	}
-	
+
 	async getAllStoreProductsData() {
 		return new Promise(async (resolve, reject) => {
 			try {
@@ -73,8 +73,8 @@ class DatabaseService {
 					this.db.transaction((tx) => {
 						tx.executeSql(
 							`SELECT sp.id, p.name AS product_name, sp.count
-                             FROM store_products AS sp
-                                      INNER JOIN products AS p ON sp.product_id = p.id`,
+               FROM store_products AS sp
+                        INNER JOIN products AS p ON sp.product_id = p.id`,
 							[],
 							(tx, results) => {
 								const productData = [];
@@ -94,14 +94,14 @@ class DatabaseService {
 						);
 					});
 				});
-				
+
 				resolve(result);
 			} catch (error) {
 				reject(error);
 			}
 		});
 	}
-	
+
 	async createSellGroup() {
 		return new Promise((resolve, reject) => {
 			this.db.transaction((tx) => {
@@ -122,7 +122,7 @@ class DatabaseService {
 			});
 		});
 	}
-	
+
 	async createSellHistory(product_id, count, countType, created_date) {
 		return new Promise((resolve, reject) => {
 			this.db.transaction((tx) => {
@@ -143,7 +143,7 @@ class DatabaseService {
 			});
 		});
 	}
-	
+
 	async sellProduct(groupId, sell_history_id) {
 		try {
 			await new Promise((resolve, reject) => {
@@ -165,16 +165,16 @@ class DatabaseService {
 			return Promise.reject(error);
 		}
 	}
-	
+
 	async getProductHistory() {
 		return new Promise((resolve, reject) => {
 			this.db.transaction((tx) => {
 				tx.executeSql(
 					`SELECT p.name                             AS product_name,
-                            sh.count || " " || sh.countType    AS count_and_type,
-                            strftime("%H:%M", sh.created_date) AS formatted_created_date
-                     FROM sell_history AS sh
-                              INNER JOIN products AS p ON sh.product_id = p.id`,
+                  sh.count || " " || sh.countType    AS count_and_type,
+                  strftime("%H:%M", sh.created_date) AS formatted_created_date
+           FROM sell_history AS sh
+                    INNER JOIN products AS p ON sh.product_id = p.id`,
 					[],
 					(tx, results) => {
 						const productHistory = [];
@@ -195,16 +195,16 @@ class DatabaseService {
 			});
 		});
 	}
-	
+
 	async getSellHistoryGroupData() {
 		return new Promise((resolve, reject) => {
 			this.db.transaction((tx) => {
 				tx.executeSql(
 					`SELECT shg.group_id, SUM(sh.count * sp.price) AS selled_price
-                     FROM sell_history AS sh
-                              INNER JOIN sell_history_group AS shg ON sh.id = shg.history_id
-                              INNER JOIN store_products AS sp ON sh.product_id = sp.product_id
-                     GROUP BY shg.group_id`,
+           FROM sell_history AS sh
+                    INNER JOIN sell_history_group AS shg ON sh.id = shg.history_id
+                    INNER JOIN store_products AS sp ON sh.product_id = sp.product_id
+           GROUP BY shg.group_id`,
 					[],
 					(tx, results) => {
 						const sellHistoryGroupData = [];
