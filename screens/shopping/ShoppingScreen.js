@@ -457,6 +457,17 @@ class Shopping extends Component {
 	}
 
 	async componentDidMount() {
+		/* Month sell amount setting value ** */
+		let thisMonthSellAmount = parseInt(await AsyncStorage.getItem("month_sell_amount"));
+
+		let currentDate = new Date();
+		let currentMonth = currentDate.getMonth();
+		let lastStoredMonth = parseInt(await AsyncStorage.getItem("month"));
+
+		if (currentMonth === lastStoredMonth) {
+			this.setState({thisMonthSellAmount: thisMonthSellAmount});
+		}
+
 		let lastSellGroup = await this.sellHistoryRepository.getLastSellGroup();
 		let lastGroupId = lastSellGroup.id;
 
