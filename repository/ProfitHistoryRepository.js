@@ -55,6 +55,7 @@ class ProfitHistoryRepository {
 
 	async createProfitGroup(profit) {
 		let current_date = new Date();
+        const localDate = new Date(current_date.getTime() - (current_date.getTimezoneOffset() * 60000)).toISOString();
 
 		try {
 			const query = `
@@ -63,7 +64,7 @@ class ProfitHistoryRepository {
 
 			// Execute the query
 			await this.db.transaction(async (tx) => {
-				tx.executeSql(query, [current_date.toISOString(), profit]);
+				tx.executeSql(query, [localDate, profit]);
 			});
 
 			let lastProfitHistoryGroup = await this.getLastProfitHistoryGroupId();
@@ -214,6 +215,7 @@ class ProfitHistoryRepository {
 		profit
 	) {
 		let created_date = new Date();
+        const localDate = new Date(created_date.getTime() - (created_date.getTimezoneOffset() * 60000)).toISOString();
 
 		try {
 			const insertProfitHistoryQuery = `
@@ -235,12 +237,12 @@ class ProfitHistoryRepository {
 						count,
 						count_type,
 						profit,
-						created_date.toISOString()
+						localDate
 					]
 				);
 			});
 
-			let lastIdOfProfitHistory = await this.getLastIdOfProfitHistory(product_id, created_date.toISOString());
+			let lastIdOfProfitHistory = await this.getLastIdOfProfitHistory(product_id, localDate);
 			return lastIdOfProfitHistory.id;
 		} catch (error) {
 			throw error;
@@ -259,15 +261,15 @@ class ProfitHistoryRepository {
 
 		try {
 			const insertProfitHistoryQuery = `
-          INSERT INTO profit_history (product_id,
-                                      count,
-                                      count_type,
-                                      profit,
-                                      created_date,
-                                      global_id,
-                                      saved)
-          VALUES (?, ?, ?, ?, ?, ?, ?);
-			`;
+                INSERT INTO profit_history (product_id,
+                                            count,
+                                            count_type,
+                                            profit,
+                                            created_date,
+                                            global_id,
+                                            saved)
+                VALUES (?, ?, ?, ?, ?, ?, ?);
+            `;
 
 			await this.db.transaction(async (tx) => {
 				await tx.executeSql(

@@ -148,9 +148,11 @@ class AmountDateRepository {
 		this.db.transaction(tx => {
 			tx.executeSql(selectQuery, [date], (tx, results) => {
 					if (results.rows.length > 0) {
+                        console.log(results.rows.item(0))
 						// If record with the given date exists, add the new sell amount to the existing one
 						const currentSell = results.rows.item(0).amount;
 						const updatedSell = currentSell + sellAmount;
+
 						const updateQuery = `UPDATE sell_amount_date
                                  SET amount = ?,
                                      saved = 0

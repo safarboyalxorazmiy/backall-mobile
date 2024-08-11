@@ -1337,6 +1337,8 @@ class Sell extends Component {
 			this.state.amount, formattedDate
 		);
 
+        console.log("setSellAmount::", formattedDate)
+
 		// STORING CURRENT MONTHLY AMOUNTS
 		const currentMonth = currentDate.getMonth();
 		await AsyncStorage.setItem("month", currentMonth + "");

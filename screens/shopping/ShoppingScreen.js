@@ -523,12 +523,14 @@ class Shopping extends Component {
 			let lastAmount;
 			for (const history of allSellHistories) {
 				const date = history.created_date.split("T")[0];
+				console.log(date)
+
 				if (!grouped[date]) {
 					const formattedDate = this.formatDate(date);
 					grouped[date] = {date, dateInfo: formattedDate, histories: [], totalAmount: 0};
 				}
 
-				if (lastDate !== date) {
+				if (lastDate != date) {
 					lastAmount = await this.amountDateRepository.getSellAmountInfoByDate(date);
 					lastDate = date;
 				}
