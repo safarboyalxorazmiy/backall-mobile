@@ -309,7 +309,7 @@ class Profit extends Component {
 		let lastStoredMonth = parseInt(await AsyncStorage.getItem("month"));
 
 		if (currentMonth === lastStoredMonth) {
-			this.setState({thisMonthSellAmount: thisMonthSellAmount});
+			this.setState({thisMonthProfitAmount: thisMonthSellAmount});
 		}
 
 		let lastProfitGroup =
@@ -408,6 +408,17 @@ class Profit extends Component {
 		const {navigation} = this.props;
 
 		navigation.addListener("focus", async () => {
+			/* Month profit amount setting value ** */
+			let thisMonthProfitAmount = parseInt(await AsyncStorage.getItem("month_profit_amount"));
+
+			let currentDate = new Date();
+			let currentMonth = currentDate.getMonth();
+			let lastStoredMonth = parseInt(await AsyncStorage.getItem("month"));
+
+			if (currentMonth === lastStoredMonth) {
+				this.setState({thisMonthProfitAmount: thisMonthProfitAmount});
+			}
+
 			await this.getDateInfo();
 
 			// New history created load new items **
@@ -605,17 +616,6 @@ class Profit extends Component {
 				/* FOR BOSS (MODAL) **
 				let notAllowed = await AsyncStorage.getItem("not_allowed");
 				this.setState({notAllowed: notAllowed}) */
-
-				/* Month profit amount setting value ** */
-				let thisMonthProfitAmount = parseInt(await AsyncStorage.getItem("month_profit_amount"));
-
-				let currentDate = new Date();
-				let currentMonth = currentDate.getMonth();
-				let lastStoredMonth = parseInt(await AsyncStorage.getItem("month"));
-
-				if (currentMonth === lastStoredMonth) {
-					this.setState({thisMonthProfitAmount: thisMonthProfitAmount});
-				}
 			}
 		});
 	}
@@ -809,7 +809,7 @@ class Profit extends Component {
 													fontSize: 16,
 													lineHeight: 24,
 													color: "#FFF"
-												}}>{this.state.thisMonthProfitAmount} so’m</Text>
+												}}>{this.state.thisMonthProfitAmount.toLocaleString()} so’m</Text>
 											</View>
 										</View>
 									)}

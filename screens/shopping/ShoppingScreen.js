@@ -556,6 +556,17 @@ class Shopping extends Component {
 		const {navigation} = this.props;
 
 		navigation.addListener("focus", async () => {
+			/* Month sell amount setting value ** */
+			let thisMonthSellAmount = parseInt(await AsyncStorage.getItem("month_sell_amount"));
+
+			let currentDate = new Date();
+			let currentMonth = currentDate.getMonth();
+			let lastStoredMonth = parseInt(await AsyncStorage.getItem("month"));
+
+			if (currentMonth === lastStoredMonth) {
+				this.setState({thisMonthSellAmount: thisMonthSellAmount});
+			}
+
 			await this.getDateInfo();
 
 			// New history created load new items **
@@ -748,17 +759,6 @@ class Shopping extends Component {
 				/* FOR BOSS (MODAL) **
 				let notAllowed = await AsyncStorage.getItem("not_allowed");
 				this.setState({notAllowed: notAllowed}) */
-
-				/* Month sell amount setting value ** */
-				let thisMonthSellAmount = parseInt(await AsyncStorage.getItem("month_sell_amount"));
-
-				let currentDate = new Date();
-				let currentMonth = currentDate.getMonth();
-				let lastStoredMonth = parseInt(await AsyncStorage.getItem("month"));
-
-				if (currentMonth === lastStoredMonth) {
-					this.setState({thisMonthSellAmount: thisMonthSellAmount});
-				}
 			}
 		});
 	}
@@ -850,7 +850,7 @@ class Shopping extends Component {
 											fontSize: 16,
 											lineHeight: 24,
 											color: "#FFF"
-										}}>{`${this.state.thisMonthSellAmount} so’m`}</Text>
+										}}>{`${this.state.thisMonthSellAmount.toLocaleString()} so’m`}</Text>
 									)}
 
 								</View>
@@ -858,7 +858,10 @@ class Shopping extends Component {
 						)}
 
 						renderItem={({item}) => (
-							<HistoryGroup key={item.date} item={item} navigation={navigation}/>
+							<HistoryGroup
+								key={item.date}
+								item={item}
+								navigation={navigation} />
 						)}
 					/>
 				</View>
@@ -945,8 +948,7 @@ class Shopping extends Component {
 	}
 }
 
-const
-	styles = StyleSheet.create({
+const styles = StyleSheet.create({
 		container: {
 			width: "100%",
 			flex: 1,
