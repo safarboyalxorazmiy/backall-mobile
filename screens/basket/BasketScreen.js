@@ -131,11 +131,26 @@ class Basket extends Component {
 
 		navigation.addListener("focus",
 			async () => {
+			console.log("FOCUSED")
 				await this.getCreated();
 				this.setState({role: await AsyncStorage.getItem("role")});
 
-				if (await AsyncStorage.getItem("basketFullyLoaded") != "true") {
+				let storeProducts = this.state.storeProducts;
 
+				if (await AsyncStorage.getItem("basketFullyLoaded") != "true") {
+					let updatedRows = await this.storeProductRepository.findByWhereUpdatedFalse();
+					for (const row of updatedRows) {
+						let rowIndex = storeProducts.findIndex(product => product.id === row.id);
+						if (rowIndex !== -1) {
+							storeProducts.splice(rowIndex, 1);
+						}
+					}
+
+					this.setState({
+						storeProducts: [...updatedRows, ...storeProducts]
+					});
+
+					/*
 					this.setState(
 						{
 							addButtonStyle: styles.addButton,
@@ -186,6 +201,8 @@ class Basket extends Component {
 							break;
 						}
 					}
+
+					*/
 
 					await AsyncStorage.setItem("basketFullyLoaded", "true");
 				}

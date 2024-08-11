@@ -111,4 +111,7 @@ const styles = StyleSheet.create({
 
 });
 
-export default memo(BasketItem, (prevProps, nextProps) => prevProps.product.id === nextProps.product.id);
+export default memo(BasketItem, (prevProps, nextProps) =>
+	prevProps.product.id === nextProps.product.id &&
+	prevProps.product.updated === 1
+);
