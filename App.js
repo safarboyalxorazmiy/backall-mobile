@@ -299,6 +299,7 @@ class App extends Component {
 
 				// SELL GROUP
 				let sellGroupNotSaved = await AsyncStorage.getItem("sellGroupNotSaved");
+				console.log("sellGroupNotSaved == \"true\":", sellGroupNotSaved == "true")
 				if (sellGroupNotSaved == "true") {
 					console.log("Sell group creating ⏳⏳⏳")
 
@@ -414,12 +415,16 @@ class App extends Component {
 
 				// SELL AMOUNT DATE
 				let sellAmountDateNotSaved = await AsyncStorage.getItem("sellAmountDateNotSaved");
+				console.log("sellAmountDateNotSaved == \"true\"", sellAmountDateNotSaved == "true")
 				if (sellAmountDateNotSaved == "true") {
 					console.log("Sell amount date creating started. ⏳⏳⏳");
 
 					let notSavedSellAmountDates =
 						await this.amountDateRepository.getSellAmountDateSavedFalse();
+
 					for (const sellAmountDate of notSavedSellAmountDates) {
+						console.log(sellAmountDate)
+
 						try {
 
 							let response =

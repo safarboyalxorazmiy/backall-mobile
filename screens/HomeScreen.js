@@ -90,8 +90,6 @@ class Home extends Component {
 		this.storeProductRepository = new StoreProductRepository();
 		this.databaseRepository = new DatabaseRepository();
 		this.tokenService = new TokenService();
-
-		this.getAmountInfo();
 	}
 
 	async componentDidMount() {
@@ -115,8 +113,6 @@ class Home extends Component {
 			});
 
 			console.log("HOME NAVIGATED");
-
-			await this.getAmountInfo();
 
 			let isDownloaded = await AsyncStorage.getItem("isDownloaded");
 			if (isDownloaded !== "true" || isDownloaded == null) {
@@ -191,6 +187,35 @@ class Home extends Component {
 				console.log("LOADING STARTED");
 
 				this.setState({isLoading: true}); // loading started
+
+				// Get the current date
+				const currentDate = new Date();
+
+				// Extract year, month, and day
+				const year = currentDate.getFullYear();
+				const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Month is zero-indexed, so add 1
+				const day = String(currentDate.getDate()).padStart(2, "0");
+
+				// Format the date as yyyy-mm-dd
+				const formattedDate = `${year}-${month}-${day}`;
+
+				try {
+					let sellAmount = await this.apiService.getSellAmountByDate(
+						formattedDate,
+						this.props.navigation
+					);
+
+					let profitAmount = await this.apiService.getProfitAmountByDate(
+						formattedDate,
+						this.props.navigation
+					);
+
+					this.setState({
+						sellAmount: sellAmount.amount,
+						profitAmount: profitAmount.amount
+					})
+				} catch (e) {	}
+
 
 				let isDownloaded = true;
 
@@ -543,7 +568,7 @@ class Home extends Component {
 		let response;
 		try {
 			response = await this.apiService.getSellAmountDate(
-				lastSellAmountGlobalId, page, size, this.props.navigation
+				lastSellAmountGlobalId + 1, page, size, this.props.navigation
 			);
 		} catch (error) {
 			console.error("Error fetching global products:", error);
@@ -748,7 +773,7 @@ class Home extends Component {
 		let response;
 		try {
 			response = await this.apiService.getProfitAmountDate(
-				lastProfitAmountDateGlobalId, page, size, this.props.navigation
+				lastProfitAmountDateGlobalId + 1, page, size, this.props.navigation
 			);
 		} catch (error) {
 			console.error("Error fetching global products:", error);
@@ -783,8 +808,6 @@ class Home extends Component {
 	}
 
 	async getAmountInfo() {
-		await this.amountDateRepository.init();
-
 		// HOW TO GET yyyy-mm-dd from new Date()
 
 		// Get the current date
