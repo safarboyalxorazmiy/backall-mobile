@@ -890,7 +890,7 @@ class Home extends Component {
 									style={styles.cardTitle}>Bugungi kirim</Text>
 								<Text
 									style={styles.cardDescription}>
-									{this.state.sellAmount}
+									{this.state.sellAmount.toLocaleString()}
 									<Text
 										style={styles.currency}>UZS</Text>
 								</Text>
@@ -927,7 +927,7 @@ class Home extends Component {
 									style={styles.cardTitle}>Bugungi foyda</Text>
 								<Text
 									style={styles.cardDescription}>
-									{this.state.profitAmount}
+									{this.state.profitAmount.toLocaleString()}
 									<Text
 										style={styles.currency}>UZS</Text>
 								</Text>
