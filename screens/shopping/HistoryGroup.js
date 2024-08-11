@@ -13,7 +13,7 @@ import HistoryItem from "./HistoryItem";
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
-const HistoryGroup = ({item}) => {
+const HistoryGroup = ({item, navigation}) => {
 	return (
 		<>
 			<View style={styles.historyTitleWrapper}>
@@ -25,7 +25,7 @@ const HistoryGroup = ({item}) => {
 			</View>
 
 			{item.histories.map((history) => (
-				<HistoryItem key={history.id} history={history}/>
+				<HistoryItem key={history.id} history={history} navigation={navigation} />
 			))}
 		</>
 	);

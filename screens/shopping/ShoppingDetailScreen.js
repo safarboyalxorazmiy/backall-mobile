@@ -52,6 +52,7 @@ class ShoppingDetail extends Component {
 
 	async getDetails() {
 		let sellGroupId = await AsyncStorage.getItem("sell_history_id");
+		console.log("sellGroupId:: ", sellGroupId)
 
 		await this.setState(
 			{sellGroupId: parseInt(sellGroupId)}
@@ -117,7 +118,6 @@ class ShoppingDetail extends Component {
 			lastId: last.id
 		});
 	}
-
 
 	getTime(isoString) {
 		var parsedDate = new Date(isoString);

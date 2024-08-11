@@ -301,16 +301,16 @@ class Profit extends Component {
 	}
 
 	async componentDidMount() {
-        /* Month profit amount setting value ** */
-        let thisMonthSellAmount = parseInt(await AsyncStorage.getItem("month_profit_amount"));
+		/* Month profit amount setting value ** */
+		let thisMonthSellAmount = parseInt(await AsyncStorage.getItem("month_profit_amount"));
 
-        let currentDate = new Date();
-        let currentMonth = currentDate.getMonth();
-        let lastStoredMonth = parseInt(await AsyncStorage.getItem("month"));
+		let currentDate = new Date();
+		let currentMonth = currentDate.getMonth();
+		let lastStoredMonth = parseInt(await AsyncStorage.getItem("month"));
 
-        if (currentMonth === lastStoredMonth) {
-            this.setState({thisMonthSellAmount: thisMonthSellAmount});
-        }
+		if (currentMonth === lastStoredMonth) {
+			this.setState({thisMonthSellAmount: thisMonthSellAmount});
+		}
 
 		let lastProfitGroup =
 			await this.profitHistoryRepository.getLastProfitGroup();

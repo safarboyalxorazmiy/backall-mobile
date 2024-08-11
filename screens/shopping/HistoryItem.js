@@ -4,17 +4,17 @@ import {
 	Text,
 	StyleSheet,
 	Dimensions,
-	TouchableOpacity,
-	AsyncStorage
+	TouchableOpacity
 } from "react-native";
 import {memo} from 'react';
 import SellIcon from "../../assets/sell-icon.svg";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
-const HistoryItem = ({history}) => {
-	getFormattedTime = (created_date) => {
+const HistoryItem = ({history, navigation}) => {
+	const getFormattedTime = (created_date) => {
 		let date = new Date(created_date);
 		let hours = date.getHours();
 		let minutes = date.getMinutes();
@@ -26,7 +26,6 @@ const HistoryItem = ({history}) => {
 		}
 		return `${hours}:${minutes}`;
 	};
-
 
 	return (
 		<TouchableOpacity
@@ -41,7 +40,9 @@ const HistoryItem = ({history}) => {
 				} catch (error) {
 				}
 
-				this.props.navigation.navigate("ShoppingDetail", {item});
+				console.log(navigation)
+
+				navigation.navigate("ShoppingDetail");
 			}}>
 			<View style={styles.historyAmountWrapper}>
 				<SellIcon/>

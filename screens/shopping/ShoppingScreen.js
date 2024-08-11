@@ -858,7 +858,7 @@ class Shopping extends Component {
 						)}
 
 						renderItem={({item}) => (
-							<HistoryGroup key={item.date} item={item}/>
+							<HistoryGroup key={item.date} item={item} navigation={navigation}/>
 						)}
 					/>
 				</View>
