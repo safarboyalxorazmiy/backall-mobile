@@ -11,7 +11,7 @@ import ProfitItem from "./ProfitItem";
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
-const ProfitGroup = ({item}) => {
+const ProfitGroup = ({item, navigation}) => {
 	return (
 		<View>
 			{(<View style={styles.historyTitleWrapper}>
@@ -23,16 +23,22 @@ const ProfitGroup = ({item}) => {
 			</View>)}
 
 			{item.histories.map((history) => (
-				<ProfitItem key={history.id} history={history}/>
+				<ProfitItem
+					key={history.id}
+					history={history}
+					navigation={navigation} />
 			))}
 		</View>
 	);
 };
 
-
 const styles = StyleSheet.create({
 	container: {
-		width: "100%", flex: 1, backgroundColor: "#fff", alignItems: "center", paddingTop: 50
+		width: "100%",
+		flex: 1,
+		backgroundColor: "#fff",
+		alignItems: "center",
+		paddingTop: 50
 	},
 
 	navbar: {
@@ -215,4 +221,10 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default memo(ProfitGroup, (prevProps, nextProps) => prevProps.item.histories.length === nextProps.item.histories.length);
+export default memo(
+	ProfitGroup, (
+		prevProps,
+		nextProps
+	) =>
+		prevProps.item.histories.length === nextProps.item.histories.length
+);

@@ -752,19 +752,33 @@ class Profit extends Component {
 												<View>
 													<TouchableOpacity
 														onPress={async () => {
-															await AsyncStorage.setItem("calendarFromPage", "Profit");
+															await AsyncStorage.setItem(
+																"calendarFromPage", "Profit"
+															);
 															navigation.navigate("Calendar")
 														}}
-														style={[this.state.calendarInputContent === "--/--/----" ? styles.calendarInput : styles.calendarInputActive]}>
+														style={[
+															this.state.calendarInputContent === "--/--/----" ?
+																styles.calendarInput : styles.calendarInputActive
+														]}>
 														<Text
-															style={[this.state.calendarInputContent === "--/--/----" ? styles.calendarInputPlaceholder : styles.calendarInputPlaceholderActive]}>{this.state.calendarInputContent}</Text>
+															style={[
+																this.state.calendarInputContent === "--/--/----" ?
+																	styles.calendarInputPlaceholder : styles.calendarInputPlaceholderActive
+															]}>{this.state.calendarInputContent}</Text>
 													</TouchableOpacity>
 
-													{this.state.calendarInputContent === "--/--/----" ? (<CalendarIcon
-														style={styles.calendarIcon}
-														resizeMode="cover"/>) : (<CrossIcon
-														style={styles.calendarIcon}
-														resizeMode="cover"/>)}
+													{
+														this.state.calendarInputContent === "--/--/----" ? (
+															<CalendarIcon
+																style={styles.calendarIcon}
+																resizeMode="cover"/>
+														) : (
+															<CrossIcon
+																style={styles.calendarIcon}
+																resizeMode="cover"/>
+														)
+													}
 												</View>
 											</View>
 
@@ -801,7 +815,10 @@ class Profit extends Component {
 									)}
 
 									renderItem={({item}) => (
-										<ProfitGroup key={item.date} item={item}/>
+										<ProfitGroup
+											key={item.date}
+											item={item}
+											navigation={navigation}/>
 									)}
 				/>
 
@@ -826,7 +843,10 @@ class Profit extends Component {
 					}}></View>
 
 					<Animatable.View
-						animation="bounceInUp" delay={0} iterationCount={1} direction="alternate"
+						animation="bounceInUp"
+						delay={0}
+						iterationCount={1}
+						direction="alternate"
 						style={{
 							height: screenHeight,
 							display: "flex",

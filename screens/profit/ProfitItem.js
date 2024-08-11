@@ -4,16 +4,16 @@ import {
 	Text,
 	StyleSheet,
 	Dimensions,
-	TouchableOpacity,
-	AsyncStorage
+	TouchableOpacity
 } from "react-native";
 import {memo} from 'react';
 import ProfitIcon from "../../assets/profit-icon.svg";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const screenWidth = Dimensions.get("window").width;
 
-const ProfitItem = ({history}) => {
-	getFormattedTime = (created_date) => {
+const ProfitItem = ({history, navigation}) => {
+	const getFormattedTime = (created_date) => {
 		let date = new Date(created_date);
 		let hours = date.getHours();
 		let minutes = date.getMinutes();
@@ -48,7 +48,7 @@ const ProfitItem = ({history}) => {
 			</View>
 
 			<Text
-				style={styles.historyTime}>{this.getFormattedTime(history.created_date)}</Text>
+				style={styles.historyTime}>{getFormattedTime(history.created_date)}</Text>
 		</TouchableOpacity>
 	);
 };
@@ -240,4 +240,10 @@ const styles = StyleSheet.create({
 });
 
 
-export default memo(ProfitItem, (prevProps, nextProps) => prevProps.history.id === nextProps.history.id);
+export default memo(
+	ProfitItem, (
+		prevProps,
+		nextProps
+	) =>
+		prevProps.history.id === nextProps.history.id
+);

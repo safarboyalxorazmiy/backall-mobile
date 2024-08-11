@@ -2,8 +2,8 @@ import React, {Component} from "react";
 import {View, Text, TouchableOpacity, Image, StyleSheet, Dimensions} from "react-native";
 import {ScrollView} from "react-native-gesture-handler";
 import BackIcon from "../../assets/arrow-left-icon.svg";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import ProfitHistoryRepository from "../../repository/ProfitHistoryRepository";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -98,7 +98,7 @@ class ProfitDetail extends Component {
 	}
 
 	getTime(isoString) {
-		var parsedDate = new Date(isoString);
+		let parsedDate = new Date(isoString);
 
 		let hours = parsedDate.getHours();
 		let minutes = parsedDate.getMinutes();
@@ -108,9 +108,9 @@ class ProfitDetail extends Component {
 	}
 
 	getDay(isoString) {
-		var parsedDate = new Date(isoString);
+		let parsedDate = new Date(isoString);
 
-		var monthNames = [
+		let monthNames = [
 			"yanvar",
 			"fevral",
 			"mart",
