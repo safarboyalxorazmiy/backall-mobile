@@ -217,6 +217,38 @@ class Home extends Component {
 				} catch (e) {	}
 
 
+				try {
+					// STORING CURRENT MONTHLY AMOUNTS
+					let currentDate = new Date()
+					const currentMonth = currentDate.getMonth();
+					await AsyncStorage.setItem("month", currentMonth + "");
+
+					let sellMonthAmount = await this.apiService.getSellMonthAmount(this.props.navigation);
+					let profitMonthAmount = await this.apiService.getProfitMonthAmount(this.props.navigation);
+
+					console.log("sellMonthAmount:: ", sellMonthAmount);
+					console.log("profitMonthAmount:: ", profitMonthAmount);
+					await AsyncStorage.setItem(
+						"month_sell_amount",
+						sellMonthAmount.toString() + ""
+					);
+
+					await AsyncStorage.setItem(
+						"month_profit_amount",
+						profitMonthAmount.toString() + ""
+					);
+				} catch (e) {
+					await AsyncStorage.setItem(
+						"month_sell_amount",
+						0 + ""
+					);
+
+					await AsyncStorage.setItem(
+						"month_profit_amount",
+						0 + ""
+					);
+				}
+
 				let isDownloaded = true;
 
 				isDownloaded = isDownloaded && await this.getLocalProducts();

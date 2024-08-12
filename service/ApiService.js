@@ -1721,6 +1721,96 @@ class ApiService {
 		}
 	}
 
+	
+	async getSellMonthAmount(navigation) {
+		try {
+			const accessToken = await this.tokenService.retrieveAccessToken();
+			const storeId = BigInt(await this.getStoreId());
+
+			const requestOptions = {
+				method: "GET",
+				headers: {
+					"Authorization": `Bearer ${accessToken}`
+				}
+			};
+
+			console.log("Sending request to:", `${serverUrl}/api/v1/store/sell/month/amount?storeId=${storeId}`);
+			console.log("Request body:", requestOptions);
+
+			const response = await fetch(
+				`${serverUrl}/api/v1/store/profit/month/amount?storeId=${storeId}`,
+				requestOptions
+			);
+
+			console.log("Response status:", response.status);
+
+			if (response.status === 401) {
+				await this.logout(navigation);
+				return;
+			}
+
+
+			if (!response.ok) {
+				throw new Error("Network response was not ok");
+			}
+
+			// Parse and log the response body
+			const responseBody = await response.text();
+			console.log("Response body:", responseBody);
+
+			// Return the response body as an integer
+			return parseInt(responseBody);
+		} catch (error) {
+			console.log("Error occurred: ", error);
+			throw error; // Re-throwing the error for handling in the calling code
+		}
+	}
+
+
+
+	async getProfitMonthAmount(navigation) {
+		try {
+			const accessToken = await this.tokenService.retrieveAccessToken();
+			const storeId = BigInt(await this.getStoreId());
+
+			const requestOptions = {
+				method: "GET",
+				headers: {
+					"Authorization": `Bearer ${accessToken}`
+				}
+			};
+
+			console.log("Sending request to:", `${serverUrl}/api/v1/store/profit/month/amount?storeId=${storeId}`);
+			console.log("Request body:", requestOptions);
+
+			const response = await fetch(
+				`${serverUrl}/api/v1/store/profit/month/amount?storeId=${storeId}`,
+				requestOptions
+			);
+
+			console.log("Response status:", response.status);
+
+			if (response.status === 401) {
+				await this.logout(navigation);
+				return;
+			}
+
+
+			if (!response.ok) {
+				throw new Error("Network response was not ok");
+			}
+
+			// Parse and log the response body
+			const responseBody = await response.text();
+			console.log("Response body:", responseBody);
+
+			// Return the response body as an integer
+			return parseInt(responseBody);
+		} catch (error) {
+			console.log("Error occurred: ", error);
+			throw error; // Re-throwing the error for handling in the calling code
+		}
+	}
 }
 
 export default ApiService;
