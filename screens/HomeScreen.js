@@ -99,6 +99,8 @@ class Home extends Component {
 			this.setState({isConnected: state.isConnected});
 		});
 
+		await this.getAmountInfo();
+
 		navigation.addListener("focus", async () => {
 			// ROLE ERROR
 			let notAllowed = await AsyncStorage.getItem("not_allowed");
@@ -113,6 +115,8 @@ class Home extends Component {
 			});
 
 			console.log("HOME NAVIGATED");
+
+			await this.getAmountInfo();
 
 			let isDownloaded = await AsyncStorage.getItem("isDownloaded");
 			if (isDownloaded !== "true" || isDownloaded == null) {
