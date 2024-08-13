@@ -685,25 +685,29 @@ class Shopping extends Component {
 
 			// Download the rest of the list with date.
 			if (this.state.fromDate != null && this.state.toDate != null) {
-				const firstGroupGlobalId = await this.apiService.getLastSellGroupGlobalIdByDate(
+				this.setState({
+					loading: true
+				});
+
+				this.setState({
+					groupedHistories: []
+				})
+				let firstSellGroup = await this.sellHistoryRepository.getFirstSellGroupByDate(
 					this.state.fromDate,
-					this.state.toDate,
-					this.props.navigation
+					this.state.toDate
 				);
 
 				this.setState({
-					firstGroupGlobalId: firstGroupGlobalId
+					firstGroupGlobalId: firstSellGroup.global_id
 				});
 
 				let lastGroup =
 					await this.sellHistoryRepository.getLastSellHistoryGroupByDate(
 						this.state.fromDate, this.state.toDate
 					);
-
-				this.setState({
-					loading: true
-				});
 				let lastGroupId = lastGroup.id;
+
+
 				let sellingHistory =
 					await this.sellHistoryRepository.getTop10SellGroupByDate(
 						lastGroupId,
@@ -711,28 +715,48 @@ class Shopping extends Component {
 						this.state.toDate
 					);
 
+				lastGroupId -= 11;
+
 				try {
-					const grouped = {};
+					const grouped = [];
 
 					let lastDate;
 					let lastAmount;
 					for (const history of sellingHistory) {
 						const date = history.created_date.split("T")[0];
-						if (!grouped[date]) {
+						let groupIndex = grouped.findIndex(group => group.date === date);
+
+						if (groupIndex === -1) {
 							const formattedDate = this.formatDate(date);
-							grouped[date] = {date, dateInfo: formattedDate, histories: [], totalAmount: 0};
+							grouped.push({
+								date,
+								dateInfo: formattedDate,
+								histories: [],
+								totalAmount: 0
+							});
+							groupIndex = grouped.length - 1;
 						}
 
+						grouped[groupIndex].histories.push({
+							id: history.id,
+							created_date: history.created_date,
+							amount: history.amount,
+							saved: false
+						});
+
 						if (lastDate !== date) {
-							lastAmount = await this.amountDateRepository.getSellAmountInfoByDate(date);
+							try {
+								lastAmount = await this.amountDateRepository.getSellAmountInfoByDate(date);
+								lastDate = date;
+							} catch (e) {
+								lastAmount = 0;
+							}
+
 							lastDate = date;
 						}
 
-						grouped[date].totalAmount = lastAmount;
-						grouped[date].histories.push(history);
+						grouped[groupIndex].totalAmount = lastAmount;
 					}
-
-					lastGroupId -= 11;
 
 					this.setState({
 						sellingHistory: sellingHistory,
@@ -740,8 +764,8 @@ class Shopping extends Component {
 						lastGroupId: lastGroupId
 					});
 				}
-				catch (e) {
-				}
+				catch (e) { }
+
 
 				while (true) {
 					if (lastGroupId <= 0 || await AsyncStorage.getItem("window") != "Shopping") {
@@ -757,6 +781,8 @@ class Shopping extends Component {
 							this.state.fromDate,
 							this.state.toDate
 						);
+					lastGroupId -= 11;
+
 					if (sellingHistory.length === 0) {
 						return;
 					}

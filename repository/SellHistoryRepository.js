@@ -192,8 +192,6 @@ class SellHistoryRepository {
 			toDateObj.getTime() - toDateObj.getTimezoneOffset() * 60000
 		).toISOString().slice(0, 19).replace('T', ' ');
 
-		console.log(fromLocalDate, toLocalDate);
-
 		console.log(`
         SELECT *
         FROM sell_group
@@ -657,6 +655,59 @@ class SellHistoryRepository {
 		}
 	}
 
+	async getFirstSellGroupByDate(fromDate, toDate) {
+		let fromDateObj = new Date(fromDate);
+		fromDateObj.setHours(23, 59, 59, 999); // Set to the end of the day
+		const fromLocalDate = new Date(
+			fromDateObj.getTime() - fromDateObj.getTimezoneOffset() * 60000
+		).toISOString().slice(0, 19).replace('T', ' ');
+
+		let toDateObj = new Date(toDate);
+		toDateObj.setHours(0, 0, 0, 0); // Set to the beginning of the day
+		const toLocalDate = new Date(
+			toDateObj.getTime() - toDateObj.getTimezoneOffset() * 60000
+		).toISOString().slice(0, 19).replace('T', ' ');
+
+		try {
+			console.log(`SELECT *
+          FROM sell_group
+          WHERE created_date BETWEEN '${toLocalDate}' AND '${fromLocalDate}'
+          ORDER BY ID ASC
+          LIMIT 1;`)
+			const query = `
+          SELECT *
+          FROM sell_group
+          WHERE created_date BETWEEN ? AND ?
+          ORDER BY ID ASC
+          LIMIT 1;
+			`;
+
+			const result = await new Promise((resolve, reject) => {
+				this.db.transaction((tx) => {
+					tx.executeSql(
+						query,
+						[toLocalDate, fromLocalDate],
+						(_, resultSet) => resolve(resultSet),
+						(_, error) => reject(error)
+					);
+				});
+			});
+
+			if (!result || !result.rows || !result.rows._array) {
+				console.error("Unexpected result structure:", result);
+				throw new Error("Unexpected result structure");
+			}
+
+			const rows = result.rows._array[0];
+
+			return rows;
+		} catch (error) {
+			console.error("Error getLastSellHistoryGroupId:", error);
+			throw error;
+		}
+	}
+
+
 	async getTop10SellGroupByDate(lastHistoryId, fromDate, toDate) {
 		let fromDateObj = new Date(fromDate);
 		fromDateObj.setHours(23, 59, 59, 999); // Set to the end of the day
@@ -670,23 +721,21 @@ class SellHistoryRepository {
 			toDateObj.getTime() - toDateObj.getTimezoneOffset() * 60000
 		).toISOString().slice(0, 19).replace('T', ' ');
 
-		console.log(fromLocalDate, toLocalDate);
-
 		try {
 			const query = `
             SELECT *
             FROM sell_group
             WHERE id <= ?
               AND created_date BETWEEN ? AND ?
-            ORDER BY created_date DESC
-            LIMIT 10;
+            ORDER BY id DESC
+            LIMIT 11;
         `;
 
 			const result = await new Promise((resolve, reject) => {
 				this.db.transaction((tx) => {
 					tx.executeSql(
 						query,
-						[lastHistoryId, toLocalDate, fromLocalDate], // Use toLocalDate here
+						[lastHistoryId, toLocalDate, fromLocalDate],
 						(_, resultSet) => resolve(resultSet),
 						(_, error) => reject(error)
 					);
