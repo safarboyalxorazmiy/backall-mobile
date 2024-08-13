@@ -230,6 +230,9 @@ class CalendarPage extends Component {
 							await AsyncStorage.removeItem(this.state.calendarFromPage + "FromDate");
 							await AsyncStorage.removeItem(this.state.calendarFromPage + "ToDate");
 
+							// Reload the screen cause date is deleted
+							await AsyncStorage.setItem("shoppingFullyLoaded", "false");
+
 							navigation.navigate(this.state.calendarFromPage);
 						}}
 						style={styles.deleteIcon}
