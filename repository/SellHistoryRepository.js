@@ -181,16 +181,18 @@ class SellHistoryRepository {
 
 	async getLastSellHistoryGroupByDate(fromDate, toDate) {
 		let fromDateObj = new Date(fromDate);
-		fromDateObj.setHours(23, 59, 59, 999);
+		fromDateObj.setHours(23, 59, 59, 999); // Set to the end of the day
 		const fromLocalDate = new Date(
-			fromDateObj.getTime(0, 0, 0, 0) - fromDateObj.getTimezoneOffset() * 60000
+			fromDateObj.getTime() - fromDateObj.getTimezoneOffset() * 60000
 		).toISOString().slice(0, 19).replace('T', ' ');
 
 		let toDateObj = new Date(toDate);
-		toDateObj.setHours();
+		toDateObj.setHours(0, 0, 0, 0); // Set to the beginning of the day
 		const toLocalDate = new Date(
 			toDateObj.getTime() - toDateObj.getTimezoneOffset() * 60000
 		).toISOString().slice(0, 19).replace('T', ' ');
+
+		console.log(fromLocalDate, toLocalDate);
 
 		console.log(`
         SELECT *
@@ -657,16 +659,18 @@ class SellHistoryRepository {
 
 	async getTop10SellGroupByDate(lastHistoryId, fromDate, toDate) {
 		let fromDateObj = new Date(fromDate);
-		fromDateObj.setHours(23, 59, 59, 999);
+		fromDateObj.setHours(23, 59, 59, 999); // Set to the end of the day
 		const fromLocalDate = new Date(
-			fromDateObj.getTime(0, 0, 0, 0) - fromDateObj.getTimezoneOffset() * 60000
+			fromDateObj.getTime() - fromDateObj.getTimezoneOffset() * 60000
 		).toISOString().slice(0, 19).replace('T', ' ');
 
 		let toDateObj = new Date(toDate);
-		toDateObj.setHours();
+		toDateObj.setHours(0, 0, 0, 0); // Set to the beginning of the day
 		const toLocalDate = new Date(
 			toDateObj.getTime() - toDateObj.getTimezoneOffset() * 60000
 		).toISOString().slice(0, 19).replace('T', ' ');
+
+		console.log(fromLocalDate, toLocalDate);
 
 		try {
 			const query = `
