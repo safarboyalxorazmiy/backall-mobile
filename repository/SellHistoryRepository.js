@@ -182,14 +182,14 @@ class SellHistoryRepository {
 	async getLastSellHistoryGroupByDate(fromDate, toDate) {
 		// Set fromDate to the start of the day (00:00:00.000)
 		let fromDateObj = new Date(fromDate);
-		fromDateObj.setHours(0, 0, 0, 0);
+		fromDateObj.setHours(23, 59, 59, 999);
 		const fromLocalDate = new Date(
-			fromDateObj.getTime() - fromDateObj.getTimezoneOffset() * 60000
+			fromDateObj.getTime(0, 0, 0, 0) - fromDateObj.getTimezoneOffset() * 60000
 		).toISOString().slice(0, 19).replace('T', ' ');
 
 		// Set toDate to the end of the day (23:59:59.999)
 		let toDateObj = new Date(toDate);
-		toDateObj.setHours(23, 59, 59, 999);
+		toDateObj.setHours();
 		const toLocalDate = new Date(
 			toDateObj.getTime() - toDateObj.getTimezoneOffset() * 60000
 		).toISOString().slice(0, 19).replace('T', ' ');
@@ -660,14 +660,14 @@ class SellHistoryRepository {
 	async getTop10SellGroupByDate(lastHistoryId, fromDate, toDate) {
 		// Convert fromDate to local time in 'YYYY-MM-DDTHH:MM:SS.sssZ' format
 		let fromDateObj = new Date(fromDate);
-		fromDateObj.setHours(0, 0, 0, 0);
+		fromDateObj.setHours(23, 59, 59, 999);
 		const fromLocalDate = new Date(
 			fromDateObj.getTime() - (fromDateObj.getTimezoneOffset() * 60000)
 		).toISOString();
 
 		// Convert toDate to local time in 'YYYY-MM-DDTHH:MM:SS.sssZ' format
 		let toDateObj = new Date(toDate);
-		toDateObj.setHours(23, 59, 59, 999);
+		toDateObj.setHours(0, 0, 0, 0);
 		const toLocalDate = new Date(
 			toDateObj.getTime() - (toDateObj.getTimezoneOffset() * 60000)
 		).toISOString();
