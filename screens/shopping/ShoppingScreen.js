@@ -522,8 +522,9 @@ class Shopping extends Component {
 			let lastDate;
 			let lastAmount;
 			for (const history of allSellHistories) {
+				console.log(history);
+
 				const date = history.created_date.split("T")[0];
-				console.log(date)
 
 				if (!grouped[date]) {
 					const formattedDate = this.formatDate(date);
@@ -558,6 +559,10 @@ class Shopping extends Component {
 		const {navigation} = this.props;
 
 		navigation.addListener("focus", async () => {
+			await this.getDateInfo();
+			console.log("fromDate:", this.state.fromDate);
+			console.log("toDate:", this.state.toDate);
+
 			/* Month sell amount setting value ** */
 			let thisMonthSellAmount = parseInt(await AsyncStorage.getItem("month_sell_amount"));
 
@@ -671,12 +676,114 @@ class Shopping extends Component {
 
 			// Load rest of items if exists **
 			let lastGroupId = this.state.lastGroupId;
-			let allSellHistories = this.state.sellingHistory;
 
 			this.setState({
 				loading: true
 			});
 
+
+			// Download the rest of the list with date.
+			if (this.state.fromDate != null && this.state.toDate != null) {
+				let lastGroup =
+					await this.sellHistoryRepository.getLastSellHistoryGroupByDate(
+						this.state.fromDate, this.state.toDate
+					);
+
+
+				let lastGroupId = lastGroup.id;
+				let sellingHistory =
+					await this.sellHistoryRepository.getTop10SellGroupByDate(
+						lastGroupId,
+						this.state.fromDate,
+						this.state.toDate
+					);
+
+				try {
+					const grouped = {};
+
+					let lastDate;
+					let lastAmount;
+					for (const history of sellingHistory) {
+						const date = history.created_date.split("T")[0];
+						if (!grouped[date]) {
+							const formattedDate = this.formatDate(date);
+							grouped[date] = {date, dateInfo: formattedDate, histories: [], totalAmount: 0};
+						}
+
+						if (lastDate !== date) {
+							lastAmount = await this.amountDateRepository.getSellAmountInfoByDate(date);
+							lastDate = date;
+						}
+
+						grouped[date].totalAmount = lastAmount;
+						grouped[date].histories.push(history);
+					}
+
+					lastGroupId -= 11;
+
+					this.setState({
+						sellingHistory: sellingHistory,
+						groupedHistories: Object.values(grouped),
+						lastGroupId: lastGroupId
+					});
+				} catch (e) {
+				}
+
+				while (true) {
+					if (lastGroupId <= 0 || await AsyncStorage.getItem("window") != "Shopping") {
+						this.setState({
+							loading: false
+						});
+						break;
+					}
+
+					let sellingHistory =
+						await this.sellHistoryRepository.getTop10SellGroupByDate(
+							lastGroupId,
+							this.state.fromDate,
+							this.state.toDate
+						);
+					if (sellingHistory.length === 0) {
+						return;
+					}
+
+					try {
+						const grouped = {};
+
+						let lastDate;
+						let lastAmount;
+						for (const history of sellingHistory) {
+							const date = history.created_date.split("T")[0];
+							if (!grouped[date]) {
+								const formattedDate = this.formatDate(date);
+								grouped[date] = {date, dateInfo: formattedDate, histories: [], totalAmount: 0};
+							}
+
+							if (lastDate !== date) {
+								lastAmount = await this.amountDateRepository.getSellAmountInfoByDate(date);
+								lastDate = date;
+							}
+
+							grouped[date].totalAmount = lastAmount;
+							grouped[date].histories.push(history);
+						}
+
+						lastGroupId -= 11;
+
+						this.setState({
+							sellingHistory: [...this.state.sellingHistory, sellingHistory],
+							groupedHistories: Object.values(grouped),
+							lastGroupId: lastGroupId
+						});
+
+					} catch (e) {
+					}
+				}
+
+				return;
+			}
+
+			// Download the rest of the list.
 			while (true) {
 				if (lastGroupId <= 0 || await AsyncStorage.getItem("window") != "Shopping") {
 					this.setState({

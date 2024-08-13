@@ -10,24 +10,24 @@ class AmountDateRepository {
 			this.db.transaction(tx => {
 				tx.executeSql(
 					`CREATE TABLE IF NOT EXISTS profit_amount_date
-           (
-               id        INTEGER PRIMARY KEY AUTOINCREMENT,
-               date      TEXT   NOT NULL,
-               amount    DOUBLE NOT NULL,
-               global_id INTEGER,
-               saved     boolean
-           );`
+                     (
+                         id        INTEGER PRIMARY KEY AUTOINCREMENT,
+                         date      TEXT   NOT NULL,
+                         amount    DOUBLE NOT NULL,
+                         global_id INTEGER,
+                         saved     boolean
+                     );`
 				);
 
 				tx.executeSql(
 					`CREATE TABLE IF NOT EXISTS sell_amount_date
-           (
-               id        INTEGER PRIMARY KEY AUTOINCREMENT,
-               date      TEXT   NOT NULL,
-               amount    DOUBLE NOT NULL,
-               global_id INTEGER,
-               saved     boolean
-           );`
+                     (
+                         id        INTEGER PRIMARY KEY AUTOINCREMENT,
+                         date      TEXT   NOT NULL,
+                         amount    DOUBLE NOT NULL,
+                         global_id INTEGER,
+                         saved     boolean
+                     );`
 				);
 			})
 
@@ -37,11 +37,11 @@ class AmountDateRepository {
 
 	async createProfitAmountWithAllValues(profitAmount, date, global_id, saved) {
 		const insertQuery = `
-        INSERT INTO profit_amount_date (date,
-                                        amount,
-                                        global_id,
-                                        saved)
-        VALUES (?, ?, ?, ?);`;
+            INSERT INTO profit_amount_date (date,
+                                            amount,
+                                            global_id,
+                                            saved)
+            VALUES (?, ?, ?, ?);`;
 		await this.db.transaction(async (tx) => {
 			await tx.executeSql(insertQuery, [
 					date,
@@ -64,7 +64,7 @@ class AmountDateRepository {
 	async createSellAmountWithAllValues(sellAmount, date, global_id, saved) {
 		const insertQuery =
 			`INSERT INTO sell_amount_date (date, amount, global_id, saved)
-       VALUES (?, ?, ?, ?);`;
+             VALUES (?, ?, ?, ?);`;
 
 		await this.db.transaction(async (tx) => {
 			await tx.executeSql(
@@ -85,8 +85,8 @@ class AmountDateRepository {
 
 	async setProfitAmount(profitAmount, date) {
 		const selectQuery = `SELECT amount
-                         FROM profit_amount_date
-                         WHERE date = ?;`;
+                             FROM profit_amount_date
+                             WHERE date = ?;`;
 		this.db.transaction(tx => {
 			tx.executeSql(selectQuery, [date], (tx, results) => {
 					if (results.rows.length > 0) {
@@ -94,9 +94,9 @@ class AmountDateRepository {
 						const currentProfit = results.rows.item(0).amount;
 						const updatedProfit = currentProfit + profitAmount;
 						const updateQuery = `UPDATE profit_amount_date
-                                 SET amount = ?,
-                                     saved  = 0
-                                 WHERE date = ?;`;
+                                             SET amount = ?,
+                                                 saved  = 0
+                                             WHERE date = ?;`;
 						tx.executeSql(updateQuery, [updatedProfit, date], (tx, updateResults) => {
 								if (updateResults.rowsAffected > 0) {
 									console.log(`Profit amount updated successfully`);
@@ -107,7 +107,7 @@ class AmountDateRepository {
 							error => {
 								// If no record with the given date exists, insert a new record
 								const insertQuery = `INSERT INTO profit_amount_date (date, amount, global_id, saved)
-                                     VALUES (?, ?, ?, ?);`;
+                                                     VALUES (?, ?, ?, ?);`;
 								tx.executeSql(insertQuery, [date, profitAmount, null, 0], (tx, insertResults) => {
 										if (insertResults.rowsAffected > 0) {
 											console.log(`Profit amount inserted successfully`);
@@ -121,7 +121,7 @@ class AmountDateRepository {
 							});
 					} else {
 						const insertQuery = `INSERT INTO profit_amount_date (date, amount, global_id, saved)
-                                 VALUES (?, ?, ?, ?);`;
+                                             VALUES (?, ?, ?, ?);`;
 						tx.executeSql(insertQuery, [date, profitAmount, null, 0], (tx, insertResults) => {
 								if (insertResults.rowsAffected > 0) {
 									console.log(`Profit amount inserted successfully`);
@@ -143,8 +143,8 @@ class AmountDateRepository {
 
 	async setSellAmount(sellAmount, date) {
 		const selectQuery = `SELECT amount
-                         FROM sell_amount_date
-                         WHERE date = ?;`;
+                             FROM sell_amount_date
+                             WHERE date = ?;`;
 		this.db.transaction(tx => {
 			tx.executeSql(selectQuery, [date], (tx, results) => {
 					if (results.rows.length > 0) {
@@ -154,9 +154,9 @@ class AmountDateRepository {
 						const updatedSell = currentSell + sellAmount;
 
 						const updateQuery = `UPDATE sell_amount_date
-                                 SET amount = ?,
-                                     saved  = 0
-                                 WHERE date = ?;`;
+                                             SET amount = ?,
+                                                 saved  = 0
+                                             WHERE date = ?;`;
 						tx.executeSql(updateQuery, [updatedSell, date], (tx, updateResults) => {
 								if (updateResults.rowsAffected > 0) {
 									console.log(`Sell amount updated successfully`);
@@ -170,7 +170,7 @@ class AmountDateRepository {
 					} else {
 						// If no record with the given date exists, insert a new record
 						const insertQuery = `INSERT INTO sell_amount_date (date, amount, global_id, saved)
-                                 VALUES (?, ?, null, 0);`;
+                                             VALUES (?, ?, null, 0);`;
 						tx.executeSql(insertQuery, [date, sellAmount], (tx, insertResults) => {
 								if (insertResults.rowsAffected > 0) {
 									console.log(`Sell amount inserted successfully`);
@@ -186,7 +186,7 @@ class AmountDateRepository {
 				},
 				error => {
 					const insertQuery = `INSERT INTO sell_amount_date (date, amount, global_id, saved)
-                               VALUES (?, ?, null, 0);`;
+                                         VALUES (?, ?, null, 0);`;
 					tx.executeSql(insertQuery, [date, sellAmount], (tx, insertResults) => {
 							if (insertResults.rowsAffected > 0) {
 								console.log(`Sell amount inserted successfully`);
@@ -232,8 +232,8 @@ class AmountDateRepository {
 	async getProfitAmountDateSavedFalse() {
 		return new Promise((resolve, reject) => {
 			const selectQuery = `SELECT *
-                           FROM profit_amount_date
-                           WHERE saved = 0;`;
+                                 FROM profit_amount_date
+                                 WHERE saved = 0;`;
 			this.db.transaction(tx => {
 				tx.executeSql(selectQuery, [], (tx, results) => {
 						if (results.rows.length > 0) {
@@ -252,8 +252,8 @@ class AmountDateRepository {
 	async getSellAmountDateSavedFalse() {
 		return new Promise((resolve, reject) => {
 			const selectQuery = `SELECT *
-                           FROM sell_amount_date
-                           WHERE saved = 0;`;
+                                 FROM sell_amount_date
+                                 WHERE saved = 0;`;
 			this.db.transaction(tx => {
 				tx.executeSql(selectQuery, [], (tx, results) => {
 						if (results.rows.length > 0) {
@@ -271,9 +271,10 @@ class AmountDateRepository {
 
 	async getProfitAmountInfoByDate(date) {
 		return new Promise((resolve, reject) => {
-			const selectQuery = `SELECT amount
-                           FROM profit_amount_date
-                           WHERE date = ?;`;
+			const selectQuery =
+				`SELECT amount
+                 FROM profit_amount_date
+                 WHERE date = ?;`;
 			this.db.transaction(tx => {
 				tx.executeSql(selectQuery, [date], (tx, results) => {
 						if (results.rows.length > 0) {
@@ -293,8 +294,8 @@ class AmountDateRepository {
 		return new Promise((resolve, reject) => {
 			const selectQuery =
 				`SELECT amount
-         FROM sell_amount_date
-         WHERE date = ?;`;
+                 FROM sell_amount_date
+                 WHERE date = ?;`;
 			this.db.transaction(tx => {
 				tx.executeSql(selectQuery, [date], (tx, results) => {
 						if (results.rows.length > 0) {
@@ -313,8 +314,8 @@ class AmountDateRepository {
 
 	async getProfitAmountInfoByDates(dates) {
 		const selectQuery = `SELECT date, amount
-                         FROM sell_amount_date
-                         WHERE date IN (${dates.map(() => '?').join(',')});`;
+                             FROM sell_amount_date
+                             WHERE date IN (${dates.map(() => '?').join(',')});`;
 
 		try {
 			const results = await new Promise((resolve, reject) => {
@@ -348,8 +349,8 @@ class AmountDateRepository {
 	async getSellAmountInfoByDates(dates) {
 		const selectQuery =
 			`SELECT date, amount
-       FROM profit_amount_date
-       WHERE date IN (${dates.map(() => '?').join(',')});`;
+             FROM profit_amount_date
+             WHERE date IN (${dates.map(() => '?').join(',')});`;
 
 		try {
 			const results = await new Promise((resolve, reject) => {
