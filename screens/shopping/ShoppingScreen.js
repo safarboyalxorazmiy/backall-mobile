@@ -584,7 +584,7 @@ class Shopping extends Component {
 				let lastGroupId = lastSellGroup.id;
 
 				if ((lastGroupId - 100) > 0) {
-					await this.sellHistoryRepository.deleteByIdLessThan(lastGroupId - 100);
+					await this.sellHistoryRepository.deleteByGroupIdLessThan(lastGroupId - 100);
 				}
 
 				// Explanation for firstSellGroup. We need it for getting rest of rows from global.
