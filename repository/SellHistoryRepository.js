@@ -928,8 +928,7 @@ class SellHistoryRepository {
                     SELECT *
                     FROM sell_history_group
                     WHERE group_id = ?
-                    ORDER BY id
-                    LIMIT 6;
+                    ORDER BY id;
                 `;
                 result = await new Promise((resolve, reject) => {
                     this.db.transaction((tx) => {
@@ -941,14 +940,14 @@ class SellHistoryRepository {
                         );
                     });
                 });
-            } else {
+            }
+            else {
                 query = `
                     SELECT *
                     FROM sell_history_group
                     WHERE group_id = ?
                       and id > ?
-                    ORDER BY id
-                    LIMIT 2;
+                    ORDER BY id;
                 `;
 
                 result = await new Promise((resolve, reject) => {
