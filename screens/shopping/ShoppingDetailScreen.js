@@ -58,7 +58,9 @@ class ShoppingDetail extends Component {
 			{sellGroupId: parseInt(sellGroupId)}
 		);
 
-		let sellHistoryDetail = await this.sellHistoryRepository.getSellHistoryDetailByGroupIdTop6(this.state.sellGroupId, this.state.lastId);
+		let sellHistoryDetail = await this.sellHistoryRepository.getSellHistoryDetailByGroupId(this.state.sellGroupId, this.state.lastId);
+
+		console.log("sellHistoryDetail:: ", sellHistoryDetail)
 
 		await this.setState(
 			{
@@ -99,7 +101,7 @@ class ShoppingDetail extends Component {
 		}
 
 		let nextSellHistoryDetail =
-			await this.sellHistoryRepository.getSellHistoryDetailByGroupIdTop6(
+			await this.sellHistoryRepository.getSellHistoryDetailByGroupId(
 				this.state.sellGroupId, this.state.lastId
 			);
 
