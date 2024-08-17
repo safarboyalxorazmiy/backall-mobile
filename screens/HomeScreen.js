@@ -30,6 +30,7 @@ import LogoutIcon from "../assets/logout-icon.svg";
 import CrossIcon from "../assets/cross-icon.svg";
 import ShoppingIcon from "../assets/home/shopping-icon.svg";
 import BenefitIcon from "../assets/home/benefit-icon.svg";
+import apiService from "../service/ApiService";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -273,7 +274,8 @@ class Home extends Component {
 						sellAmount: sellAmount.amount,
 						profitAmount: profitAmount.amount
 					})
-				} catch (e) {	}
+				} catch (e) {
+				}
 
 
 				try {
@@ -316,19 +318,11 @@ class Home extends Component {
 				this.setState({spinner: true})
 				isDownloaded = isDownloaded && await this.getStoreProducts();
 				this.setState({spinner: true})
-				isDownloaded = isDownloaded && await this.getSellGroups();
-				this.setState({spinner: true})
-				isDownloaded = isDownloaded && await this.getSellHistories();
-				this.setState({spinner: true})
-				isDownloaded = isDownloaded && await this.getSellHistoryGroup();
+				isDownloaded = isDownloaded && await this.getSellGroupsAndHistories()();
 				this.setState({spinner: true})
 				isDownloaded = isDownloaded && await this.getSellAmountDate();
 				this.setState({spinner: true})
-				isDownloaded = isDownloaded && await this.getProfitGroups();
-				this.setState({spinner: true})
-				isDownloaded = isDownloaded && await this.getProfitHistories();
-				this.setState({spinner: true})
-				isDownloaded = isDownloaded && await this.getProfitHistoryGroup();
+				isDownloaded = isDownloaded && await this.getProfitGroupsAndHistories();
 				this.setState({spinner: true})
 				isDownloaded = isDownloaded && await this.getProfitAmountDate();
 				this.setState({spinner: true})
@@ -501,7 +495,7 @@ class Home extends Component {
 	}
 
 	// SELL PAGINATION
-	async getSellGroups() {
+	async getSellGroupsAndHistories() {
 		// GET LAST ID OF GROUPS
 
 		let lastSellGroupGlobalId =
@@ -537,12 +531,35 @@ class Home extends Component {
 
 		for (const sellGroup of response.content) {
 			try {
-				await this.sellHistoryRepository.createSellGroupWithAllValues(
-					sellGroup.createdDate,
-					sellGroup.amount,
-					sellGroup.id,
-					true
-				);
+				let createdSellGroupId =
+					await this.sellHistoryRepository.createSellGroupWithAllValues(
+						sellGroup.createdDate,
+						sellGroup.amount,
+						sellGroup.id,
+						true
+					);
+
+				let sellHistoryLinkInfos = await this.apiService.getSellHistoryLinkInfoByGroupId(sellGroup.id);
+				if (sellHistoryLinkInfos.length !== 0) {
+					for (let sellHistoryLinkInfoElement of sellHistoryLinkInfos) {
+						let createdSellHistoryId = await this.sellHistoryRepository.createSellHistoryWithAllValues(
+							sellHistoryLinkInfoElement.sellHistory.productId,
+							sellHistoryLinkInfoElement.sellHistory.id,
+							sellHistoryLinkInfoElement.sellHistory.count,
+							sellHistoryLinkInfoElement.sellHistory.countType,
+							sellHistoryLinkInfoElement.sellHistory.sellingPrice,
+							sellHistoryLinkInfoElement.sellHistory.createdDate,
+							true
+						);
+
+						await this.sellHistoryRepository.createSellHistoryGroupWithAllValues(
+							createdSellHistoryId,
+							createdSellGroupId,
+							sellHistoryLinkInfoElement.id,
+							true
+						);
+					}
+				}
 			} catch (error) {
 				console.error("Error getSellGroups:", error);
 			}
@@ -694,7 +711,7 @@ class Home extends Component {
 	}
 
 	// PROFIT
-	async getProfitGroups() {
+	async getProfitGroupsAndHistories() {
 		console.log("GETTING PROFIT GROUPS ⏳⏳⏳");
 		let lastProfitGroupGlobalId =
 			await this.apiService.getLastProfitGroupGlobalId(this.props.navigation);
@@ -727,12 +744,34 @@ class Home extends Component {
 
 		for (const profitGroup of response.content) {
 			try {
-				let createdGroupId = await this.profitHistoryRepository.createProfitGroupWithAllValues(
+				let createdProfitGroupId = await this.profitHistoryRepository.createProfitGroupWithAllValues(
 					profitGroup.createdDate,
 					profitGroup.profit,
 					profitGroup.id,
 					true
 				);
+
+				let profitHistoryLinkInfos = await this.apiService.getProfitHistoryLinkInfoByGroupId(profitGroup.id);
+				if (profitHistoryLinkInfos.length !== 0) {
+					for (let profitHistoryLinkInfoElement of profitHistoryLinkInfos) {
+						let createdProfitHistoryId = await this.profitHistoryRepository.createProfitHistoryWithAllValues(
+							profitHistoryLinkInfoElement.profitHistory.productId,
+							profitHistoryLinkInfoElement.profitHistory.id,
+							profitHistoryLinkInfoElement.profitHistory.count,
+							profitHistoryLinkInfoElement.profitHistory.countType,
+							profitHistoryLinkInfoElement.profitHistory.profit,
+							profitHistoryLinkInfoElement.profitHistory.createdDate,
+							true
+						);
+
+						await this.profitHistoryRepository.createProfitHistoryGroupWithAllValues(
+							createdProfitHistoryId,
+							createdProfitGroupId,
+							profitHistoryLinkInfoElement.id,
+							true
+						);
+					}
+				}
 
 				console.log("Group created with id: ", createdGroupId);
 			} catch (error) {
