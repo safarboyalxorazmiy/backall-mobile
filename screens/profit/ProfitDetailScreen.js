@@ -58,7 +58,9 @@ class ProfitDetail extends Component {
 			);
 
 		if (profitHistoryDetail.length === 0) {
-			profitHistoryDetail = await this.apiService.getProfitHistoriesByProfitGroupGlobalId(profitGroup[0].id);
+			profitHistoryDetail = await this.apiService.getProfitHistoriesByProfitGroupGlobalId(
+				profitGroup[0].id, this.props.navigation
+			);
 		}
 
 		this.setState({

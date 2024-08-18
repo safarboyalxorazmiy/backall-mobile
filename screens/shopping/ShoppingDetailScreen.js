@@ -68,7 +68,9 @@ class ShoppingDetail extends Component {
 			);
 
 		if (sellHistoryDetail.length === 0) {
-			sellHistoryDetail = await this.apiService.getSellHistoriesBySellGroupGlobalId(sellGroup[0].id);
+			sellHistoryDetail = await this.apiService.getSellHistoriesBySellGroupGlobalId(
+				sellGroup[0].id, this.props.navigation
+			);
 		}
 
 		this.setState({
