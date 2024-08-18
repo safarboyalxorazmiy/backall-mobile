@@ -36,12 +36,10 @@ class ProfitDetail extends Component {
 			this.setState({
 				groupId: null,
 				profitHistoryDetail: [],
-				profitHistoryDetailLastId: 0,
 				groupDetail: [],
-				lastId: 0,
-				lastYPos: 0,
-				isLoaded: false
-			})
+				profitHistoryDetailLastId: 0
+			});
+
 			await this.getDetails();
 		});
 	}
