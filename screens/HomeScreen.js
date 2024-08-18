@@ -548,8 +548,9 @@ class Home extends Component {
 		let sellHistoryLinkInfos = await this.apiService.getSellHistoryLinkInfoByGroupId(lastSellGroupGlobalIdByResponse);
 		if (sellHistoryLinkInfos.length !== 0) {
 			for (let sellHistoryLinkInfoElement of sellHistoryLinkInfos) {
+				let products = await this.productRepository.findProductsByGlobalId(sellHistoryLinkInfoElement.sellHistory.productId);
 				let createdSellHistoryId = await this.sellHistoryRepository.createSellHistoryWithAllValues(
-					sellHistoryLinkInfoElement.sellHistory.productId,
+					products[0].id,
 					sellHistoryLinkInfoElement.sellHistory.id,
 					sellHistoryLinkInfoElement.sellHistory.count,
 					sellHistoryLinkInfoElement.sellHistory.countType,
@@ -769,8 +770,11 @@ class Home extends Component {
 		let profitHistoryLinkInfos = await this.apiService.getProfitHistoryLinkInfoByGroupId(lastProfitGroupGlobalIdByResponse);
 		if (profitHistoryLinkInfos.length !== 0) {
 			for (let profitHistoryLinkInfoElement of profitHistoryLinkInfos) {
+				let products =
+					await this.productRepository.findProductsByGlobalId(profitHistoryLinkInfoElement.profitHistory.productId);
+
 				let createdProfitHistoryId = await this.profitHistoryRepository.createProfitHistoryWithAllValues(
-					profitHistoryLinkInfoElement.profitHistory.productId,
+					products[0].id,
 					profitHistoryLinkInfoElement.profitHistory.id,
 					profitHistoryLinkInfoElement.profitHistory.count,
 					profitHistoryLinkInfoElement.profitHistory.countType,
