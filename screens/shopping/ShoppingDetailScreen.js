@@ -11,6 +11,7 @@ import {ScrollView} from "react-native-gesture-handler";
 import BackIcon from "../../assets/arrow-left-icon.svg";
 import SellHistoryRepository from "../../repository/SellHistoryRepository";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import ApiService from "../../service/ApiService";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -29,12 +30,13 @@ class ShoppingDetail extends Component {
 		}
 
 		this.sellHistoryRepository = new SellHistoryRepository();
-		this.getDetails();
+		this.apiService = new ApiService();
 	}
 
 	async componentDidMount() {
 		const {navigation} = this.props;
 
+		await this.getDetails();
 		navigation.addListener("focus", async () => {
 			this.setState({
 				sellGroupId: null,

@@ -12,8 +12,6 @@ class ProfitDetail extends Component {
 	constructor(props) {
 		super(props);
 
-		this.profitHistoryRepository = new ProfitHistoryRepository();
-
 		this.state = {
 			groupId: null,
 			profitHistoryDetail: [],
@@ -24,14 +22,14 @@ class ProfitDetail extends Component {
 			isLoaded: false
 		}
 
-		this.getDetails();
-
+		this.profitHistoryRepository = new ProfitHistoryRepository();
 		this.apiService = new ApiService();
 	}
 
 	async componentDidMount() {
 		const {navigation} = this.props;
 
+		await this.getDetails();
 		navigation.addListener("focus", async () => {
 			this.setState({
 				groupId: null,
