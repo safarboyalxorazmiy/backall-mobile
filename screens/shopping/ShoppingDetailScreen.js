@@ -58,9 +58,12 @@ class ShoppingDetail extends Component {
 			await this.sellHistoryRepository.getSellGroupInfoById(this.state.groupId);
 		this.setState({groupDetail: sellGroup[0]});
 
-		this.setState(
-			{groupId: parseInt(await AsyncStorage.getItem("sell_history_id"))}
-		);
+		const sellHistoryId = await AsyncStorage.getItem("profit_history_id");
+		const groupId = isNaN(Number(sellHistoryId)) ? BigInt(sellHistoryId) : Number(sellHistoryId);
+
+		this.setState({
+			groupId
+		});
 
 		let sellHistoryDetail =
 			await this.sellHistoryRepository.getSellHistoryDetailByGroupId(
@@ -69,7 +72,7 @@ class ShoppingDetail extends Component {
 
 		if (sellHistoryDetail.length === 0) {
 			sellHistoryDetail = await this.apiService.getSellHistoriesBySellGroupGlobalId(
-				sellGroup[0].id, this.props.navigation
+				this.state.groupId, this.props.navigation
 			);
 		}
 

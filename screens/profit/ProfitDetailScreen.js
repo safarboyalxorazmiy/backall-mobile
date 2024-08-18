@@ -48,9 +48,12 @@ class ProfitDetail extends Component {
 			await this.profitHistoryRepository.getProfitGroupInfoById(this.state.groupId);
 		this.setState({groupDetail: profitGroup[0]});
 
-		this.setState(
-			{groupId: parseInt(await AsyncStorage.getItem("profit_history_id"))}
-		);
+		const profitHistoryId = await AsyncStorage.getItem("profit_history_id");
+		const groupId = isNaN(Number(profitHistoryId)) ? BigInt(profitHistoryId) : Number(profitHistoryId);
+
+		this.setState({
+			groupId
+		});
 
 		let profitHistoryDetail =
 			await this.profitHistoryRepository.getProfitHistoryDetailByGroupId(

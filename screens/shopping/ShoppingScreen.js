@@ -376,7 +376,7 @@ class Shopping extends Component {
 			}
 
 			grouped[groupIndex].histories.push({
-				id: lastGroupId,
+				id: history.id,
 				created_date: history.createdDate,
 				amount: history.amount,
 				saved: false
@@ -394,7 +394,6 @@ class Shopping extends Component {
 			}
 
 			grouped[groupIndex].totalAmount = lastAmount;
-			lastGroupId++;
 		}
 
 		this.setState(prevState => ({
