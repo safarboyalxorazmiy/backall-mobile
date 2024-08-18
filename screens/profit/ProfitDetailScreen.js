@@ -4,6 +4,7 @@ import {ScrollView} from "react-native-gesture-handler";
 import BackIcon from "../../assets/arrow-left-icon.svg";
 import ProfitHistoryRepository from "../../repository/ProfitHistoryRepository";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import ApiService from "../../service/ApiService";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -24,6 +25,8 @@ class ProfitDetail extends Component {
 		}
 
 		this.getDetails();
+
+		this.apiService = new ApiService();
 	}
 
 	async componentDidMount() {
@@ -44,57 +47,27 @@ class ProfitDetail extends Component {
 	}
 
 	async getDetails() {
-		await this.setState(
+		// GROUP..
+		let profitGroup =
+			await this.profitHistoryRepository.getProfitGroupInfoById(this.state.groupId);
+		this.setState({groupDetail: profitGroup[0]});
+
+		this.setState(
 			{groupId: parseInt(await AsyncStorage.getItem("profit_history_id"))}
 		);
 
-		let profitHistoryDetail = await this.profitHistoryRepository.getProfitHistoryDetailByGroupIdTop6(this.state.groupId, parseInt(this.state.lastId));
-		let last = profitHistoryDetail[profitHistoryDetail.length - 1];
-
-		await this.setState(
-			{
-				profitHistoryDetail: profitHistoryDetail,
-				lastId: last.id
-			}
-		);
-
-		let profitHistoryDetailLastId = await this.profitHistoryRepository.getLastProfitHistoryDetailByGroupId(this.state.groupId);
-		profitHistoryDetailLastId = profitHistoryDetailLastId[0];
-		this.setState({
-			profitHistoryDetailLastId: profitHistoryDetailLastId.id
-		})
-
-		// GROUP.. 
-		let groupDetail =
-			await this.profitHistoryRepository.getProfitGroupInfoById(this.state.groupId);
-		this.setState({groupDetail: groupDetail[0]});
-	}
-
-	async getNextDetails() {
-		if (this.state.isLoaded) {
-			return;
-		}
-
-		let nextProfitHistoryDetail =
-			await this.profitHistoryRepository.getProfitHistoryDetailByGroupIdTop6(
-				this.state.groupId, this.state.lastId
+		let profitHistoryDetail =
+			await this.profitHistoryRepository.getProfitHistoryDetailByGroupId(
+				this.state.groupId
 			);
 
-		let last = nextProfitHistoryDetail[nextProfitHistoryDetail.length - 1]
-		if (last != undefined) {
-			if (last.id == this.state.profitHistoryDetailLastId) {
-				this.setState({
-					isLoaded: true
-				});
-			}
-
-			let allProfitHistoryDetail =
-				this.state.profitHistoryDetail.concat(nextProfitHistoryDetail);
-			await this.setState({
-				profitHistoryDetail: allProfitHistoryDetail,
-				lastId: last.id
-			});
+		if (profitHistoryDetail.length === 0) {
+			profitHistoryDetail = await this.apiService.getProfitHistoriesByProfitGroupGlobalId(profitGroup[0].id);
 		}
+
+		this.setState({
+			profitHistoryDetail: profitHistoryDetail
+		});
 	}
 
 	getTime(isoString) {
@@ -138,18 +111,7 @@ class ProfitDetail extends Component {
 		const {navigation} = this.props;
 
 		return (
-			<ScrollView
-				onScrollBeginDrag={async (event) => {
-					const currentYPos = event.nativeEvent.contentOffset.y;
-
-					if ((currentYPos - this.state.lastYPos) > 138) {
-						this.setState({lastYPos: currentYPos});
-						;
-						await this.getNextDetails();
-					}
-				}}
-
-				style={styles.body}>
+			<ScrollView	style={styles.body}>
 				<View style={styles.container}>
 					<View style={styles.header}>
 						<TouchableOpacity
