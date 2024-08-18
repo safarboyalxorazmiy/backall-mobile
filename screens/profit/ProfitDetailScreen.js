@@ -48,8 +48,14 @@ class ProfitDetail extends Component {
 			await this.profitHistoryRepository.getProfitGroupInfoById(this.state.groupId);
 		this.setState({groupDetail: profitGroup[0]});
 
-		const profitHistoryId = await AsyncStorage.getItem("profit_history_id");
-		const groupId = isNaN(Number(profitHistoryId)) ? BigInt(profitHistoryId) : Number(profitHistoryId);
+		const profitHistoryId = await AsyncStorage.getItem("sell_history_id");
+
+		let groupId;
+		if (BigInt(profitHistoryId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+			groupId = Number(profitHistoryId); // Convert to a Number if it's within the safe range
+		} else {
+			groupId = BigInt(profitHistoryId); // Keep as a BigInt if it's large
+		}
 
 		this.setState({
 			groupId

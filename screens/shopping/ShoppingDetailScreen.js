@@ -58,8 +58,14 @@ class ShoppingDetail extends Component {
 			await this.sellHistoryRepository.getSellGroupInfoById(this.state.groupId);
 		this.setState({groupDetail: sellGroup[0]});
 
-		const sellHistoryId = await AsyncStorage.getItem("profit_history_id");
-		const groupId = isNaN(Number(sellHistoryId)) ? BigInt(sellHistoryId) : Number(sellHistoryId);
+		const sellHistoryId = await AsyncStorage.getItem("sell_history_id");
+
+		let groupId;
+		if (BigInt(sellHistoryId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+			groupId = Number(sellHistoryId); // Convert to a Number if it's within the safe range
+		} else {
+			groupId = BigInt(sellHistoryId); // Keep as a BigInt if it's large
+		}
 
 		this.setState({
 			groupId
