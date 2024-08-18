@@ -51,73 +51,26 @@ class ShoppingDetail extends Component {
 	}
 
 	async getDetails() {
-		let sellGroupId = await AsyncStorage.getItem("sell_history_id");
-		console.log("sellGroupId:: ", sellGroupId)
+		// GROUP..
+		let sellGroup =
+			await this.sellHistoryRepository.getSellGroupInfoById(this.state.groupId);
+		this.setState({groupDetail: sellGroup[0]});
 
-		await this.setState(
-			{sellGroupId: parseInt(sellGroupId)}
+		this.setState(
+			{groupId: parseInt(await AsyncStorage.getItem("sell_history_id"))}
 		);
 
-		let sellHistoryDetail = await this.sellHistoryRepository.getSellHistoryDetailByGroupId(this.state.sellGroupId, this.state.lastId);
-
-		console.log("sellHistoryDetail:: ", sellHistoryDetail)
-
-		await this.setState(
-			{
-				sellHistoryDetail: sellHistoryDetail
-			}
-		);
-
-		let last = sellHistoryDetail[sellHistoryDetail.length - 1];
-		if (last) {
-			this.setState({
-				lastId: last.id
-			})
-		}
-
-		let sellHistoryDetailLastId =
-			await this.sellHistoryRepository.getLastSellHistoryDetailByGroupId(this.state.sellGroupId);
-		sellHistoryDetailLastId = sellHistoryDetailLastId[0];
-		this.setState({
-			sellHistoryDetailLastId: sellHistoryDetailLastId.id
-		})
-
-		console.log("last")
-		console.log(this.state.sellHistoryDetailLastId)
-
-		// GROUP INFO..
-		let groupDetail =
-			await this.sellHistoryRepository.getSellGroupInfoById(
-				this.state.sellGroupId
-			);
-		this.setState({sellGroupDetail: groupDetail[0]});
-
-		console.log("GROUP DETAIL: ", this.state.sellGroupDetail);
-	}
-
-	async getNextDetails() {
-		if (this.state.isLoaded) {
-			return;
-		}
-
-		let nextSellHistoryDetail =
+		let sellHistoryDetail =
 			await this.sellHistoryRepository.getSellHistoryDetailByGroupId(
-				this.state.sellGroupId, this.state.lastId
+				this.state.groupId
 			);
 
-		let last = nextSellHistoryDetail[nextSellHistoryDetail.length - 1]
-		if (last.id == this.state.sellHistoryDetailLastId) {
-			this.setState({
-				isLoaded: true
-			});
+		if (sellHistoryDetail.length === 0) {
+			sellHistoryDetail = await this.apiService.getSellHistoriesBySellGroupGlobalId(sellGroup[0].id);
 		}
 
-		let allSellHistoryDetail = this.state.sellHistoryDetail.concat(nextSellHistoryDetail);
-
-		console.log("LAST ID::", last.id)
-		await this.setState({
-			sellHistoryDetail: allSellHistoryDetail,
-			lastId: last.id
+		this.setState({
+			sellHistoryDetail: sellHistoryDetail
 		});
 	}
 
@@ -163,18 +116,7 @@ class ShoppingDetail extends Component {
 		const {navigation} = this.props;
 
 		return (
-			<ScrollView
-				onScrollBeginDrag={async (event) => {
-					const currentYPos = event.nativeEvent.contentOffset.y;
-					console.log("Current Y position:", currentYPos);
-
-					if ((currentYPos - this.state.lastYPos) > 138) {
-						console.log("God help!");
-						this.setState({lastYPos: currentYPos});
-						await this.getNextDetails();
-					}
-				}}
-				style={styles.body}>
+			<ScrollView style={styles.body}>
 				<View style={styles.container}>
 					<View style={styles.header}>
 						<TouchableOpacity
@@ -197,14 +139,14 @@ class ShoppingDetail extends Component {
 					</View>
 
 					{/*
-						this.state.profitHistoryDetail = 
+						this.state.sellHistoryDetail = 
 						[{
 							"count": 1, 
 							"count_type": "DONA", 
 							"created_date": "2024-01-28 16:13:46", 
 							"id": 9, 
 							"product_id": 1, 
-							"profit": 500
+							"sell": 500
 						}] 
 					*/}
 					<View>
@@ -212,17 +154,17 @@ class ShoppingDetail extends Component {
 						{
 							this.state.sellHistoryDetail.map((item, index) => (
 
-								<View style={styles.profitContainer} key={index}>
-									<Text style={styles.profitTitle}>{item.productName}</Text>
+								<View style={styles.sellContainer} key={index}>
+									<Text style={styles.sellTitle}>{item.productName}</Text>
 
-									<View style={styles.profitRow}>
-										<Text style={styles.profitText}>Soni</Text>
-										<Text style={styles.profitPrice}>{item.count} {item.count_type}</Text>
+									<View style={styles.sellRow}>
+										<Text style={styles.sellText}>Soni</Text>
+										<Text style={styles.sellPrice}>{item.count} {item.count_type}</Text>
 									</View>
 
-									<View style={styles.profitRow}>
-										<Text style={styles.profitText}>Sotilgan narxi</Text>
-										<Text style={styles.profitPrice}>
+									<View style={styles.sellRow}>
+										<Text style={styles.sellText}>Sotilgan narxi</Text>
+										<Text style={styles.sellPrice}>
 											{
 												(item.count * item.selling_price).toLocaleString()
 											} so’m
@@ -294,7 +236,7 @@ const styles = StyleSheet.create(
 			color: "#FFF",
 		},
 
-		profitContainer: {
+		sellContainer: {
 			marginTop: 8,
 			width: screenWidth - 32,
 			borderWidth: 1,
@@ -310,20 +252,20 @@ const styles = StyleSheet.create(
 			paddingVertical: 16,
 		},
 
-		profitTitle: {
+		sellTitle: {
 			fontFamily: "Gilroy-SemiBold",
 			fontWeight: "600",
 			fontSize: 16,
 			marginBottom: 12,
 		},
 
-		profitRow: {
+		sellRow: {
 			flexDirection: "row",
 			justifyContent: "space-between",
 			marginBottom: 12,
 		},
 
-		profitText: {
+		sellText: {
 			color: "#777",
 			fontSize: 16,
 			fontFamily: "Gilroy-Medium",
@@ -331,7 +273,7 @@ const styles = StyleSheet.create(
 			lineHeight: 24,
 		},
 
-		profitPrice: {
+		sellPrice: {
 			color: "#9A50AD",
 			fontSize: 16,
 			fontFamily: "Gilroy-Medium",
