@@ -318,7 +318,7 @@ class Home extends Component {
 				this.setState({spinner: true})
 				isDownloaded = isDownloaded && await this.getStoreProducts();
 				this.setState({spinner: true})
-				isDownloaded = isDownloaded && await this.getSellGroupsAndHistories()();
+				isDownloaded = isDownloaded && await this.getSellGroupsAndHistories();
 				this.setState({spinner: true})
 				isDownloaded = isDownloaded && await this.getSellAmountDate();
 				this.setState({spinner: true})
@@ -515,7 +515,8 @@ class Home extends Component {
 					100,
 					this.props.navigation
 				);
-		} catch (error) {
+		}
+		catch (error) {
 			console.error("Error fetching global products:", error);
 			this.setState({
 				lastSize: size,
@@ -531,37 +532,43 @@ class Home extends Component {
 
 		for (const sellGroup of response.content) {
 			try {
-				let createdSellGroupId =
 					await this.sellHistoryRepository.createSellGroupWithAllValues(
 						sellGroup.createdDate,
 						sellGroup.amount,
 						sellGroup.id,
 						true
 					);
-
-				let sellHistoryLinkInfos = await this.apiService.getSellHistoryLinkInfoByGroupId(sellGroup.id);
-				if (sellHistoryLinkInfos.length !== 0) {
-					for (let sellHistoryLinkInfoElement of sellHistoryLinkInfos) {
-						let createdSellHistoryId = await this.sellHistoryRepository.createSellHistoryWithAllValues(
-							sellHistoryLinkInfoElement.sellHistory.productId,
-							sellHistoryLinkInfoElement.sellHistory.id,
-							sellHistoryLinkInfoElement.sellHistory.count,
-							sellHistoryLinkInfoElement.sellHistory.countType,
-							sellHistoryLinkInfoElement.sellHistory.sellingPrice,
-							sellHistoryLinkInfoElement.sellHistory.createdDate,
-							true
-						);
-
-						await this.sellHistoryRepository.createSellHistoryGroupWithAllValues(
-							createdSellHistoryId,
-							createdSellGroupId,
-							sellHistoryLinkInfoElement.id,
-							true
-						);
-					}
-				}
 			} catch (error) {
 				console.error("Error getSellGroups:", error);
+			}
+		}
+
+
+		let lastSellGroupGlobalIdByResponse = response.content[0].id;
+		let sellHistoryLinkInfos = await this.apiService.getSellHistoryLinkInfoByGroupId(lastSellGroupGlobalIdByResponse);
+		if (sellHistoryLinkInfos.length !== 0) {
+			for (let sellHistoryLinkInfoElement of sellHistoryLinkInfos) {
+				let createdSellHistoryId = await this.sellHistoryRepository.createSellHistoryWithAllValues(
+					sellHistoryLinkInfoElement.sellHistory.productId,
+					sellHistoryLinkInfoElement.sellHistory.id,
+					sellHistoryLinkInfoElement.sellHistory.count,
+					sellHistoryLinkInfoElement.sellHistory.countType,
+					sellHistoryLinkInfoElement.sellHistory.sellingPrice,
+					sellHistoryLinkInfoElement.sellHistory.createdDate,
+					true
+				);
+
+				let createdSellGroup =
+					await this.sellHistoryRepository.findSellGroupByGlobalId(sellHistoryLinkInfoElement.sellGroupId);
+
+				if (createdSellGroup[0]) {
+					await this.sellHistoryRepository.createSellHistoryGroupWithAllValues(
+						createdSellHistoryId,
+						createdSellGroup[0].id,
+						sellHistoryLinkInfoElement.id,
+						true
+					);
+				}
 			}
 		}
 
@@ -724,7 +731,8 @@ class Home extends Component {
 			response = await this.apiService.getProfitGroups(
 				lastProfitGroupGlobalId, page, size, this.props.navigation
 			);
-		} catch (error) {
+		}
+		catch (error) {
 			console.error("Error fetching getProfitGroups():", error);
 			this.setState({
 				lastSize: size,
@@ -744,40 +752,44 @@ class Home extends Component {
 
 		for (const profitGroup of response.content) {
 			try {
-				let createdProfitGroupId = await this.profitHistoryRepository.createProfitGroupWithAllValues(
+				await this.profitHistoryRepository.createProfitGroupWithAllValues(
 					profitGroup.createdDate,
 					profitGroup.profit,
 					profitGroup.id,
 					true
 				);
-
-				let profitHistoryLinkInfos = await this.apiService.getProfitHistoryLinkInfoByGroupId(profitGroup.id);
-				if (profitHistoryLinkInfos.length !== 0) {
-					for (let profitHistoryLinkInfoElement of profitHistoryLinkInfos) {
-						let createdProfitHistoryId = await this.profitHistoryRepository.createProfitHistoryWithAllValues(
-							profitHistoryLinkInfoElement.profitHistory.productId,
-							profitHistoryLinkInfoElement.profitHistory.id,
-							profitHistoryLinkInfoElement.profitHistory.count,
-							profitHistoryLinkInfoElement.profitHistory.countType,
-							profitHistoryLinkInfoElement.profitHistory.profit,
-							profitHistoryLinkInfoElement.profitHistory.createdDate,
-							true
-						);
-
-						await this.profitHistoryRepository.createProfitHistoryGroupWithAllValues(
-							createdProfitHistoryId,
-							createdProfitGroupId,
-							profitHistoryLinkInfoElement.id,
-							true
-						);
-					}
-				}
-
-				console.log("Group created with id: ", createdGroupId);
 			} catch (error) {
 				console.error("Error getProfitGroups:", error);
 				// Continue with next product
 				continue;
+			}
+		}
+
+		let lastProfitGroupGlobalIdByResponse = response.content[0].id;
+		let profitHistoryLinkInfos = await this.apiService.getProfitHistoryLinkInfoByGroupId(lastProfitGroupGlobalIdByResponse);
+		if (profitHistoryLinkInfos.length !== 0) {
+			for (let profitHistoryLinkInfoElement of profitHistoryLinkInfos) {
+				let createdProfitHistoryId = await this.profitHistoryRepository.createProfitHistoryWithAllValues(
+					profitHistoryLinkInfoElement.profitHistory.productId,
+					profitHistoryLinkInfoElement.profitHistory.id,
+					profitHistoryLinkInfoElement.profitHistory.count,
+					profitHistoryLinkInfoElement.profitHistory.countType,
+					profitHistoryLinkInfoElement.profitHistory.profit,
+					profitHistoryLinkInfoElement.profitHistory.createdDate,
+					true
+				);
+
+				let createdProfitGroup =
+					await this.profitHistoryRepository.findProfitGroupByGlobalId(profitHistoryLinkInfoElement.profitGroupId);
+
+				if (createdProfitGroup[0]) {
+					await this.profitHistoryRepository.createProfitHistoryGroupWithAllValues(
+						createdProfitHistoryId,
+						createdProfitGroup[0].id,
+						profitHistoryLinkInfoElement.id,
+						true
+					);
+				}
 			}
 		}
 
