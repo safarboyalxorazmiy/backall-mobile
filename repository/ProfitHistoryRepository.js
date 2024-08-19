@@ -1094,35 +1094,101 @@ class ProfitHistoryRepository {
 		}
 	}
 
-	async deleteByIdLessThan(id) {
+	async deleteByIdLessThan(group_id) {
+		let profitHistoryGroups;
+
 		try {
-			const query = `
-          DELETE
-          FROM profit_group
-          WHERE id <= ?;
+			// Fetch the profit history groups with group_id <= provided group_id
+			const selectQuery = `
+          SELECT *
+          FROM profit_history_group
+          WHERE group_id <= ?;
 			`;
 
 			const result = await new Promise((resolve, reject) => {
 				this.db.transaction((tx) => {
 					tx.executeSql(
-						query,
-						[id],
+						selectQuery,
+						[group_id],
 						(_, resultSet) => resolve(resultSet),
 						(_, error) => reject(error)
 					);
 				});
 			});
 
-			// Check if any rows were affected by the deletion
-			if (result && result.rowsAffected > 0) {
-				console.log("Rows deleted:", result.rowsAffected);
-				return true; // Deletion was successful
-			} else {
-				console.log("No rows were deleted.");
-				return false; // No rows were deleted
+			if (!result || !result.rows || !result.rows._array) {
+				console.error("Unexpected result structure:", result);
+				throw new Error("Unexpected result structure");
 			}
+
+			profitHistoryGroups = result.rows._array;
+			console.log("Selected profitHistoryGroups:", profitHistoryGroups);
 		} catch (error) {
-			console.error("Error in deleteByIdGreaterThan:", error);
+			console.error("Error fetching profit history groups:", error);
+			throw error;
+		}
+
+		if (profitHistoryGroups.length === 0) {
+			console.log("No profit history groups found to delete.");
+			return false;
+		}
+
+		// Start a new transaction for the deletion process
+		try {
+			await new Promise((resolve, reject) => {
+				this.db.transaction((tx) => {
+					// Delete related entries in the profit_history table
+					for (const profitHistoryGroup of profitHistoryGroups) {
+						const deleteHistoryQuery = `
+                DELETE
+                FROM profit_history
+                WHERE id = ?;
+						`;
+						tx.executeSql(
+							deleteHistoryQuery,
+							[profitHistoryGroup.history_id],
+							(_, resultSet) => {
+								if (resultSet.rowsAffected > 0) {
+									console.log(`Deleted history_id: ${profitHistoryGroup.history_id}`);
+								} else {
+									console.log(`No rows deleted for history_id: ${profitHistoryGroup.history_id}`);
+								}
+							},
+							(_, error) => {
+								console.error("Error deleting from profit_history:", error);
+								reject(error); // Reject the promise to roll back the transaction
+							}
+						);
+					}
+
+					// Delete the entries in the profit_group table
+					const deleteGroupQuery = `
+              DELETE
+              FROM profit_group
+              WHERE id <= ?;
+					`;
+					tx.executeSql(
+						deleteGroupQuery,
+						[group_id],
+						(_, resultSet) => {
+							if (resultSet.rowsAffected > 0) {
+								console.log("Deleted groups with id <= ", group_id);
+							} else {
+								console.log("No rows deleted in profit_group.");
+							}
+							resolve(true); // Resolve the promise to commit the transaction
+						},
+						(_, error) => {
+							console.error("Error deleting from profit_group:", error);
+							reject(error); // Reject the promise to roll back the transaction
+						}
+					);
+				});
+			});
+
+			return true; // All deletions were successful
+		} catch (error) {
+			console.error("Error during deletion transaction:", error);
 			return false; // Return false in case of an error
 		}
 	}

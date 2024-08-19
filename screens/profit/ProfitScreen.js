@@ -427,8 +427,8 @@ class Profit extends Component {
                 let lastProfitGroup = await this.profitHistoryRepository.getLastProfitGroup();
                 let lastGroupId = lastProfitGroup.id;
 
-                if ((lastGroupId - 100) > 0) {
-                    await this.profitHistoryRepository.deleteByIdLessThan(lastGroupId - 100);
+                if ((lastGroupId - 1000) > 0) {
+                    await this.profitHistoryRepository.deleteByIdLessThan(lastGroupId - 1000);
                 }
 
                 // Explanation for firstProfitGroup. We need it for getting rest of rows from global.
