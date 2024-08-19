@@ -540,6 +540,54 @@ class ApiService {
 			throw error; // Re-throw the error for handling in the calling code
 		}
 	}
+
+	async getSellGroupByGlobalId(globalId, navigation) {
+		try {
+			// Retrieve the access token and store ID
+			const accessToken = await this.tokenService.retrieveAccessToken();
+			const storeId = parseInt(await this.getStoreId(), 10);
+
+			// Define request options
+			const requestOptions = {
+				method: "GET",
+				headers: {
+					"accept": "*/*",
+					"Authorization": `Bearer ${accessToken}`
+				}
+			};
+
+			// Construct the request URL
+			const url = `http://api.backall.uz/api/v1/store/sell/group/get/by/${globalId}?storeId=${storeId}`;
+			console.log("Sending request to:", url);
+			console.log("Request options:", requestOptions);
+
+			// Send the request
+			const response = await fetch(url, requestOptions);
+			console.log("Response status:", response.status);
+
+			// Handle 401 Unauthorized response
+			if (response.status === 401) {
+				await this.logout(navigation);
+				return;
+			}
+
+			// Check if the response is not OK
+			if (!response.ok) {
+				throw new Error(`Network response was not ok: ${response.statusText}`);
+			}
+
+			// Parse and log the response body
+			const responseBody = await response.text();
+			console.log("Response body:", responseBody);
+
+			// Return the response body as an integer
+			return parseInt(responseBody, 10);
+		} catch (error) {
+			console.error("Error occurred:", error);
+			throw error; // Re-throw the error for handling in the calling code
+		}
+	}
+
 	async getSellHistories(lastId, page, size, navigation) {
 		try {
 			const accessToken = await this.tokenService.retrieveAccessToken();
@@ -709,11 +757,7 @@ class ApiService {
 			}
 
 			// Parse and log the response body
-			const responseBody = await response.json();
-			console.log("Response body:", responseBody);
-
-			// Return the response body as an integer
-			return parseInt(responseBody, 10);
+			return response.json();
 		} catch (error) {
 			console.error("Error occurred:", error);
 			throw error; // Re-throw the error for handling in the calling code
@@ -1178,6 +1222,53 @@ class ApiService {
 		}
 	}
 
+	async getProfitGroupByGlobalId(globalId, navigation) {
+		try {
+			// Retrieve the access token and store ID
+			const accessToken = await this.tokenService.retrieveAccessToken();
+			const storeId = parseInt(await this.getStoreId(), 10);
+
+			// Define request options
+			const requestOptions = {
+				method: "GET",
+				headers: {
+					"accept": "*/*",
+					"Authorization": `Bearer ${accessToken}`
+				}
+			};
+
+			// Construct the request URL
+			const url = `http://api.backall.uz/api/v1/store/profit/group/get/by/${globalId}?storeId=${storeId}`;
+			console.log("Sending request to:", url);
+			console.log("Request options:", requestOptions);
+
+			// Send the request
+			const response = await fetch(url, requestOptions);
+			console.log("Response status:", response.status);
+
+			// Handle 401 Unauthorized response
+			if (response.status === 401) {
+				await this.logout(navigation);
+				return;
+			}
+
+			// Check if the response is not OK
+			if (!response.ok) {
+				throw new Error(`Network response was not ok: ${response.statusText}`);
+			}
+
+			// Parse and log the response body
+			const responseBody = await response.text();
+			console.log("Response body:", responseBody);
+
+			// Return the response body as an integer
+			return parseInt(responseBody, 10);
+		} catch (error) {
+			console.error("Error occurred:", error);
+			throw error; // Re-throw the error for handling in the calling code
+		}
+	}
+
 	async getProfitHistories(
 		lastId, page, size, navigation
 	) {
@@ -1336,12 +1427,7 @@ class ApiService {
 				throw new Error(`Network response was not ok: ${response.statusText}`);
 			}
 
-			// Parse and log the response body
-			const responseBody = await response.json();
-			console.log("Response body:", responseBody);
-
-			// Return the response body as an integer
-			return parseInt(responseBody, 10);
+			return response.json();
 		} catch (error) {
 			console.error("Error occurred:", error);
 			throw error; // Re-throw the error for handling in the calling code
