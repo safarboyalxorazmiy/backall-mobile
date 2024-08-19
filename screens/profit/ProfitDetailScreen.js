@@ -108,7 +108,7 @@ class ProfitDetail extends Component {
 			"may",
 			"iyun",
 			"iyul",
-			"avqust",
+			"avgust",
 			"sentyabr",
 			"oktyabr",
 			"noyabr",
