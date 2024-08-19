@@ -503,16 +503,13 @@ class Home extends Component {
 
 		console.log("GETTING SELL GROUPS ⏳⏳⏳");
 
-		let page = 0;
-		let size = 100;
-
 		let response;
 		try {
 			response =
 				await this.apiService.getSellGroups(
 					lastSellGroupGlobalId,
 					0,
-					100,
+					1000,
 					this.props.navigation
 				);
 		}
@@ -581,19 +578,16 @@ class Home extends Component {
 		let lastSellAmountGlobalId =
 			await this.apiService.getLastSellAmountDateGlobalId(this.props.navigation);
 
-		let page = 0;
-		let size = 100;
-
 		let response;
 		try {
 			response = await this.apiService.getSellAmountDate(
-				lastSellAmountGlobalId + 1, page, size, this.props.navigation
+				lastSellAmountGlobalId + 1, 0, 1000, this.props.navigation
 			);
 		} catch (error) {
 			console.error("Error fetching global products:", error);
 			this.setState({
-				lastSize: size,
-				lastPage: page
+				lastSize: 1000,
+				lastPage: 0
 			});
 
 			return false; // Indicate failure
@@ -627,20 +621,17 @@ class Home extends Component {
 		let lastProfitGroupGlobalId =
 			await this.apiService.getLastProfitGroupGlobalId(this.props.navigation);
 
-		let page = 0;
-		let size = 100;
-
 		let response;
 		try {
 			response = await this.apiService.getProfitGroups(
-				lastProfitGroupGlobalId, page, size, this.props.navigation
+				lastProfitGroupGlobalId, 0, 1000, this.props.navigation
 			);
 		}
 		catch (error) {
 			console.error("Error fetching getProfitGroups():", error);
 			this.setState({
-				lastSize: size,
-				lastPage: page
+				lastSize: 1000,
+				lastPage: 0
 			});
 
 			return false; // Indicate failure
@@ -709,9 +700,6 @@ class Home extends Component {
 		let lastProfitAmountDateGlobalId =
 			await this.apiService.getLastProfitAmountDateId(this.props.navigation);
 
-		let page = 0;
-		let size = 100;
-
 		let response;
 		try {
 			response = await this.apiService.getProfitAmountDate(
@@ -720,8 +708,8 @@ class Home extends Component {
 		} catch (error) {
 			console.error("Error fetching global products:", error);
 			this.setState({
-				lastSize: size,
-				lastPage: page
+				lastSize: 0,
+				lastPage: 1000
 			});
 
 			return false; // Indicate failure
