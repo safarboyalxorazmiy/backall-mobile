@@ -70,7 +70,11 @@ class ShoppingDetail extends Component {
 		} else {
 			let groupDetail = await this.apiService.getSellGroupByGlobalId(groupId, this.props.navigation);
 			if (groupDetail) {
-				this.setState({groupDetail})
+				this.setState({groupDetail: {
+						id: groupDetail.id,
+						created_date: groupDetail.createdDate,
+						amount: groupDetail.amount
+					}})
 			}
 		}
 
@@ -109,7 +113,7 @@ class ShoppingDetail extends Component {
 			"may",
 			"iyun",
 			"iyul",
-			"avqust",
+			"avgust",
 			"sentyabr",
 			"oktyabr",
 			"noyabr",

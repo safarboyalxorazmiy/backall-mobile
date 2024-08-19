@@ -576,12 +576,7 @@ class ApiService {
 				throw new Error(`Network response was not ok: ${response.statusText}`);
 			}
 
-			// Parse and log the response body
-			const responseBody = await response.text();
-			console.log("Response body:", responseBody);
-
-			// Return the response body as an integer
-			return parseInt(responseBody, 10);
+			return response.json();
 		} catch (error) {
 			console.error("Error occurred:", error);
 			throw error; // Re-throw the error for handling in the calling code
@@ -1257,12 +1252,7 @@ class ApiService {
 				throw new Error(`Network response was not ok: ${response.statusText}`);
 			}
 
-			// Parse and log the response body
-			const responseBody = await response.text();
-			console.log("Response body:", responseBody);
-
-			// Return the response body as an integer
-			return parseInt(responseBody, 10);
+			return response.json;
 		} catch (error) {
 			console.error("Error occurred:", error);
 			throw error; // Re-throw the error for handling in the calling code

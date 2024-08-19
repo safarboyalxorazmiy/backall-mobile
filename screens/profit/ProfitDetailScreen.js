@@ -61,7 +61,13 @@ class ProfitDetail extends Component {
 		} else {
 			let groupDetail = await this.apiService.getProfitGroupByGlobalId(groupId, this.props.navigation);
 			if (groupDetail) {
-				this.setState({groupDetail})
+				this.setState({
+					groupDetail: {
+						id: groupDetail.id,
+						created_date: groupDetail.createdDate,
+						profit: groupDetail.profit
+					}
+				})
 			}
 		}
 
