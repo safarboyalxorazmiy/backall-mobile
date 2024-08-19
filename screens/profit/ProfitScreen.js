@@ -671,6 +671,7 @@ class Profit extends Component {
             }
 
             grouped[groupIndex].histories.push({
+                id: history.id,
                 created_date: history.createdDate,
                 amount: history.amount,
                 saved: false
