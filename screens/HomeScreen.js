@@ -703,7 +703,7 @@ class Home extends Component {
 		let response;
 		try {
 			response = await this.apiService.getProfitAmountDate(
-				lastProfitAmountDateGlobalId + 1, page, size, this.props.navigation
+				lastProfitAmountDateGlobalId + 1, 0, 1000, this.props.navigation
 			);
 		} catch (error) {
 			console.error("Error fetching global products:", error);
