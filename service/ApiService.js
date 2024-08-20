@@ -73,7 +73,14 @@ class ApiService {
 	async getLocalProducts(page, size, navigation) {
 		try {
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId());
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			const requestOptions = {
 				method: "GET",
@@ -110,7 +117,14 @@ class ApiService {
 	async getNotDownloadedLocalProducts(page, size, navigation) {
 		try {
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId());
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			const requestOptions = {
 				method: "GET",
@@ -146,7 +160,14 @@ class ApiService {
 	) {
 		try {
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId());
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			const requestOptions = {
 				method: "GET",
@@ -185,7 +206,14 @@ class ApiService {
 	) {
 		try {
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId());
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			const requestOptions = {
 				method: "GET",
@@ -227,7 +255,14 @@ class ApiService {
 	) {
 		try {
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId());
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			const requestOptions = {
 				method: "GET",
@@ -267,7 +302,14 @@ class ApiService {
 	) {
 		try {
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId(), 10);
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			const requestOptions = {
 				method: "GET",
@@ -314,7 +356,14 @@ class ApiService {
 	) {
 		try {
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId());
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			const requestOptions = {
 				method: "GET",
@@ -359,7 +408,14 @@ class ApiService {
 	) {
 		try {
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId(), 10);
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			const requestOptions = {
 				method: "GET",
@@ -406,7 +462,14 @@ class ApiService {
 	) {
 		try {
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId(), 10);
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			const requestOptions = {
 				method: "GET",
@@ -447,7 +510,13 @@ class ApiService {
 		try {
 			// Retrieve the access token and store ID
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId(), 10);
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
 
 			// Define request options
 			const requestOptions = {
@@ -498,7 +567,14 @@ class ApiService {
 		try {
 			// Retrieve the access token and store ID
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId(), 10);
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			// Define request options
 			const requestOptions = {
@@ -545,7 +621,14 @@ class ApiService {
 		try {
 			// Retrieve the access token and store ID
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId(), 10);
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			// Define request options
 			const requestOptions = {
@@ -586,7 +669,14 @@ class ApiService {
 	async getSellHistories(lastId, page, size, navigation) {
 		try {
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId(), 10);
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			const requestOptions = {
 				method: "GET",
@@ -631,7 +721,14 @@ class ApiService {
 	) {
 		try {
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId());
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			const requestOptions = {
 				method: "GET",
@@ -669,7 +766,14 @@ class ApiService {
 		try {
 			// Retrieve the access token and store ID
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId(), 10);
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			// Define request options
 			const requestOptions = {
@@ -720,7 +824,14 @@ class ApiService {
 		try {
 			// Retrieve the access token and store ID
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId(), 10);
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			// Define request options
 			const requestOptions = {
@@ -767,7 +878,14 @@ class ApiService {
 	) {
 		try {
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId());
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			const requestOptions = {
 				method: "GET",
@@ -805,7 +923,14 @@ class ApiService {
 	async getSellAmountDateNotDownloaded(lastId, page, size, navigation) {
 		try {
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId());
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			const requestOptions = {
 				method: "GET",
@@ -844,7 +969,14 @@ class ApiService {
 		try {
 			// Retrieve the access token and store ID
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId(), 10);
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			// Define request options
 			const requestOptions = {
@@ -889,7 +1021,14 @@ class ApiService {
 	async getSellAmountByDate(date, navigation) {
 		try {
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId());
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			const requestOptions = {
 				method: "GET",
@@ -927,7 +1066,14 @@ class ApiService {
 	async getSellHistoryGroup(lastId, page, size, navigation) {
 		try {
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId());
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			const requestOptions = {
 				method: "GET",
@@ -965,7 +1111,14 @@ class ApiService {
 	async getSellHistoryGroupNotDownloaded(lastId, page, size, navigation) {
 		try {
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId());
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			const requestOptions = {
 				method: "GET",
@@ -1005,7 +1158,14 @@ class ApiService {
 		try {
 			// Retrieve the access token and store ID
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId(), 10);
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			// Define request options
 			const requestOptions = {
@@ -1052,7 +1212,14 @@ class ApiService {
 	) {
 		try {
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId());
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			const requestOptions = {
 				method: "GET",
@@ -1095,7 +1262,14 @@ class ApiService {
 	async getProfitGroups(lastId, page, size, navigation) {
 		try {
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId());
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			const requestOptions = {
 				method: "GET",
@@ -1132,7 +1306,14 @@ class ApiService {
 	) {
 		try {
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId());
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			const requestOptions = {
 				method: "GET",
@@ -1174,7 +1355,14 @@ class ApiService {
 		try {
 			// Retrieve the access token and store ID
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId(), 10);
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			// Define request options
 			const requestOptions = {
@@ -1221,7 +1409,14 @@ class ApiService {
 		try {
 			// Retrieve the access token and store ID
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId(), 10);
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			// Define request options
 			const requestOptions = {
@@ -1264,7 +1459,14 @@ class ApiService {
 	) {
 		try {
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId());
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			const requestOptions = {
 				method: "GET",
@@ -1304,7 +1506,14 @@ class ApiService {
 	) {
 		try {
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId());
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			const requestOptions = {
 				method: "GET",
@@ -1342,7 +1551,14 @@ class ApiService {
 	async getLastProfitHistoryId(navigation) {
 		try {
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId(), 10);
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			const requestOptions = {
 				method: "GET",
@@ -1386,7 +1602,14 @@ class ApiService {
 		try {
 			// Retrieve the access token and store ID
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId(), 10);
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			// Define request options
 			const requestOptions = {
@@ -1429,7 +1652,14 @@ class ApiService {
 	) {
 		try {
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId());
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			const requestOptions = {
 				method: "GET",
@@ -1469,7 +1699,14 @@ class ApiService {
 	) {
 		try {
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId());
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			const requestOptions = {
 				method: "GET",
@@ -1509,7 +1746,14 @@ class ApiService {
 	) {
 		try {
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId());
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			const requestOptions = {
 				method: "GET",
@@ -1547,7 +1791,14 @@ class ApiService {
 	async getLastProfitHistoryGroupId(navigation) {
 		try {
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId(), 10);
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			const requestOptions = {
 				method: "GET",
@@ -1589,7 +1840,14 @@ class ApiService {
 	) {
 		try {
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId());
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			const requestOptions = {
 				method: "GET",
@@ -1629,7 +1887,14 @@ class ApiService {
 	) {
 		try {
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId());
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			const requestOptions = {
 				method: "GET",
@@ -1667,7 +1932,14 @@ class ApiService {
 	async getLastProfitAmountDateId(navigation) {
 		try {
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId(), 10);
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			const requestOptions = {
 				method: "GET",
@@ -1732,7 +2004,14 @@ class ApiService {
 
 	// Function to create local product
 	async createLocalProduct(serialNumber, name, brandName, navigation) {
-		const storeId = parseInt(await this.getStoreId());
+		let storeId = await this.getStoreId();
+
+		if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+			storeId = Number(storeId); // Convert to a Number if it's safe
+		} else {
+			storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+		}
+
 		const accessToken = await this.tokenService.retrieveAccessToken();
 
 		const requestBody = {
@@ -1772,7 +2051,14 @@ class ApiService {
 		navigation
 	) {
 		const accessToken = await this.tokenService.retrieveAccessToken();
-		const storeId = parseInt(await this.getStoreId());
+		let storeId = await this.getStoreId();
+
+		if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+			storeId = Number(storeId); // Convert to a Number if it's safe
+		} else {
+			storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+		}
+
 
 		const requestBody = {
 			storeId: storeId,
@@ -1808,7 +2094,14 @@ class ApiService {
 	// Function to create sell group
 	async createSellGroup(createdDate, amount, navigation) {
 		const accessToken = await this.tokenService.retrieveAccessToken();
-		const storeId = parseInt(await this.getStoreId());
+		let storeId = await this.getStoreId();
+
+		if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+			storeId = Number(storeId); // Convert to a Number if it's safe
+		} else {
+			storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+		}
+
 
 		const requestBody = {
 			createdDate: createdDate,
@@ -1845,7 +2138,14 @@ class ApiService {
 		navigation
 	) {
 		const accessToken = await this.tokenService.retrieveAccessToken();
-		const storeId = parseInt(await this.getStoreId());
+		let storeId = await this.getStoreId();
+
+		if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+			storeId = Number(storeId); // Convert to a Number if it's safe
+		} else {
+			storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+		}
+
 
 		const requestOptions = {
 			method: "POST",
@@ -1875,7 +2175,14 @@ class ApiService {
 		sellHistoryId, sellGroupId, navigation
 	) {
 		const accessToken = await this.tokenService.retrieveAccessToken();
-		const storeId = parseInt(await this.getStoreId());
+		let storeId = await this.getStoreId();
+
+		if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+			storeId = Number(storeId); // Convert to a Number if it's safe
+		} else {
+			storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+		}
+
 
 		const requestOptions = {
 			method: "POST",
@@ -1902,7 +2209,14 @@ class ApiService {
 		date, amount, navigation
 	) {
 		const accessToken = await this.tokenService.retrieveAccessToken();
-		const storeId = parseInt(await this.getStoreId());
+		let storeId = await this.getStoreId();
+
+		if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+			storeId = Number(storeId); // Convert to a Number if it's safe
+		} else {
+			storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+		}
+
 
 		const requestOptions = {
 			method: "POST",
@@ -1929,7 +2243,14 @@ class ApiService {
 	// Function to create profit group
 	async createProfitGroup(createdDate, profit, navigation) {
 		const accessToken = await this.tokenService.retrieveAccessToken();
-		const storeId = parseInt(await this.getStoreId());
+		let storeId = await this.getStoreId();
+
+		if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+			storeId = Number(storeId); // Convert to a Number if it's safe
+		} else {
+			storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+		}
+
 
 		const requestBody = {
 			createdDate: createdDate,
@@ -1964,7 +2285,14 @@ class ApiService {
 		navigation
 	) {
 		const accessToken = await this.tokenService.retrieveAccessToken();
-		const storeId = parseInt(await this.getStoreId());
+		let storeId = await this.getStoreId();
+
+		if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+			storeId = Number(storeId); // Convert to a Number if it's safe
+		} else {
+			storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+		}
+
 
 		const requestOptions = {
 			method: "POST",
@@ -1992,7 +2320,14 @@ class ApiService {
 		profitHistoryId, profitGroupId, navigation
 	) {
 		const accessToken = await this.tokenService.retrieveAccessToken();
-		const storeId = parseInt(await this.getStoreId());
+		let storeId = await this.getStoreId();
+
+		if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+			storeId = Number(storeId); // Convert to a Number if it's safe
+		} else {
+			storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+		}
+
 
 		const requestOptions = {
 			method: "POST",
@@ -2016,7 +2351,14 @@ class ApiService {
 		date, amount, navigation
 	) {
 		const accessToken = await this.tokenService.retrieveAccessToken();
-		const storeId = parseInt(await this.getStoreId());
+		let storeId = await this.getStoreId();
+
+		if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+			storeId = Number(storeId); // Convert to a Number if it's safe
+		} else {
+			storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+		}
+
 
 		const requestBody = {
 			date: date,
@@ -2041,7 +2383,14 @@ class ApiService {
 	async getProfitAmountByDate(date, navigation) {
 		try {
 			const accessToken = await this.tokenService.retrieveAccessToken();
-			const storeId = parseInt(await this.getStoreId());
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
 
 			const requestOptions = {
 				method: "GET",
@@ -2157,7 +2506,7 @@ class ApiService {
 		}
 	}
 
-	
+
 	async getSellMonthAmount(navigation) {
 		try {
 			const accessToken = await this.tokenService.retrieveAccessToken();
@@ -2201,7 +2550,6 @@ class ApiService {
 			throw error; // Re-throwing the error for handling in the calling code
 		}
 	}
-
 
 
 	async getProfitMonthAmount(navigation) {
