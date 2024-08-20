@@ -945,10 +945,12 @@ class Shopping extends Component {
 						data={this.state.groupedHistories}
 						extraData={this.state.groupedHistories}
 						keyExtractor={(item) => item.date}
-						estimatedItemSize={200}
-						onEndReachedThreshold={2}
-						onScroll={async () => {
+						onEndReachedThreshold={0.5}
+						onTouchStart={async () => {
 							console.log("onEndReached()");
+							await this.loadMore();
+							await this.loadMore();
+							await this.loadMore();
 							await this.loadMore();
 						}}
 
