@@ -6,7 +6,7 @@ import {
 	View,
 	Dimensions,
 	TouchableOpacity,
-	FlatList
+	FlatList, ActivityIndicator
 } from "react-native";
 import * as Animatable from "react-native-animatable";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -621,83 +621,91 @@ class Profit extends Component {
 	}
 
 	async loadMore() {
-		if (this.state.loading || this.state.globalFullyLoaded) {
-			return;
-		}
+		if (this.state.globalFullyLoaded || this.state.loading) return;
 
 		this.setState({loading: true});
 
-		let response;
 		try {
-			response = await this.apiService.getProfitGroups(
-				this.state.firstGroupGlobalId,
-				this.state.lastProfitGroupPage,
-				22,
-				this.props.navigation
-			);
-		} catch (error) {
-			this.setState({loading: false});
-			console.error("Error fetching global products:", error);
-			return;
-		}
-
-		if (!response || !response.content || response.content.length === 0) {
-
-			this.setState({
-				loading: false,
-				globalFullyLoaded: true
-			});
-			return;
-		}
-
-		let allProfitHistories = response.content;
-		let grouped = [...this.state.groupedHistories];  // Shallow copy of the array
-
-		let lastDate;
-		let lastAmount;
-		for (const history of allProfitHistories) {
-			const date = history.createdDate.split("T")[0];
-			let groupIndex = grouped.findIndex(group => group.date === date);
-
-			if (groupIndex === -1) {
-				const formattedDate = this.formatDate(date);
-				grouped.push({
-					date,
-					dateInfo: formattedDate,
-					histories: [],
-					totalAmount: 0
-				});
-				groupIndex = grouped.length - 1;
+			let response;
+			if (this.state.fromDate && this.state.toDate) {
+				response = await this.apiService.getProfitGroupsByDate(
+					this.state.firstGroupGlobalId,
+					this.state.fromDate,
+					this.state.toDate,
+					0,
+					22,
+					this.props.navigation
+				);
+			} else {
+				try {
+					response = await this.apiService.getProfitGroups(
+						this.state.firstGroupGlobalId,
+						0,
+						22,
+						this.props.navigation
+					);
+				} catch (error) {
+					this.setState({loading: false});
+					console.error("Error fetching global products:", error);
+					return;
+				}
 			}
 
-			grouped[groupIndex].histories.push({
-				id: history.id,
-				created_date: history.createdDate,
-				amount: history.amount,
-				saved: false
-			});
+			if (!response || !response.content || response.content.length === 0) {
+				this.setState({loading: false, globalFullyLoaded: true});
+				return;
+			}
 
-			if (lastDate !== date) {
-				try {
-					let response =
-						await this.apiService.getProfitAmountByDate(date, this.props.navigation);
-					lastAmount = response.amount;
-				} catch (e) {
-					lastAmount = 0;
+			let grouped = [...this.state.groupedHistories];  // Shallow copy of the array
+
+			let lastDate, lastAmount;
+			for (const history of response.content) {
+				const date = history.createdDate.split("T")[0];
+				let groupIndex = grouped.findIndex(group => group.date === date);
+
+				if (groupIndex === -1) {
+					const formattedDate = this.formatDate(date);
+					grouped.push({
+						date,
+						dateInfo: formattedDate,
+						histories: [],
+						totalAmount: 0
+					});
+					groupIndex = grouped.length - 1;
 				}
 
-				lastDate = date;
+				grouped[groupIndex].histories.push({
+					id: history.id,
+					created_date: history.createdDate,
+					amount: history.amount,
+					saved: false
+				});
+
+				if (lastDate !== date) {
+					try {
+						let response =
+							await this.apiService.getProfitAmountByDate(date, this.props.navigation);
+						lastAmount = response.amount;
+					} catch (e) {
+						lastAmount = 0;
+					}
+
+					lastDate = date;
+				}
+
+				grouped[groupIndex].totalAmount = lastAmount;
 			}
 
-			grouped[groupIndex].totalAmount = lastAmount;
+			this.setState(prevState => ({
+				profitHistory: [...prevState.profitHistory, ...response.content],
+				groupedHistories: grouped,
+				firstGroupGlobalId: response.content[0].id
+			}));
+		} catch (error) {
+			console.error("Error fetching global products:", error);
+		} finally {
+			this.setState({loading: false});
 		}
-
-		this.setState(prevState => ({
-			profitHistory: [...prevState.profitHistory, ...allProfitHistories],
-			groupedHistories: grouped,  // Update with the modified array
-			firstGroupGlobalId: response.content[0].id,
-			loading: false
-		}));
 	}
 
 
@@ -706,125 +714,135 @@ class Profit extends Component {
 
 		return (
 			<View style={styles.container}>
-				<FlatList style={{width: "100%"}}
-									data={this.state.groupedHistories}
-									extraData={this.state.groupedHistories}
-									keyExtractor={(item) => item.date}
-									estimatedItemSize={200}
-									onEndReachedThreshold={2}
-									onTouchStart={async () => {
-										console.log("onEndReached()");
-										await this.loadMore();
-										await this.loadMore();
-										await this.loadMore();
-										await this.loadMore();
-									}}
+				<FlatList
+					style={{width: "100%"}}
+					data={this.state.groupedHistories}
+					extraData={this.state.groupedHistories}
+					keyExtractor={(item) => item.date}
+					estimatedItemSize={200}
+					onEndReachedThreshold={2}
+					onTouchStart={async () => {
+						console.log("onEndReached()");
+						await this.loadMore();
+						await this.loadMore();
+						await this.loadMore();
+						await this.loadMore();
+					}}
 
-									ListHeaderComponent={() => (
-										<View style={{width: "100%"}}>
-											<View style={{
-												borderBottomColor: "#AFAFAF",
-												borderBottomWidth: 1,
-												width: screenWidth - (16 * 2),
-												marginRight: "auto",
-												marginLeft: "auto",
-												height: 44,
-												display: "flex",
-												alignItems: "center",
-												justifyContent: "center"
-											}}>
-												<Text style={{
-													fontFamily: "Gilroy-SemiBold", fontWeight: "600", fontSize: 18, lineHeight: 24
-												}}>Foyda tarixi</Text>
-											</View>
+					ListHeaderComponent={() => (
+						<View style={{width: "100%"}}>
+							<View style={{
+								borderBottomColor: "#AFAFAF",
+								borderBottomWidth: 1,
+								width: screenWidth - (16 * 2),
+								marginRight: "auto",
+								marginLeft: "auto",
+								height: 44,
+								display: "flex",
+								alignItems: "center",
+								justifyContent: "center"
+							}}>
+								<Text style={{
+									fontFamily: "Gilroy-SemiBold", fontWeight: "600", fontSize: 18, lineHeight: 24
+								}}>Foyda tarixi</Text>
+							</View>
 
-											<View style={{
-												marginTop: 24,
-												width: screenWidth - (16 * 2),
-												marginRight: "auto",
-												marginLeft: "auto"
-											}}>
-												<Text
-													style={{
-														fontFamily: "Gilroy-Medium",
-														fontWeight: "500",
-														fontSize: 16,
-														marginBottom: 4
-													}}>
-													Muddatni tanlang
-												</Text>
+							<View style={{
+								marginTop: 24,
+								width: screenWidth - (16 * 2),
+								marginRight: "auto",
+								marginLeft: "auto"
+							}}>
+								<Text
+									style={{
+										fontFamily: "Gilroy-Medium",
+										fontWeight: "500",
+										fontSize: 16,
+										marginBottom: 4
+									}}>
+									Muddatni tanlang
+								</Text>
 
-												<View>
-													<TouchableOpacity
-														onPress={async () => {
-															await AsyncStorage.setItem(
-																"calendarFromPage", "Profit"
-															);
-															navigation.navigate("Calendar")
-														}}
-														style={[
-															this.state.calendarInputContent === "--/--/----" ?
-																styles.calendarInput : styles.calendarInputActive
-														]}>
-														<Text
-															style={[
-																this.state.calendarInputContent === "--/--/----" ?
-																	styles.calendarInputPlaceholder : styles.calendarInputPlaceholderActive
-															]}>{this.state.calendarInputContent}</Text>
-													</TouchableOpacity>
+								<View>
+									<TouchableOpacity
+										onPress={async () => {
+											await AsyncStorage.setItem(
+												"calendarFromPage", "Profit"
+											);
+											navigation.navigate("Calendar")
+										}}
+										style={[
+											this.state.calendarInputContent === "--/--/----" ?
+												styles.calendarInput : styles.calendarInputActive
+										]}>
+										<Text
+											style={[
+												this.state.calendarInputContent === "--/--/----" ?
+													styles.calendarInputPlaceholder : styles.calendarInputPlaceholderActive
+											]}>{this.state.calendarInputContent}</Text>
+									</TouchableOpacity>
 
-													{
-														this.state.calendarInputContent === "--/--/----" ? (
-															<CalendarIcon
-																style={styles.calendarIcon}
-																resizeMode="cover"/>
-														) : (
-															<CrossIcon
-																style={styles.calendarIcon}
-																resizeMode="cover"/>
-														)
-													}
-												</View>
-											</View>
+									{
+										this.state.calendarInputContent === "--/--/----" ? (
+											<CalendarIcon
+												style={styles.calendarIcon}
+												resizeMode="cover"/>
+										) : (
+											<CrossIcon
+												style={styles.calendarIcon}
+												resizeMode="cover"/>
+										)
+									}
+								</View>
+							</View>
 
-											<View style={{
-												marginTop: 12,
-												width: screenWidth - (16 * 2),
-												marginRight: "auto",
-												marginLeft: "auto",
+							<View style={{
+								marginTop: 12,
+								width: screenWidth - (16 * 2),
+								marginRight: "auto",
+								marginLeft: "auto",
 
-												display: "flex",
-												flexDirection: "row",
-												justifyContent: "space-between",
-												paddingHorizontal: 16,
-												paddingVertical: 14,
-												backgroundColor: "#4F579F",
-												borderRadius: 8
-											}}>
-												<Text style={{
-													fontFamily: "Gilroy-Medium",
-													fontWeight: "500",
-													fontSize: 16,
-													lineHeight: 24,
-													color: "#FFF"
-												}}>Oylik foyda</Text>
-												<Text style={{
-													fontFamily: "Gilroy-Medium",
-													fontWeight: "500",
-													fontSize: 16,
-													lineHeight: 24,
-													color: "#FFF"
-												}}>{this.state.thisMonthProfitAmount.toLocaleString()} so’m</Text>
-											</View>
-										</View>
-									)}
+								display: "flex",
+								flexDirection: "row",
+								justifyContent: "space-between",
+								paddingHorizontal: 16,
+								paddingVertical: 14,
+								backgroundColor: "#4F579F",
+								borderRadius: 8
+							}}>
+								<Text style={{
+									fontFamily: "Gilroy-Medium",
+									fontWeight: "500",
+									fontSize: 16,
+									lineHeight: 24,
+									color: "#FFF"
+								}}>Oylik foyda</Text>
+								<Text style={{
+									fontFamily: "Gilroy-Medium",
+									fontWeight: "500",
+									fontSize: 16,
+									lineHeight: 24,
+									color: "#FFF"
+								}}>{this.state.thisMonthProfitAmount.toLocaleString()} so’m</Text>
+							</View>
+						</View>
+					)}
 
-									renderItem={({item}) => (
-										<ProfitGroup
-											key={item.date}
-											item={item}
-											navigation={navigation}/>
-									)}
+					ListFooterComponent={() => {
+						if (!this.state.loading) return null;
+						return (
+							<View style={{padding: 10}}>
+								<ActivityIndicator size="large" color={"#9A50AD"}/>
+							</View>
+						);
+					}}
+
+					renderItem={({item}) => (
+						<ProfitGroup
+							key={item.date}
+							item={item}
+							navigation={navigation}/>
+					)}
 				/>
 
 				{/* Role error */}

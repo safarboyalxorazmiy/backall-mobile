@@ -1301,6 +1301,60 @@ class ApiService {
 		}
 	}
 
+	async getProfitGroupsByDate(
+		lastId,
+		fromDate,
+		toDate,
+		page,
+		size,
+		navigation
+	) {
+		try {
+			const accessToken = await this.tokenService.retrieveAccessToken();
+			let storeId = await this.getStoreId();
+
+			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				storeId = Number(storeId); // Convert to a Number if it's safe
+			} else {
+				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+			}
+
+
+			const requestOptions = {
+				method: "GET",
+				headers: {
+					"Authorization": `Bearer ${accessToken}`,
+					"Accept": "*/*"
+				}
+			};
+
+			const url = `${serverUrl}/api/v1/store/profit/group/get/by?fromDate=${fromDate}&toDate=${toDate}&storeId=${storeId}&page=${page}&size=${size}&lastId=${lastId}`;
+			console.log("Sending request to:", url);
+			console.log("Request options:", requestOptions);
+
+			const response = await fetch(url, requestOptions);
+
+			console.log("Response status:", response.status);
+
+			if (response.status === 401) {
+				await this.logout(navigation);
+				return;
+			}
+
+			const responseBody = await response.json();
+			console.log("Response body:", responseBody);
+
+			if (!response.ok) {
+				throw new Error(`Network response was not ok: ${responseBody.message || response.statusText}`);
+			}
+
+			return responseBody;
+		} catch (error) {
+			console.error("Error occurred:", error);
+			throw error; // Re-throwing the error for handling in the calling code
+		}
+	}
+
 	async getProfitGroupsNotDownloaded(
 		lastId, page, size, navigation
 	) {

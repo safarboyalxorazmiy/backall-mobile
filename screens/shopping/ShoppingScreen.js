@@ -7,7 +7,8 @@ import {
 	Text,
 	TouchableOpacity,
 	View,
-	FlatList
+	FlatList,
+	ActivityIndicator
 } from "react-native";
 import * as Animatable from "react-native-animatable";
 import Modal from "react-native-modal";
@@ -292,7 +293,6 @@ class Shopping extends Component {
 		}
 	}
 
-
 	formatDate = (dateString) => {
 		const date = new Date(dateString);
 		const options = {day: "numeric", month: "long", weekday: "long"};
@@ -305,15 +305,13 @@ class Shopping extends Component {
 	};
 
 	async loadMore() {
-		if (this.state.loading || this.state.globalFullyLoaded) {
-			return;
-		}
+		if (this.state.globalFullyLoaded || this.state.loading) return;
 
 		this.setState({loading: true});
 
-		let response;
-		if (this.state.fromDate != null && this.state.toDate != null) {
-			try {
+		try {
+			let response;
+			if (this.state.fromDate && this.state.toDate) {
 				response = await this.apiService.getSellGroupsByDate(
 					this.state.firstGroupGlobalId,
 					this.state.fromDate,
@@ -322,15 +320,7 @@ class Shopping extends Component {
 					22,
 					this.props.navigation
 				);
-			}
-			catch (error) {
-				this.setState({loading: false});
-				console.error("Error fetching global products:", error);
-				return;
-			}
-		}
-		else {
-			try {
+			} else {
 				response = await this.apiService.getSellGroups(
 					this.state.firstGroupGlobalId,
 					this.state.lastSellGroupPage,
@@ -338,73 +328,57 @@ class Shopping extends Component {
 					this.props.navigation
 				);
 			}
-			catch (error) {
-				this.setState({loading: false});
-				console.error("Error fetching global products:", error);
+
+			if (!response || !response.content || response.content.length === 0) {
+				this.setState({loading: false, globalFullyLoaded: true});
 				return;
 			}
-		}
 
-		if (!response || !response.content || response.content.length === 0) {
+			let grouped = [...this.state.groupedHistories];
+			let lastDate, lastAmount;
 
-			this.setState({
-				loading: false,
-				globalFullyLoaded: true
-			});
-			return;
-		}
+			for (const history of response.content) {
+				const date = history.createdDate.split("T")[0];
+				let group = grouped.find(group => group.date === date);
 
-		let lastGroupId = this.state.lastGroupId;
-		let allSellHistories = response.content;
-		let grouped = [...this.state.groupedHistories];  // Shallow copy of the array
-
-		let lastDate;
-		let lastAmount;
-		for (const history of allSellHistories) {
-			const date = history.createdDate.split("T")[0];
-			let groupIndex = grouped.findIndex(group => group.date === date);
-
-			if (groupIndex === -1) {
-				const formattedDate = this.formatDate(date);
-				grouped.push({
-					date,
-					dateInfo: formattedDate,
-					histories: [],
-					totalAmount: 0
-				});
-				groupIndex = grouped.length - 1;
-			}
-
-			grouped[groupIndex].histories.push({
-				id: history.id,
-				created_date: history.createdDate,
-				amount: history.amount,
-				saved: false
-			});
-
-			if (lastDate !== date) {
-				try {
-					lastAmount = await this.amountDateRepository.getSellAmountInfoByDate(date);
-					lastDate = date;
-				} catch (e) {
-					lastAmount = 0;
+				if (!group) {
+					const formattedDate = this.formatDate(date);
+					group = {date, dateInfo: formattedDate, histories: [], totalAmount: 0};
+					grouped.push(group);
 				}
 
-				lastDate = date;
+				group.histories.push({
+					id: history.id,
+					created_date: history.createdDate,
+					amount: history.amount,
+					saved: false
+				});
+
+				if (lastDate !== date) {
+					try {
+              let response =
+                  await this.apiService.getSellAmountByDate(date, this.props.navigation);
+              lastAmount = response.amount;
+					} catch (e) {
+						lastAmount = 0;
+					}
+					lastDate = date;
+				}
+
+				group.totalAmount = lastAmount;
 			}
 
-			grouped[groupIndex].totalAmount = lastAmount;
+			this.setState(prevState => ({
+				sellingHistory: [...prevState.sellingHistory, ...response.content],
+				groupedHistories: grouped,
+				firstGroupGlobalId: response.content[0].id,
+			}));
+		} catch (error) {
+			console.error("Error fetching global products:", error);
+		} finally {
+			this.setState({loading: false});
 		}
-
-		this.setState(prevState => ({
-			sellingHistory: [...prevState.sellingHistory, ...allSellHistories],
-			groupedHistories: grouped,  // Update with the modified array
-			lastGroupId: lastGroupId,
-			firstGroupGlobalId: response.content[0].id,
-			loading: false
-		}));
 	}
-
 
 	async loadFirst() {
 		const startTime = performance.now();
@@ -762,8 +736,8 @@ class Shopping extends Component {
 						groupedHistories: Object.values(grouped),
 						lastGroupId: lastGroupId
 					});
+				} catch (e) {
 				}
-				catch (e) { }
 
 
 				while (true) {
@@ -835,7 +809,8 @@ class Shopping extends Component {
 						}));
 
 						await new Promise(resolve => setTimeout(resolve, 100)); // Adding delay to manage UI thread load
-					} catch (e) { }
+					} catch (e) {
+					}
 				}
 
 				this.setState({
@@ -917,8 +892,7 @@ class Shopping extends Component {
 					}));
 
 					await new Promise(resolve => setTimeout(resolve, 100)); // Adding delay to manage UI thread load
-				}
-				catch (error) {
+				} catch (error) {
 					this.setState({
 						loading: false
 					});
@@ -945,12 +919,9 @@ class Shopping extends Component {
 						data={this.state.groupedHistories}
 						extraData={this.state.groupedHistories}
 						keyExtractor={(item) => item.date}
-						onEndReachedThreshold={0.5}
+						onEndReachedThreshold={0.1}
 						onTouchStart={async () => {
 							console.log("onEndReached()");
-							await this.loadMore();
-							await this.loadMore();
-							await this.loadMore();
 							await this.loadMore();
 						}}
 
@@ -1030,6 +1001,14 @@ class Shopping extends Component {
 								</View>
 							</>
 						)}
+						ListFooterComponent={() => {
+							if (!this.state.loading) return null;
+							return (
+								<View style={{padding: 10}}>
+									<ActivityIndicator size="large" color={"#9A50AD"}/>
+								</View>
+							);
+						}}
 
 						renderItem={({item}) => (
 							<HistoryGroup
