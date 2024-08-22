@@ -529,10 +529,175 @@ class Profit extends Component {
 				loading: true
 			});
 
+			// Download the rest of the list with date.
+			if (this.state.fromDate != null && this.state.toDate != null) {
+				this.setState({
+					loading: true
+				});
+
+				this.setState({
+					groupedHistories: []
+				})
+				let firstSellGroup = await this.profitHistoryRepository.getFirstProfitGroupByDate(
+					this.state.fromDate,
+					this.state.toDate
+				);
+
+				this.setState({
+					firstGroupGlobalId: firstSellGroup.global_id
+				});
+
+				let lastGroup =
+					await this.profitHistoryRepository.getLastProfitHistoryGroupByDate(
+						this.state.fromDate, this.state.toDate
+					);
+				let lastGroupId = lastGroup.id;
+
+
+				let sellingHistory =
+					await this.profitHistoryRepository.getTop10ProfitGroupByDate(
+						lastGroupId,
+						this.state.fromDate,
+						this.state.toDate
+					);
+
+				lastGroupId -= 11;
+
+				try {
+					const grouped = [];
+
+					let lastDate;
+					let lastAmount;
+					for (const history of sellingHistory) {
+						const date = history.created_date.split("T")[0];
+						let groupIndex = grouped.findIndex(group => group.date === date);
+
+						if (groupIndex === -1) {
+							const formattedDate = this.formatDate(date);
+							grouped.push({
+								date,
+								dateInfo: formattedDate,
+								histories: [],
+								totalAmount: 0
+							});
+							groupIndex = grouped.length - 1;
+						}
+
+						grouped[groupIndex].histories.push({
+							id: history.id,
+							created_date: history.created_date,
+							amount: history.amount,
+							saved: false
+						});
+
+						if (lastDate !== date) {
+							try {
+								lastAmount = await this.amountDateRepository.getProfitAmountInfoByDate(date);
+								lastDate = date;
+							} catch (e) {
+								lastAmount = 0;
+							}
+
+							lastDate = date;
+						}
+
+						grouped[groupIndex].totalAmount = lastAmount;
+					}
+
+					this.setState({
+						sellingHistory: sellingHistory,
+						groupedHistories: Object.values(grouped),
+						lastGroupId: lastGroupId
+					});
+				} catch (e) {
+				}
+
+
+				while (true) {
+					if (lastGroupId <= 0 || await AsyncStorage.getItem("window") != "Shopping") {
+						this.setState({
+							loading: false
+						});
+						break;
+					}
+
+					let profitHistory =
+						await this.profitHistoryRepository.getTop10ProfitGroupByDate(
+							lastGroupId,
+							this.state.fromDate,
+							this.state.toDate
+						);
+					lastGroupId -= 11;
+
+					if (profitHistory.length === 0) {
+						return;
+					}
+
+					try {
+						let grouped = [...this.state.groupedHistories];  // Shallow copy of the array
+
+						let lastDate;
+						let lastAmount;
+						for (const history of profitHistory) {
+							const date = history.created_date.split("T")[0];
+							let groupIndex = grouped.findIndex(group => group.date === date);
+
+							if (groupIndex === -1) {
+								const formattedDate = this.formatDate(date);
+								grouped.push({
+									date,
+									dateInfo: formattedDate,
+									histories: [],
+									totalAmount: 0
+								});
+								groupIndex = grouped.length - 1;
+							}
+
+							grouped[groupIndex].histories.push({
+								id: history.id,
+								created_date: history.created_date,
+								amount: history.amount,
+								saved: false
+							});
+
+							if (lastDate !== date) {
+								try {
+									lastAmount = await this.amountDateRepository.getProfitAmountInfoByDate(date);
+									lastDate = date;
+								} catch (e) {
+									lastAmount = 0;
+								}
+
+								lastDate = date;
+							}
+
+							grouped[groupIndex].totalAmount = lastAmount;
+						}
+
+						this.setState(prevState => ({
+							profitHistory: [...prevState.profitHistory, ...sellingHistory],
+							groupedHistories: grouped,
+							lastGroupId: lastGroupId,
+							loading: false
+						}));
+
+						await new Promise(resolve => setTimeout(resolve, 100)); // Adding delay to manage UI thread load
+					} catch (e) {
+					}
+				}
+
+				this.setState({
+					loading: false
+				});
+
+				return;
+			}
+
+			// Download the rest of the list.
 			while (true) {
 				if (
 					lastGroupId <= 0 ||
-					await AsyncStorage.getItem("window") != "Shopping"
+					await AsyncStorage.getItem("window") !== "Profit"
 				) {
 					this.setState({
 						loading: false
@@ -583,8 +748,8 @@ class Profit extends Component {
 
 						if (lastDate !== date) {
 							try {
-								let response = await this.apiService.getProfitAmountByDate(date, this.props.navigation);
-								lastAmount = response.amount;
+								lastAmount = await this.amountDateRepository.getProfitAmountInfoByDate(date);
+								lastDate = date;
 							} catch (e) {
 								lastAmount = 0;
 							}

@@ -208,6 +208,52 @@ class ProfitHistoryRepository {
 		}
 	}
 
+	async getTop10ProfitGroupByDate(lastHistoryId, fromDate, toDate) {
+		let fromDateObj = new Date(fromDate);
+		fromDateObj.setHours(23, 59, 59, 999); // Set to the end of the day
+		const fromLocalDate = new Date(
+			fromDateObj.getTime() - fromDateObj.getTimezoneOffset() * 60000
+		).toISOString().slice(0, 19).replace('T', ' ');
+
+		let toDateObj = new Date(toDate);
+		toDateObj.setHours(0, 0, 0, 0); // Set to the beginning of the day
+		const toLocalDate = new Date(
+			toDateObj.getTime() - toDateObj.getTimezoneOffset() * 60000
+		).toISOString().slice(0, 19).replace('T', ' ');
+
+		try {
+			const query = `
+          SELECT *
+          FROM profit_group
+          WHERE id <= ?
+            AND created_date BETWEEN ? AND ?
+          ORDER BY id DESC
+          LIMIT 11;
+			`;
+
+			const result = await new Promise((resolve, reject) => {
+				this.db.transaction((tx) => {
+					tx.executeSql(
+						query,
+						[lastHistoryId, toLocalDate, fromLocalDate],
+						(_, resultSet) => resolve(resultSet),
+						(_, error) => reject(error)
+					);
+				});
+			});
+
+			if (!result || !result.rows || !result.rows._array) {
+				throw new Error("Unexpected result structure");
+			}
+
+			const rows = result.rows._array;
+			return rows;
+		} catch (error) {
+			console.error("Error retrieving sell history:", error);
+			throw error;
+		}
+	}
+
 	async createProfitHistory(
 		product_id,
 		count,
@@ -1060,6 +1106,61 @@ class ProfitHistoryRepository {
 		}
 	}
 
+	async getLastProfitHistoryGroupByDate(fromDate, toDate) {
+		let fromDateObj = new Date(fromDate);
+		fromDateObj.setHours(23, 59, 59, 999); // Set to the end of the day
+		const fromLocalDate = new Date(
+			fromDateObj.getTime() - fromDateObj.getTimezoneOffset() * 60000
+		).toISOString().slice(0, 19).replace('T', ' ');
+
+		let toDateObj = new Date(toDate);
+		toDateObj.setHours(0, 0, 0, 0); // Set to the beginning of the day
+		const toLocalDate = new Date(
+			toDateObj.getTime() - toDateObj.getTimezoneOffset() * 60000
+		).toISOString().slice(0, 19).replace('T', ' ');
+
+		console.log(`
+        SELECT *
+        FROM profit_group
+        WHERE created_date BETWEEN '${toLocalDate}' AND '${fromLocalDate}'
+        ORDER BY id DESC
+        LIMIT 1;
+		`);
+
+		try {
+			const query = `
+          SELECT *
+          FROM profit_group
+          WHERE created_date BETWEEN ? AND ?
+          ORDER BY id DESC
+          LIMIT 1;
+			`;
+
+			const result = await new Promise((resolve, reject) => {
+				this.db.transaction((tx) => {
+					tx.executeSql(
+						query,
+						[toLocalDate, fromLocalDate],
+						(_, resultSet) => resolve(resultSet),
+						(_, error) => reject(error)
+					);
+				});
+			});
+
+			if (!result || !result.rows || !result.rows._array || result.rows._array.length === 0) {
+				console.error("No sell history found for the specified date range.");
+				return null; // Return null or handle the case when no records are found
+			}
+
+			const row = result.rows._array[0];
+
+			return row;
+		} catch (error) {
+			console.error("Error retrieving sell history:", error);
+			throw error;
+		}
+	}
+
 	async getFirstProfitGroup() {
 		try {
 			const query = `
@@ -1090,6 +1191,57 @@ class ProfitHistoryRepository {
 			return rows;
 		} catch (error) {
 			console.error("Error getLastProfitHistoryGroupId:", error);
+			throw error;
+		}
+	}
+	async getFirstProfitGroupByDate(fromDate, toDate) {
+		let fromDateObj = new Date(fromDate);
+		fromDateObj.setHours(23, 59, 59, 999); // Set to the end of the day
+		const fromLocalDate = new Date(
+			fromDateObj.getTime() - fromDateObj.getTimezoneOffset() * 60000
+		).toISOString().slice(0, 19).replace('T', ' ');
+
+		let toDateObj = new Date(toDate);
+		toDateObj.setHours(0, 0, 0, 0); // Set to the beginning of the day
+		const toLocalDate = new Date(
+			toDateObj.getTime() - toDateObj.getTimezoneOffset() * 60000
+		).toISOString().slice(0, 19).replace('T', ' ');
+
+		try {
+			console.log(`SELECT *
+                   FROM profit_group
+                   WHERE created_date BETWEEN '${toLocalDate}' AND '${fromLocalDate}'
+                   ORDER BY ID ASC
+                   LIMIT 1;`)
+			const query = `
+          SELECT *
+          FROM profit_group
+          WHERE created_date BETWEEN ? AND ?
+          ORDER BY ID ASC
+          LIMIT 1;
+			`;
+
+			const result = await new Promise((resolve, reject) => {
+				this.db.transaction((tx) => {
+					tx.executeSql(
+						query,
+						[toLocalDate, fromLocalDate],
+						(_, resultSet) => resolve(resultSet),
+						(_, error) => reject(error)
+					);
+				});
+			});
+
+			if (!result || !result.rows || !result.rows._array) {
+				console.error("Unexpected result structure:", result);
+				throw new Error("Unexpected result structure");
+			}
+
+			const rows = result.rows._array[0];
+
+			return rows;
+		} catch (error) {
+			console.error("Error getLastSellHistoryGroupId:", error);
 			throw error;
 		}
 	}
