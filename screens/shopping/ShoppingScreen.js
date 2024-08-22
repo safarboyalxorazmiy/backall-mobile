@@ -356,9 +356,9 @@ class Shopping extends Component {
 
 				if (lastDate !== date) {
 					try {
-              let response =
-                  await this.apiService.getSellAmountByDate(date, this.props.navigation);
-              lastAmount = response.amount;
+						let response =
+							await this.apiService.getSellAmountByDate(date, this.props.navigation);
+						lastAmount = response.amount;
 					} catch (e) {
 						lastAmount = 0;
 					}
@@ -738,8 +738,6 @@ class Shopping extends Component {
 					});
 				} catch (e) {
 				}
-
-
 				while (true) {
 					if (lastGroupId <= 0 || await AsyncStorage.getItem("window") != "Shopping") {
 						this.setState({
@@ -757,6 +755,9 @@ class Shopping extends Component {
 					lastGroupId -= 11;
 
 					if (sellingHistory.length === 0) {
+						this.setState({
+							loading: false
+						});
 						return;
 					}
 
@@ -804,8 +805,7 @@ class Shopping extends Component {
 						this.setState(prevState => ({
 							sellingHistory: [...prevState.sellingHistory, ...sellingHistory],
 							groupedHistories: grouped,
-							lastGroupId: lastGroupId,
-							loading: false
+							lastGroupId: lastGroupId
 						}));
 
 						await new Promise(resolve => setTimeout(resolve, 100)); // Adding delay to manage UI thread load

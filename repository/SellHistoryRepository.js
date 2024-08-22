@@ -201,19 +201,26 @@ class SellHistoryRepository {
 		`);
 
 		try {
-			const query = `
-          SELECT *
-          FROM sell_group
-          WHERE created_date BETWEEN ? AND ?
-          ORDER BY id DESC
-          LIMIT 1;
-			`;
+			let query;
+			if (toDate == fromDate) {
+				query = `SELECT *
+                 FROM sell_group
+                 WHERE DATE(created_date) = '${fromDate}'
+                 ORDER BY id DESC
+                 LIMIT 1;`
+			} else {
+				query = `SELECT *
+                 FROM sell_group
+                 WHERE created_date BETWEEN '${toLocalDate}' AND '${fromLocalDate}'
+                 ORDER BY id DESC
+                 LIMIT 1;`;
+			}
 
 			const result = await new Promise((resolve, reject) => {
 				this.db.transaction((tx) => {
 					tx.executeSql(
 						query,
-						[toLocalDate, fromLocalDate],
+						[],
 						(_, resultSet) => resolve(resultSet),
 						(_, error) => reject(error)
 					);
@@ -657,36 +664,40 @@ class SellHistoryRepository {
 
 	async getFirstSellGroupByDate(fromDate, toDate) {
 		let fromDateObj = new Date(fromDate);
-		fromDateObj.setHours(23, 59, 59, 999); // Set to the end of the day
-		const fromLocalDate = new Date(
-			fromDateObj.getTime() - fromDateObj.getTimezoneOffset() * 60000
-		).toISOString().slice(0, 19).replace('T', ' ');
+		fromDateObj.setUTCHours(23, 59, 59, 999); // Set to start of the day in UTC
+		const fromUTCDate = fromDateObj.toISOString().slice(0, 19).replace('T', ' ');
 
 		let toDateObj = new Date(toDate);
-		toDateObj.setHours(0, 0, 0, 0); // Set to the beginning of the day
-		const toLocalDate = new Date(
-			toDateObj.getTime() - toDateObj.getTimezoneOffset() * 60000
-		).toISOString().slice(0, 19).replace('T', ' ');
+		toDateObj.setUTCHours(0, 0, 0, 0); // Set to end of the day in UTC
+		const toUTCDate = toDateObj.toISOString().slice(0, 19).replace('T', ' ');
 
 		try {
 			console.log(`SELECT *
-                   FROM sell_group
-                   WHERE created_date BETWEEN '${toLocalDate}' AND '${fromLocalDate}'
-                   ORDER BY ID ASC
-                   LIMIT 1;`)
-			const query = `
-          SELECT *
-          FROM sell_group
-          WHERE created_date BETWEEN ? AND ?
-          ORDER BY ID ASC
-          LIMIT 1;
-			`;
+                 FROM sell_group
+                 WHERE created_date BETWEEN '${toUTCDate}' AND '${fromUTCDate}'
+                 ORDER BY ID ASC
+                 LIMIT 1;`);
+
+			let query;
+			if (toDate == fromDate) {
+				query = `SELECT *
+                 FROM sell_group
+                 WHERE DATE(created_date) = '${fromDate}'
+                 ORDER BY ID ASC
+                 LIMIT 1;`
+			} else {
+				query = `SELECT *
+               FROM sell_group
+               WHERE created_date BETWEEN '${toUTCDate}' AND '${fromUTCDate}'
+               ORDER BY ID ASC
+               LIMIT 1;`;
+			}
 
 			const result = await new Promise((resolve, reject) => {
 				this.db.transaction((tx) => {
 					tx.executeSql(
 						query,
-						[toLocalDate, fromLocalDate],
+						[],
 						(_, resultSet) => resolve(resultSet),
 						(_, error) => reject(error)
 					);
@@ -700,13 +711,15 @@ class SellHistoryRepository {
 
 			const rows = result.rows._array[0];
 
+			console.log("result:: ", rows);
+
 			return rows;
-		} catch (error) {
-			console.error("Error getLastSellHistoryGroupId:", error);
+		}
+		catch (error) {
+			console.error("Error getFirstSellGroupByDate:", error);
 			throw error;
 		}
 	}
-
 
 	async getTop10SellGroupByDate(lastHistoryId, fromDate, toDate) {
 		let fromDateObj = new Date(fromDate);
@@ -722,20 +735,29 @@ class SellHistoryRepository {
 		).toISOString().slice(0, 19).replace('T', ' ');
 
 		try {
-			const query = `
-          SELECT *
-          FROM sell_group
-          WHERE id <= ?
-            AND created_date BETWEEN ? AND ?
-          ORDER BY id DESC
-          LIMIT 11;
-			`;
+			let query;
+			if (toDate == fromDate) {
+				query = `
+            SELECT *
+            FROM sell_group
+            WHERE id <= ${lastHistoryId}
+              AND DATE(created_date) = '${fromDate}'
+            ORDER BY id DESC
+            LIMIT 11;`
+			} else {
+				query = `SELECT *
+                 FROM sell_group
+                 WHERE id <= ${lastHistoryId}
+                   AND created_date BETWEEN '${toLocalDate}' AND '${fromLocalDate}'
+                 ORDER BY id DESC
+                 LIMIT 11;`;
+			}
 
 			const result = await new Promise((resolve, reject) => {
 				this.db.transaction((tx) => {
 					tx.executeSql(
 						query,
-						[lastHistoryId, toLocalDate, fromLocalDate],
+						[],
 						(_, resultSet) => resolve(resultSet),
 						(_, error) => reject(error)
 					);
