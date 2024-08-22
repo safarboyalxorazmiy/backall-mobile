@@ -872,8 +872,7 @@ class Shopping extends Component {
 
 						if (lastDate !== date) {
 							try {
-								let response = await this.apiService.getSellAmountByDate(date, this.props.navigation);
-								lastAmount = response.amount;
+								lastAmount = await this.amountDateRepository.getSellAmountInfoByDate(date);
 							} catch (e) {
 								lastAmount = 0;
 							}
