@@ -22,6 +22,8 @@ import SearchIcon from "../../assets/search-icon.svg";
 import BasketIcon from "../../assets/basket-icon-light.svg";
 import Success from "../../assets/success.svg";
 import BasketItem from "./BasketItem";
+import SellHistoryRepository from "../../repository/SellHistoryRepository";
+import AmountDateRepository from "../../repository/AmountDateRepository";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -293,6 +295,33 @@ class Basket extends Component {
 				}
 			}
 		);
+	}
+
+	async loadScreen() {
+		if (await AsyncStorage.getItem("loadBasket") === "true") {
+			this.setState({
+				isCreated: "false",
+				storeProducts: [],
+				addButtonStyle: styles.addButton,
+				searchInputValue: "",
+				lastId: 0,
+				lastYPos: 0,
+				notAllowed: "",
+				role: "",
+
+				lastNotDownloadedProductsPage: 0,
+				lastNotDownloadedProductsSize: 10,
+				lastStoreProductsPage: 0,
+				lastStoreProductsSize: 10,
+
+				productsLoadingIntervalId: undefined,
+				productsLoadingIntervalProccessIsFinished: true,
+			});
+
+			this.storeProductRepository = new StoreProductRepository();
+			this.apiService = new ApiService();
+			this.productRepository = new ProductRepository();
+		}
 	}
 
 	async getNotDownloadedLocalProducts() {
