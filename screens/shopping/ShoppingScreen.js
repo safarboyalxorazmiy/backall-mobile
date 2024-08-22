@@ -432,7 +432,9 @@ class Shopping extends Component {
 	}
 
 	async componentDidMount() {
-		await this.loadScreen();
+		if (await AsyncStorage.getItem("loadShopping") === "true") {
+			await this.initializeScreenScreen();
+		}
 
 		/* Month sell amount setting value ** */
 		let thisMonthSellAmount = parseInt(await AsyncStorage.getItem("month_sell_amount"));
@@ -536,6 +538,12 @@ class Shopping extends Component {
 		const {navigation} = this.props;
 
 		navigation.addListener("focus", async () => {
+			if (await AsyncStorage.getItem("loadShopping") === "true") {
+				await this.initializeScreenScreen();
+
+				await AsyncStorage.setItem("loadShopping", "false");
+			}
+
 			await this.getDateInfo();
 			console.log("fromDate:", this.state.fromDate);
 			console.log("toDate:", this.state.toDate);
@@ -916,41 +924,39 @@ class Shopping extends Component {
 		});
 	}
 
-	async loadScreen() {
-		if (await AsyncStorage.getItem("loadShopping") === "true") {
-			this.setState({
-				sellingHistory: [],
-				groupedHistories: [],
-				lastDate: new Date(),
-				currentMonthTotal: 0,
-				lastGroupId: 0,
-				firstGroupGlobalId: 0,
+	async initializeScreenScreen() {
+		this.setState({
+			sellingHistory: [],
+			groupedHistories: [],
+			lastDate: new Date(),
+			currentMonthTotal: 0,
+			lastGroupId: 0,
+			firstGroupGlobalId: 0,
 
-				calendarInputContent: "--/--/----",
-				fromDate: null,
-				toDate: null,
-				thisMonthSellAmount: 0.00,
-				notAllowed: "",
+			calendarInputContent: "--/--/----",
+			fromDate: null,
+			toDate: null,
+			thisMonthSellAmount: 0.00,
+			notAllowed: "",
 
-				// SELL
-				lastSellGroupPage: 0,
+			// SELL
+			lastSellGroupPage: 0,
 
-				lastSellHistoryPage: 0,
-				lastSellHistorySize: 10,
-				lastSellHistoryGroupPage: 0,
-				lastSellHistoryGroupSize: 10,
-				lastSellAmountDatePage: 0,
-				lastSellAmountDateSize: 10,
+			lastSellHistoryPage: 0,
+			lastSellHistorySize: 10,
+			lastSellHistoryGroupPage: 0,
+			lastSellHistoryGroupSize: 10,
+			lastSellAmountDatePage: 0,
+			lastSellAmountDateSize: 10,
 
-				loading: false,
-				globalFullyLoaded: false
-			});
+			loading: false,
+			globalFullyLoaded: false
+		});
 
-			this.sellHistoryRepository = new SellHistoryRepository();
-			this.amountDateRepository = new AmountDateRepository();
-			this.productRepository = new ProductRepository();
-			this.apiService = new ApiService();
-		}
+		this.sellHistoryRepository = new SellHistoryRepository();
+		this.amountDateRepository = new AmountDateRepository();
+		this.productRepository = new ProductRepository();
+		this.apiService = new ApiService();
 	}
 
 	render() {
