@@ -548,10 +548,13 @@ class Shopping extends Component {
 				this.setState({thisMonthSellAmount: thisMonthSellAmount});
 			}
 
-			await this.getDateInfo();
-
 			// New history created load new items **
-			if (await AsyncStorage.getItem("shoppingFullyLoaded") != "true") {
+			if (await AsyncStorage.getItem("shoppingFullyLoaded") !== "true") {
+				// Remove date
+				await AsyncStorage.removeItem("ShoppingFromDate");
+				await AsyncStorage.removeItem("ShoppingToDate");
+				await AsyncStorage.setItem("shoppingFullyLoaded", "false");
+				await this.getDateInfo();
 
 				let lastSellGroup = await this.sellHistoryRepository.getLastSellGroup();
 				let lastGroupId = lastSellGroup.id;
@@ -647,6 +650,8 @@ class Shopping extends Component {
 
 				await AsyncStorage.setItem("shoppingFullyLoaded", "true");
 			}
+
+			await this.getDateInfo();
 
 			// Load rest of items if exists **
 			let lastGroupId = this.state.lastGroupId;
