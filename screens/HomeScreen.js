@@ -98,86 +98,26 @@ class Home extends Component {
 
 		console.log("component mounted!")
 
+		
 		this.unsubscribe = NetInfo.addEventListener((state) => {
 			this.setState({isConnected: state.isConnected});
 		});
 
-		let isDownloaded = await AsyncStorage.getItem("isDownloaded");
-		if (isDownloaded !== "true" || isDownloaded == null) {
-			await this.initializeScreen();
-
-			this.setState({spinner: true});
-
-			const {navigation} = this.props;
-
-			let isLoggedIn = await this.tokenService.checkTokens();
-			if (!isLoggedIn) {
-				this.setState({spinner: false});
-				navigation.navigate("Login");
-			}
-
-			await this.storeProductRepository.init();
-			await this.sellHistoryRepository.init();
-			await this.profitHistoryRepository.init();
-			await this.amountDateRepository.init();
-
-			if (isLoggedIn) {
-				console.log("isDownloaded??", isDownloaded);
-				if (isDownloaded !== "true" || isDownloaded == null) {
-					// LOAD..
-					console.log("ABOUT TO LOAD...");
-
-					console.log("Initial isConnected:", this.state.isConnected);
-
-					// Check if setInterval callback is reached
-					console.log("Setting up setInterval...");
-
-					if (!this.state.isConnected) {
-						this.setState({spinner: false});
-						navigation.navigate("Login");
-						return;
-					}
-
-					try {
-						// Has internet connection
-						await this.loadProducts();
-
-					} catch (error) {
-						console.error("Error loading products:", error);
-					} finally {
-						this.setState({spinner: false});
-					}
-				}
-
-				await this.getAmountInfo();
-
-				let notAllowed = await AsyncStorage.getItem("not_allowed");
-				this.setState({notAllowed: notAllowed});
-			}
-		}
-
 		navigation.addListener("focus", async () => {
-			console.log("FOCUSED");
-			console.log("-------");
-
-			// ROLE ERROR
-			let notAllowed = await AsyncStorage.getItem("not_allowed");
-			this.setState({notAllowed: notAllowed});
+			console.log("HOME NAVIGATED");
+			
+			this.unsubscribe = NetInfo.addEventListener((state) => {
+				this.setState({isConnected: state.isConnected});
+			});
 
 			if (this.unsubscribe) {
 				this.unsubscribe();
 			}
 
-			this.unsubscribe = NetInfo.addEventListener((state) => {
-				this.setState({isConnected: state.isConnected});
-			});
-
-			console.log("HOME NAVIGATED");
-
-			await this.getAmountInfo();
-
 			let isDownloaded = await AsyncStorage.getItem("isDownloaded");
+			console.log("isDownloaded::", isDownloaded);
 			if (isDownloaded !== "true" || isDownloaded == null) {
+				await this.initializeScreen();
 				this.setState({spinner: true});
 
 				const {navigation} = this.props;
@@ -227,7 +167,71 @@ class Home extends Component {
 					this.setState({notAllowed: notAllowed});
 				}
 			}
+			
+			console.log("FOCUSED");
+			console.log("-------");
+
+			// ROLE ERROR
+			let notAllowed = await AsyncStorage.getItem("not_allowed");
+			this.setState({notAllowed: notAllowed});
+
+
+			await this.getAmountInfo();
 		});
+
+		// let isDownloaded = await AsyncStorage.getItem("isDownloaded");
+		// if (isDownloaded !== "true" || isDownloaded == null) {
+		// 	await this.initializeScreen();
+
+		// 	this.setState({spinner: true});
+
+		// 	const {navigation} = this.props;
+
+		// 	let isLoggedIn = await this.tokenService.checkTokens();
+		// 	if (!isLoggedIn) {
+		// 		this.setState({spinner: false});
+		// 		navigation.navigate("Login");
+		// 	}
+
+		// 	await this.storeProductRepository.init();
+		// 	await this.sellHistoryRepository.init();
+		// 	await this.profitHistoryRepository.init();
+		// 	await this.amountDateRepository.init();
+
+		// 	if (isLoggedIn) {
+		// 		console.log("isDownloaded??", isDownloaded);
+		// 		if (isDownloaded !== "true" || isDownloaded == null) {
+		// 			// LOAD..
+		// 			console.log("ABOUT TO LOAD...");
+
+		// 			console.log("Initial isConnected:", this.state.isConnected);
+
+		// 			// Check if setInterval callback is reached
+		// 			console.log("Setting up setInterval...");
+
+		// 			if (!this.state.isConnected) {
+		// 				this.setState({spinner: false});
+		// 				navigation.navigate("Login");
+		// 				return;
+		// 			}
+
+		// 			try {
+		// 				// Has internet connection
+		// 				await this.loadProducts();
+
+		// 			} catch (error) {
+		// 				console.error("Error loading products:", error);
+		// 			} finally {
+		// 				this.setState({spinner: false});
+		// 			}
+		// 		}
+
+		// 		await this.getAmountInfo();
+
+		// 		let notAllowed = await AsyncStorage.getItem("not_allowed");
+		// 		this.setState({notAllowed: notAllowed});
+		// 	}
+		// }
 	}
 
 	async initializeScreen() {
@@ -238,7 +242,6 @@ class Home extends Component {
 			sellAmount: 0,
 			notAllowed: "",
 			spinner: false,
-			isConnected: null,
 			isLoading: false,
 			isDownloaded: "false",
 
