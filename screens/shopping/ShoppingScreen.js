@@ -435,7 +435,7 @@ class Shopping extends Component {
 		if (await AsyncStorage.getItem("loadShopping") === "true") {
 			await this.initializeScreen();
 
-        await AsyncStorage.setItem("loadShopping", "false");
+			await AsyncStorage.setItem("loadShopping", "false");
 		}
 
 		/* Month sell amount setting value ** */

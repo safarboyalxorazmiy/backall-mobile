@@ -76,6 +76,12 @@ class Basket extends Component {
 	};
 
 	async componentDidMount() {
+		if (await AsyncStorage.getItem("loadBasket") === "true") {
+			await this.initializeScreen();
+
+			await AsyncStorage.setItem("loadBasket", "false");
+		}
+
 		console.log("Loaded..")
 		const {navigation} = this.props;
 
@@ -133,6 +139,12 @@ class Basket extends Component {
 
 		navigation.addListener("focus",
 			async () => {
+				if (await AsyncStorage.getItem("loadBasket") === "true") {
+					await this.initializeScreen();
+		
+					await AsyncStorage.setItem("loadBasket", "false");
+				}
+
 				await this.getCreated();
 				this.setState({role: await AsyncStorage.getItem("role")});
 
@@ -297,7 +309,7 @@ class Basket extends Component {
 		);
 	}
 
-	async loadScreen() {
+	async initializeScreen() {
 		if (await AsyncStorage.getItem("loadBasket") === "true") {
 			this.setState({
 				isCreated: "false",
