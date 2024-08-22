@@ -630,6 +630,9 @@ class Profit extends Component {
 					lastGroupId -= 11;
 
 					if (profitHistory.length === 0) {
+						this.setState({
+							loading: false
+						});
 						return;
 					}
 
