@@ -104,7 +104,7 @@ class Home extends Component {
 
 		let isDownloaded = await AsyncStorage.getItem("isDownloaded");
 		if (isDownloaded !== "true" || isDownloaded == null) {
-			await this.initScreen();
+			await this.initializeScreen();
 
 			this.setState({spinner: true});
 
@@ -230,7 +230,7 @@ class Home extends Component {
 		});
 	}
 
-	async initScreen() {
+	async initializeScreen() {
 		this.setState({
 			shoppingCardColors: ["#E59C0D", "#FDD958"],
 			profitCardColors: ["#2C8134", "#1DCB00"],
