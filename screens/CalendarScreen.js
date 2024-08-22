@@ -273,7 +273,17 @@ class CalendarPage extends Component {
 								toDayInputValue: this.getCurrentDay(),
 								toMonthInputValue: this.getCurrentMonth(),
 								toYearInputValue: this.getCurrentYear()
-							})
+							});
+
+
+							let fromDateString = `${this.getCurrentYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}-${this.getCurrentDay()}`;  // Corrected to use lastYear, lastMonthIndex, lastDay
+							let toDateString = `${this.getCurrentYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}-${this.getCurrentDay()}`;
+
+							this.setState({
+								fromDate: fromDateString,
+								toDate: toDateString
+							});
+
 						}}>
 						<Text
 							style={{
