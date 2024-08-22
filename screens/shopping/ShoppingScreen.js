@@ -22,6 +22,7 @@ import ApiService from "../../service/ApiService";
 import CalendarIcon from "../../assets/calendar-icon.svg";
 import CrossIcon from "../../assets/cross-icon-light.svg";
 import HistoryGroup from "./HistoryGroup";
+import ProfitHistoryRepository from "../../repository/ProfitHistoryRepository";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -431,6 +432,8 @@ class Shopping extends Component {
 	}
 
 	async componentDidMount() {
+		await this.loadScreen();
+
 		/* Month sell amount setting value ** */
 		let thisMonthSellAmount = parseInt(await AsyncStorage.getItem("month_sell_amount"));
 
@@ -911,6 +914,43 @@ class Shopping extends Component {
 				this.setState({notAllowed: notAllowed}) */
 			}
 		});
+	}
+
+	async loadScreen() {
+		if (await AsyncStorage.getItem("loadShopping") === "true") {
+			this.setState({
+				sellingHistory: [],
+				groupedHistories: [],
+				lastDate: new Date(),
+				currentMonthTotal: 0,
+				lastGroupId: 0,
+				firstGroupGlobalId: 0,
+
+				calendarInputContent: "--/--/----",
+				fromDate: null,
+				toDate: null,
+				thisMonthSellAmount: 0.00,
+				notAllowed: "",
+
+				// SELL
+				lastSellGroupPage: 0,
+
+				lastSellHistoryPage: 0,
+				lastSellHistorySize: 10,
+				lastSellHistoryGroupPage: 0,
+				lastSellHistoryGroupSize: 10,
+				lastSellAmountDatePage: 0,
+				lastSellAmountDateSize: 10,
+
+				loading: false,
+				globalFullyLoaded: false
+			});
+
+			this.sellHistoryRepository = new SellHistoryRepository();
+			this.amountDateRepository = new AmountDateRepository();
+			this.productRepository = new ProductRepository();
+			this.apiService = new ApiService();
+		}
 	}
 
 	render() {
