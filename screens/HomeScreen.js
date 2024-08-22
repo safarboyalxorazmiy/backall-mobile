@@ -104,6 +104,8 @@ class Home extends Component {
 
 		let isDownloaded = await AsyncStorage.getItem("isDownloaded");
 		if (isDownloaded !== "true" || isDownloaded == null) {
+			await this.initScreen();
+
 			this.setState({spinner: true});
 
 			const {navigation} = this.props;
@@ -226,6 +228,61 @@ class Home extends Component {
 				}
 			}
 		});
+	}
+
+	async initScreen() {
+		this.setState({
+			shoppingCardColors: ["#E59C0D", "#FDD958"],
+			profitCardColors: ["#2C8134", "#1DCB00"],
+			profitAmount: 0,
+			sellAmount: 0,
+			notAllowed: "",
+			spinner: false,
+			isConnected: null,
+			isLoading: false,
+			isDownloaded: "false",
+
+			// PRODUCT
+			lastLocalProductsPage: 0,
+			lastLocalProductsSize: 10,
+			lastGlobalProductsPage: 0,
+			lastGlobalProductsSize: 10,
+			lastStoreProductsPage: 0,
+			lastStoreProductsSize: 10,
+
+			// SELL
+			lastSellGroupsPage: 0,
+			lastSellGroupsSize: 10,
+			lastSellHistoriesPage: 0,
+			lastSellHistoriesSize: 10,
+			lastSellHistoryGroupPage: 0,
+			lastSellHistoryGroupSize: 10,
+			lastSellAmountDatePage: 0,
+			lastSellAmountDateSize: 10,
+
+			// PROFIT
+			lastProfitGroupsPage: 0,
+			lastProfitGroupsSize: 10,
+			lastProfitHistoriesPage: 0,
+			lastProfitHistoriesSize: 10,
+			lastProfitHistoryGroupPage: 0,
+			lastProfitHistoryGroupSize: 10,
+			lastProfitAmountDatePage: 0,
+			lastProfitAmountDateSize: 10,
+
+			menuFocused: false,
+			crossFocused: false,
+			menuOpened: false
+		});
+
+		this.amountDateRepository = new AmountDateRepository();
+		this.apiService = new ApiService();
+		this.productRepository = new ProductRepository();
+		this.sellHistoryRepository = new SellHistoryRepository();
+		this.profitHistoryRepository = new ProfitHistoryRepository();
+		this.storeProductRepository = new StoreProductRepository();
+		this.databaseRepository = new DatabaseRepository();
+		this.tokenService = new TokenService();
 	}
 
 	componentWillUnmount() {
@@ -512,8 +569,7 @@ class Home extends Component {
 					1000,
 					this.props.navigation
 				);
-		}
-		catch (error) {
+		} catch (error) {
 			console.error("Error fetching global products:", error);
 			this.setState({
 				lastSize: size,
@@ -529,12 +585,12 @@ class Home extends Component {
 
 		for (const sellGroup of response.content) {
 			try {
-					await this.sellHistoryRepository.createSellGroupWithAllValues(
-						sellGroup.createdDate,
-						sellGroup.amount,
-						sellGroup.id,
-						true
-					);
+				await this.sellHistoryRepository.createSellGroupWithAllValues(
+					sellGroup.createdDate,
+					sellGroup.amount,
+					sellGroup.id,
+					true
+				);
 			} catch (error) {
 				console.error("Error getSellGroups:", error);
 			}
@@ -626,8 +682,7 @@ class Home extends Component {
 			response = await this.apiService.getProfitGroups(
 				lastProfitGroupGlobalId, 0, 1000, this.props.navigation
 			);
-		}
-		catch (error) {
+		} catch (error) {
 			console.error("Error fetching getProfitGroups():", error);
 			this.setState({
 				lastSize: 1000,

@@ -71,6 +71,7 @@ class VerificationScreen extends Component {
 				await AsyncStorage.setItem("loadProfit", "true");
 				await AsyncStorage.setItem("loadShopping", "true");
 				await AsyncStorage.setItem("loadBasket", "true");
+				await AsyncStorage.setItem("isDownloaded", "false");
 				navigation.navigate("Home");
 			} else {
 				this.setState({
