@@ -68,6 +68,9 @@ class VerificationScreen extends Component {
 					error: false
 				});
 
+				await AsyncStorage.setItem("loadProfit", "true");
+				await AsyncStorage.setItem("loadShopping", "true");
+				await AsyncStorage.setItem("loadBasket", "true");
 				navigation.navigate("Home");
 			} else {
 				this.setState({
