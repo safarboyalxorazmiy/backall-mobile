@@ -301,35 +301,7 @@ class Profit extends Component {
 	}
 
 	async componentDidMount() {
-		if (await AsyncStorage.getItem("loadProfit") === "true") {
-			this.setState({
-				profitHistory: [],
-				groupedHistories: [],
-				currentMonthTotal: 0,
-				lastGroupId: 0,
-				isCollecting: false,
-				calendarInputContent: "--/--/----",
-				thisMonthProfitAmount: 0.00,
-				notAllowed: "",
-				notFinished: true,
-
-				lastProfitGroupPage: 0,
-
-				lastProfitGroupsPage: 0,
-				lastProfitGroupsSize: 10,
-				lastProfitHistoriesPage: 0,
-				lastProfitHistoriesSize: 10,
-				lastProfitHistoryGroupPage: 0,
-				lastProfitHistoryGroupSize: 10,
-				lastProfitAmountDatePage: 0,
-				lastProfitAmountDateSize: 10,
-			})
-
-			this.productRepository = new ProductRepository();
-			this.profitHistoryRepository = new ProfitHistoryRepository();
-			this.amountDateRepository = new AmountDateRepository();
-			this.apiService = new ApiService();
-		}
+		await this.loadScreen();
 
 		/* Month profit amount setting value ** */
 		let thisMonthProfitAmount = parseInt(await AsyncStorage.getItem("month_profit_amount"));
@@ -438,6 +410,8 @@ class Profit extends Component {
 		const {navigation} = this.props;
 
 		navigation.addListener("focus", async () => {
+			await this.loadScreen();
+
 			/* Month profit amount setting value ** */
 			let thisMonthProfitAmount = parseInt(await AsyncStorage.getItem("month_profit_amount"));
 
@@ -821,6 +795,38 @@ class Profit extends Component {
 				this.setState({notAllowed: notAllowed}) */
 			}
 		});
+	}
+
+	async loadScreen() {
+		if (await AsyncStorage.getItem("loadProfit") === "true") {
+			this.setState({
+				profitHistory: [],
+				groupedHistories: [],
+				currentMonthTotal: 0,
+				lastGroupId: 0,
+				isCollecting: false,
+				calendarInputContent: "--/--/----",
+				thisMonthProfitAmount: 0.00,
+				notAllowed: "",
+				notFinished: true,
+
+				lastProfitGroupPage: 0,
+
+				lastProfitGroupsPage: 0,
+				lastProfitGroupsSize: 10,
+				lastProfitHistoriesPage: 0,
+				lastProfitHistoriesSize: 10,
+				lastProfitHistoryGroupPage: 0,
+				lastProfitHistoryGroupSize: 10,
+				lastProfitAmountDatePage: 0,
+				lastProfitAmountDateSize: 10,
+			})
+
+			this.productRepository = new ProductRepository();
+			this.profitHistoryRepository = new ProfitHistoryRepository();
+			this.amountDateRepository = new AmountDateRepository();
+			this.apiService = new ApiService();
+		}
 	}
 
 	async loadMore() {
