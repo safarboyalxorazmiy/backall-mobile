@@ -302,14 +302,14 @@ class Profit extends Component {
 
 	async componentDidMount() {
 		/* Month profit amount setting value ** */
-		let thisMonthSellAmount = parseInt(await AsyncStorage.getItem("month_profit_amount"));
+		let thisMonthProfitAmount = parseInt(await AsyncStorage.getItem("month_profit_amount"));
 
 		let currentDate = new Date();
 		let currentMonth = currentDate.getMonth();
 		let lastStoredMonth = parseInt(await AsyncStorage.getItem("month"));
 
 		if (currentMonth === lastStoredMonth) {
-			this.setState({thisMonthProfitAmount: thisMonthSellAmount});
+			this.setState({thisMonthProfitAmount: thisMonthProfitAmount});
 		}
 
 		let lastProfitGroup =
@@ -538,13 +538,13 @@ class Profit extends Component {
 				this.setState({
 					groupedHistories: []
 				})
-				let firstSellGroup = await this.profitHistoryRepository.getFirstProfitGroupByDate(
+				let firstProfitGroup = await this.profitHistoryRepository.getFirstProfitGroupByDate(
 					this.state.fromDate,
 					this.state.toDate
 				);
 
 				this.setState({
-					firstGroupGlobalId: firstSellGroup.global_id
+					firstGroupGlobalId: firstProfitGroup.global_id
 				});
 
 				let lastGroup =
@@ -554,7 +554,7 @@ class Profit extends Component {
 				let lastGroupId = lastGroup.id;
 
 
-				let sellingHistory =
+				let profitHistory =
 					await this.profitHistoryRepository.getTop10ProfitGroupByDate(
 						lastGroupId,
 						this.state.fromDate,
@@ -568,7 +568,7 @@ class Profit extends Component {
 
 					let lastDate;
 					let lastAmount;
-					for (const history of sellingHistory) {
+					for (const history of profitHistory) {
 						const date = history.created_date.split("T")[0];
 						let groupIndex = grouped.findIndex(group => group.date === date);
 
@@ -586,7 +586,7 @@ class Profit extends Component {
 						grouped[groupIndex].histories.push({
 							id: history.id,
 							created_date: history.created_date,
-							amount: history.amount,
+							profit: history.profit,
 							saved: false
 						});
 
@@ -605,7 +605,7 @@ class Profit extends Component {
 					}
 
 					this.setState({
-						sellingHistory: sellingHistory,
+						profitHistory: profitHistory,
 						groupedHistories: Object.values(grouped),
 						lastGroupId: lastGroupId
 					});
@@ -614,7 +614,7 @@ class Profit extends Component {
 
 
 				while (true) {
-					if (lastGroupId <= 0 || await AsyncStorage.getItem("window") != "Shopping") {
+					if (lastGroupId <= 0 || await AsyncStorage.getItem("window") != "Profit") {
 						this.setState({
 							loading: false
 						});
@@ -656,7 +656,7 @@ class Profit extends Component {
 							grouped[groupIndex].histories.push({
 								id: history.id,
 								created_date: history.created_date,
-								amount: history.amount,
+								profit: history.profit,
 								saved: false
 							});
 
@@ -675,7 +675,7 @@ class Profit extends Component {
 						}
 
 						this.setState(prevState => ({
-							profitHistory: [...prevState.profitHistory, ...sellingHistory],
+							profitHistory: [...prevState.profitHistory, ...profitHistory],
 							groupedHistories: grouped,
 							lastGroupId: lastGroupId,
 							loading: false
@@ -742,7 +742,7 @@ class Profit extends Component {
 						grouped[groupIndex].histories.push({
 							id: history.id,
 							created_date: history.created_date,
-							amount: history.amount,
+							profit: history.profit,
 							saved: false
 						});
 
@@ -842,7 +842,7 @@ class Profit extends Component {
 				grouped[groupIndex].histories.push({
 					id: history.id,
 					created_date: history.createdDate,
-					amount: history.amount,
+					profit: history.profit,
 					saved: false
 				});
 
