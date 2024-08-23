@@ -1170,14 +1170,6 @@ class ProfitHistoryRepository {
 			toDateObj.getTime() - toDateObj.getTimezoneOffset() * 60000
 		).toISOString().slice(0, 19).replace('T', ' ');
 
-		console.log(`
-        SELECT *
-        FROM profit_group
-        WHERE created_date BETWEEN '${fromUTCDate}' AND '${toUTCDate}'
-        ORDER BY id DESC
-        LIMIT 1;
-		`);
-
 		try {
 			let query;
 			if (toDate == fromDate) {
@@ -1187,21 +1179,15 @@ class ProfitHistoryRepository {
                  ORDER BY id DESC
                  LIMIT 1;`
 			} else if (fromUTCDate > toUTCDate) {
-				fromDateObj.setUTCHours(23, 59, 59, 999); // Set to start of the day in UTC
-				const fromUTCDate = fromDateObj.toISOString().slice(0, 19).replace('T', ' ');
-
-				toDateObj.setUTCHours(0, 0, 0, 0); // Set to end of the day in UTC
-				const toUTCDate = toDateObj.toISOString().slice(0, 19).replace('T', ' ');
-
 				query = `SELECT *
                  FROM profit_group
-                 WHERE created_date BETWEEN '${toUTCDate}' AND '${fromUTCDate}'
+                 WHERE DATE(created_date) BETWEEN '${toDate}' AND '${fromDate}'
                  ORDER BY id DESC
                  LIMIT 1;`;
 			} else {
 				query = `SELECT *
                  FROM profit_group
-                 WHERE created_date BETWEEN '${fromUTCDate}' AND '${toUTCDate}'
+                 WHERE DATE(created_date) BETWEEN '${fromDate}' AND '${toDate}'
                  ORDER BY id DESC
                  LIMIT 1;`;
 			}
@@ -1241,12 +1227,6 @@ class ProfitHistoryRepository {
 		const toUTCDate = toDateObj.toISOString().slice(0, 19).replace('T', ' ');
 
 		try {
-			console.log(`SELECT *
-                   FROM profit_group
-                   WHERE created_date BETWEEN '${fromUTCDate}' AND '${toUTCDate}'
-                   ORDER BY ID ASC
-                   LIMIT 1;`);
-
 			let query;
 			if (toDate == fromDate) {
 				query = `SELECT *
@@ -1255,23 +1235,17 @@ class ProfitHistoryRepository {
                  ORDER BY ID ASC
                  LIMIT 1;`
 			} else if (fromUTCDate > toUTCDate) {
-				fromDateObj.setUTCHours(23, 59, 59, 999); // Set to start of the day in UTC
-				const fromUTCDate = fromDateObj.toISOString().slice(0, 19).replace('T', ' ');
-
-				toDateObj.setUTCHours(0, 0, 0, 0); // Set to end of the day in UTC
-				const toUTCDate = toDateObj.toISOString().slice(0, 19).replace('T', ' ');
-
 				query = `SELECT *
-                 FROM profit_group
-                 WHERE created_date BETWEEN '${toUTCDate}' AND '${fromUTCDate}'
-                 ORDER BY ID ASC
-                 LIMIT 1;`;
+               FROM profit_group
+               WHERE DATE(created_date) BETWEEN '${toDate}' AND '${fromDate}'
+               ORDER BY ID ASC
+               LIMIT 1;`;
 			} else {
 				query = `SELECT *
-                 FROM profit_group
-                 WHERE created_date BETWEEN '${fromUTCDate}' AND '${toUTCDate}'
-                 ORDER BY ID ASC
-                 LIMIT 1;`;
+               FROM profit_group
+               WHERE DATE(created_date) BETWEEN '${fromDate}' AND '${toDate}'
+               ORDER BY ID ASC
+               LIMIT 1;`;
 			}
 
 			const result = await new Promise((resolve, reject) => {
@@ -1295,7 +1269,8 @@ class ProfitHistoryRepository {
 			console.log("result:: ", rows);
 
 			return rows;
-		} catch (error) {
+		}
+		catch (error) {
 			console.error("Error getFirstSellGroupByDate:", error);
 			throw error;
 		}
@@ -1323,7 +1298,7 @@ class ProfitHistoryRepository {
             WHERE id <= ${lastHistoryId}
               AND DATE(created_date) = '${fromDate}'
             ORDER BY id DESC
-            LIMIT 11;`
+            limit 11;`
 			} else if (fromUTCDate > toUTCDate) {
 				fromDateObj.setUTCHours(23, 59, 59, 999); // Set to start of the day in UTC
 				const fromUTCDate = fromDateObj.toISOString().slice(0, 19).replace('T', ' ');
@@ -1334,16 +1309,16 @@ class ProfitHistoryRepository {
 				query = `SELECT *
                  FROM profit_group
                  WHERE id <= ${lastHistoryId}
-                   AND created_date BETWEEN '${toUTCDate}' AND '${fromUTCDate}'
+                   AND DATE(created_date) BETWEEN '${toDate}' AND '${fromDate}'
                  ORDER BY id DESC
-                 LIMIT 11;`;
+                 limit 11;`;
 			} else {
 				query = `SELECT *
                  FROM profit_group
                  WHERE id <= ${lastHistoryId}
-                   AND created_date BETWEEN '${fromUTCDate}' AND '${toUTCDate}'
+                   AND DATE(created_date) BETWEEN '${fromDate}' AND '${toDate}'
                  ORDER BY id DESC
-                 LIMIT 11;`;
+                 limit 11;`;
 			}
 
 			const result = await new Promise((resolve, reject) => {
@@ -1368,7 +1343,6 @@ class ProfitHistoryRepository {
 			throw error;
 		}
 	}
-
 }
 
 export default ProfitHistoryRepository;
