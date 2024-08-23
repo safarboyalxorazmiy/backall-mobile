@@ -1147,14 +1147,6 @@ class SellHistoryRepository {
 			toDateObj.getTime() - toDateObj.getTimezoneOffset() * 60000
 		).toISOString().slice(0, 19).replace('T', ' ');
 
-		console.log(`
-        SELECT *
-        FROM sell_group
-        WHERE created_date BETWEEN '${fromUTCDate}' AND '${toUTCDate}'
-        ORDER BY id DESC
-        LIMIT 1;
-		`);
-
 		try {
 			let query;
 			if (toDate == fromDate) {
@@ -1172,13 +1164,13 @@ class SellHistoryRepository {
 
 				query = `SELECT *
                  FROM sell_group
-                 WHERE created_date BETWEEN '${toUTCDate}' AND '${fromUTCDate}'
+                 WHERE DATE(created_date) BETWEEN '${toDate}' AND '${fromDate}'
                  ORDER BY id DESC
                  LIMIT 1;`;
 			} else {
 				query = `SELECT *
                  FROM sell_group
-                 WHERE created_date BETWEEN '${fromUTCDate}' AND '${toUTCDate}'
+                 WHERE DATE(created_date) BETWEEN '${fromDate}' AND '${toDate}'
                  ORDER BY id DESC
                  LIMIT 1;`;
 			}
@@ -1240,13 +1232,13 @@ class SellHistoryRepository {
 
 				query = `SELECT *
                FROM sell_group
-               WHERE created_date BETWEEN '${toUTCDate}' AND '${fromUTCDate}'
+               WHERE DATE(created_date) BETWEEN '${toDate}' AND '${fromDate}'
                ORDER BY ID ASC
                LIMIT 1;`;
 			} else {
 				query = `SELECT *
                FROM sell_group
-               WHERE created_date BETWEEN '${fromUTCDate}' AND '${toUTCDate}'
+               WHERE DATE(created_date) BETWEEN '${fromDate}' AND '${toDate}'
                ORDER BY ID ASC
                LIMIT 1;`;
 			}
@@ -1301,8 +1293,8 @@ class SellHistoryRepository {
             WHERE id <= ${lastHistoryId}
               AND DATE(created_date) = '${fromDate}'
             ORDER BY id DESC
-            LIMIT 11;`
-			}   else if (fromUTCDate > toUTCDate) {
+            limit 11;`
+			} else if (fromUTCDate > toUTCDate) {
 				fromDateObj.setUTCHours(23, 59, 59, 999); // Set to start of the day in UTC
 				const fromUTCDate = fromDateObj.toISOString().slice(0, 19).replace('T', ' ');
 
@@ -1312,16 +1304,16 @@ class SellHistoryRepository {
 				query = `SELECT *
                  FROM sell_group
                  WHERE id <= ${lastHistoryId}
-                   AND created_date BETWEEN '${toUTCDate}' AND '${fromUTCDate}'
+                   AND DATE(created_date) BETWEEN '${toDate}' AND '${fromDate}'
                  ORDER BY id DESC
-                 LIMIT 11;`;
+                 limit 11;`;
 			} else {
 				query = `SELECT *
                  FROM sell_group
                  WHERE id <= ${lastHistoryId}
-                   AND created_date BETWEEN '${fromUTCDate}' AND '${toUTCDate}'
+                   AND DATE(created_date) BETWEEN '${fromDate}' AND '${toDate}'
                  ORDER BY id DESC
-                 LIMIT 11;`;
+                 limit 11;`;
 			}
 
 			const result = await new Promise((resolve, reject) => {

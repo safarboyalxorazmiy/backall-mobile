@@ -536,6 +536,7 @@ class Shopping extends Component {
 			loading: false
 		});
 
+		console.log(this.state.groupedHistories)
 
 		const {navigation} = this.props;
 
@@ -681,8 +682,10 @@ class Shopping extends Component {
 				});
 
 				this.setState({
-					groupedHistories: []
+					groupedHistories: [],
+					sellingHistory: []
 				})
+
 				let firstSellGroup = await this.sellHistoryRepository.getFirstSellGroupByDate(
 					this.state.fromDate,
 					this.state.toDate
@@ -699,63 +702,6 @@ class Shopping extends Component {
 				let lastGroupId = lastGroup.id;
 
 
-				let sellingHistory =
-					await this.sellHistoryRepository.getTop10SellGroupByDate(
-						lastGroupId,
-						this.state.fromDate,
-						this.state.toDate
-					);
-
-				lastGroupId -= 11;
-
-				try {
-					const grouped = [];
-
-					let lastDate;
-					let lastAmount;
-					for (const history of sellingHistory) {
-						const date = history.created_date.split("T")[0];
-						let groupIndex = grouped.findIndex(group => group.date === date);
-
-						if (groupIndex === -1) {
-							const formattedDate = this.formatDate(date);
-							grouped.push({
-								date,
-								dateInfo: formattedDate,
-								histories: [],
-								totalAmount: 0
-							});
-							groupIndex = grouped.length - 1;
-						}
-
-						grouped[groupIndex].histories.push({
-							id: history.id,
-							created_date: history.created_date,
-							amount: history.amount,
-							saved: false
-						});
-
-						if (lastDate !== date) {
-							try {
-								lastAmount = await this.amountDateRepository.getSellAmountInfoByDate(date);
-								lastDate = date;
-							} catch (e) {
-								lastAmount = 0;
-							}
-
-							lastDate = date;
-						}
-
-						grouped[groupIndex].totalAmount = lastAmount;
-					}
-
-					this.setState({
-						sellingHistory: sellingHistory,
-						groupedHistories: Object.values(grouped),
-						lastGroupId: lastGroupId
-					});
-				} catch (e) {
-				}
 				while (true) {
 					if (lastGroupId <= 0 || await AsyncStorage.getItem("window") != "Shopping") {
 						this.setState({
@@ -763,6 +709,8 @@ class Shopping extends Component {
 						});
 						break;
 					}
+
+					let grouped = [...this.state.groupedHistories];
 
 					let sellingHistory =
 						await this.sellHistoryRepository.getTop10SellGroupByDate(
@@ -773,20 +721,21 @@ class Shopping extends Component {
 					lastGroupId -= 11;
 
 					if (sellingHistory.length === 0) {
+						console.log("sellingHistory length is 0");
 						this.setState({
 							loading: false
 						});
-						return;
+						break;
 					}
 
 					try {
-						let grouped = [...this.state.groupedHistories];  // Shallow copy of the array
-
 						let lastDate;
 						let lastAmount;
 						for (const history of sellingHistory) {
+							console.log(history);
 							const date = history.created_date.split("T")[0];
 							let groupIndex = grouped.findIndex(group => group.date === date);
+							console.log("GroupIndex::", groupIndex)
 
 							if (groupIndex === -1) {
 								const formattedDate = this.formatDate(date);
@@ -803,7 +752,7 @@ class Shopping extends Component {
 								id: history.id,
 								created_date: history.created_date,
 								amount: history.amount,
-								saved: false
+								saved: true
 							});
 
 							if (lastDate !== date) {
@@ -827,9 +776,11 @@ class Shopping extends Component {
 						}));
 
 						await new Promise(resolve => setTimeout(resolve, 100)); // Adding delay to manage UI thread load
-					} catch (e) {
 					}
+					catch (e) {}
 				}
+
+				console.log(this.state.groupedHistories)
 
 				this.setState({
 					loading: false
@@ -969,10 +920,9 @@ class Shopping extends Component {
 				<View style={{width: "100%", height: "100%"}}>
 					<FlatList
 						data={this.state.groupedHistories}
-						extraData={this.state.groupedHistories}
 						keyExtractor={(item) => item.date}
 						onEndReachedThreshold={0.1}
-						onTouchStart={async () => {
+						onEndReached={async () => {
 							console.log("onEndReached()");
 							await this.loadMore();
 						}}
@@ -991,6 +941,8 @@ class Shopping extends Component {
 									<View>
 										<TouchableOpacity
 											onPress={async () => {
+												await AsyncStorage.setItem("window", "Calendar");
+
 												await AsyncStorage.setItem("calendarFromPage", "Shopping");
 												navigation.navigate("Calendar");
 											}}

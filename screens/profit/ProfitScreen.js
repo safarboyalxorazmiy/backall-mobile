@@ -981,6 +981,7 @@ class Profit extends Component {
 								<View>
 									<TouchableOpacity
 										onPress={async () => {
+											await AsyncStorage.setItem("window", "Calendar");
 											await AsyncStorage.setItem(
 												"calendarFromPage", "Profit"
 											);

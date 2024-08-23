@@ -50,6 +50,7 @@ const HistoryItem = ({history, navigation}) => {
 			</View>
 
 			<Text style={styles.historyTime}>{getFormattedTime(history.created_date)}</Text>
+			<Text style={styles.historyTime}>{history.id}</Text>
 		</TouchableOpacity>
 	);
 };
@@ -110,4 +111,6 @@ const styles = StyleSheet.create({
 	}
 });
 
-export default memo(HistoryItem, (prevProps, nextProps) => prevProps.history.id === nextProps.history.id);
+export default memo(HistoryItem,
+	(prevProps, nextProps) =>
+		prevProps.history.id === nextProps.history.id && nextProps.history.saved === false);
