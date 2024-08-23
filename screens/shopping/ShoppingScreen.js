@@ -775,6 +775,24 @@ class Shopping extends Component {
 							lastGroupId: lastGroupId
 						}));
 
+						const lastItem = grouped.pop();
+
+						for (const group of grouped) {
+							if (group.histories[0].saved === false) {
+								continue;
+							}
+
+							for (const history of group.histories) {
+								history.saved = false
+							}
+						}
+
+						grouped.push(lastItem);
+
+						this.setState({
+							groupedHistories: grouped
+						})
+
 						await new Promise(resolve => setTimeout(resolve, 100)); // Adding delay to manage UI thread load
 					}
 					catch (e) {}
