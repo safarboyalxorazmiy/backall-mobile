@@ -1,35 +1,63 @@
-import React from "react";
-import {
-	View,
-	Text,
-	StyleSheet,
-	Dimensions,
-	TouchableOpacity,
-	AsyncStorage
-} from "react-native";
-import {memo} from 'react';
-import HistoryItem from "./HistoryItem";
+import React, { memo, useState } from 'react';
+import { Text, TouchableOpacity, View, StyleSheet, Dimensions } from 'react-native';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import CalendarIcon from "../../assets/calendar-icon.svg";
+import CrossIcon from "../../assets/cross-icon-light.svg";
 
-const screenWidth = Dimensions.get("window").width;
-const screenHeight = Dimensions.get("window").height;
+const screenWidth = Dimensions.get('window').width;
 
-const HistoryGroup = ({item, navigation}) => {
+const ShoppingHeader = memo(({ navigation, calendarInputContent, thisMonthSellAmount }) => {
+	const handlePress = async () => {
+		await AsyncStorage.setItem("window", "Calendar");
+		await AsyncStorage.setItem("calendarFromPage", "Shopping");
+		navigation.navigate("Calendar");
+	};
+
 	return (
 		<>
-			<View style={styles.historyTitleWrapper}>
-				<Text style={styles.historyTitleText}>{item.dateInfo}</Text>
-
-				<Text style={styles.historyTitleText}>//</Text>
-
-				<Text style={styles.historyTitleText}>{`${item.totalAmount.toLocaleString()} so’m`}</Text>
+			<View style={styles.pageTitle}>
+				<Text style={styles.pageTitleText}>Sotuv tarixi</Text>
 			</View>
 
-			{item.histories.map((history) => (
-				<HistoryItem key={history.id} history={history} navigation={navigation}/>
-			))}
+			<View style={styles.calendarWrapper}>
+				<Text style={styles.calendarLabel}>Muddatni tanlang</Text>
+
+				<View>
+					<TouchableOpacity
+						onPress={handlePress}
+						style={[
+							calendarInputContent === "--/--/----" ?
+								styles.calendarInput :
+								styles.calendarInputActive,
+							{ backgroundColor: "red" }
+						]}
+					>
+						<Text
+							style={[
+								calendarInputContent === "--/--/----" ?
+									styles.calendarInputPlaceholder :
+									styles.calendarInputPlaceholderActive
+							]}
+						>
+							{calendarInputContent}
+						</Text>
+					</TouchableOpacity>
+
+					{calendarInputContent === "--/--/----" ? (
+						<CalendarIcon style={styles.calendarIcon} resizeMode="cover" />
+					) : (
+						<CrossIcon style={styles.calendarIcon} resizeMode="cover" />
+					)}
+				</View>
+			</View>
+
+			<View style={styles.summaryContainer}>
+				<Text style={styles.summaryText}>Oylik aylanma</Text>
+				<Text style={styles.summaryAmount}>{`${thisMonthSellAmount.toLocaleString()} so’m`}</Text>
+			</View>
 		</>
 	);
-};
+});
 
 const styles = StyleSheet.create({
 	container: {
@@ -186,7 +214,7 @@ const styles = StyleSheet.create({
 		paddingVertical: 14,
 		borderColor: "#AFAFAF",
 		borderWidth: 1,
-		borderRadius: 8
+		borderRadius: 8,
 	},
 
 	calendarInputActive: {
@@ -195,7 +223,8 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 16,
 		paddingVertical: 14,
 		borderColor: "#AFAFAF",
-		backgroundColor: "#272727",
+		// backgroundColor: "#272727",
+		backgroundColor: "#FFF",
 		borderWidth: 1,
 		borderRadius: 8
 	},
@@ -275,11 +304,34 @@ const styles = StyleSheet.create({
 		fontFamily: "Gilroy-Medium",
 		fontWeight: "500",
 		fontSize: 14
+	},
+	summaryContainer: {
+		marginTop: 12,
+		width: screenWidth - 32,
+		marginLeft: "auto",
+		marginRight: "auto",
+		flexDirection: "row",
+		justifyContent: "space-between",
+		paddingHorizontal: 16,
+		paddingVertical: 14,
+		backgroundColor: "#4F579F",
+		borderRadius: 8
+	},
+	summaryText: {
+		fontFamily: "Gilroy-Medium",
+		fontWeight: "500",
+		fontSize: 16,
+		lineHeight: 24,
+		color: "#FFF"
+	},
+	summaryAmount: {
+		fontFamily: "Gilroy-Medium",
+		fontWeight: "500",
+		fontSize: 16,
+		lineHeight: 24,
+		color: "#FFF"
 	}
+
 });
 
-export default memo(HistoryGroup, (
-	prevProps, nextProps) =>
-	prevProps.item.histories.length === nextProps.item.histories.length
-	&& nextProps.item.histories[0].saved === false
-);
+export default ShoppingHeader;

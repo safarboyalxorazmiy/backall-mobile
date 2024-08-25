@@ -400,7 +400,7 @@ class SellHistoryRepository {
           FROM sell_group
           where id <= ${lastHistoryId}
           ORDER BY id DESC
-          limit 11;
+          limit 50;
 			`;
 
 			const result = await new Promise((resolve, reject) => {
@@ -1253,7 +1253,7 @@ class SellHistoryRepository {
 		}
 	}
 
-	async getTop10SellGroupByDate(lastHistoryId, fromDate, toDate) {
+	async getAllSellGroupByDate(lastHistoryId, fromDate, toDate) {
 		let fromDateObj = new Date(fromDate);
 		fromDateObj.setHours(0, 0, 0, 0); // Set to the end of the day
 		const fromUTCDate = new Date(

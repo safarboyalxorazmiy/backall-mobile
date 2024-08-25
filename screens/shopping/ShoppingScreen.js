@@ -5,7 +5,6 @@ import {
 	ScrollView,
 	StyleSheet,
 	Text,
-	TouchableOpacity,
 	View,
 	FlatList,
 	ActivityIndicator
@@ -19,10 +18,10 @@ import AmountDateRepository from "../../repository/AmountDateRepository";
 import ProductRepository from "../../repository/ProductRepository";
 import ApiService from "../../service/ApiService";
 
-import CalendarIcon from "../../assets/calendar-icon.svg";
-import CrossIcon from "../../assets/cross-icon-light.svg";
 import HistoryGroup from "./HistoryGroup";
-import ProfitHistoryRepository from "../../repository/ProfitHistoryRepository";
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import ShoppingHeader from "./ShoppingHeader";
+import _ from 'lodash';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -56,118 +55,18 @@ class Shopping extends Component {
 			lastSellAmountDateSize: 10,
 
 			loading: false,
-			globalFullyLoaded: false
+			globalFullyLoaded: false,
+			localFullyLoaded: false
 		};
 
 		this.sellHistoryRepository = new SellHistoryRepository();
 		this.amountDateRepository = new AmountDateRepository();
 		this.productRepository = new ProductRepository();
 		this.apiService = new ApiService();
+
+		this.onEndReached = _.debounce(this.onEndReached.bind(this), 300);
 	}
 
-	async getDateInfo() {
-		this.setState({
-			fromDate: await AsyncStorage.getItem("ShoppingFromDate"),
-			toDate: await AsyncStorage.getItem("ShoppingToDate")
-		});
-
-		if (this.state.fromDate != null && this.state.toDate != null) {
-			let fromDate = this.state.fromDate.replace(/-/g, "/");
-			let toDate = this.state.toDate.replace(/-/g, "/");
-
-			console.log(fromDate + " - " + toDate);
-			this.setState({calendarInputContent: fromDate + " - " + toDate});
-		} else {
-			this.setState({calendarInputContent: "--/--/----"});
-		}
-	}
-
-	formatDate = (dateString) => {
-		const date = new Date(dateString);
-		const options = {day: "numeric", month: "long", weekday: "long"};
-		const formattedDate = date.toLocaleDateString("uz", options);
-
-		let [weekday, day] = formattedDate.split(", ");
-
-		weekday = weekday.charAt(0).toUpperCase() + weekday.slice(1);
-		return `${day}, ${weekday}`;
-	};
-
-	async loadMore() {
-		if (this.state.globalFullyLoaded || this.state.loading) return;
-
-		this.setState({loading: true});
-
-		try {
-			let response;
-			if (this.state.fromDate && this.state.toDate) {
-				response = await this.apiService.getSellGroupsByDate(
-					this.state.firstGroupGlobalId,
-					this.state.fromDate,
-					this.state.toDate,
-					this.state.lastSellGroupPage,
-					22,
-					this.props.navigation
-				);
-			} else {
-				response = await this.apiService.getSellGroups(
-					this.state.firstGroupGlobalId,
-					this.state.lastSellGroupPage,
-					22,
-					this.props.navigation
-				);
-			}
-
-			if (!response || !response.content || response.content.length === 0) {
-				this.setState({loading: false, globalFullyLoaded: true});
-				return;
-			}
-
-			let grouped = [...this.state.groupedHistories];
-			let lastDate, lastAmount;
-
-			for (const history of response.content) {
-				const date = history.createdDate.split("T")[0];
-				let group = grouped.find(group => group.date === date);
-
-				if (!group) {
-					const formattedDate = this.formatDate(date);
-					group = {date, dateInfo: formattedDate, histories: [], totalAmount: 0};
-					grouped.push(group);
-				}
-
-				group.histories.push({
-					id: history.id,
-					created_date: history.createdDate,
-					amount: history.amount,
-					saved: false
-				});
-
-				if (lastDate !== date) {
-					try {
-						let response =
-							await this.apiService.getSellAmountByDate(date, this.props.navigation);
-						lastAmount = response.amount;
-					} catch (e) {
-						lastAmount = 0;
-					}
-					lastDate = date;
-				}
-
-				group.totalAmount = lastAmount;
-			}
-
-			this.setState(prevState => ({
-				sellingHistory: [...prevState.sellingHistory, ...response.content],
-				groupedHistories: grouped,
-				firstGroupGlobalId: response.content[0].id,
-			}));
-		} catch (error) {
-			console.error("Error fetching global products:", error);
-		} finally {
-			this.setState({loading: false});
-		}
-	}
 
 	async componentDidMount() {
 		if (await AsyncStorage.getItem("loadShopping") === "true") {
@@ -194,87 +93,13 @@ class Shopping extends Component {
 
 		this.setState({
 			firstGroupGlobalId: firstSellGroup.global_id,
-			loading: true
+			lastGroupId: lastGroupId
 		});
 
-		const allSellHistories = [];
+		console.log("Shopping mounted");
 
-
-		while (true) {
-			if (lastGroupId <= 0 || await AsyncStorage.getItem("window") != "Shopping") {
-				this.setState({
-					loading: false
-				});
-				break;
-			}
-
-			console.log("LAST GROUP ID: ", lastGroupId);
-
-			try {
-				let sellHistories =
-					await this.sellHistoryRepository.getAllSellGroup(lastGroupId);
-
-				if (sellHistories.length === 0) {
-					this.setState({
-						loading: false
-					});
-					break;
-				}
-
-				allSellHistories.push(...sellHistories);
-
-				lastGroupId -= 11;
-
-				await new Promise(resolve => setTimeout(resolve, 100)); // Adding delay to manage UI thread load
-			} catch (error) {
-				console.error('Error fetching sell histories:', error);
-				this.setState({
-					loading: false
-				});
-				break;
-			}
-
-			const startTime = performance.now();
-
-			const grouped = {};
-
-			let lastDate;
-			let lastAmount;
-			for (const history of allSellHistories) {
-				console.log(history);
-
-				const date = history.created_date.split("T")[0];
-
-				if (!grouped[date]) {
-					const formattedDate = this.formatDate(date);
-					grouped[date] = {date, dateInfo: formattedDate, histories: [], totalAmount: 0};
-				}
-
-				if (lastDate != date) {
-					lastAmount = await this.amountDateRepository.getSellAmountInfoByDate(date);
-					lastDate = date;
-				}
-
-				grouped[date].totalAmount = lastAmount;
-				grouped[date].histories.push(history);
-			}
-
-			this.setState({
-				sellingHistory: allSellHistories,
-				groupedHistories: Object.values(grouped),
-				lastGroupId: lastGroupId
-			});
-
-			const endTime = performance.now();
-			const executionTime = endTime - startTime;
-			console.log(`Execution time: ${executionTime} milliseconds`);
-		}
-
-		this.setState({
-			loading: false
-		});
-
-		console.log(this.state.groupedHistories)
+		this.setState({loading: true});
+		await this.loadLocalSellGroups();
 
 		const {navigation} = this.props;
 
@@ -284,6 +109,9 @@ class Shopping extends Component {
 
 				await AsyncStorage.setItem("loadShopping", "false");
 			}
+
+			this.setState({loading: true, localFullyLoaded: false});
+			await this.loadLocalSellGroups();
 
 			await this.getDateInfo();
 			console.log("fromDate:", this.state.fromDate);
@@ -321,99 +149,98 @@ class Shopping extends Component {
 				this.setState({
 					firstGroupGlobalId: firstSellGroup.global_id,
 					globalFullyLoaded: false,
-					loading: true
+					// loading: true
 				});
 
-				const allSellHistories = [];
-
-				while (true) {
-					console.log("While started()")
-					if (lastGroupId <= 0 || await AsyncStorage.getItem("window") !== "Shopping") {
-						console.log("await AsyncStorage.getItem(\"window\") != \"Shopping\"::", await AsyncStorage.getItem("window") !== "Shopping");
-
-						this.setState({
-							loading: false
-						});
-						break;
-					}
-
-					console.log("LAST GROUP ID: ", lastGroupId);
-
-					try {
-						let sellHistories =
-							await this.sellHistoryRepository.getAllSellGroup(lastGroupId);
-
-						if (sellHistories.length === 0) {
-							this.setState({
-								loading: false
-							});
-							break;
-						}
-
-						allSellHistories.push(...sellHistories);
-
-						lastGroupId -= 11;
-
-						await new Promise(resolve => setTimeout(resolve, 100)); // Adding delay to manage UI thread load
-					} catch (error) {
-						console.error('Error fetching sell histories:', error);
-						this.setState({
-							loading: false
-						});
-						break;
-					}
-
-					const startTime = performance.now();
-
-					const grouped = {};
-
-					let lastDate;
-					let lastAmount;
-					for (const history of allSellHistories) {
-						const date = history.created_date.split("T")[0];
-						if (!grouped[date]) {
-							const formattedDate = this.formatDate(date);
-							grouped[date] = {date, dateInfo: formattedDate, histories: [], totalAmount: 0};
-						}
-
-						if (lastDate !== date) {
-							lastAmount = await this.amountDateRepository.getSellAmountInfoByDate(date);
-							lastDate = date;
-						}
-
-						grouped[date].totalAmount = lastAmount;
-						grouped[date].histories.push(history);
-					}
-
-					this.setState({
-						sellingHistory: allSellHistories,
-						groupedHistories: Object.values(grouped),
-						lastGroupId: lastGroupId
-					});
-
-					const endTime = performance.now();
-					const executionTime = endTime - startTime;
-					console.log(`Execution time: ${executionTime} milliseconds`);
-				}
-
-				this.setState({
-					loading: false
-				});
+				// const allSellHistories = [];
+				//
+				// while (true) {
+				// 	if (lastGroupId <= 0 || await AsyncStorage.getItem("window") !== "Shopping") {
+				// 		console.log("await AsyncStorage.getItem(\"window\") != \"Shopping\"::", await AsyncStorage.getItem("window") !== "Shopping");
+				//
+				// 		this.setState({
+				// 			loading: false
+				// 		});
+				// 		break;
+				// 	}
+				//
+				// 	console.log("LAST GROUP ID: ", lastGroupId);
+				//
+				// 	try {
+				// 		let sellHistories =
+				// 			await this.sellHistoryRepository.getAllSellGroup(lastGroupId);
+				//
+				// 		if (sellHistories.length === 0) {
+				// 			this.setState({
+				// 				loading: false
+				// 			});
+				// 			break;
+				// 		}
+				//
+				// 		allSellHistories.push(...sellHistories);
+				//
+				// 		lastGroupId -= 11;
+				//
+				// 		await new Promise(resolve => setTimeout(resolve, 100)); // Adding delay to manage UI thread load
+				// 	} catch (error) {
+				// 		console.error('Error fetching sell histories:', error);
+				// 		this.setState({
+				// 			loading: false
+				// 		});
+				// 		break;
+				// 	}
+				//
+				// 	const startTime = performance.now();
+				//
+				// 	const grouped = {};
+				//
+				// 	let lastDate;
+				// 	let lastAmount;
+				// 	for (const history of allSellHistories) {
+				// 		const date = history.created_date.split("T")[0];
+				// 		if (!grouped[date]) {
+				// 			const formattedDate = this.formatDate(date);
+				// 			grouped[date] = {date, dateInfo: formattedDate, histories: [], totalAmount: 0};
+				// 		}
+				//
+				// 		if (lastDate !== date) {
+				// 			lastAmount = await this.amountDateRepository.getSellAmountInfoByDate(date);
+				// 			lastDate = date;
+				// 		}
+				//
+				// 		grouped[date].totalAmount = lastAmount;
+				// 		grouped[date].histories.push(history);
+				// 	}
+				//
+				// 	this.setState({
+				// 		sellingHistory: allSellHistories,
+				// 		groupedHistories: Object.values(grouped),
+				// 		lastGroupId: lastGroupId
+				// 	});
+				//
+				// 	const endTime = performance.now();
+				// 	const executionTime = endTime - startTime;
+				// 	console.log(`Execution time: ${executionTime} milliseconds`);
+				// }
+				//
+				// this.setState({
+				// 	loading: false
+				// });
 
 				await AsyncStorage.setItem("shoppingFullyLoaded", "true");
 			}
 
 			await this.getDateInfo();
 
-			// Load rest of items if exists **
-			let lastGroupId = this.state.lastGroupId;
+			// // Load rest of items if exists **
+			// let lastGroupId = this.state.lastGroupId;
 
-			this.setState({
-				loading: true
-			});
+			// this.setState({
+			// 	loading: true
+			// });
 
 
-			// Download the rest of the list with date.
+			// // Download the rest of the list with date.
 			if (this.state.fromDate != null && this.state.toDate != null) {
 				this.setState({
 					loading: true
@@ -532,8 +359,8 @@ class Shopping extends Component {
 						})
 
 						await new Promise(resolve => setTimeout(resolve, 100)); // Adding delay to manage UI thread load
+					} catch (e) {
 					}
-					catch (e) {}
 				}
 
 				console.log(this.state.groupedHistories)
@@ -544,94 +371,36 @@ class Shopping extends Component {
 
 				return;
 			}
-
-			// Download the rest of the list.
-			while (true) {
-				if (lastGroupId <= 0 || await AsyncStorage.getItem("window") != "Shopping") {
-					this.setState({
-						loading: false
-					});
-					break;
-				}
-
-				console.log("LAST GROUP ID: ", lastGroupId);
-
-				try {
-					let sellHistories =
-						await this.sellHistoryRepository.getAllSellGroup(lastGroupId);
-
-					if (sellHistories.length === 0) {
-						this.setState({
-							loading: false
-						});
-						break;
-					}
-
-					lastGroupId -= 11;
-
-					let grouped = [...this.state.groupedHistories];  // Shallow copy of the array
-
-					let lastDate;
-					let lastAmount;
-					for (const history of sellHistories) {
-						const date = history.created_date.split("T")[0];
-						let groupIndex = grouped.findIndex(group => group.date === date);
-
-						if (groupIndex === -1) {
-							const formattedDate = this.formatDate(date);
-							grouped.push({
-								date,
-								dateInfo: formattedDate,
-								histories: [],
-								totalAmount: 0
-							});
-							groupIndex = grouped.length - 1;
-						}
-
-						grouped[groupIndex].histories.push({
-							id: history.id,
-							created_date: history.created_date,
-							amount: history.amount,
-							saved: false
-						});
-
-						if (lastDate !== date) {
-							try {
-								lastAmount = await this.amountDateRepository.getSellAmountInfoByDate(date);
-							} catch (e) {
-								lastAmount = 0;
-							}
-
-							lastDate = date;
-						}
-
-						grouped[groupIndex].totalAmount = lastAmount;
-					}
-
-					this.setState(prevState => ({
-						sellingHistory: [...prevState.sellingHistory, ...sellHistories],
-						groupedHistories: grouped,
-						lastGroupId: lastGroupId,
-						loading: false
-					}));
-
-					await new Promise(resolve => setTimeout(resolve, 100)); // Adding delay to manage UI thread load
-				} catch (error) {
-					this.setState({
-						loading: false
-					});
-
-					console.error('Error fetching sell histories:', error);
-					break;
-				}
-
-
-				/* FOR BOSS (MODAL) **
-				let notAllowed = await AsyncStorage.getItem("not_allowed");
-				this.setState({notAllowed: notAllowed}) */
-			}
 		});
 	}
+
+	async getDateInfo() {
+		this.setState({
+			fromDate: await AsyncStorage.getItem("ShoppingFromDate"),
+			toDate: await AsyncStorage.getItem("ShoppingToDate")
+		});
+
+		if (this.state.fromDate != null && this.state.toDate != null) {
+			let fromDate = this.state.fromDate.replace(/-/g, "/");
+			let toDate = this.state.toDate.replace(/-/g, "/");
+
+			console.log(fromDate + " - " + toDate);
+			this.setState({calendarInputContent: fromDate + " - " + toDate});
+		} else {
+			this.setState({calendarInputContent: "--/--/----"});
+		}
+	}
+
+	formatDate = (dateString) => {
+		const date = new Date(dateString);
+		const options = {day: "numeric", month: "long", weekday: "long"};
+		const formattedDate = date.toLocaleDateString("uz", options);
+
+		let [weekday, day] = formattedDate.split(", ");
+
+		weekday = weekday.charAt(0).toUpperCase() + weekday.slice(1);
+		return `${day}, ${weekday}`;
+	};
 
 	async initializeScreen() {
 		this.setState({
@@ -668,6 +437,293 @@ class Shopping extends Component {
 		this.apiService = new ApiService();
 	}
 
+	async loadMore() {
+		if (this.state.loading) {
+			console.log("already loading");
+			return;
+		}
+		;
+
+		if (this.state.localFullyLoaded === false) {
+			this.setState({loading: true});
+			let isLoaded = await this.loadLocalSellGroups();
+			if (isLoaded) {
+				return;
+			}
+		}
+
+		if (this.state.globalFullyLoaded || this.state.loading) return;
+
+		this.setState({loading: true});
+
+		try {
+			let response;
+			if (this.state.fromDate && this.state.toDate) {
+				response = await this.apiService.getSellGroupsByDate(
+					this.state.firstGroupGlobalId,
+					this.state.fromDate,
+					this.state.toDate,
+					this.state.lastSellGroupPage,
+					22,
+					this.props.navigation
+				);
+			} else {
+				response = await this.apiService.getSellGroups(
+					this.state.firstGroupGlobalId,
+					this.state.lastSellGroupPage,
+					22,
+					this.props.navigation
+				);
+			}
+
+			if (!response || !response.content || response.content.length === 0) {
+				this.setState({loading: false, globalFullyLoaded: true});
+				return;
+			}
+
+			let grouped = [...this.state.groupedHistories];
+			let lastDate, lastAmount;
+
+			for (const history of response.content) {
+				const date = history.createdDate.split("T")[0];
+				let group = grouped.find(group => group.date === date);
+
+				if (!group) {
+					const formattedDate = this.formatDate(date);
+					group = {date, dateInfo: formattedDate, histories: [], totalAmount: 0};
+					grouped.push(group);
+				}
+
+				group.histories.push({
+					id: history.id,
+					created_date: history.createdDate,
+					amount: history.amount,
+					saved: false
+				});
+
+				if (lastDate !== date) {
+					try {
+						let response =
+							await this.apiService.getSellAmountByDate(date, this.props.navigation);
+						lastAmount = response.amount;
+					} catch (e) {
+						lastAmount = 0;
+					}
+					lastDate = date;
+				}
+
+				group.totalAmount = lastAmount;
+			}
+
+			this.setState(prevState => ({
+				sellingHistory: [...prevState.sellingHistory, ...response.content],
+				groupedHistories: grouped,
+				firstGroupGlobalId: response.content[0].id,
+			}));
+		} catch (error) {
+			console.error("Error fetching global products:", error);
+		} finally {
+			this.setState({loading: false});
+		}
+	}
+
+	async loadLocalSellGroups() {
+    console.log("loading");
+
+    if (this.state.lastGroupId <= 0) {
+			this.setState({
+					loading: false,
+					localFullyLoaded: true
+			});
+			return false;
+    }
+
+    try {
+        const sellHistories = await this.sellHistoryRepository.getAllSellGroup(this.state.lastGroupId);
+
+        if (sellHistories.length === 0) {
+            this.setState({
+                loading: false,
+                localFullyLoaded: true
+            });
+            return false;
+        }
+
+        let grouped = [...this.state.groupedHistories];
+        let lastDate = null;
+        let lastAmount = 0;
+
+        for (const history of sellHistories) {
+            const date = history.created_date.split("T")[0];
+            let groupIndex = grouped.findIndex(group => group.date === date);
+
+            if (groupIndex === -1) {
+                const formattedDate = this.formatDate(date);
+                grouped.push({
+                    date,
+                    dateInfo: formattedDate,
+                    histories: [],
+                    totalAmount: 0
+                });
+                groupIndex = grouped.length - 1;
+            }
+
+            if (lastDate !== date) {
+                lastAmount = await this.amountDateRepository.getSellAmountInfoByDate(date).catch(() => 0);
+                lastDate = date;
+            }
+
+            grouped[groupIndex].histories.push({
+                id: history.id,
+                created_date: history.created_date,
+                amount: history.amount,
+                saved: true
+            });
+
+            grouped[groupIndex].totalAmount = lastAmount;
+        }
+
+        // Update the state in one go
+        const groupedCopy = grouped.map(group => ({
+            ...group,
+            histories: group.histories.map(history => ({
+                ...history,
+                saved: false
+            }))
+        }));
+
+        const lastGroup = grouped[grouped.length - 1];
+        if (lastGroup) {
+            groupedCopy[groupedCopy.length - 1].histories[0].saved = true;
+        }
+
+        const startTime = performance.now();
+
+        this.setState(prevState => ({
+            sellingHistory: [...prevState.sellingHistory, ...sellHistories],
+            groupedHistories: groupedCopy,
+            lastGroupId: prevState.lastGroupId - 50,
+            loading: false
+        }));
+
+        const endTime = performance.now();
+        console.log(`Execution time: ${endTime - startTime} milliseconds`);
+
+        return true;
+    } catch (error) {
+        this.setState({
+            loading: false
+        });
+        console.error('Error fetching sell histories:', error);
+        return false;
+    }
+	}
+
+	async loadLocalSellGroupsByDate() {
+		console.log("loading")
+		if (this.state.lastGroupId <= 0) {
+			this.setState({
+				loading: false,
+				localFullyLoaded: true
+			});
+			return false;
+		}
+
+		try {
+			let sellHistories =
+				await this.sellHistoryRepository.getAllSellGroupByDate(
+					this.state.lastGroupId, this.state.toDate, this.state.fromDate
+				);
+
+			if (sellHistories.length === 0) {
+				this.setState({
+					loading: false,
+					localFullyLoaded: true
+				});
+				return false;
+			}
+
+			let grouped = [...this.state.groupedHistories];  // Shallow copy of the array
+
+			let lastDate;
+			let lastAmount;
+			for (const history of sellHistories) {
+				const date = history.created_date.split("T")[0];
+				let groupIndex = grouped.findIndex(group => group.date === date);
+
+				if (groupIndex === -1) {
+					const formattedDate = this.formatDate(date);
+					grouped.push({
+						date,
+						dateInfo: formattedDate,
+						histories: [],
+						totalAmount: 0
+					});
+					groupIndex = grouped.length - 1;
+				}
+
+				grouped[groupIndex].histories.push({
+					id: history.id,
+					created_date: history.created_date,
+					amount: history.amount,
+					saved: true
+				});
+
+				if (lastDate !== date) {
+					try {
+						lastAmount = await this.amountDateRepository.getSellAmountInfoByDate(date);
+					} catch (e) {
+						lastAmount = 0;
+					}
+
+					lastDate = date;
+				}
+
+				grouped[groupIndex].totalAmount = lastAmount;
+			}
+
+			this.setState(prevState => ({
+				sellingHistory: [...prevState.sellingHistory, ...sellHistories],
+				groupedHistories: grouped,
+				lastGroupId: prevState.lastGroupId - 11,
+				loading: false
+			}));
+
+			const groupedCopy = [...grouped];
+			const lastItem = groupedCopy.pop();
+
+			groupedCopy.forEach(group => {
+				if (group.histories[0].saved) {
+					group.histories.forEach(history => {
+						history.saved = false;
+					});
+				}
+			});
+
+			groupedCopy.push(lastItem);
+
+			this.setState({
+				groupedHistories: groupedCopy
+			});
+
+			return true;
+		} catch (error) {
+			this.setState({
+				loading: false
+			});
+
+			console.error('Error fetching sell histories:', error);
+			return false;
+		}
+	}
+
+	async onEndReached() {
+		console.log("onEndReached()");
+		if (!this.state.loading) {
+				await this.loadMore();
+		}
+	}
+
 	render() {
 		const {navigation} = this.props;
 
@@ -677,90 +733,15 @@ class Shopping extends Component {
 					<FlatList
 						data={this.state.groupedHistories}
 						keyExtractor={(item) => item.date}
-						onEndReachedThreshold={0.1}
-						onEndReached={async () => {
-							console.log("onEndReached()");
-							await this.loadMore();
-						}}
+						onEndReachedThreshold={0.5}
+						onEndReached={this.onEndReached}
+						initialNumToRender={10}
 
-						ListHeaderComponent={() => (
-							<>
-								<View style={styles.pageTitle}>
-									<Text style={styles.pageTitleText}>Sotuv tarixi</Text>
-								</View>
-
-								<View style={styles.calendarWrapper}>
-									<Text style={styles.calendarLabel}>
-										Muddatni tanlang
-									</Text>
-
-									<View>
-										<TouchableOpacity
-											onPress={async () => {
-												await AsyncStorage.setItem("window", "Calendar");
-
-												await AsyncStorage.setItem("calendarFromPage", "Shopping");
-												navigation.navigate("Calendar");
-											}}
-											style={[
-												this.state.calendarInputContent === "--/--/----" ?
-													styles.calendarInput :
-													styles.calendarInputActive
-											]}>
-											<Text
-												style={[
-													this.state.calendarInputContent === "--/--/----" ?
-														styles.calendarInputPlaceholder :
-														styles.calendarInputPlaceholderActive
-												]}>{this.state.calendarInputContent}</Text>
-										</TouchableOpacity>
-
-										{this.state.calendarInputContent === "--/--/----" ? (
-												<CalendarIcon
-													style={styles.calendarIcon}
-													resizeMode="cover"/>
-											)
-											: (
-												<CrossIcon
-													style={styles.calendarIcon}
-													resizeMode="cover"/>
-											)}
-									</View>
-								</View>
-
-								<View style={{
-									marginTop: 12,
-									width: screenWidth - (16 * 2),
-									marginLeft: "auto",
-									marginRight: "auto",
-									display: "flex",
-									flexDirection: "row",
-									justifyContent: "space-between",
-									paddingHorizontal: 16,
-									paddingVertical: 14,
-									backgroundColor: "#4F579F",
-									borderRadius: 8
-								}}>
-									<Text style={{
-										fontFamily: "Gilroy-Medium",
-										fontWeight: "500",
-										fontSize: 16,
-										lineHeight: 24,
-										color: "#FFF"
-									}}>Oylik aylanma</Text>
-									{(
-										<Text style={{
-											fontFamily: "Gilroy-Medium",
-											fontWeight: "500",
-											fontSize: 16,
-											lineHeight: 24,
-											color: "#FFF"
-										}}>{`${this.state.thisMonthSellAmount.toLocaleString()} so’m`}</Text>
-									)}
-
-								</View>
-							</>
-						)}
+						ListHeaderComponent={<ShoppingHeader
+							navigation={this.props.navigation}
+							calendarInputContent={this.state.calendarInputContent}
+							thisMonthSellAmount={this.state.thisMonthSellAmount}
+						/>}
 						ListFooterComponent={() => {
 							if (!this.state.loading) return null;
 							return (
@@ -1016,7 +997,7 @@ const styles = StyleSheet.create({
 		paddingVertical: 14,
 		borderColor: "#AFAFAF",
 		borderWidth: 1,
-		borderRadius: 8
+		borderRadius: 8,
 	},
 
 	calendarInputActive: {
@@ -1025,7 +1006,8 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 16,
 		paddingVertical: 14,
 		borderColor: "#AFAFAF",
-		backgroundColor: "#272727",
+		// backgroundColor: "#272727",
+		backgroundColor: "#FFF",
 		borderWidth: 1,
 		borderRadius: 8
 	},
