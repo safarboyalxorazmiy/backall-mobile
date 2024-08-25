@@ -1,8 +1,7 @@
-import React, {Component} from "react";
+import React, {Component, memo} from "react";
 import {StatusBar} from "expo-status-bar";
 import {
 	Dimensions,
-	ScrollView,
 	StyleSheet,
 	Text,
 	View,
@@ -620,6 +619,7 @@ class Shopping extends Component {
 						keyExtractor={(item) => item.date}
 						onEndReachedThreshold={40}
 						onEndReached={this.onEndReached}
+						initialNumToRender={100}
 
 						ListHeaderComponent={<ShoppingHeader
 							navigation={this.props.navigation}
@@ -974,4 +974,4 @@ const styles = StyleSheet.create({
 	}
 });
 
-export default Shopping;
+export default memo(Shopping);
