@@ -393,14 +393,45 @@ class SellHistoryRepository {
 		}
 	}
 
-	async getAllSellGroup(lastHistoryId) {
+	async getTop50SellGroup(lastHistoryId) {
 		try {
 			const query = `
           SELECT *
           FROM sell_group
           where id <= ${lastHistoryId}
           ORDER BY id DESC
-          limit 50;
+          limit 11;
+			`;
+
+			const result = await new Promise((resolve, reject) => {
+				this.db.transaction((tx) => {
+					tx.executeSql(
+						query,
+						[],
+						(_, resultSet) => resolve(resultSet),
+						(_, error) => reject(error)
+					);
+				});
+			});
+
+			if (!result || !result.rows || !result.rows._array) {
+				throw new Error("Unexpected result structure");
+			}
+
+			const rows = result.rows._array;
+			return rows;
+		} catch (error) {
+			console.error("Error getAllSellGroup:", error);
+			throw error;
+		}
+	}
+	async getTop1SellGroup() {
+		try {
+			const query = `
+          SELECT *
+          FROM sell_group
+          ORDER BY id DESC
+          limit 1;
 			`;
 
 			const result = await new Promise((resolve, reject) => {
