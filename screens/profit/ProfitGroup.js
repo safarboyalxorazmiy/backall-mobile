@@ -227,4 +227,5 @@ export default memo(
 		nextProps
 	) =>
 		prevProps.item.histories.length === nextProps.item.histories.length
+		&& nextProps.item.histories[0].saved === false
 );
