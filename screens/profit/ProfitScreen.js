@@ -21,6 +21,7 @@ import CalendarIcon from "../../assets/calendar-icon.svg";
 import CrossIcon from "../../assets/cross-icon-light.svg";
 import ProfitGroup from "./ProfitGroup";
 import _ from "lodash";
+import ProfitHeader from "./ProfitHeader";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -758,103 +759,11 @@ class Profit extends Component {
 					style={{width: "100%"}}
 
 					ListHeaderComponent={() => (
-						<View style={{width: "100%"}}>
-							<View style={{
-								borderBottomColor: "#AFAFAF",
-								borderBottomWidth: 1,
-								width: screenWidth - (16 * 2),
-								marginRight: "auto",
-								marginLeft: "auto",
-								height: 44,
-								display: "flex",
-								alignItems: "center",
-								justifyContent: "center"
-							}}>
-								<Text style={{
-									fontFamily: "Gilroy-SemiBold", fontWeight: "600", fontSize: 18, lineHeight: 24
-								}}>Foyda tarixi</Text>
-							</View>
-
-							<View style={{
-								marginTop: 24,
-								width: screenWidth - (16 * 2),
-								marginRight: "auto",
-								marginLeft: "auto"
-							}}>
-								<Text
-									style={{
-										fontFamily: "Gilroy-Medium",
-										fontWeight: "500",
-										fontSize: 16,
-										marginBottom: 4
-									}}>
-									Muddatni tanlang
-								</Text>
-
-								<View>
-									<TouchableOpacity
-										onPress={async () => {
-											await AsyncStorage.setItem("window", "Calendar");
-											await AsyncStorage.setItem(
-												"calendarFromPage", "Profit"
-											);
-											navigation.navigate("Calendar")
-										}}
-										style={[
-											this.state.calendarInputContent === "--/--/----" ?
-												styles.calendarInput : styles.calendarInputActive
-										]}>
-										<Text
-											style={[
-												this.state.calendarInputContent === "--/--/----" ?
-													styles.calendarInputPlaceholder : styles.calendarInputPlaceholderActive
-											]}>{this.state.calendarInputContent}</Text>
-									</TouchableOpacity>
-
-									{
-										this.state.calendarInputContent === "--/--/----" ? (
-											<CalendarIcon
-												style={styles.calendarIcon}
-												resizeMode="cover"/>
-										) : (
-											<CrossIcon
-												style={styles.calendarIcon}
-												resizeMode="cover"/>
-										)
-									}
-								</View>
-							</View>
-
-							<View style={{
-								marginTop: 12,
-								width: screenWidth - (16 * 2),
-								marginRight: "auto",
-								marginLeft: "auto",
-
-								display: "flex",
-								flexDirection: "row",
-								justifyContent: "space-between",
-								paddingHorizontal: 16,
-								paddingVertical: 14,
-								backgroundColor: "#4F579F",
-								borderRadius: 8
-							}}>
-								<Text style={{
-									fontFamily: "Gilroy-Medium",
-									fontWeight: "500",
-									fontSize: 16,
-									lineHeight: 24,
-									color: "#FFF"
-								}}>Oylik foyda</Text>
-								<Text style={{
-									fontFamily: "Gilroy-Medium",
-									fontWeight: "500",
-									fontSize: 16,
-									lineHeight: 24,
-									color: "#FFF"
-								}}>{this.state.thisMonthProfitAmount.toLocaleString()} so’m</Text>
-							</View>
-						</View>
+						<ProfitHeader
+							calendarInputContent={this.state.calendarInputContent}
+							navigation={this.props.navigation}
+							thisMonthProfitAmount={this.state.thisMonthProfitAmount}
+						/>
 					)}
 
 					ListFooterComponent={() => {
