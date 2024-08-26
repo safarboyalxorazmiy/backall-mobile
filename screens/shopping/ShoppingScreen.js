@@ -503,7 +503,7 @@ class Shopping extends Component {
 				grouped.push({
 					date: historyDate, // Make sure this matches your structure; it was 'historyDate' in your code, but 'date' elsewhere
 					dateInfo: formattedDate,
-					histories: sellHistories,
+					histories: [...sellHistories],
 					totalAmount: 0
 				});
 			}
