@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, {Component, memo} from "react";
 import {StatusBar} from "expo-status-bar";
 import {
 	StyleSheet,
@@ -404,7 +404,7 @@ class Sell extends Component {
 
 					<Modal
 						visible={isModalVisible}
-						animationType="none"
+						animationType="slide"
 						style={{}}
 						transparent={true}>
 						<TouchableOpacity
@@ -419,11 +419,7 @@ class Sell extends Component {
 							}}></View>
 						</TouchableOpacity>
 
-						<Animatable.View
-							animation="bounceInUp"
-							delay={2}
-							iterationCount={1}
-							direction={"alternate"}
+						<View
 							style={{
 								height: screenHeight,
 								display: "flex",
@@ -491,25 +487,27 @@ class Sell extends Component {
 													productNameInputValue: value
 												});
 
-												if (value !== "" || value !== " ") {
-													let storeProducts =
-														await this.storeProductRepository.searchProductsInfo(
-															value + "%"
-														);
-
-													this.setState({
-														recommenderProducts: storeProducts
-													});
-
-													this.setState({
-														isQuantityInputFocused: false,
-														isPriceInputFocused: false,
-														selectedProduct: {},
-														productNameContentStyle: {},
-														quantityInputValue: "",
-														priceInputValue: ""
-													});
+												if (value === "" || value === " ") {
+													return;
 												}
+
+												let storeProducts =
+													await this.storeProductRepository.searchProductsInfo(
+														value + "%"
+													);
+
+												this.setState({
+													recommenderProducts: storeProducts
+												});
+
+												this.setState({
+													isQuantityInputFocused: false,
+													isPriceInputFocused: false,
+													selectedProduct: {},
+													productNameContentStyle: {},
+													quantityInputValue: "",
+													priceInputValue: ""
+												});
 											}}
 
 											onFocus={() => {
@@ -543,7 +541,8 @@ class Sell extends Component {
 
 											placeholderTextColor="#AAAAAA"
 
-											value={this.state.productNameInputValue}/>
+											value={this.state.productNameInputValue}
+										/>
 
 										<View style={{marginTop: 2}}>
 											<View style={this.state.productNameContentStyle}>
@@ -810,12 +809,12 @@ class Sell extends Component {
 									</TouchableOpacity>
 								</View>
 							</View>
-						</Animatable.View>
+						</View>
 					</Modal>
 
 					<Modal
 						visible={this.state.isUtilizationModalVisible}
-						animationType="none"
+						animationType="slide"
 						style={{}}
 						transparent={true}>
 						<TouchableOpacity
@@ -892,23 +891,14 @@ class Sell extends Component {
 										<Text style={styles.modalLabel}>Mahsulot nomi</Text>
 										<TextInput
 											autoCapitalize="none"
+											autoComplete={"off"}
+											autoCorrect={false}
 
 											onChangeText={async (value) => {
-												this.setState({
-													productNameInputValue: value
-												});
-
-												if (value !== "" || value !== " ") {
-													let storeProducts =
-														await this.storeProductRepository.searchProductsInfo(
-															value + "%"
-														);
-
+												let text = value;
+												if (text.length > 1) {
 													this.setState({
-														recommenderProducts: storeProducts
-													});
-
-													this.setState({
+														recommenderProducts: [],
 														isQuantityInputFocused: false,
 														isPriceInputFocused: false,
 														selectedProduct: {},
@@ -916,7 +906,32 @@ class Sell extends Component {
 														quantityInputValue: "",
 														priceInputValue: ""
 													});
+													return;
 												}
+
+												this.setState({
+													productNameInputValue: value
+												});
+
+
+
+												let storeProducts =
+													await this.storeProductRepository.searchProductsInfo(
+														text + "%"
+													);
+
+												this.setState({
+													recommenderProducts: storeProducts
+												});
+
+												this.setState({
+													isQuantityInputFocused: false,
+													isPriceInputFocused: false,
+													selectedProduct: {},
+													productNameContentStyle: {},
+													quantityInputValue: "",
+													priceInputValue: ""
+												});
 											}}
 
 											onFocus={() => {
@@ -1625,4 +1640,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default Sell;
+export default memo(Sell);
