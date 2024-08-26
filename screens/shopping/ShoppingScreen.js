@@ -152,6 +152,7 @@ class Shopping extends Component {
 				});
 
 				await this.loadTop1LocalSellGroups();
+				this.scrollToTop();
 				await AsyncStorage.setItem("shoppingFullyLoaded", "true");
 			}
 
