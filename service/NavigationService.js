@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, {Component, memo} from "react";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {NavigationContainer} from "@react-navigation/native";
 import {StyleSheet, View, TouchableOpacity, Keyboard} from "react-native";
@@ -288,4 +288,4 @@ class NavigationService extends Component {
 	}
 }
 
-export default NavigationService;
+export default memo(NavigationService);

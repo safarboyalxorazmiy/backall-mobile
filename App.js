@@ -1,4 +1,4 @@
-import React, {Component, createRef} from "react";
+import React, {Component, createRef, memo} from "react";
 import {
 	Appearance,
 	Text,
@@ -814,4 +814,4 @@ const styles = StyleSheet.create({
 
 AppRegistry.registerComponent("Backall", () => App);
 
-export default App;
+export default memo(App);
