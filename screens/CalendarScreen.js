@@ -1,4 +1,4 @@
-import React, {Component, useState} from "react";
+import React, {Component, memo, useState} from "react";
 import {
 	StyleSheet,
 	Text,
@@ -731,4 +731,4 @@ const styles = StyleSheet.create({
 	}
 });
 
-export default CalendarPage;
+export default memo(CalendarPage);
