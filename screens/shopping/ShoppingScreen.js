@@ -40,6 +40,7 @@ class Shopping extends Component {
 			calendarInputContent: "--/--/----",
 			fromDate: null,
 			toDate: null,
+			prevFromDate: null, // for reloading after denpxleting
 			thisMonthSellAmount: 0.00,
 			notAllowed: "",
 
@@ -109,11 +110,6 @@ class Shopping extends Component {
 				await AsyncStorage.setItem("loadShopping", "false");
 			}
 
-			this.setState({loading: true, localFullyLoaded: false});
-			await this.loadLocalSellGroups();
-
-			await this.getDateInfo();
-
 			/* Month sell amount setting value ** */
 			let thisMonthSellAmount = parseInt(await AsyncStorage.getItem("month_sell_amount"));
 
@@ -123,6 +119,12 @@ class Shopping extends Component {
 
 			if (currentMonth === lastStoredMonth) {
 				this.setState({thisMonthSellAmount: thisMonthSellAmount});
+			}
+
+			/* If there is no history get histories */
+			if (this.state.groupedHistories.length <= 0) {
+				this.setState({loading: true, localFullyLoaded: false});
+				await this.loadLocalSellGroups();
 			}
 
 			// New history created load new items **
@@ -152,9 +154,9 @@ class Shopping extends Component {
 				await AsyncStorage.setItem("shoppingFullyLoaded", "true");
 			}
 
+			/* Getting date removing date */
 			await this.getDateInfo();
 
-			// // Download the rest of the list with date.
 			if (this.state.fromDate != null && this.state.toDate != null) {
 				console.log("fromDate:", this.state.fromDate);
 				console.log("toDate:", this.state.toDate);
@@ -191,6 +193,26 @@ class Shopping extends Component {
 
 				return;
 			}
+			/* reloading after removing date */
+			else if (this.state.prevFromDate != null) {
+				let lastSellGroup = await this.sellHistoryRepository.getLastSellGroup();
+				let lastGroupId = lastSellGroup.id;
+
+				let firstSellGroup = await this.sellHistoryRepository.getFirstSellGroup();
+
+				this.setState({
+					groupedHistories: [],
+					sellingHistory: [],
+					firstGroupGlobalId: firstSellGroup.global_id,
+					lastGroupId: lastGroupId,
+					prevFromDate: null
+				});
+
+				console.log("Shopping mounted");
+
+				this.setState({loading: true});
+				await this.loadLocalSellGroups();
+			}
 		});
 	}
 
@@ -200,7 +222,13 @@ class Shopping extends Component {
 			toDate: await AsyncStorage.getItem("ShoppingToDate")
 		});
 
-		if (this.state.fromDate != null && this.state.toDate != null) {
+		if (this.state.fromDate != null) {
+			this.setState({
+				prevFromDate: this.state.fromDate
+			});
+		}
+
+		if (this.state.fromDate !== null && this.state.toDate !== null) {
 			let fromDate = this.state.fromDate.replace(/-/g, "/");
 			let toDate = this.state.toDate.replace(/-/g, "/");
 

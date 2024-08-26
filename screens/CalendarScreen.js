@@ -236,10 +236,8 @@ class CalendarPage extends Component {
 							await AsyncStorage.removeItem(this.state.calendarFromPage + "FromDate");
 							await AsyncStorage.removeItem(this.state.calendarFromPage + "ToDate");
 
-							// Reload the screen cause date is deleted
-							await AsyncStorage.setItem("shoppingFullyLoaded", "false");
-
 							await AsyncStorage.setItem("window", this.state.calendarFromPage);
+							this.setState({dateType: "Bugun"});
 							navigation.navigate(this.state.calendarFromPage);
 						}}
 						style={styles.deleteIcon}
@@ -435,7 +433,7 @@ class CalendarPage extends Component {
 					transparent={true}
 					animationIn={"slideInUp"}
 					animationOut={"slideOutDown"}
-					animationInTiming={100}>
+					animationInTiming={0}>
 					<View style={{
 						position: "absolute",
 						width: screenWidth,
