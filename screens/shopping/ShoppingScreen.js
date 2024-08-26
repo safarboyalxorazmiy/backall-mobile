@@ -113,8 +113,6 @@ class Shopping extends Component {
 			await this.loadLocalSellGroups();
 
 			await this.getDateInfo();
-			console.log("fromDate:", this.state.fromDate);
-			console.log("toDate:", this.state.toDate);
 
 			/* Month sell amount setting value ** */
 			let thisMonthSellAmount = parseInt(await AsyncStorage.getItem("month_sell_amount"));
@@ -158,6 +156,9 @@ class Shopping extends Component {
 
 			// // Download the rest of the list with date.
 			if (this.state.fromDate != null && this.state.toDate != null) {
+				console.log("fromDate:", this.state.fromDate);
+				console.log("toDate:", this.state.toDate);
+
 				this.setState({
 					loading: true
 				});
@@ -171,16 +172,16 @@ class Shopping extends Component {
 					this.state.fromDate,
 					this.state.toDate
 				);
-
-				this.setState({
-					firstGroupGlobalId: firstSellGroup.global_id
-				});
-
 				let lastGroup =
 					await this.sellHistoryRepository.getLastSellHistoryGroupByDate(
 						this.state.fromDate, this.state.toDate
 					);
 				let lastGroupId = lastGroup.id;
+
+				this.setState({
+					firstGroupGlobalId: firstSellGroup.global_id,
+					lastGroupId: lastGroupId
+				});
 
 				await this.loadLocalSellGroups();
 
@@ -357,7 +358,14 @@ class Shopping extends Component {
 		}
 
 		try {
-			const sellHistories = await this.sellHistoryRepository.getTop50SellGroup(this.state.lastGroupId);
+			let sellHistories;
+			if (this.state.fromDate != null && this.state.toDate != null) {
+				sellHistories =
+					await this.sellHistoryRepository.getTop11SellGroupByDate(this.state.lastGroupId, this.state.fromDate, this.state.toDate);
+			} else {
+				sellHistories =
+					await this.sellHistoryRepository.getTop11SellGroup(this.state.lastGroupId);
+			}
 
 			if (sellHistories.length === 0) {
 				this.setState({
@@ -450,7 +458,7 @@ class Shopping extends Component {
 			let grouped = this.state.groupedHistories;
 
 			console.log(grouped[0])
-			const { id, created_date, amount } = sellHistories[0];
+			const {id, created_date, amount} = sellHistories[0];
 			const historyDate = created_date.split("T")[0];
 
 			if (historyDate === grouped[0].date) {
