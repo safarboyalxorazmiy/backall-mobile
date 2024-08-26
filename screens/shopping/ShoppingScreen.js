@@ -541,104 +541,6 @@ class Shopping extends Component {
 		}
 	}
 
-	async loadLocalSellGroupsByDate() {
-		console.log("loading")
-		if (this.state.lastGroupId <= 0) {
-			this.setState({
-				loading: false,
-				localFullyLoaded: true
-			});
-			return false;
-		}
-
-		try {
-			let sellHistories =
-				await this.sellHistoryRepository.getAllSellGroupByDate(
-					this.state.lastGroupId, this.state.toDate, this.state.fromDate
-				);
-
-			if (sellHistories.length === 0) {
-				this.setState({
-					loading: false,
-					localFullyLoaded: true
-				});
-				return false;
-			}
-
-			let grouped = [...this.state.groupedHistories];  // Shallow copy of the array
-
-			let lastDate;
-			let lastAmount;
-			for (const history of sellHistories) {
-				const date = history.created_date.split("T")[0];
-				let groupIndex = grouped.findIndex(group => group.date === date);
-
-				if (groupIndex === -1) {
-					const formattedDate = this.formatDate(date);
-					grouped.push({
-						date,
-						dateInfo: formattedDate,
-						histories: [],
-						totalAmount: 0
-					});
-					groupIndex = grouped.length - 1;
-				}
-
-				grouped[groupIndex].histories.push({
-					id: history.id,
-					created_date: history.created_date,
-					amount: history.amount,
-					saved: true
-				});
-
-				if (lastDate !== date) {
-					try {
-						lastAmount = await this.amountDateRepository.getSellAmountInfoByDate(date);
-					} catch (e) {
-						lastAmount = 0;
-					}
-
-					lastDate = date;
-				}
-
-				grouped[groupIndex].totalAmount = lastAmount;
-			}
-
-			this.setState(prevState => ({
-				sellingHistory: [...prevState.sellingHistory, ...sellHistories],
-				groupedHistories: grouped,
-				lastGroupId: prevState.lastGroupId - 11,
-				loading: false
-			}));
-
-			const groupedCopy = [...grouped];
-			const lastItem = groupedCopy.pop();
-
-			groupedCopy.forEach(group => {
-				if (group.histories[0].saved) {
-					group.histories.forEach(history => {
-						history.saved = false;
-					});
-				}
-			});
-
-			groupedCopy.push(lastItem);
-
-			this.setState({
-				groupedHistories: groupedCopy
-			});
-
-			return true;
-		} catch (error) {
-			this.setState({
-				loading: false
-			});
-
-			console.error('Error fetching sell histories:', error);
-			return false;
-		}
-	}
-
 	async onEndReached() {
 		console.log("onEndReached()");
 		if (!this.state.loading) {
@@ -647,7 +549,7 @@ class Shopping extends Component {
 	}
 
 	scrollToTop = () => {
-		this.flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
+		this.flatListRef.current?.scrollToOffset({animated: true, offset: 0});
 	};
 
 	render() {
@@ -664,11 +566,14 @@ class Shopping extends Component {
 						onEndReached={this.onEndReached}
 						initialNumToRender={100}
 
-						ListHeaderComponent={<ShoppingHeader
-							navigation={this.props.navigation}
-							calendarInputContent={this.state.calendarInputContent}
-							thisMonthSellAmount={this.state.thisMonthSellAmount}
-						/>}
+						ListHeaderComponent={
+							<ShoppingHeader
+								navigation={this.props.navigation}
+								calendarInputContent={this.state.calendarInputContent}
+								thisMonthSellAmount={this.state.thisMonthSellAmount}
+							/>
+						}
+
 						ListFooterComponent={() => {
 							if (!this.state.loading) return null;
 							return (

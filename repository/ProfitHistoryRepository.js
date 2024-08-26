@@ -711,14 +711,14 @@ class ProfitHistoryRepository {
 		}
 	}
 
-	async getTop10ProfitGroupByStartId(startId) {
+	async getTop11ProfitGroup(startId) {
 		try {
 			const query = `
           SELECT *
           FROM profit_group
           where id <= ${startId}
           ORDER BY id DESC
-          limit 10;
+          limit 11;
 			`;
 
 			const result = await new Promise((resolve, reject) => {
@@ -744,22 +744,56 @@ class ProfitHistoryRepository {
 		}
 	}
 
-	async getTop10ProfitGroupByStartIdAndDate(startId, fromDate, toDate) {
+	async getTop11ProfitGroupByDate(lastHistoryId, fromDate, toDate) {
+		let fromDateObj = new Date(fromDate);
+		fromDateObj.setHours(0, 0, 0, 0); // Set to the end of the day
+		const fromUTCDate = new Date(
+			fromDateObj.getTime() - fromDateObj.getTimezoneOffset() * 60000
+		).toISOString().slice(0, 19).replace('T', ' ');
+
+		let toDateObj = new Date(toDate);
+		toDateObj.setHours(23, 59, 59, 999); // Set to the beginning of the day
+		const toUTCDate = new Date(
+			toDateObj.getTime() - toDateObj.getTimezoneOffset() * 60000
+		).toISOString().slice(0, 19).replace('T', ' ');
+
 		try {
-			const query = `
-          SELECT *
-          FROM profit_group
-          WHERE id <= ?
-            AND created_date BETWEEN ? AND ?
-          ORDER BY id DESC
-          LIMIT 10;
-			`;
+			let query;
+			if (toDate == fromDate) {
+				query = `
+            SELECT *
+            FROM profit_group
+            WHERE id <= ${lastHistoryId}
+              AND DATE(created_date) = '${fromDate}'
+            ORDER BY id DESC
+            limit 11;`
+			} else if (fromUTCDate > toUTCDate) {
+				fromDateObj.setUTCHours(23, 59, 59, 999); // Set to start of the day in UTC
+				const fromUTCDate = fromDateObj.toISOString().slice(0, 19).replace('T', ' ');
+
+				toDateObj.setUTCHours(0, 0, 0, 0); // Set to end of the day in UTC
+				const toUTCDate = toDateObj.toISOString().slice(0, 19).replace('T', ' ');
+
+				query = `SELECT *
+                 FROM profit_group
+                 WHERE id <= ${lastHistoryId}
+                   AND DATE(created_date) BETWEEN '${toDate}' AND '${fromDate}'
+                 ORDER BY id DESC
+                 limit 11;`;
+			} else {
+				query = `SELECT *
+                 FROM profit_group
+                 WHERE id <= ${lastHistoryId}
+                   AND DATE(created_date) BETWEEN '${fromDate}' AND '${toDate}'
+                 ORDER BY id DESC
+                 limit 11;`;
+			}
 
 			const result = await new Promise((resolve, reject) => {
 				this.db.transaction((tx) => {
 					tx.executeSql(
 						query,
-						[startId, toDate, fromDate],
+						[],
 						(_, resultSet) => resolve(resultSet),
 						(_, error) => reject(error)
 					);
@@ -777,6 +811,7 @@ class ProfitHistoryRepository {
 			throw error;
 		}
 	}
+
 
 	async getProfitHistoryDetailByGroupId(group_id) {
 		try {
@@ -1024,7 +1059,7 @@ class ProfitHistoryRepository {
 		}
 	}
 
-	async deleteByIdLessThan(group_id) {
+	async deleteByGroupIdLessThan(group_id) {
 		let profitHistoryGroups;
 
 		try {
@@ -1204,7 +1239,7 @@ class ProfitHistoryRepository {
 			});
 
 			if (!result || !result.rows || !result.rows._array || result.rows._array.length === 0) {
-				console.error("No sell history found for the specified date range.");
+				console.error("No profit history found for the specified date range.");
 				return null; // Return null or handle the case when no records are found
 			}
 
@@ -1212,7 +1247,7 @@ class ProfitHistoryRepository {
 
 			return row;
 		} catch (error) {
-			console.error("Error retrieving sell history:", error);
+			console.error("Error retrieving profit history:", error);
 			throw error;
 		}
 	}
@@ -1236,16 +1271,16 @@ class ProfitHistoryRepository {
                  LIMIT 1;`
 			} else if (fromUTCDate > toUTCDate) {
 				query = `SELECT *
-               FROM profit_group
-               WHERE DATE(created_date) BETWEEN '${toDate}' AND '${fromDate}'
-               ORDER BY ID ASC
-               LIMIT 1;`;
+                 FROM profit_group
+                 WHERE DATE(created_date) BETWEEN '${toDate}' AND '${fromDate}'
+                 ORDER BY ID ASC
+                 LIMIT 1;`;
 			} else {
 				query = `SELECT *
-               FROM profit_group
-               WHERE DATE(created_date) BETWEEN '${fromDate}' AND '${toDate}'
-               ORDER BY ID ASC
-               LIMIT 1;`;
+                 FROM profit_group
+                 WHERE DATE(created_date) BETWEEN '${fromDate}' AND '${toDate}'
+                 ORDER BY ID ASC
+                 LIMIT 1;`;
 			}
 
 			const result = await new Promise((resolve, reject) => {
@@ -1269,80 +1304,12 @@ class ProfitHistoryRepository {
 			console.log("result:: ", rows);
 
 			return rows;
-		}
-		catch (error) {
-			console.error("Error getFirstSellGroupByDate:", error);
-			throw error;
-		}
-	}
-
-	async getTop10ProfitGroupByDate(lastHistoryId, fromDate, toDate) {
-		let fromDateObj = new Date(fromDate);
-		fromDateObj.setHours(0, 0, 0, 0); // Set to the end of the day
-		const fromUTCDate = new Date(
-			fromDateObj.getTime() - fromDateObj.getTimezoneOffset() * 60000
-		).toISOString().slice(0, 19).replace('T', ' ');
-
-		let toDateObj = new Date(toDate);
-		toDateObj.setHours(23, 59, 59, 999); // Set to the beginning of the day
-		const toUTCDate = new Date(
-			toDateObj.getTime() - toDateObj.getTimezoneOffset() * 60000
-		).toISOString().slice(0, 19).replace('T', ' ');
-
-		try {
-			let query;
-			if (toDate == fromDate) {
-				query = `
-            SELECT *
-            FROM profit_group
-            WHERE id <= ${lastHistoryId}
-              AND DATE(created_date) = '${fromDate}'
-            ORDER BY id DESC
-            limit 11;`
-			} else if (fromUTCDate > toUTCDate) {
-				fromDateObj.setUTCHours(23, 59, 59, 999); // Set to start of the day in UTC
-				const fromUTCDate = fromDateObj.toISOString().slice(0, 19).replace('T', ' ');
-
-				toDateObj.setUTCHours(0, 0, 0, 0); // Set to end of the day in UTC
-				const toUTCDate = toDateObj.toISOString().slice(0, 19).replace('T', ' ');
-
-				query = `SELECT *
-                 FROM profit_group
-                 WHERE id <= ${lastHistoryId}
-                   AND DATE(created_date) BETWEEN '${toDate}' AND '${fromDate}'
-                 ORDER BY id DESC
-                 limit 11;`;
-			} else {
-				query = `SELECT *
-                 FROM profit_group
-                 WHERE id <= ${lastHistoryId}
-                   AND DATE(created_date) BETWEEN '${fromDate}' AND '${toDate}'
-                 ORDER BY id DESC
-                 limit 11;`;
-			}
-
-			const result = await new Promise((resolve, reject) => {
-				this.db.transaction((tx) => {
-					tx.executeSql(
-						query,
-						[],
-						(_, resultSet) => resolve(resultSet),
-						(_, error) => reject(error)
-					);
-				});
-			});
-
-			if (!result || !result.rows || !result.rows._array) {
-				throw new Error("Unexpected result structure");
-			}
-
-			const rows = result.rows._array;
-			return rows;
 		} catch (error) {
-			console.error("Error retrieving sell history:", error);
+			console.error("Error getFirstProfitGroupByDate:", error);
 			throw error;
 		}
 	}
+
 }
 
 export default ProfitHistoryRepository;

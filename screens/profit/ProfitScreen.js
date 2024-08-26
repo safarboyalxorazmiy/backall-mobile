@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, {Component, memo} from "react";
 import {StatusBar} from "expo-status-bar";
 import {
 	StyleSheet,
@@ -20,6 +20,7 @@ import ApiService from "../../service/ApiService";
 import CalendarIcon from "../../assets/calendar-icon.svg";
 import CrossIcon from "../../assets/cross-icon-light.svg";
 import ProfitGroup from "./ProfitGroup";
+import _ from "lodash";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -49,12 +50,19 @@ class Profit extends Component {
 			lastProfitHistoryGroupSize: 10,
 			lastProfitAmountDatePage: 0,
 			lastProfitAmountDateSize: 10,
+
+			loading: false,
+			globalFullyLoaded: false,
+			localFullyLoaded: false
 		}
 
 		this.productRepository = new ProductRepository();
 		this.profitHistoryRepository = new ProfitHistoryRepository();
 		this.amountDateRepository = new AmountDateRepository();
 		this.apiService = new ApiService();
+
+		this.onEndReached = _.debounce(this.onEndReached.bind(this), 300);
+		this.flatListRef = React.createRef();
 	}
 
 	async getDateInfo() {
@@ -84,20 +92,7 @@ class Profit extends Component {
 		return `${day}, ${weekday}`;
 	};
 
-	getFormattedTime = (created_date) => {
-		let date = new Date(created_date);
-		let hours = date.getHours();
-		let minutes = date.getMinutes();
-
-		minutes = minutes + "";
-		if (minutes.length != 2) {
-			minutes = "0" + minutes;
-		}
-		return `${hours}:${minutes}`;
-	};
-
 	// Save not downloaded profit data
-
 	// PROFIT
 	async getProfitGroupNotDownloaded() {
 		console.log("GETTING PROFIT NOT DOWNLOADED GROUPS ⏳⏳⏳");
@@ -318,105 +313,27 @@ class Profit extends Component {
 			this.setState({thisMonthProfitAmount: thisMonthProfitAmount});
 		}
 
-		let lastProfitGroup =
-			await this.profitHistoryRepository.getLastProfitGroup();
+		let lastProfitGroup = await this.profitHistoryRepository.getLastProfitGroup();
 		let lastGroupId = lastProfitGroup.id;
 
-		console.log(lastGroupId)
-
-		let firstProfitGroup =
-			await this.profitHistoryRepository.getFirstProfitGroup();
+		let firstProfitGroup = await this.profitHistoryRepository.getFirstProfitGroup();
 
 		this.setState({
 			firstGroupGlobalId: firstProfitGroup.global_id,
-			loading: true
+			lastGroupId: lastGroupId
 		});
 
-		const allProfitHistories = [];
+		console.log("Profit mounted");
 
-		while (true) {
-			if (
-				lastGroupId <= 0 ||
-				await AsyncStorage.getItem("window") != "Profit"
-			) {
-				this.setState({
-					loading: false
-				});
-				break;
-			}
-
-			console.log("LAST GROUP ID: ", lastGroupId);
-
-			try {
-				let profitHistories =
-					await this.profitHistoryRepository.getAllProfitGroup(lastGroupId);
-
-				console.log(profitHistories)
-
-				if (profitHistories.length === 0) {
-					this.setState({
-						loading: false
-					});
-					break;
-				}
-
-				allProfitHistories.push(...profitHistories);
-
-				lastGroupId -= 11;
-
-				await new Promise(resolve => setTimeout(resolve, 100)); // Adding delay to manage UI thread load
-			} catch (error) {
-				console.error('Error fetching profit histories:', error);
-				this.setState({
-					loading: false
-				});
-				break;
-			}
-
-			const startTime = performance.now();
-
-			const grouped = {};
-
-			let lastDate;
-			let lastAmount;
-			for (const history of allProfitHistories) {
-				const date = history.created_date.split("T")[0];
-				if (!grouped[date]) {
-					const formattedDate = this.formatDate(date);
-					grouped[date] = {date, dateInfo: formattedDate, histories: [], totalAmount: 0};
-				}
-
-				if (lastDate !== date) {
-					lastAmount = await this.amountDateRepository.getProfitAmountInfoByDate(date);
-					lastDate = date;
-				}
-
-				grouped[date].totalAmount = lastAmount;
-				grouped[date].histories.push(history);
-			}
-
-			this.setState({
-				profitHistory: allProfitHistories,
-				groupedHistories: Object.values(grouped),
-				lastGroupId: lastGroupId
-			});
-
-			const endTime = performance.now();
-			const executionTime = endTime - startTime;
-			console.log(`Execution time: ${executionTime} milliseconds`);
-		}
-
-		this.setState({
-			loading: false
-		});
-
+		this.setState({loading: true});
+		await this.loadLocalProfitGroups();
 
 		const {navigation} = this.props;
 
 		navigation.addListener("focus", async () => {
 			if (await AsyncStorage.getItem("loadProfit") === "true") {
 				await this.initializeScreen();
-	
+
 				await AsyncStorage.setItem("loadProfit", "false");
 			}
 
@@ -431,280 +348,76 @@ class Profit extends Component {
 				this.setState({thisMonthProfitAmount: thisMonthProfitAmount});
 			}
 
+			// If there is no history get histories
+			if (this.state.groupedHistories.length <= 0) {
+				this.setState({loading: true, localFullyLoaded: false});
+				await this.loadLocalProfitGroups();
+			}
+
 			// New history created load new items **
-			if (await AsyncStorage.getItem("profitFullyLoaded") != "true") {
+			if (await AsyncStorage.getItem("profitFullyLoaded") !== "true") {
 				// Remove date
-				await AsyncStorage.removeItem("ShoppingFromDate");
-				await AsyncStorage.removeItem("ShoppingToDate");
-				await AsyncStorage.setItem("shoppingFullyLoaded", "false");
+				await AsyncStorage.removeItem("ProfitFromDate");
+				await AsyncStorage.removeItem("ProfitToDate");
+				await AsyncStorage.setItem("profitFullyLoaded", "false");
 				await this.getDateInfo();
 
 				let lastProfitGroup = await this.profitHistoryRepository.getLastProfitGroup();
 				let lastGroupId = lastProfitGroup.id;
 
 				if ((lastGroupId - 1000) > 0) {
-					await this.profitHistoryRepository.deleteByIdLessThan(lastGroupId - 1000);
+					await this.profitHistoryRepository.deleteByGroupIdLessThan(lastGroupId - 1000);
 				}
 
-				// Explanation for firstProfitGroup. We need it for getting rest of rows from global.
-				// Right here we update it again cause we deleted rows which ids higher then 1000
 				let firstProfitGroup = await this.profitHistoryRepository.getFirstProfitGroup();
+
 				this.setState({
 					firstGroupGlobalId: firstProfitGroup.global_id,
-					globalFullyLoaded: false,
-					loading: true
+					lastGroupId: lastGroupId,
+					groupedHistories: [],
+					profitHistory: []
 				});
 
-				const allProfitHistories = [];
+				console.log("Profit mounted");
 
-				while (true) {
-					if (
-						lastGroupId <= 0 ||
-						await AsyncStorage.getItem("window") !== "Profit"
-					) {
-						console.log("await AsyncStorage.getItem(\"window\") != \"Profit\"::", await AsyncStorage.getItem("window") !== "Profit");
-
-						this.setState({
-							loading: false
-						});
-						break;
-					}
-
-					console.log("LAST GROUP ID: ", lastGroupId);
-
-					try {
-						let profitHistories =
-							await this.profitHistoryRepository.getAllProfitGroup(lastGroupId);
-
-						if (profitHistories.length === 0) {
-							this.setState({
-								loading: false
-							});
-							break;
-						}
-
-						allProfitHistories.push(...profitHistories);
-
-						lastGroupId -= 11;
-
-						await new Promise(resolve => setTimeout(resolve, 100)); // Adding delay to manage UI thread load
-					} catch (error) {
-						console.error('Error fetching profit histories:', error);
-						this.setState({
-							loading: false
-						});
-						break;
-					}
-
-					const startTime = performance.now();
-
-					const grouped = {};
-
-					let lastDate;
-					let lastAmount;
-					for (const history of allProfitHistories) {
-						const date = history.created_date.split("T")[0];
-						if (!grouped[date]) {
-							const formattedDate = this.formatDate(date);
-							grouped[date] = {date, dateInfo: formattedDate, histories: [], totalAmount: 0};
-						}
-
-						if (lastDate !== date) {
-							lastAmount = await this.amountDateRepository.getProfitAmountInfoByDate(date);
-							lastDate = date;
-						}
-
-						grouped[date].totalAmount = lastAmount;
-						grouped[date].histories.push(history);
-					}
-
-					this.setState({
-						profitHistory: allProfitHistories,
-						groupedHistories: Object.values(grouped),
-						lastGroupId: lastGroupId
-					});
-
-					const endTime = performance.now();
-					const executionTime = endTime - startTime;
-					console.log(`Execution time: ${executionTime} milliseconds`);
-				}
-
-				this.setState({
-					loading: false
-				});
+				this.setState({loading: true});
+				await this.loadLocalProfitGroups();
 
 				await AsyncStorage.setItem("profitFullyLoaded", "true");
 			}
 
+			// Getting date removing date
 			await this.getDateInfo();
 
-			// Load rest of items if exists **
-			let lastGroupId = this.state.lastGroupId;
-			let allProfitHistories = this.state.profitHistory;
-
-			this.setState({
-				loading: true
-			});
-
-			// Download the rest of the list with date.
 			if (this.state.fromDate != null && this.state.toDate != null) {
+				console.log("fromDate:", this.state.fromDate);
+				console.log("toDate:", this.state.toDate);
+
 				this.setState({
 					loading: true
 				});
 
 				this.setState({
-					groupedHistories: []
+					groupedHistories: [],
+					profitHistory: []
 				})
+
 				let firstProfitGroup = await this.profitHistoryRepository.getFirstProfitGroupByDate(
 					this.state.fromDate,
 					this.state.toDate
 				);
-
-				this.setState({
-					firstGroupGlobalId: firstProfitGroup.global_id
-				});
-
 				let lastGroup =
 					await this.profitHistoryRepository.getLastProfitHistoryGroupByDate(
 						this.state.fromDate, this.state.toDate
 					);
 				let lastGroupId = lastGroup.id;
 
+				this.setState({
+					firstGroupGlobalId: firstProfitGroup.global_id,
+					lastGroupId: lastGroupId
+				});
 
-				let profitHistory =
-					await this.profitHistoryRepository.getTop10ProfitGroupByDate(
-						lastGroupId,
-						this.state.fromDate,
-						this.state.toDate
-					);
-
-				lastGroupId -= 11;
-
-				try {
-					const grouped = [];
-
-					let lastDate;
-					let lastAmount;
-					for (const history of profitHistory) {
-						const date = history.created_date.split("T")[0];
-						let groupIndex = grouped.findIndex(group => group.date === date);
-
-						if (groupIndex === -1) {
-							const formattedDate = this.formatDate(date);
-							grouped.push({
-								date,
-								dateInfo: formattedDate,
-								histories: [],
-								totalAmount: 0
-							});
-							groupIndex = grouped.length - 1;
-						}
-
-						grouped[groupIndex].histories.push({
-							id: history.id,
-							created_date: history.created_date,
-							profit: history.profit,
-							saved: false
-						});
-
-						if (lastDate !== date) {
-							try {
-								lastAmount = await this.amountDateRepository.getProfitAmountInfoByDate(date);
-								lastDate = date;
-							} catch (e) {
-								lastAmount = 0;
-							}
-
-							lastDate = date;
-						}
-
-						grouped[groupIndex].totalAmount = lastAmount;
-					}
-
-					this.setState({
-						profitHistory: profitHistory,
-						groupedHistories: Object.values(grouped),
-						lastGroupId: lastGroupId
-					});
-				} catch (e) {
-				}
-
-
-				while (true) {
-					if (lastGroupId <= 0 || await AsyncStorage.getItem("window") != "Profit") {
-						this.setState({
-							loading: false
-						});
-						break;
-					}
-
-					let profitHistory =
-						await this.profitHistoryRepository.getTop10ProfitGroupByDate(
-							lastGroupId,
-							this.state.fromDate,
-							this.state.toDate
-						);
-					lastGroupId -= 11;
-
-					if (profitHistory.length === 0) {
-						this.setState({
-							loading: false
-						});
-						return;
-					}
-
-					try {
-						let grouped = [...this.state.groupedHistories];  // Shallow copy of the array
-
-						let lastDate;
-						let lastAmount;
-						for (const history of profitHistory) {
-							const date = history.created_date.split("T")[0];
-							let groupIndex = grouped.findIndex(group => group.date === date);
-
-							if (groupIndex === -1) {
-								const formattedDate = this.formatDate(date);
-								grouped.push({
-									date,
-									dateInfo: formattedDate,
-									histories: [],
-									totalAmount: 0
-								});
-								groupIndex = grouped.length - 1;
-							}
-
-							grouped[groupIndex].histories.push({
-								id: history.id,
-								created_date: history.created_date,
-								profit: history.profit,
-								saved: false
-							});
-
-							if (lastDate !== date) {
-								try {
-									lastAmount = await this.amountDateRepository.getProfitAmountInfoByDate(date);
-									lastDate = date;
-								} catch (e) {
-									lastAmount = 0;
-								}
-
-								lastDate = date;
-							}
-
-							grouped[groupIndex].totalAmount = lastAmount;
-						}
-
-						this.setState(prevState => ({
-							profitHistory: [...prevState.profitHistory, ...profitHistory],
-							groupedHistories: grouped,
-							lastGroupId: lastGroupId,
-							loading: false
-						}));
-
-						await new Promise(resolve => setTimeout(resolve, 100)); // Adding delay to manage UI thread load
-					} catch (e) {
-					}
-				}
+				await this.loadLocalProfitGroups();
 
 				this.setState({
 					loading: false
@@ -712,95 +425,25 @@ class Profit extends Component {
 
 				return;
 			}
+			// reloading after removing date
+			else if (this.state.prevFromDate != null) {
+				let lastProfitGroup = await this.profitHistoryRepository.getLastProfitGroup();
+				let lastGroupId = lastProfitGroup.id;
 
-			// Download the rest of the list.
-			while (true) {
-				if (
-					lastGroupId <= 0 ||
-					await AsyncStorage.getItem("window") !== "Profit"
-				) {
-					this.setState({
-						loading: false
-					});
-					break;
-				}
+				let firstProfitGroup = await this.profitHistoryRepository.getFirstProfitGroup();
 
-				console.log("LAST GROUP ID: ", lastGroupId);
+				this.setState({
+					groupedHistories: [],
+					profitHistory: [],
+					firstGroupGlobalId: firstProfitGroup.global_id,
+					lastGroupId: lastGroupId,
+					prevFromDate: null
+				});
 
-				try {
-					let profitHistories =
-						await this.profitHistoryRepository.getAllProfitGroup(lastGroupId);
+				console.log("Profit mounted");
 
-					if (profitHistories.length === 0) {
-						this.setState({
-							loading: false
-						});
-						break;
-					}
-
-					lastGroupId -= 11;
-
-					let grouped = [...this.state.groupedHistories];  // Shallow copy of the array
-
-					let lastDate;
-					let lastAmount;
-					for (const history of profitHistories) {
-						const date = history.created_date.split("T")[0];
-						let groupIndex = grouped.findIndex(group => group.date === date);
-
-						if (groupIndex === -1) {
-							const formattedDate = this.formatDate(date);
-							grouped.push({
-								date,
-								dateInfo: formattedDate,
-								histories: [],
-								totalAmount: 0
-							});
-							groupIndex = grouped.length - 1;
-						}
-
-						grouped[groupIndex].histories.push({
-							id: history.id,
-							created_date: history.created_date,
-							profit: history.profit,
-							saved: false
-						});
-
-						if (lastDate !== date) {
-							try {
-								lastAmount = await this.amountDateRepository.getProfitAmountInfoByDate(date);
-								lastDate = date;
-							} catch (e) {
-								lastAmount = 0;
-							}
-
-							lastDate = date;
-						}
-
-						grouped[groupIndex].totalAmount = lastAmount;
-					}
-
-					this.setState(prevState => ({
-						profitHistory: [...prevState.profitHistory, ...profitHistories],
-						groupedHistories: grouped,
-						lastGroupId: lastGroupId,
-						loading: false
-					}));
-
-					await new Promise(resolve => setTimeout(resolve, 100)); // Adding delay to manage UI thread load
-				} catch (error) {
-					this.setState({
-						loading: false
-					});
-
-					console.error('Error fetching profit histories:', error);
-					break;
-				}
-
-
-				/* FOR BOSS (MODAL) **
-				let notAllowed = await AsyncStorage.getItem("not_allowed");
-				this.setState({notAllowed: notAllowed}) */
+				this.setState({loading: true});
+				await this.loadLocalProfitGroups();
 			}
 		});
 	}
@@ -836,6 +479,19 @@ class Profit extends Component {
 	}
 
 	async loadMore() {
+		if (this.state.loading) {
+			console.log("already loading");
+			return;
+		}
+
+		if (this.state.localFullyLoaded === false) {
+			this.setState({loading: true});
+			let isLoaded = await this.loadLocalProfitGroups();
+			if (isLoaded) {
+				return;
+			}
+		}
+
 		if (this.state.globalFullyLoaded || this.state.loading) return;
 
 		this.setState({loading: true});
@@ -847,23 +503,17 @@ class Profit extends Component {
 					this.state.firstGroupGlobalId,
 					this.state.fromDate,
 					this.state.toDate,
-					0,
+					this.state.lastProfitGroupPage,
 					22,
 					this.props.navigation
 				);
 			} else {
-				try {
-					response = await this.apiService.getProfitGroups(
-						this.state.firstGroupGlobalId,
-						0,
-						22,
-						this.props.navigation
-					);
-				} catch (error) {
-					this.setState({loading: false});
-					console.error("Error fetching global products:", error);
-					return;
-				}
+				response = await this.apiService.getProfitGroups(
+					this.state.firstGroupGlobalId,
+					this.state.lastProfitGroupPage,
+					22,
+					this.props.navigation
+				);
 			}
 
 			if (!response || !response.content || response.content.length === 0) {
@@ -871,25 +521,20 @@ class Profit extends Component {
 				return;
 			}
 
-			let grouped = [...this.state.groupedHistories];  // Shallow copy of the array
-
+			let grouped = [...this.state.groupedHistories];
 			let lastDate, lastAmount;
+
 			for (const history of response.content) {
 				const date = history.createdDate.split("T")[0];
-				let groupIndex = grouped.findIndex(group => group.date === date);
+				let group = grouped.find(group => group.date === date);
 
-				if (groupIndex === -1) {
+				if (!group) {
 					const formattedDate = this.formatDate(date);
-					grouped.push({
-						date,
-						dateInfo: formattedDate,
-						histories: [],
-						totalAmount: 0
-					});
-					groupIndex = grouped.length - 1;
+					group = {date, dateInfo: formattedDate, histories: [], totalAmount: 0};
+					grouped.push(group);
 				}
 
-				grouped[groupIndex].histories.push({
+				group.histories.push({
 					id: history.id,
 					created_date: history.createdDate,
 					profit: history.profit,
@@ -904,17 +549,16 @@ class Profit extends Component {
 					} catch (e) {
 						lastAmount = 0;
 					}
-
 					lastDate = date;
 				}
 
-				grouped[groupIndex].totalAmount = lastAmount;
+				group.totalAmount = lastAmount;
 			}
 
 			this.setState(prevState => ({
 				profitHistory: [...prevState.profitHistory, ...response.content],
 				groupedHistories: grouped,
-				firstGroupGlobalId: response.content[0].id
+				firstGroupGlobalId: response.content[0].id,
 			}));
 		} catch (error) {
 			console.error("Error fetching global products:", error);
@@ -923,6 +567,181 @@ class Profit extends Component {
 		}
 	}
 
+	async loadLocalProfitGroups() {
+		console.log("loading");
+
+		if (this.state.lastGroupId <= 0) {
+			this.setState({
+				loading: false,
+				localFullyLoaded: true
+			});
+			return false;
+		}
+
+		try {
+			let profitHistories;
+			if (this.state.fromDate != null && this.state.toDate != null) {
+				profitHistories =
+					await this.profitHistoryRepository.getTop11ProfitGroupByDate(this.state.lastGroupId, this.state.fromDate, this.state.toDate);
+			} else {
+				profitHistories =
+					await this.profitHistoryRepository.getTop11ProfitGroup(this.state.lastGroupId);
+			}
+
+			if (profitHistories.length === 0) {
+				this.setState({
+					loading: false,
+					localFullyLoaded: true
+				});
+				return false;
+			}
+
+			let grouped = [...this.state.groupedHistories];
+			let lastDate = null;
+			let lastAmount = 0;
+
+			for (const history of profitHistories) {
+				const date = history.created_date.split("T")[0];
+				let groupIndex = grouped.findIndex(group => group.date === date);
+
+				if (groupIndex === -1) {
+					const formattedDate = this.formatDate(date);
+					grouped.push({
+						date,
+						dateInfo: formattedDate,
+						histories: [],
+						totalAmount: 0
+					});
+					groupIndex = grouped.length - 1;
+				}
+
+				if (lastDate !== date) {
+					lastAmount = await this.amountDateRepository.getProfitAmountInfoByDate(date).catch(() => 0);
+					lastDate = date;
+				}
+
+				grouped[groupIndex].histories.push({
+					id: history.id,
+					created_date: history.created_date,
+					profit: history.profit,
+					saved: true
+				});
+
+				grouped[groupIndex].totalAmount = lastAmount;
+			}
+
+			// Update the state in one go
+			const groupedCopy = grouped.map(group => ({
+				...group,
+				histories: group.histories.map(history => ({
+					...history,
+					saved: false
+				}))
+			}));
+
+			const lastGroup = grouped[grouped.length - 1];
+			if (lastGroup) {
+				groupedCopy[groupedCopy.length - 1].histories[0].saved = true;
+			}
+
+			const startTime = performance.now();
+
+			this.setState(prevState => ({
+				profitHistory: [...prevState.profitHistory, ...profitHistories],
+				groupedHistories: groupedCopy,
+				lastGroupId: prevState.lastGroupId - 11,
+				loading: false
+			}));
+
+			const endTime = performance.now();
+			console.log(`Execution time: ${endTime - startTime} milliseconds`);
+
+			return true;
+		} catch (error) {
+			this.setState({
+				loading: false
+			});
+			console.error('Error fetching profit histories:', error);
+			return false;
+		}
+	}
+
+	async loadTop1LocalProfitGroups() {
+		console.log("loading");
+
+		try {
+			const profitHistories = await this.profitHistoryRepository.getTop1ProfitGroup();
+
+			if (!profitHistories[0]) {
+				return false;
+			}
+
+			let grouped = this.state.groupedHistories;
+
+			console.log(grouped[0])
+			const {id, created_date, amount} = profitHistories[0];
+			const historyDate = created_date.split("T")[0];
+
+			if (historyDate === grouped[0].date) {
+				grouped[0].histories = [{
+					id,
+					created_date,
+					amount,
+					saved: true
+				}, ...grouped[0].histories];
+			} else {
+				const formattedDate = this.formatDate(historyDate);
+				grouped.push({
+					date: historyDate, // Make sure this matches your structure; it was 'historyDate' in your code, but 'date' elsewhere
+					dateInfo: formattedDate,
+					histories: profitHistories,
+					totalAmount: 0
+				});
+			}
+
+			const startTime = performance.now();
+			this.setState(prevState => ({
+				groupedHistories: grouped,
+			}));
+
+
+			const groupedCopy = [...grouped];
+			const lastItem = groupedCopy.pop();
+
+			groupedCopy.forEach(group => {
+				if (group.histories[0].saved) {
+					group.histories.forEach(history => {
+						history.saved = false;
+					});
+				}
+			});
+
+			groupedCopy.push(lastItem);
+
+			this.setState({
+				groupedHistories: groupedCopy
+			});
+
+			const endTime = performance.now();
+			console.log(`Execution time: ${endTime - startTime} milliseconds`);
+
+			return true;
+		} catch (error) {
+			console.error('Error fetching profit histories:', error);
+			return false;
+		}
+	}
+
+	async onEndReached() {
+		console.log("onEndReached()");
+		if (!this.state.loading) {
+			await this.loadMore();
+		}
+	}
+
+	scrollToTop = () => {
+		this.flatListRef.current?.scrollToOffset({animated: true, offset: 0});
+	};
 
 	render() {
 		const {navigation} = this.props;
@@ -930,19 +749,13 @@ class Profit extends Component {
 		return (
 			<View style={styles.container}>
 				<FlatList
-					style={{width: "100%"}}
+					ref={this.flatListRef}
 					data={this.state.groupedHistories}
-					extraData={this.state.groupedHistories}
 					keyExtractor={(item) => item.date}
-					estimatedItemSize={200}
-					onEndReachedThreshold={2}
-					onTouchStart={async () => {
-						console.log("onEndReached()");
-						await this.loadMore();
-						await this.loadMore();
-						await this.loadMore();
-						await this.loadMore();
-					}}
+					onEndReachedThreshold={40}
+					onEndReached={this.onEndReached}
+					initialNumToRender={100}
+					style={{width: "100%"}}
 
 					ListHeaderComponent={() => (
 						<View style={{width: "100%"}}>
@@ -1348,4 +1161,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default Profit;
+export default memo(Profit);
