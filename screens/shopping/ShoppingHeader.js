@@ -28,8 +28,7 @@ const ShoppingHeader = memo(({ navigation, calendarInputContent, thisMonthSellAm
 						style={[
 							calendarInputContent === "--/--/----" ?
 								styles.calendarInput :
-								styles.calendarInputActive,
-							{ backgroundColor: "red" }
+								styles.calendarInputActive
 						]}
 					>
 						<Text
