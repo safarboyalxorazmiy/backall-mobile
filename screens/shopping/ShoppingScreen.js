@@ -65,6 +65,7 @@ class Shopping extends Component {
 		this.apiService = new ApiService();
 
 		this.onEndReached = _.debounce(this.onEndReached.bind(this), 300);
+		this.flatListRef = React.createRef();
 	}
 
 
@@ -121,7 +122,7 @@ class Shopping extends Component {
 				this.setState({thisMonthSellAmount: thisMonthSellAmount});
 			}
 
-			/* If there is no history get histories */
+			// If there is no history get histories
 			if (this.state.groupedHistories.length <= 0) {
 				this.setState({loading: true, localFullyLoaded: false});
 				await this.loadLocalSellGroups();
@@ -154,7 +155,7 @@ class Shopping extends Component {
 				await AsyncStorage.setItem("shoppingFullyLoaded", "true");
 			}
 
-			/* Getting date removing date */
+			// Getting date removing date
 			await this.getDateInfo();
 
 			if (this.state.fromDate != null && this.state.toDate != null) {
@@ -193,7 +194,7 @@ class Shopping extends Component {
 
 				return;
 			}
-			/* reloading after removing date */
+			// reloading after removing date
 			else if (this.state.prevFromDate != null) {
 				let lastSellGroup = await this.sellHistoryRepository.getLastSellGroup();
 				let lastGroupId = lastSellGroup.id;
@@ -644,6 +645,10 @@ class Shopping extends Component {
 		}
 	}
 
+	scrollToTop = () => {
+		this.flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
+	};
+
 	render() {
 		const {navigation} = this.props;
 
@@ -651,6 +656,7 @@ class Shopping extends Component {
 			<View style={[styles.container, Platform.OS === "web" && {width: "100%"}]}>
 				<View style={{width: "100%", height: "100%"}}>
 					<FlatList
+						ref={this.flatListRef}
 						data={this.state.groupedHistories}
 						keyExtractor={(item) => item.date}
 						onEndReachedThreshold={40}
