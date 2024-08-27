@@ -37,6 +37,7 @@ import AuthScreen from "../screens/auth/AuthScreen";
 const Tab = createBottomTabNavigator();
 const routesWithoutNavbar = [
 	"ProfitDetail",
+	"Auth",
 	"Login",
 	"Verification",
 	"ProductAdd",

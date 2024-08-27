@@ -14,7 +14,9 @@ class AuthScreen extends Component {
 				<Text style={styles.headerMainText}>Backallga hush kelibsiz</Text>
 				<Text style={styles.headerInfoText}>O’rta osiyodagi dokonlarni avtomatlashtirish uchun eng tez mobil
 					dastur. Bu hamyonbop va xavfsiz.</Text>
-				<TouchableOpacity style={styles.loginBtn}>
+				<TouchableOpacity style={styles.loginBtn} onPress={() => {
+					this.props.navigation.navigate("Login");
+				}}>
 					<Text style={styles.loginBtnText}>Kirish</Text>
 				</TouchableOpacity>
 				<TouchableOpacity style={styles.registerBtn}>
