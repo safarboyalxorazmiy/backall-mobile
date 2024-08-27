@@ -166,7 +166,7 @@ class Register extends Component {
 								<Text style={{color: "red", fontFamily: "Montserrat-Regular"}}>Login va parol xato.</Text>
 							</Animatable.View> : null}
 					<TouchableOpacity onPress={async () => {
-						await this.login()
+						this.props.navigation.navigate("RegisterVerification");
 					}}>
 						<View style={styles.button}>
 							<Text style={styles.buttonText}>Ro’yxatdan o’tish</Text>
