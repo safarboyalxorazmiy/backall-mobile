@@ -32,12 +32,14 @@ import ProductRepository from "../repository/ProductRepository";
 
 import ApiService from "./ApiService";
 import AuthScreen from "../screens/auth/AuthScreen";
+import Register from "../screens/auth/RegisterScreen";
 
 
 const Tab = createBottomTabNavigator();
 const routesWithoutNavbar = [
 	"ProfitDetail",
 	"Auth",
+	"Register",
 	"Login",
 	"Verification",
 	"ProductAdd",
@@ -182,6 +184,14 @@ class NavigationService extends Component {
 					<Tab.Screen
 						name="Auth"
 						component={AuthScreen}
+						options={({navigation}) => ({
+							title: "",
+							headerShown: false,
+						})}
+					/>
+					<Tab.Screen
+						name="Register"
+						component={Register}
 						options={({navigation}) => ({
 							title: "",
 							headerShown: false,
