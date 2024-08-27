@@ -500,12 +500,12 @@ class Shopping extends Component {
 				}, ...grouped[0].histories];
 			} else {
 				const formattedDate = this.formatDate(historyDate);
-				grouped.push({
+				grouped = [...[{
 					date: historyDate, // Make sure this matches your structure; it was 'historyDate' in your code, but 'date' elsewhere
 					dateInfo: formattedDate,
 					histories: [...sellHistories],
 					totalAmount: 0
-				});
+				}], ...grouped];
 			}
 
 			const startTime = performance.now();
