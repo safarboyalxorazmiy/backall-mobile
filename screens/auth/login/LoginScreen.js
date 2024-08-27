@@ -11,11 +11,11 @@ import {
 	Platform,
 	Linking
 } from "react-native";
-import Logo from "../../assets/logo.svg";
-import ApiService from "../../service/ApiService";
+import Logo from "../../../assets/logo.svg";
+import ApiService from "../../../service/ApiService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Animatable from "react-native-animatable";
-import BackIcon from "../../assets/arrow-left-icon.svg";
+import BackIcon from "../../../assets/arrow-left-icon.svg";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;

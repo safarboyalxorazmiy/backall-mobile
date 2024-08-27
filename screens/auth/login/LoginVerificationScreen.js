@@ -1,15 +1,15 @@
-import React, {Component} from "react";
+import React, {Component, memo} from "react";
 import {StyleSheet, View, Text, TouchableOpacity, TextInput, Dimensions} from "react-native";
-import GreenCircle from "../../assets/small-green-circle.svg";
-import RedCircle from "../../assets/small-red-circle.svg"
+import GreenCircle from "../../../assets/small-green-circle.svg";
+import RedCircle from "../../../assets/small-red-circle.svg"
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import ApiService from "../../service/ApiService";
-import TokenService from "../../service/TokenService";
+import ApiService from "../../../service/ApiService";
+import TokenService from "../../../service/TokenService";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
-class VerificationScreen extends Component {
+class LoginVerificationScreen extends Component {
 	constructor(props) {
 		super(props);
 
@@ -74,7 +74,8 @@ class VerificationScreen extends Component {
 				await AsyncStorage.setItem("isDownloaded", "false");
 				
 				await navigation.navigate("Home");
-			} else {
+			}
+			else {
 				this.setState({
 					verificationCode: "",
 					error: true
@@ -281,4 +282,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default VerificationScreen;
+export default memo(LoginVerificationScreen);

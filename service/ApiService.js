@@ -2560,6 +2560,51 @@ class ApiService {
 		}
 	}
 
+	async register(storeName, email, password, pinCode) {
+		await AsyncStorage.setItem("isRequestInProgress", "true");
+
+		try {
+			const response = await fetch(serverUrl + "/api/v1/auth/register", {
+				method: "POST",
+				headers: {
+					Accept: "application/json",
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+
+					firstname: "string",
+					lastname: "string",
+					storeName: storeName,
+					email: email,
+					password: password,
+					pinCode: pinCode,
+					role: "ROLE_SELLER"
+
+				}),
+			});
+
+			// Check if the response is ok
+			if (response.ok) {
+				// Return the parsed JSON response directly
+
+				await AsyncStorage.setItem("isRequestInProgress", "false")
+				return response.json();
+			} else {
+				// Handle non-successful responses
+				console.error("Request failed with status:", response.status);
+
+				await AsyncStorage.setItem("isRequestInProgress", "false")
+				return false; // Return false indicating failure
+			}
+		} catch (error) {
+			// Handle fetch errors
+			console.error("Error:", error);
+
+			await AsyncStorage.setItem("isRequestInProgress", "false");
+			return false; // Return false indicating failure
+		}
+	}
+
 
 	async getSellMonthAmount(navigation) {
 		try {

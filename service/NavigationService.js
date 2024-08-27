@@ -9,13 +9,13 @@ import Basket from "../screens/basket/BasketScreen";
 import Sell from "../screens/selling/SellScreen";
 import Shopping from "../screens/shopping/ShoppingScreen";
 import Profit from "../screens/profit/ProfitScreen";
-import Login from "../screens/auth/LoginScreen";
+import Login from "../screens/auth/login/LoginScreen";
 import ProductAdd from "../screens/basket/ProductAddScreen";
 import ProfitDetail from "../screens/profit/ProfitDetailScreen";
 import CalendarPage from "../screens/CalendarScreen";
 import ShoppingDetail from "../screens/shopping/ShoppingDetailScreen";
 import ProductEdit from "../screens/basket/ProductEditScreen";
-import VerificationScreen from "../screens/auth/VerificationScreen";
+import LoginVerificationScreen from "../screens/auth/login/LoginVerificationScreen";
 
 import DashboardIcon from "../assets/navbar/dashboard-icon.svg";
 import DashboardIconActive from "../assets/navbar/dashboard-icon-active.svg";
@@ -32,7 +32,8 @@ import ProductRepository from "../repository/ProductRepository";
 
 import ApiService from "./ApiService";
 import AuthScreen from "../screens/auth/AuthScreen";
-import Register from "../screens/auth/RegisterScreen";
+import Register from "../screens/auth/register/RegisterScreen";
+import RegisterVerificationScreen from "../screens/auth/register/RegisterVerificationScreen";
 
 
 const Tab = createBottomTabNavigator();
@@ -198,6 +199,14 @@ class NavigationService extends Component {
 						})}
 					/>
 					<Tab.Screen
+						name="RegisterVerification"
+						component={RegisterVerificationScreen}
+						options={({navigation}) => ({
+							title: "",
+							headerShown: false,
+						})}
+					/>
+					<Tab.Screen
 						name="Login"
 						component={Login}
 						options={({navigation}) => ({
@@ -206,8 +215,8 @@ class NavigationService extends Component {
 						})}
 					/>
 					<Tab.Screen
-						name="Verification"
-						component={VerificationScreen}
+						name="LoginVerification"
+						component={LoginVerificationScreen}
 						options={({navigation}) => ({
 							title: "",
 							headerShown: false,

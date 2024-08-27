@@ -1,7 +1,7 @@
 import React, {Component, memo} from "react";
 import {Dimensions, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
-import BackIcon from "../../assets/arrow-left-icon.svg";
-import Logo from "../../assets/logo.svg";
+import BackIcon from "../../../assets/arrow-left-icon.svg";
+import Logo from "../../../assets/logo.svg";
 import * as Animatable from "react-native-animatable";
 
 const screenWidth = Dimensions.get("window").width;
