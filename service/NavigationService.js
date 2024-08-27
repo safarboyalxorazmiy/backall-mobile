@@ -9,13 +9,13 @@ import Basket from "../screens/basket/BasketScreen";
 import Sell from "../screens/selling/SellScreen";
 import Shopping from "../screens/shopping/ShoppingScreen";
 import Profit from "../screens/profit/ProfitScreen";
-import Login from "../screens/login/LoginScreen";
+import Login from "../screens/auth/LoginScreen";
 import ProductAdd from "../screens/basket/ProductAddScreen";
 import ProfitDetail from "../screens/profit/ProfitDetailScreen";
 import CalendarPage from "../screens/CalendarScreen";
 import ShoppingDetail from "../screens/shopping/ShoppingDetailScreen";
 import ProductEdit from "../screens/basket/ProductEditScreen";
-import VerificationScreen from "../screens/login/VerificationScreen";
+import VerificationScreen from "../screens/auth/VerificationScreen";
 
 import DashboardIcon from "../assets/navbar/dashboard-icon.svg";
 import DashboardIconActive from "../assets/navbar/dashboard-icon-active.svg";
@@ -31,6 +31,7 @@ import StoreProductRepository from "../repository/StoreProductRepository";
 import ProductRepository from "../repository/ProductRepository";
 
 import ApiService from "./ApiService";
+import AuthScreen from "../screens/auth/AuthScreen";
 
 
 const Tab = createBottomTabNavigator();
@@ -174,6 +175,14 @@ class NavigationService extends Component {
 						initialParams={{hideScreen: true}}
 						options={({route, navigation}) => ({
 							tabBarVisible: false,
+							headerShown: false,
+						})}
+					/>
+					<Tab.Screen
+						name="Auth"
+						component={AuthScreen}
+						options={({navigation}) => ({
+							title: "",
 							headerShown: false,
 						})}
 					/>

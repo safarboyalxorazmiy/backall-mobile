@@ -32,6 +32,7 @@ import ApiService from "./service/ApiService";
 
 import RightArrow from "./assets/right-arrow.svg";
 import RightArrowLight from "./assets/right-arrow-light.svg"
+import AuthScreen from "./screens/auth/AuthScreen";
 
 const tokenService = new TokenService();
 
@@ -81,6 +82,9 @@ class App extends Component {
 				"Gilroy-SemiBold": require("./assets/fonts/gilroy/Gilroy-SemiBold.ttf"),
 				"Gilroy-Bold": require("./assets/fonts/gilroy/Gilroy-Bold.ttf"),
 				"Gilroy-Black": require("./assets/fonts/gilroy/Gilroy-Black.ttf"),
+				"Montserrat-Bold": require("./assets/fonts/montserrat/Montserrat-Bold.ttf"),
+				"Montserrat-Medium": require("./assets/fonts/montserrat/Montserrat-Medium.ttf"),
+
 			});
 
 			this.setState({fontsLoaded: true});
