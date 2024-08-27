@@ -82,6 +82,7 @@ class App extends Component {
 				"Gilroy-SemiBold": require("./assets/fonts/gilroy/Gilroy-SemiBold.ttf"),
 				"Gilroy-Bold": require("./assets/fonts/gilroy/Gilroy-Bold.ttf"),
 				"Gilroy-Black": require("./assets/fonts/gilroy/Gilroy-Black.ttf"),
+				"Montserrat-Regular": require("./assets/fonts/montserrat/Montserrat-Regular.ttf"),
 				"Montserrat-Bold": require("./assets/fonts/montserrat/Montserrat-Bold.ttf"),
 				"Montserrat-Medium": require("./assets/fonts/montserrat/Montserrat-Medium.ttf"),
 

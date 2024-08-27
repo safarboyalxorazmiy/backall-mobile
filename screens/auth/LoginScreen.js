@@ -15,6 +15,7 @@ import Logo from "../../assets/logo.svg";
 import ApiService from "../../service/ApiService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Animatable from "react-native-animatable";
+import BackIcon from "../../assets/arrow-left-icon.svg";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -68,9 +69,17 @@ class Login extends Component {
 	};
 
 	render() {
-		const {email, password, loading} = this.state;
+		const {email, password, loading, navigation} = this.state;
 		return (
 			<ScrollView contentContainerStyle={styles.container}>
+				<TouchableOpacity
+					onPress={() => {
+						this.props.navigation.navigate("Auth");
+					}}
+					style={styles.backIcon}>
+					<BackIcon/>
+				</TouchableOpacity>
+
 				{(Platform.OS === "android" || Platform.OS === "ios") ?
 					<Logo style={styles.logo} resizeMode="cover"/> :
 					<Logo style={styles.logo}/>}
@@ -88,7 +97,8 @@ class Login extends Component {
 							paddingHorizontal: 20,
 							fontSize: 18,
 							marginBottom: 16,
-							fontFamily: "Gilroy-Regular",
+							fontFamily: "Montserrat-Regular",
+							backgroundColor: (this.state.email.length > 0 ? "#FFF" :this.state.isLoginInputActive ? "#FFF" : "#EDF0F7"),
 						}}
 						placeholder="admin"
 						placeholderTextColor="#AFAFAF"
@@ -104,6 +114,7 @@ class Login extends Component {
 					/>
 					<Text style={styles.label}>Parolni kiriting</Text>
 					<TextInput
+						passwordRules={"required: upper; required: lower; required: digit; max-consecutive: 2; minlength: 8;"}
 						autoCapitalize="none"
 						style={{
 							height: 64,
@@ -115,7 +126,8 @@ class Login extends Component {
 							paddingHorizontal: 20,
 							fontSize: 18,
 							marginBottom: 16,
-							fontFamily: "Gilroy-Regular",
+							backgroundColor: (this.state.password.length > 0 ? "#FFF" : this.state.isPasswordInputActive ? "#FFF" : "#EDF0F7"),
+							fontFamily: "Montserrat-Regular",
 						}}
 						placeholder="********"
 						placeholderTextColor="#AFAFAF"
@@ -136,7 +148,7 @@ class Login extends Component {
 								width: screenWidth - (24 + 24),
 								marginBottom: 16,
 							}} animation="shake" duration={500}>
-								<Text style={{color: "red", fontFamily: "Gilroy-Regular"}}>Login va parol xato.</Text>
+								<Text style={{color: "red", fontFamily: "Montserrat-Regular"}}>Login va parol xato.</Text>
 							</Animatable.View> : null}
 					<TouchableOpacity onPress={async () => {
 						await this.login()
@@ -166,8 +178,17 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: "#fff",
 		alignItems: "center",
-		paddingTop: 104,
+		paddingTop: 142,
 		height: screenHeight
+	},
+	backIcon: {
+		backgroundColor: "#F5F5F7",
+		paddingVertical: 16,
+		paddingHorizontal: 19,
+		borderRadius: 50,
+		position: "absolute",
+		top: 50,
+		left: 20
 	},
 	logo: {
 		display: "block",
@@ -181,7 +202,7 @@ const styles = StyleSheet.create({
 	label: {
 		fontSize: 16,
 		fontWeight: "500",
-		fontFamily: "Gilroy-Medium",
+		fontFamily: "Montserrat-Medium",
 		marginBottom: 4,
 		width: screenWidth - (24 + 24)
 	},
@@ -194,14 +215,20 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 20,
 		fontSize: 18,
 		marginBottom: 16,
-		fontFamily: "Gilroy-Regular",
+		backgroundColor: "#EDF0F7",
+		fontFamily: "Montserrat-Regular",
 	},
 	button: {
+		marginTop: 14,
 		width: screenWidth - (24 + 24),
+		height: 66,
 		backgroundColor: "#222",
 		color: "white",
 		paddingVertical: 14,
 		borderRadius: 10,
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center"
 	},
 	buttonText: {
 		color: "white",
@@ -209,7 +236,7 @@ const styles = StyleSheet.create({
 		fontSize: 20,
 		textTransform: "capitalize",
 		fontWeight: "500",
-		fontFamily: "Gilroy-Medium"
+		fontFamily: "Montserrat-Medium"
 	},
 	forgotPasswordLink: {
 		alignItems: "center"
@@ -217,7 +244,7 @@ const styles = StyleSheet.create({
 	forgotPasswordText: {
 		fontSize: 16,
 		fontWeight: "500",
-		fontFamily: "Gilroy-Medium"
+		fontFamily: "Montserrat-Medium"
 	}
 });
 
