@@ -161,7 +161,7 @@ class LoginVerificationScreen extends Component {
 				<View style={styles.circle}></View>
 
 				<View>
-					<Text style={styles.headerText}>Tasdiqlash kodi yarating</Text>
+					<Text style={styles.headerText}>Tasdiqlash kodini kiriting</Text>
 				</View>
 
 				<View style={styles.inputContainer}>

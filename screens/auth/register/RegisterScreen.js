@@ -21,7 +21,10 @@ class Register extends Component {
 			password: "",
 
 			isPasswordVerifyInputActive: false,
-			passwordVerify: ""
+			passwordVerify: "",
+
+			isStoreNameInputActive: false,
+			storeName: ""
 		}
 	}
 
@@ -40,6 +43,34 @@ class Register extends Component {
 				</View>
 
 				<View style={styles.form}>
+					<Text style={styles.label}>Dokonni nomini kiriting</Text>
+					<TextInput
+						autoCapitalize="none"
+						style={{
+							height: 64,
+							width: screenWidth - (24 + 24),
+							borderWidth: 1,
+							borderRadius: 10,
+							borderColor: (this.state.isStoreNameInputActive ? "#000" : this.state.error ? "red" : "#AFAFAF"),
+							paddingVertical: 23,
+							paddingHorizontal: 20,
+							fontSize: 18,
+							marginBottom: 16,
+							fontFamily: "Montserrat-Regular",
+							backgroundColor: (this.state.storeName.length > 0 ? "#FFF" : this.state.isStoreNameInputActive ? "#FFF" : "#EDF0F7"),
+						}}
+						placeholder="admin"
+						placeholderTextColor="#AFAFAF"
+						cursorColor={"#000"}
+						value={this.state.storeName}
+						onFocus={() => {
+							this.setState({isStoreNameInputActive: true});
+						}}
+						onEndEditing={() => {
+							this.setState({isStoreNameInputActive: false});
+						}}
+						onChangeText={(text) => this.setState({storeName: text})}
+					/>
 					<Text style={styles.label}>Dokonni INNsini kiriting</Text>
 					<TextInput
 						autoCapitalize="none"

@@ -50,7 +50,7 @@ class Login extends Component {
 				await AsyncStorage.setItem("email", email + "@backall.uz");
 				await AsyncStorage.setItem("password", password);
 
-				this.props.navigation.navigate("Verification");
+				this.props.navigation.navigate("LoginVerification");
 			} else {
 				this.setState({
 					error: true
