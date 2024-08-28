@@ -24,6 +24,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import TrashIcon from "../../assets/trash-icon.svg";
 import TrashIconBlack from "../../assets/trash-icon-black.svg";
 import * as Animatable from "react-native-animatable";
+import {activateKeepAwake, activateKeepAwakeAsync, deactivateKeepAwake} from 'expo-keep-awake';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -96,6 +97,7 @@ class Sell extends Component {
 	}
 
 	async componentDidMount() {
+		await activateKeepAwakeAsync();
 		const {navigation} = this.props;
 
 		navigation.addListener("focus", async () => {
@@ -123,6 +125,10 @@ class Sell extends Component {
 				this.setState({thisMonthSellAmount: currentMonth});
 			}
 		});
+	}
+
+	async componentWillUnmount() {
+		await deactivateKeepAwake();
 	}
 
 	renderQuickActions = (item) => (
