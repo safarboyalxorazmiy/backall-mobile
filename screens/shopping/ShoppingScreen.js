@@ -129,7 +129,10 @@ class Shopping extends Component {
 			}
 
 			// New history created load new items **
-			if (await AsyncStorage.getItem("shoppingFullyLoaded") !== "true") {
+			if (
+				await AsyncStorage.getItem("shoppingFullyLoaded") !== null &&
+				await AsyncStorage.getItem("shoppingFullyLoaded") !== "true"
+			) {
 				// Remove date
 				await AsyncStorage.removeItem("ShoppingFromDate");
 				await AsyncStorage.removeItem("ShoppingToDate");

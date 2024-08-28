@@ -356,7 +356,10 @@ class Profit extends Component {
 			}
 
 			// New history created load new items **
-			if (await AsyncStorage.getItem("profitFullyLoaded") !== "true") {
+			if (
+				await AsyncStorage.getItem("profitFullyLoaded") !== null &&
+				await AsyncStorage.getItem("profitFullyLoaded") !== "true"
+			) {
 				// Remove date
 				await AsyncStorage.removeItem("ProfitFromDate");
 				await AsyncStorage.removeItem("ProfitToDate");
