@@ -45,6 +45,8 @@ class Register extends Component {
 				<View style={styles.form}>
 					<Text style={styles.label}>Dokonni nomini kiriting</Text>
 					<TextInput
+						scrollEnabled={false}
+
 						autoCapitalize="none"
 						style={{
 							height: 64,
@@ -52,12 +54,14 @@ class Register extends Component {
 							borderWidth: 1,
 							borderRadius: 10,
 							borderColor: (this.state.isStoreNameInputActive ? "#000" : this.state.error ? "red" : "#AFAFAF"),
-							paddingVertical: 23,
+							paddingVertical: 13,
 							paddingHorizontal: 20,
 							fontSize: 18,
 							marginBottom: 16,
 							fontFamily: "Montserrat-Regular",
 							backgroundColor: (this.state.storeName.length > 0 ? "#FFF" : this.state.isStoreNameInputActive ? "#FFF" : "#EDF0F7"),
+
+							
 						}}
 						placeholder="admin"
 						placeholderTextColor="#AFAFAF"
@@ -73,6 +77,8 @@ class Register extends Component {
 					/>
 					<Text style={styles.label}>Dokonni INNsini kiriting</Text>
 					<TextInput
+						scrollEnabled={false}
+
 						autoCapitalize="none"
 						style={{
 							height: 64,
@@ -80,12 +86,14 @@ class Register extends Component {
 							borderWidth: 1,
 							borderRadius: 10,
 							borderColor: (this.state.isEmailInputActive ? "#000" : this.state.error ? "red" : "#AFAFAF"),
-							paddingVertical: 23,
+							paddingVertical: 13,
 							paddingHorizontal: 20,
 							fontSize: 18,
 							marginBottom: 16,
 							fontFamily: "Montserrat-Regular",
 							backgroundColor: (this.state.email.length > 0 ? "#FFF" :this.state.isEmailInputActive ? "#FFF" : "#EDF0F7"),
+
+							
 						}}
 						placeholder="admin"
 						placeholderTextColor="#AFAFAF"
@@ -101,6 +109,8 @@ class Register extends Component {
 					/>
 					<Text style={styles.label}>Telefon raqam</Text>
 					<TextInput
+						scrollEnabled={false}
+
 						dataDetectorTypes={"phoneNumber"}
 						autoCapitalize="none"
 						style={{
@@ -109,15 +119,18 @@ class Register extends Component {
 							borderWidth: 1,
 							borderRadius: 10,
 							borderColor: (this.state.isPhoneInputActive ? "#000" : this.state.error ? "red" : "#AFAFAF"),
-							paddingVertical: 23,
+							paddingVertical: 13,
 							paddingHorizontal: 20,
 							fontSize: 18,
 							marginBottom: 16,
 							fontFamily: "Montserrat-Regular",
 							backgroundColor: (this.state.phone.length > 0 ? "#FFF" :this.state.isPhoneInputActive ? "#FFF" : "#EDF0F7"),
+
+							
 						}}
 						placeholder="+998 ** *** ** **"
 						placeholderTextColor="#AFAFAF"
+
 						cursorColor={"#000"}
 						value={this.state.phone}
 						onFocus={() => {
@@ -130,6 +143,8 @@ class Register extends Component {
 					/>
 					<Text style={styles.label}>Parolni kiriting</Text>
 					<TextInput
+						scrollEnabled={false}
+
 						passwordRules={"required: upper; required: lower; required: digit; max-consecutive: 2; minlength: 8;"}
 						autoCapitalize="none"
 						style={{
@@ -138,12 +153,14 @@ class Register extends Component {
 							borderWidth: 1,
 							borderRadius: 10,
 							borderColor: (this.state.isPasswordInputActive ? "#000" : this.state.error ? "red" : "#AFAFAF"),
-							paddingVertical: 23,
+							paddingVertical: 13,
 							paddingHorizontal: 20,
 							fontSize: 18,
 							marginBottom: 16,
 							backgroundColor: (this.state.password.length > 0 ? "#FFF" : this.state.isPasswordInputActive ? "#FFF" : "#EDF0F7"),
 							fontFamily: "Montserrat-Regular",
+
+							
 						}}
 						placeholder="********"
 						placeholderTextColor="#AFAFAF"
@@ -160,6 +177,8 @@ class Register extends Component {
 					/>
 					<Text style={styles.label}>Parolni tasdiqlang</Text>
 					<TextInput
+						scrollEnabled={false}
+
 						passwordRules={"required: upper; required: lower; required: digit; max-consecutive: 2; minlength: 8;"}
 						autoCapitalize="none"
 						style={{
@@ -168,12 +187,14 @@ class Register extends Component {
 							borderWidth: 1,
 							borderRadius: 10,
 							borderColor: (this.state.isPasswordVerifyInputActive ? "#000" : this.state.error ? "red" : "#AFAFAF"),
-							paddingVertical: 23,
+							paddingVertical: 13,
 							paddingHorizontal: 20,
 							fontSize: 18,
 							marginBottom: 16,
 							backgroundColor: (this.state.passwordVerify.length > 0 ? "#FFF" : this.state.isPasswordVerifyInputActive ? "#FFF" : "#EDF0F7"),
 							fontFamily: "Montserrat-Regular",
+
+
 						}}
 						placeholder="********"
 						placeholderTextColor="#AFAFAF"
