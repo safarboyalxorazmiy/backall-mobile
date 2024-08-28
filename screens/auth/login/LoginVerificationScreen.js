@@ -1,7 +1,9 @@
 import React, {Component, memo} from "react";
 import {StyleSheet, View, Text, TouchableOpacity, TextInput, Dimensions} from "react-native";
 import GreenCircle from "../../../assets/small-green-circle.svg";
+import BlackCircle from "../../../assets/small-black-circle.svg";
 import RedCircle from "../../../assets/small-red-circle.svg"
+import BackspaceIcon from "../../../assets/backspace-icon.svg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ApiService from "../../../service/ApiService";
 import TokenService from "../../../service/TokenService";
@@ -72,10 +74,9 @@ class LoginVerificationScreen extends Component {
 				await AsyncStorage.setItem("loadShopping", "true");
 				await AsyncStorage.setItem("loadBasket", "true");
 				await AsyncStorage.setItem("isDownloaded", "false");
-				
+
 				await navigation.navigate("Home");
-			}
-			else {
+			} else {
 				this.setState({
 					verificationCode: "",
 					error: true
@@ -94,49 +95,38 @@ class LoginVerificationScreen extends Component {
 	renderCustomKeyboard() {
 		// Define custom keyboard layout
 		const keyboardLayout = [
-			["1", "2", "3"],
-			["4", "5", "6"],
-			["7", "8", "9"],
-			["", "0", ""]
+			['1', '2', '3'],
+			['4', '5', '6'],
+			['7', '8', '9'],
+			['0', 'Delete'],
 		];
 
-		return keyboardLayout.map((row, rowIndex) => (
-			<View key={rowIndex} style={styles.keyboardRow}>
-				{row.map((key, keyIndex) => (
-					<TouchableOpacity
-						key={keyIndex}
-						style={this.state.focusedKey == key ? {
-							width: 100,
-							height: 100,
-							display: "flex",
-							justifyContent: "center",
-							alignItems: "center",
-							marginHorizontal: 5,
-							backgroundColor: "#222",
-							borderRadius: 50
-						} : styles.keyboardKey}
-
-						onPressIn={() => {
-							this.setState({focusedKey: key});
-							console.log(key);
-
-							if (key === "Delete") {
-								this.handleDelete();
-							} else {
-								this.handleKeyPress(key);
-							}
-						}}
-
-						onPressOut={() => {
-							this.setState({focusedKey: null});
-						}}
-
-						activeOpacity={1}>
-						<Text style={styles.keyText}>{key}</Text>
-					</TouchableOpacity>
-				))}
-			</View>
-		));
+		return (
+			keyboardLayout.map((row, rowIndex) => (
+				<View key={rowIndex} style={styles.keyboardRow}>
+					{row.map((key, keyIndex) => (
+						<TouchableOpacity
+							key={keyIndex}
+							style={this.state.focusedKey === key ? styles.focusedKey : key === 'Delete' ?  styles.keyboardBackspaceKey : styles.keyboardKey}
+							onPressIn={() => {
+								this.setState({focusedKey: key});
+								if (key === 'Delete') {
+									this.handleDelete();
+								} else {
+									this.handleKeyPress(key);
+								}
+							}}
+							onPressOut={() => {
+								this.setState({focusedKey: null});
+							}}
+							activeOpacity={1}
+						>
+							{key === 'Delete' ? <BackspaceIcon/> : <Text style={styles.keyText}>{key}</Text>}
+						</TouchableOpacity>
+					))}
+				</View>
+			))
+		);
 	}
 
 	renderCircles() {
@@ -155,7 +145,9 @@ class LoginVerificationScreen extends Component {
 			} else {
 				// Render GreenCircle or RedCircle based on the value of error
 				circles.push(
-					error ? <RedCircle key={i}/> : <GreenCircle key={i}/>
+					<View key={i} style={{height: 38, display: "flex", alignItems: "center", justifyContent: "center"}}>
+						{error ? <RedCircle key={i}/> : <BlackCircle key={i}/>}
+					</View>
 				);
 			}
 		}
@@ -169,8 +161,7 @@ class LoginVerificationScreen extends Component {
 				<View style={styles.circle}></View>
 
 				<View>
-					<Text style={styles.headerText}>Tasdiqlash kodi</Text>
-					<Text style={styles.headerInfo}>Iltimos administrator tomonidan berilgan tasdiqlash kodini kiriting</Text>
+					<Text style={styles.headerText}>Tasdiqlash kodi yarating</Text>
 				</View>
 
 				<View style={styles.inputContainer}>
@@ -203,17 +194,40 @@ const styles = StyleSheet.create({
 	keyboardRow: {
 		display: "flex",
 		flexDirection: "row",
-		columnGap: 30,
+		columnGap: 40,
 		marginBottom: 25,
 	},
 
 	keyboardKey: {
 		marginHorizontal: 5,
-		width: 100,
-		height: 100,
+		width: 80,
+		height: 80,
 		display: "flex",
 		justifyContent: "center",
 		alignItems: "center",
+		backgroundColor: "#D9D9D9",
+		borderRadius: 9
+	},
+
+	focusedKey: {
+		marginHorizontal: 5,
+		width: 80,
+		height: 80,
+		display: "flex",
+		justifyContent: "center",
+		alignItems: "center",
+		backgroundColor: "#eae9e9",
+		borderRadius: 9
+	},
+
+	keyboardBackspaceKey: {
+		marginHorizontal: 5,
+		width: 80,
+		height: 80,
+		display: "flex",
+		justifyContent: "center",
+		alignItems: "center",
+		borderRadius: 9
 	},
 
 	keyText: {
@@ -225,7 +239,7 @@ const styles = StyleSheet.create({
 	circle: {
 		width: 200,
 		height: 200,
-		backgroundColor: "#F4C23D",
+		backgroundColor: "#D9D9D9",
 		borderRadius: 100,
 		position: "absolute",
 		top: -50,
@@ -253,21 +267,18 @@ const styles = StyleSheet.create({
 
 	keyboardContainer: {
 		display: "flex",
-		alignItems: "center",
+		alignItems: "flex-end",
 		position: "absolute",
-		bottom: (
-			screenHeight >= 750 ? 0 :
-				screenHeight >= 600 ? -40 :
-					-50
-		),
-		left: 0,
-		right: 0,
-		marginTop: 100
+		bottom: 25,
+		left: 25,
+		right: 25,
+		marginTop: 20,
+
 	},
 
 	inputContainer: {
 		paddingTop: 50,
-		paddingBottom: 50,
+		paddingBottom: 0,
 		display: "flex",
 		flexDirection: "row",
 		justifyContent: "center",
@@ -277,7 +288,7 @@ const styles = StyleSheet.create({
 
 	codeText: {
 		fontSize: 38,
-		fontFamily: "Gilroy-Bold",
+		fontFamily: "Gilroy-Bold"
 	}
 
 });
