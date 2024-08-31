@@ -501,13 +501,14 @@ class Shopping extends Component {
 					amount,
 					saved: true
 				}, ...grouped[0].histories];
+				grouped[0].totalAmount = await this.amountDateRepository.getSellAmountInfoByDate(historyDate).catch(() => 0);
 			} else {
 				const formattedDate = this.formatDate(historyDate);
 				grouped = [...[{
 					date: historyDate, // Make sure this matches your structure; it was 'historyDate' in your code, but 'date' elsewhere
 					dateInfo: formattedDate,
 					histories: [...sellHistories],
-					totalAmount: 0
+					totalAmount: await this.amountDateRepository.getSellAmountInfoByDate(historyDate).catch(() => 0)
 				}], ...grouped];
 			}
 
