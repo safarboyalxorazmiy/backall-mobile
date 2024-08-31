@@ -248,38 +248,21 @@ class StoreProductRepository {
 							if (results.rows.length > 0) {
 								let currentCount = results.rows.item(0).count;
 								let newCount = currentCount - count;
-								if (newCount <= 0) {
-									// If new count is zero or negative, delete the product
-									tx.executeSql(
-										`DELETE
-                     FROM store_product
-                     WHERE product_id = ?`,
-										[productId],
-										(_, results) => {
-											resolve(true);
-										},
-										(_, error) => {
-											console.error("Error deleting store product:", error);
-											reject(false);
-										}
-									);
-								} else {
-									// Otherwise, update the count
-									tx.executeSql(
-										`UPDATE store_product
-                     SET count   = ?,
-                         updated = 0
-                     WHERE product_id = ?`,
-										[newCount, productId],
-										(_, results) => {
-											resolve(true);
-										},
-										(_, error) => {
-											console.error("Error updating store product count:", error);
-											reject(false);
-										}
-									);
-								}
+
+								tx.executeSql(
+									`UPDATE store_product
+										SET count   = ?,
+												updated = 0
+										WHERE product_id = ?`,
+									[newCount, productId],
+									(_, results) => {
+										resolve(true);
+									},
+									(_, error) => {
+										console.error("Error updating store product count:", error);
+										reject(false);
+									}
+								);
 							} else {
 								console.error("Product not found in the store");
 								reject(false);
