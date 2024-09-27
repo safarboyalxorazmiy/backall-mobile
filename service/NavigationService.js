@@ -264,7 +264,7 @@ class NavigationService extends Component {
 		const focusedRouteName = state.routes[state.index].name;
 
 		if (focusedRouteName === "Sell" || routesWithoutNavbar.includes(focusedRouteName)) {
-			return null;
+			return (<></>);
 		}
 
 		return (

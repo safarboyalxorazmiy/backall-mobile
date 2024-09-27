@@ -482,7 +482,7 @@ class Basket extends Component {
 
 
 				{/* Add Button */}
-				{this.state.role === "SELLER" ? (
+				{this.state.role === "SELLER" || this.state.role === "SELLER_BOSS" ? (
 					<TouchableOpacity
 						style={this.state.addButtonStyle}
 						onPress={() => {

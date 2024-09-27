@@ -103,7 +103,7 @@ class Sell extends Component {
 		navigation.addListener("focus", async () => {
 			let role = await AsyncStorage.getItem("role");
 
-			if (role !== "SELLER") {
+			if (!(role === "SELLER" || role === "SELLER_BOSS")) {
 				this.setState({
 					autoFocus: false
 				})
@@ -1364,28 +1364,19 @@ class Sell extends Component {
 		const currentMonth = currentDate.getMonth();
 		await AsyncStorage.setItem("month", currentMonth + "");
 
-		let lastSellAmount = await AsyncStorage.getItem("month_sell_amount")
-		let lastProfitAmount = await AsyncStorage.getItem("month_profit_amount")
+		let lastSellAmount = await AsyncStorage.getItem("month_sell_amount");
+		let lastProfitAmount = await AsyncStorage.getItem("month_profit_amount");
 
-		if (lastSellAmount == null || lastSellAmount == "") {
-			await AsyncStorage.setItem("month_sell_amount", this.state.amount + "");
-		} else {
-			let calc = parseInt(lastSellAmount) + this.state.amount;
-			await AsyncStorage.setItem(
-				"month_sell_amount",
-				calc + ""
-			);
-		}
+		const newSellAmount = lastSellAmount == null || lastSellAmount === ""
+			? this.state.amount
+			: parseInt(lastSellAmount) + this.state.amount;
 
-		if (lastProfitAmount == null || lastProfitAmount == "") {
-			await AsyncStorage.setItem("month_profit_amount", this.state.profit + "");
-		} else {
-			let calc = parseInt(lastProfitAmount) + this.state.profit;
-			await AsyncStorage.setItem(
-				"month_profit_amount",
-				calc + ""
-			);
-		}
+		const newProfitAmount = lastProfitAmount == null || lastProfitAmount === ""
+			? this.state.profit
+			: parseInt(lastProfitAmount) + this.state.profit;
+
+		await AsyncStorage.setItem("month_sell_amount", newSellAmount.toString());
+		await AsyncStorage.setItem("month_profit_amount", newProfitAmount.toString());
 
 		this.setState({
 			isModalVisible: false,
