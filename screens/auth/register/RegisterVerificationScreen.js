@@ -1,6 +1,5 @@
 import React, {Component, memo} from "react";
 import {StyleSheet, View, Text, TouchableOpacity, TextInput, Dimensions} from "react-native";
-import GreenCircle from "../../../assets/small-green-circle.svg";
 import BlackCircle from "../../../assets/small-black-circle.svg";
 import RedCircle from "../../../assets/small-red-circle.svg"
 import BackspaceIcon from "../../../assets/backspace-icon.svg";
@@ -18,42 +17,52 @@ class RegisterVerificationScreen extends Component {
 		this.state = {
 			verificationCode: "",
 			error: false,
-			focusedKey: null
+			focusedKey: null,
+			idempotencyKey: this.generateIdempotencyKey()
 		};
 
 		this.apiService = new ApiService();
 		this.tokenService = new TokenService();
 	}
 
+	generateIdempotencyKey() {
+		return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+	};
+
 	handleKeyPress = async (key) => {
-		// Update verification code state when a key is pressed
 		this.setState(prevState => ({
 			verificationCode: prevState.verificationCode + key
 		}));
 
 		if (this.state.verificationCode.length === 3) {
-			if (await AsyncStorage.getItem("isRequestInProgress") == "true") {
+			if (await AsyncStorage.getItem("isRequestInProgress") === "true") {
 				return;
 			}
 
 			const {navigation} = this.props;
 
+			let storeName = await AsyncStorage.getItem("storeName");
+			let phone = await AsyncStorage.getItem("phone");
 			let email = await AsyncStorage.getItem("email");
 			let password = await AsyncStorage.getItem("password");
 
-			let result = await this.apiService.login(
+			console.log(this.state.idempotencyKey)
+			let result = await this.apiService.register(
+				this.state.idempotencyKey,
+				"Userjon",
+				"Userjonov",
+				storeName,
+				phone,
 				email,
 				password,
 				this.state.verificationCode
 			);
 
-			console.log(
-				email,
-				password,
-				this.state.verificationCode
-			)
-
-			if (result.access_token && result.refresh_token && result.role) {
+			if (
+				result.access_token &&
+				result.refresh_token &&
+				result.role
+			) {
 				await this.tokenService.storeAccessToken(result.access_token);
 				await this.tokenService.storeRefreshToken(result.refresh_token);
 				await AsyncStorage.setItem("role", result.role);
@@ -86,7 +95,6 @@ class RegisterVerificationScreen extends Component {
 	}
 
 	handleDelete = () => {
-		// Delete the last character from verification code
 		this.setState(prevState => ({
 			verificationCode: prevState.verificationCode.slice(0, -1)
 		}));
@@ -107,7 +115,7 @@ class RegisterVerificationScreen extends Component {
 					{row.map((key, keyIndex) => (
 						<TouchableOpacity
 							key={keyIndex}
-							style={this.state.focusedKey === key ? styles.focusedKey : key === 'Delete' ?  styles.keyboardBackspaceKey : styles.keyboardKey}
+							style={this.state.focusedKey === key ? styles.focusedKey : key === 'Delete' ? styles.keyboardBackspaceKey : styles.keyboardKey}
 							onPressIn={() => {
 								this.setState({focusedKey: key});
 								if (key === 'Delete') {

@@ -2485,16 +2485,12 @@ class ApiService {
 
 		console.log(serverUrl + "/api/v1/auth/check")
 		try {
-			const response = await fetch(serverUrl + "/api/v1/auth/check", {
-				method: "POST",
+			const response = await fetch(serverUrl + "/api/v1/auth/check?email=" + email + "&password=" + password, {
+				method: "GET",
 				headers: {
 					Accept: "application/json",
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({
-					email: email,
-					password: password,
-				}),
 			});
 
 			// Check if the response is ok
@@ -2518,6 +2514,39 @@ class ApiService {
 
 			await AsyncStorage.setItem("isRequestInProgress", "false");
 			return false; // Return false indicating failure
+		}
+	}
+
+	async checkEmail(email) {
+		await AsyncStorage.setItem("isRequestInProgress", "true");
+
+		console.log(serverUrl + "/api/v1/auth/check?email=" + email)
+		try {
+			const response = await fetch(serverUrl + "/api/v1/auth/check?email=" + email, {
+				method: "GET",
+				headers: {
+					Accept: "application/json",
+					"Content-Type": "application/json",
+				},
+			});
+
+			if (response.ok) {
+				const data = await response.json();
+				const result = data;
+
+				await AsyncStorage.setItem("isRequestInProgress", "false");
+				return result;
+			} else {
+				console.error("Request failed with status:", response.status);
+
+				await AsyncStorage.setItem("isRequestInProgress", "false");
+				return false;
+			}
+		} catch (error) {
+			console.error("Error:", error);
+
+			await AsyncStorage.setItem("isRequestInProgress", "false");
+			return false;
 		}
 	}
 
@@ -2560,48 +2589,54 @@ class ApiService {
 		}
 	}
 
-	async register(storeName, email, password, pinCode) {
+	async register(idempotencyKey, firstName, lastName, storeName, phone, email, password, pinCode) {
 		await AsyncStorage.setItem("isRequestInProgress", "true");
 
+		console.log(serverUrl + "/api/v1/auth/register");
+		console.log(
+			JSON.stringify({
+				firstname: firstName,
+				lastname: lastName,
+				storeName: storeName,
+				phone: phone,
+				email: email,
+				password: password,
+				pinCode: pinCode
+			})
+		);
 		try {
 			const response = await fetch(serverUrl + "/api/v1/auth/register", {
 				method: "POST",
 				headers: {
 					Accept: "application/json",
 					"Content-Type": "application/json",
+					"Idempotency-Key": idempotencyKey
 				},
 				body: JSON.stringify({
-
-					firstname: "string",
-					lastname: "string",
+					firstname: firstName,
+					lastname: lastName,
 					storeName: storeName,
+					phone: phone,
 					email: email,
 					password: password,
-					pinCode: pinCode,
-					role: "ROLE_SELLER"
-
+					pinCode: pinCode
 				}),
 			});
 
-			// Check if the response is ok
 			if (response.ok) {
-				// Return the parsed JSON response directly
-
 				await AsyncStorage.setItem("isRequestInProgress", "false")
 				return response.json();
 			} else {
-				// Handle non-successful responses
 				console.error("Request failed with status:", response.status);
 
 				await AsyncStorage.setItem("isRequestInProgress", "false")
-				return false; // Return false indicating failure
+				return false;
 			}
 		} catch (error) {
-			// Handle fetch errors
 			console.error("Error:", error);
 
 			await AsyncStorage.setItem("isRequestInProgress", "false");
-			return false; // Return false indicating failure
+			return false;
 		}
 	}
 
