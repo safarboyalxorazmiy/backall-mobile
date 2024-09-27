@@ -508,7 +508,6 @@ class ApiService {
 
 	async getLastSellGroupGlobalId(navigation) {
 		try {
-			// Retrieve the access token and store ID
 			const accessToken = await this.tokenService.retrieveAccessToken();
 			let storeId = await this.getStoreId();
 
@@ -518,7 +517,6 @@ class ApiService {
 				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
 			}
 
-			// Define request options
 			const requestOptions = {
 				method: "GET",
 				headers: {
@@ -527,35 +525,33 @@ class ApiService {
 				}
 			};
 
-			// Construct the request URL
 			const url = `http://api.backall.uz/api/v1/store/sell/group/get/lastId?storeId=${storeId}`;
 			console.log("Sending request to:", url);
 			console.log("Request options:", requestOptions);
 
-			// Send the request
 			const response = await fetch(url, requestOptions);
 			console.log("Response status:", response.status);
 
-			// Handle 401 Unauthorized response
 			if (response.status === 401) {
 				await this.logout(navigation);
 				return;
 			}
 
-			// Check if the response is not OK
-			if (!response.ok) {
-				throw new Error(`Network response was not ok: ${response.statusText}`);
+			if (response.status === 404) {
+				return -1;
 			}
 
-			// Parse and log the response body
+			if (!response.ok) {
+				throw new Error(`Network response was not ok: ${response.message || response.statusText}`);
+			}
+
 			const responseBody = await response.text();
 			console.log("Response body:", responseBody);
 
-			// Return the response body as an integer
 			return parseInt(responseBody, 10);
 		} catch (error) {
 			console.error("Error occurred:", error);
-			throw error; // Re-throw the error for handling in the calling code
+			throw error;
 		}
 	}
 
@@ -967,7 +963,6 @@ class ApiService {
 
 	async getLastSellAmountDateGlobalId(navigation) {
 		try {
-			// Retrieve the access token and store ID
 			const accessToken = await this.tokenService.retrieveAccessToken();
 			let storeId = await this.getStoreId();
 
@@ -977,8 +972,6 @@ class ApiService {
 				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
 			}
 
-
-			// Define request options
 			const requestOptions = {
 				method: "GET",
 				headers: {
@@ -987,22 +980,22 @@ class ApiService {
 				}
 			};
 
-			// Construct the request URL
 			const url = `http://api.backall.uz/api/v1/store/sell/amount/date/get/lastId?storeId=${storeId}`;
 			console.log("Sending request to:", url);
 			console.log("Request options:", requestOptions);
 
-			// Send the request
 			const response = await fetch(url, requestOptions);
 			console.log("Response status:", response.status);
 
-			// Handle 401 Unauthorized response
 			if (response.status === 401) {
 				await this.logout(navigation);
 				return;
 			}
 
-			// Check if the response is not OK
+			if (response.status === 404) {
+				return -1;
+			}
+
 			if (!response.ok) {
 				throw new Error(`Network response was not ok: ${response.statusText}`);
 			}
@@ -1010,11 +1003,10 @@ class ApiService {
 			const responseBody = await response.text();
 			console.log("Response body:", responseBody);
 
-			// Return the response body
 			return parseInt(responseBody, 10);
 		} catch (error) {
 			console.error("Error occurred:", error);
-			throw error; // Re-throw the error for handling in the calling code
+			throw error;
 		}
 	}
 
@@ -1407,18 +1399,16 @@ class ApiService {
 
 	async getLastProfitGroupGlobalId(navigation) {
 		try {
-			// Retrieve the access token and store ID
-			const accessToken = await this.tokenService.retrieveAccessToken();
+			const accessToken =
+				await this.tokenService.retrieveAccessToken();
 			let storeId = await this.getStoreId();
 
 			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
-				storeId = Number(storeId); // Convert to a Number if it's safe
+				storeId = Number(storeId);
 			} else {
-				storeId = BigInt(storeId); // Convert to a BigInt if the number is large
+				storeId = BigInt(storeId);
 			}
 
-
-			// Define request options
 			const requestOptions = {
 				method: "GET",
 				headers: {
@@ -1427,35 +1417,33 @@ class ApiService {
 				}
 			};
 
-			// Construct the request URL
 			const url = `http://api.backall.uz/api/v1/store/profit/group/lastId?storeId=${storeId}`;
 			console.log("Sending request to:", url);
 			console.log("Request options:", requestOptions);
 
-			// Send the request
 			const response = await fetch(url, requestOptions);
 			console.log("Response status:", response.status);
 
-			// Handle 401 Unauthorized response
 			if (response.status === 401) {
 				await this.logout(navigation);
 				return;
 			}
 
-			// Check if the response is not OK
-			if (!response.ok) {
-				throw new Error(`Network response was not ok: ${response.statusText}`);
+			if (response.status === 404) {
+				return -1;
 			}
 
-			// Parse and log the response body
+			if (!response.ok) {
+				throw new Error("Network response was not ok");
+			}
+
 			const responseBody = await response.text();
 			console.log("Response body:", responseBody);
 
-			// Return the response body as an integer
 			return parseInt(responseBody, 10);
 		} catch (error) {
-			console.error("Error occurred:", error);
-			throw error; // Re-throw the error for handling in the calling code
+			console.log("Error occurred: ", error);
+			throw error;
 		}
 	}
 
@@ -1985,7 +1973,8 @@ class ApiService {
 
 	async getLastProfitAmountDateId(navigation) {
 		try {
-			const accessToken = await this.tokenService.retrieveAccessToken();
+			const accessToken =
+				await this.tokenService.retrieveAccessToken();
 			let storeId = await this.getStoreId();
 
 			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
@@ -2016,6 +2005,10 @@ class ApiService {
 			if (response.status === 401) {
 				await this.logout(navigation);
 				return;
+			}
+
+			if (response.status === 404) {
+				return -1;
 			}
 
 			// Read the response body as text

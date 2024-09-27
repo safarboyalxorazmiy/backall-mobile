@@ -98,14 +98,14 @@ class Home extends Component {
 
 		console.log("component mounted!")
 
-		
+
 		this.unsubscribe = NetInfo.addEventListener((state) => {
 			this.setState({isConnected: state.isConnected});
 		});
 
 		navigation.addListener("focus", async () => {
 			console.log("HOME NAVIGATED");
-			
+
 			this.unsubscribe = NetInfo.addEventListener((state) => {
 				this.setState({isConnected: state.isConnected});
 			});
@@ -167,7 +167,7 @@ class Home extends Component {
 					this.setState({notAllowed: notAllowed});
 				}
 			}
-			
+
 			console.log("FOCUSED");
 			console.log("-------");
 
@@ -481,7 +481,10 @@ class Home extends Component {
 
 			for (const product of response.content) {
 				try {
-					let bySerialNumber = await this.productRepository.findProductsBySerialNumberAndSavedTrue(product.serialNumber);
+					let bySerialNumber =
+						await this.productRepository.findProductsBySerialNumberAndSavedTrue(
+							product.serialNumber
+						);
 					if (bySerialNumber.length === 0) {
 						await this.productRepository.createProductWithGlobalId(
 							product.id,
@@ -557,14 +560,17 @@ class Home extends Component {
 	// SELL PAGINATION
 	async getSellGroupsAndHistories() {
 		// GET LAST ID OF GROUPS
-
-		let lastSellGroupGlobalId =
-			await this.apiService.getLastSellGroupGlobalId(this.props.navigation);
-
 		console.log("GETTING SELL GROUPS ⏳⏳⏳");
 
 		let response;
 		try {
+			let lastSellGroupGlobalId =
+				await this.apiService.getLastSellGroupGlobalId(this.props.navigation);
+
+			if (lastSellGroupGlobalId === -1) { // NO GROUPS EXIST JUST BREAK THE PROCESS
+				return true;
+			}
+
 			response =
 				await this.apiService.getSellGroups(
 					lastSellGroupGlobalId,
@@ -574,16 +580,11 @@ class Home extends Component {
 				);
 		} catch (error) {
 			console.error("Error fetching global products:", error);
-			this.setState({
-				lastSize: size,
-				lastPage: page
-			});
-
-			return false; // Indicate failure
+			return false;
 		}
 
 		if (!response || !response.content || response.content.length === 0) {
-			return true; // Indicate success and exit the loop
+			return true;
 		}
 
 		for (const sellGroup of response.content) {
@@ -634,11 +635,15 @@ class Home extends Component {
 
 	async getSellAmountDate() {
 		console.log("GETTING SELL AMOUNT DATE ⏳⏳⏳");
-		let lastSellAmountGlobalId =
-			await this.apiService.getLastSellAmountDateGlobalId(this.props.navigation);
-
 		let response;
 		try {
+			let lastSellAmountGlobalId =
+				await this.apiService.getLastSellAmountDateGlobalId(this.props.navigation);
+
+			if (lastSellAmountGlobalId === -1) {
+				return true;
+			}
+
 			response = await this.apiService.getSellAmountDate(
 				lastSellAmountGlobalId + 1, 0, 1000, this.props.navigation
 			);
@@ -677,11 +682,16 @@ class Home extends Component {
 	// PROFIT
 	async getProfitGroupsAndHistories() {
 		console.log("GETTING PROFIT GROUPS ⏳⏳⏳");
-		let lastProfitGroupGlobalId =
-			await this.apiService.getLastProfitGroupGlobalId(this.props.navigation);
 
 		let response;
 		try {
+			let lastProfitGroupGlobalId =
+				await this.apiService.getLastProfitGroupGlobalId(this.props.navigation);
+
+			if (lastProfitGroupGlobalId === -1) { // NO GROUPS EXIST JUST BREAK THE PROCESS
+				return true;
+			}
+
 			response = await this.apiService.getProfitGroups(
 				lastProfitGroupGlobalId, 0, 1000, this.props.navigation
 			);
@@ -692,7 +702,7 @@ class Home extends Component {
 				lastPage: 0
 			});
 
-			return false; // Indicate failure
+			return false;
 		}
 
 		if (!response || !response.content || response.content.length === 0) {
@@ -754,12 +764,15 @@ class Home extends Component {
 
 	async getProfitAmountDate() {
 		console.log("GETTING PROFIT AMOUNT DATE ⏳⏳⏳");
-
-		let lastProfitAmountDateGlobalId =
-			await this.apiService.getLastProfitAmountDateId(this.props.navigation);
-
 		let response;
 		try {
+			let lastProfitAmountDateGlobalId =
+				await this.apiService.getLastProfitAmountDateId(this.props.navigation);
+
+			if (lastProfitAmountDateGlobalId === -1) {
+				return true;
+			}
+
 			response = await this.apiService.getProfitAmountDate(
 				lastProfitAmountDateGlobalId + 1, 0, 1000, this.props.navigation
 			);
@@ -770,7 +783,7 @@ class Home extends Component {
 				lastPage: 1000
 			});
 
-			return false; // Indicate failure
+			return false;
 		}
 
 		if (!response || !response.content || response.content.length === 0) {
