@@ -548,7 +548,11 @@ class ApiService {
 			const responseBody = await response.text();
 			console.log("Response body:", responseBody);
 
-			return parseInt(responseBody, 10);
+			if (BigInt(responseBody) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				return Number(responseBody);
+			} else {
+				return BigInt(responseBody);
+			}
 		} catch (error) {
 			console.error("Error occurred:", error);
 			throw error;
@@ -605,8 +609,11 @@ class ApiService {
 			const responseBody = await response.text();
 			console.log("Response body:", responseBody);
 
-			// Return the response body as an integer
-			return parseInt(responseBody, 10);
+			if (BigInt(responseBody) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				return Number(responseBody);
+			} else {
+				return BigInt(responseBody);
+			}
 		} catch (error) {
 			console.error("Error occurred:", error);
 			throw error; // Re-throw the error for handling in the calling code
@@ -804,8 +811,11 @@ class ApiService {
 			const responseBody = await response.text();
 			console.log("Response body:", responseBody);
 
-			// Return the response body as an integer
-			return parseInt(responseBody, 10);
+			if (BigInt(responseBody) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				return Number(responseBody);
+			} else {
+				return BigInt(responseBody);
+			}
 		} catch (error) {
 			console.error("Error occurred:", error);
 			throw error; // Re-throw the error for handling in the calling code
@@ -1003,7 +1013,11 @@ class ApiService {
 			const responseBody = await response.text();
 			console.log("Response body:", responseBody);
 
-			return parseInt(responseBody, 10);
+			if (BigInt(responseBody) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				return Number(responseBody);
+			} else {
+				return BigInt(responseBody);
+			}
 		} catch (error) {
 			console.error("Error occurred:", error);
 			throw error;
@@ -1191,8 +1205,11 @@ class ApiService {
 			const responseBody = await response.text();
 			console.log("Response body:", responseBody);
 
-			// Return the response body
-			return parseInt(responseBody, 10);
+			if (BigInt(responseBody) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				return Number(responseBody);
+			} else {
+				return BigInt(responseBody);
+			}
 		} catch (error) {
 			console.error("Error occurred:", error);
 			throw error; // Re-throw the error for handling in the calling code
@@ -1440,7 +1457,11 @@ class ApiService {
 			const responseBody = await response.text();
 			console.log("Response body:", responseBody);
 
-			return parseInt(responseBody, 10);
+			if (BigInt(responseBody) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				return Number(responseBody);
+			} else {
+				return BigInt(responseBody);
+			}
 		} catch (error) {
 			console.log("Error occurred: ", error);
 			throw error;
@@ -1629,8 +1650,11 @@ class ApiService {
 			const responseBody = await response.text();
 			console.log("Response body:", responseBody);
 
-			// Return the response body as an integer
-			return parseInt(responseBody, 10);
+			if (BigInt(responseBody) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				return Number(responseBody);
+			} else {
+				return BigInt(responseBody);
+			}
 		} catch (error) {
 			console.log("Error occurred:", error);
 			throw error; // Re-throwing the error for handling in the calling code
@@ -1861,6 +1885,7 @@ class ApiService {
 			console.log("Response status:", response.status);
 
 			if (response.status === 401) {
+				console.log(`Bearer ${accessToken}`, `${serverUrl}/api/v1/store/profit/link/get/lastId?storeId=${storeId}`)
 				await this.logout(navigation);
 				return;
 			}
@@ -1870,7 +1895,11 @@ class ApiService {
 			console.log("Response body:", responseBody);
 
 			// Return the response body as an integer
-			return parseInt(responseBody, 10);
+			if (BigInt(responseBody) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				return Number(responseBody); // Convert to a Number if it's safe
+			} else {
+				return BigInt(responseBody); // Convert to a BigInt if the number is large
+			}
 		} catch (error) {
 			console.log("Error occurred:", error);
 			throw error; // Re-throwing the error for handling in the calling code
@@ -2016,7 +2045,12 @@ class ApiService {
 			console.log("Response body:", responseBody);
 
 			// Return the response body as an integer
-			return parseInt(responseBody, 10);
+			
+			if (BigInt(responseBody) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				return Number(responseBody); // Convert to a Number if it's safe
+			} else {
+				return BigInt(responseBody); // Convert to a BigInt if the number is large
+			}
 		} catch (error) {
 			console.log("Error occurred:", error);
 			throw error; // Re-throwing the error for handling in the calling code
@@ -2670,8 +2704,11 @@ class ApiService {
 			const responseBody = await response.text();
 			console.log("Response body:", responseBody);
 
-			// Return the response body as an integer
-			return parseInt(responseBody);
+			if (BigInt(responseBody) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				return Number(responseBody);
+			} else {
+				return BigInt(responseBody);
+			}
 		} catch (error) {
 			console.log("Error occurred: ", error);
 			throw error; // Re-throwing the error for handling in the calling code
@@ -2715,8 +2752,11 @@ class ApiService {
 			const responseBody = await response.text();
 			console.log("Response body:", responseBody);
 
-			// Return the response body as an integer
-			return parseInt(responseBody);
+			if (BigInt(responseBody) <= BigInt(Number.MAX_SAFE_INTEGER)) {
+				return Number(responseBody);
+			} else {
+				return BigInt(responseBody);
+			}
 		} catch (error) {
 			console.log("Error occurred: ", error);
 			throw error; // Re-throwing the error for handling in the calling code

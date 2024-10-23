@@ -421,7 +421,7 @@ class App extends Component {
 				// SELL AMOUNT DATE
 				let sellAmountDateNotSaved = await AsyncStorage.getItem("sellAmountDateNotSaved");
 				console.log("sellAmountDateNotSaved == \"true\"", sellAmountDateNotSaved == "true")
-				if (sellAmountDateNotSaved == "true") {
+				if (sellAmountDateNotSaved === "true") {
 					console.log("Sell amount date creating started. ⏳⏳⏳");
 
 					let notSavedSellAmountDates =
