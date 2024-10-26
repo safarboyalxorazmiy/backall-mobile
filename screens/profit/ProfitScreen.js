@@ -369,8 +369,8 @@ class Profit extends Component {
 				let lastProfitGroup = await this.profitHistoryRepository.getLastProfitGroup();
 				let lastGroupId = lastProfitGroup.id;
 
-				if ((lastGroupId - 1000) > 0) {
-					await this.profitHistoryRepository.deleteByGroupIdLessThan(lastGroupId - 1000);
+				if ((lastGroupId - 1000000) > 0) {
+					await this.profitHistoryRepository.deleteByGroupIdLessThan(lastGroupId - 1000000);
 				}
 
 				let firstProfitGroup = await this.profitHistoryRepository.getFirstProfitGroup();
