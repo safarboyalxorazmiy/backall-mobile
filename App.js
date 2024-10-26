@@ -182,7 +182,6 @@ class App extends Component {
 			}
 
 			if (isNotSaved == "true") {
-				await this.saveData();
 
 				// this.touchableRef.current && this.touchableRef.current.onPress();
 				// Keyboard.dismiss();
@@ -190,7 +189,15 @@ class App extends Component {
 				const {navigation} = this.props;
 				let isPayed =
 					await this.apiService.getPayment(email, monthYear, navigation);
+
 				console.log("Payed: ", isPayed)
+
+				if (isPayed != undefined) {
+					await this.saveData();
+				} else {
+					console.log("Server ain't working.");
+				}
+
 				if (isPayed == false) {
 					const currentDate = new Date();
 
@@ -221,9 +228,7 @@ class App extends Component {
 	}
 
 	async saveData() {
-		if (
-			(!this.state.isSavingStarted)
-		) {
+		if (this.state.isSavingStarted == false) {
 			this.setState({isSavingStarted: true});
 
 			console.log("CREATING NOT SAVED STARTED");
@@ -302,13 +307,18 @@ class App extends Component {
 					}
 				}
 
-				// SELL GROUP
-				let sellGroupNotSaved = await AsyncStorage.getItem("sellGroupNotSaved");
-				console.log("sellGroupNotSaved == \"true\":", sellGroupNotSaved == "true")
-				if (sellGroupNotSaved == "true") {
-					console.log("Sell group creating ⏳⏳⏳")
-
+				if (AsyncStorage.getItem("shoppingNotSaved") == "true") {
+					let sellHistoryGroups = await this.sellHistoryRepository.getSellHistoryGroupSavedFalse();
+					let notSavedSellAmountDates = await this.amountDateRepository.getSellAmountDateSavedFalse();
 					let sellGroups = await this.sellHistoryRepository.getSellGroupSavedFalse();
+					let sellHistories = await this.sellHistoryRepository.getSellHistorySavedFalse();
+
+					let profitHistoryGroups = await this.profitHistoryRepository.getProfitHistoryGroupSavedFalse();
+					let notSavedProfitAmountDates = await this.amountDateRepository.getProfitAmountDateSavedFalse();
+					let profitGroups = await this.profitHistoryRepository.getProfitGroupSavedFalse();
+					let profitHistories = await this.profitHistoryRepository.getProfitHistorySavedFalse();
+
+					console.log("#SellGroup creating ⏳⏳⏳")
 					for (const sellGroup of sellGroups) {
 						console.log("Group: ", sellGroup)
 						try {
@@ -334,14 +344,8 @@ class App extends Component {
 							return;
 						}
 					}
-				}
 
-				// SELL HISTORY
-				let sellHistoryNotSaved = await AsyncStorage.getItem("sellHistoryNotSaved");
-				if (sellHistoryNotSaved == "true") {
-					console.log("Sell history creating started. ⏳⏳⏳");
-
-					let sellHistories = await this.sellHistoryRepository.getSellHistorySavedFalse();
+					console.log("#SellHistory creating started. ⏳⏳⏳");
 					for (const sellHistory of sellHistories) {
 						console.log("SellHistory: ", sellHistory);
 
@@ -375,15 +379,8 @@ class App extends Component {
 							return;
 						}
 					}
-				}
 
-				// SELL HISTORY GROUP
-				let sellHistoryGroupNotSaved = await AsyncStorage.getItem("sellHistoryGroupNotSaved");
-				if (sellHistoryGroupNotSaved == "true") {
-					console.log("Sell history group creating started. ⏳⏳⏳");
-
-					let sellHistoryGroups =
-						await this.sellHistoryRepository.getSellHistoryGroupSavedFalse();
+					console.log("#SellHistoryLink creating started. ⏳⏳⏳");
 					for (const sellHistoryGroup of sellHistoryGroups) {
 						console.log(sellHistoryGroup);
 						try {
@@ -416,17 +413,8 @@ class App extends Component {
 							return;
 						}
 					}
-				}
 
-				// SELL AMOUNT DATE
-				let sellAmountDateNotSaved = await AsyncStorage.getItem("sellAmountDateNotSaved");
-				console.log("sellAmountDateNotSaved == \"true\"", sellAmountDateNotSaved == "true")
-				if (sellAmountDateNotSaved === "true") {
-					console.log("Sell amount date creating started. ⏳⏳⏳");
-
-					let notSavedSellAmountDates =
-						await this.amountDateRepository.getSellAmountDateSavedFalse();
-
+					console.log("#SellAmountDate creating started. ⏳⏳⏳");
 					for (const sellAmountDate of notSavedSellAmountDates) {
 						console.log(sellAmountDate)
 
@@ -455,14 +443,8 @@ class App extends Component {
 							return;
 						}
 					}
-				}
 
-				// PROFIT GROUP
-				let profitGroupNotSaved = await AsyncStorage.getItem("profitGroupNotSaved");
-				if (profitGroupNotSaved == "true") {
-					console.log("Profit group date creating started. ⏳⏳⏳");
-
-					let profitGroups = await this.profitHistoryRepository.getProfitGroupSavedFalse();
+					console.log("#ProfitGroup creating started. ⏳⏳⏳");
 					for (const profitGroup of profitGroups) {
 						try {
 							let response = await this.apiService.createProfitGroup(
@@ -487,14 +469,8 @@ class App extends Component {
 							return;
 						}
 					}
-				}
 
-				// PROFIT HISTORY
-				let profitHistoryNotSaved = await AsyncStorage.getItem("profitHistoryNotSaved");
-				if (profitHistoryNotSaved == "true") {
-					console.log("Profit history creating started. ⏳⏳⏳");
-
-					let profitHistories = await this.profitHistoryRepository.getProfitHistorySavedFalse();
+					console.log("#ProfitHistory creating started. ⏳⏳⏳");
 					for (const profitHistory of profitHistories) {
 						try {
 							let products = await this.productRepository.findProductsById(
@@ -526,15 +502,8 @@ class App extends Component {
 							return;
 						}
 					}
-				}
 
-				// PROFIT HISTORY GROUP
-				let profitHistoryGroupNotSaved = await AsyncStorage.getItem("profitHistoryGroupNotSaved");
-				if (profitHistoryGroupNotSaved == "true") {
-					console.log("Profit history group creating started. ⏳⏳⏳");
-
-					let profitHistoryGroups =
-						await this.profitHistoryRepository.getProfitHistoryGroupSavedFalse();
+					console.log("#ProfitHistoryLink creating started. ⏳⏳⏳");
 					for (const profitHistoryGroup of profitHistoryGroups) {
 						try {
 							let profitHistory =
@@ -570,14 +539,8 @@ class App extends Component {
 							return;
 						}
 					}
-				}
 
-				let profitAmountDateNotSaved = await AsyncStorage.getItem("profitAmountDateNotSaved");
-				if (profitAmountDateNotSaved == "true") {
-					console.log("Profit amount date creating started. ⏳⏳⏳");
-
-					let notSavedProfitAmountDates =
-						await this.amountDateRepository.getProfitAmountDateSavedFalse();
+					console.log("#ProfitAmountDate creating started. ⏳⏳⏳");
 					for (const profitAmountDate of notSavedProfitAmountDates) {
 						try {
 							console.log("PROFIT AMOUNT::", profitAmountDate);
@@ -603,11 +566,13 @@ class App extends Component {
 					}
 				}
 
-				await AsyncStorage.setItem("isNotSaved", "false");
+				await AsyncStorage.setItem("shoppingNotSaved", "false");
 				await AsyncStorage.setItem("isFetchingNotCompleated", "false");
 				this.setState({isSavingStarted: false});
 			} catch (e) {
 				console.error(e);
+				
+				await AsyncStorage.setItem("shoppingNotSaved", "true");
 				await AsyncStorage.setItem("isNotSaved", "true");
 				this.setState({isSavingStarted: false});
 			}
@@ -687,7 +652,7 @@ class App extends Component {
 
 										if (isPayed == true) {
 											this.setState({
-												notPayed: false
+												notPayed: true
 											})
 										}
 

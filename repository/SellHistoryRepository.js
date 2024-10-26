@@ -1143,7 +1143,7 @@ class SellHistoryRepository {
 			const selectQuery = `
           SELECT *
           FROM sell_history_group
-          WHERE group_id <= ?;
+          WHERE group_id <= ? and saved = 1;
 			`;
 
 			const result = await new Promise((resolve, reject) => {
@@ -1183,7 +1183,7 @@ class SellHistoryRepository {
 						const deleteHistoryQuery = `
                 DELETE
                 FROM sell_history
-                WHERE id = ?;
+                WHERE id = ? and saved = 1;
 						`;
 						tx.executeSql(
 							deleteHistoryQuery,
@@ -1206,7 +1206,7 @@ class SellHistoryRepository {
 					const deleteGroupQuery = `
               DELETE
               FROM sell_group
-              WHERE id <= ?;
+              WHERE id <= ? and saved = 1;
 					`;
 					tx.executeSql(
 						deleteGroupQuery,

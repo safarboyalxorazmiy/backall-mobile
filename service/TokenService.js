@@ -25,6 +25,7 @@ class TokenService {
 	retrieveAccessToken = async () => {
 		try {
 			const token = await AsyncStorage.getItem("access_token");
+			console.log("token::", token);
 			return token;
 		} catch (error) {
 			console.error("Error retrieving token:", error);

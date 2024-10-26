@@ -36,25 +36,22 @@ class ApiService {
 				}
 			};
 
-			console.log("Sending request to:", `${serverUrl}/payment/get?email=${email}&monthYear=${monthYear}`);
-			console.log("Request body:", requestOptions);
-
 			const response =
 				await fetch(
 					`${serverUrl}/payment/get?email=${email}&monthYear=${monthYear}`,
 					requestOptions
 				);
 
-			console.log("Response status:", response.status);
 
 			if (response.status == 401) {
+				console.log("unauthorized::" + response.url);
 				await AsyncStorage.setItem("isRequestInProgress", "false");
 				await this.logout(navigation);
 				return;
 			}
 
 			const responseBody = await response.json();
-			console.log("Response body:", responseBody);
+
 
 			if (!response.ok) {
 				await AsyncStorage.setItem("isRequestInProgress", "false");
@@ -65,7 +62,7 @@ class ApiService {
 			return responseBody;
 		} catch (error) {
 			await AsyncStorage.setItem("isRequestInProgress", "false");
-			console.log("Local fucking product error: ", error)
+			//("Local fucking product error: ", error)
 		}
 	}
 
@@ -89,20 +86,21 @@ class ApiService {
 				}
 			};
 
-			console.log("Sending request to:", `${serverUrl}/api/v1/product/get/local/info?storeId=${storeId}&page=${page}&size=${size}`);
-			console.log("Request body:", requestOptions);
+			//("Sending request to:", `${serverUrl}/api/v1/product/get/local/info?storeId=${storeId}&page=${page}&size=${size}`);
+			//("Request body:", requestOptions);
 
 			const response = await fetch(`${serverUrl}/api/v1/product/get/local/info?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
-			console.log("Response status:", response.status);
+
 
 			if (response.status == 401) {
+				console.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
 
 			const responseBody = await response.json();
-			console.log("Response body:", responseBody);
+
 
 			if (!response.ok) {
 				throw new Error("Network response was not ok");
@@ -110,7 +108,7 @@ class ApiService {
 
 			return responseBody;
 		} catch (error) {
-			console.log("Local fucking product error: ", error)
+			//("Local fucking product error: ", error)
 		}
 	}
 
@@ -136,6 +134,7 @@ class ApiService {
 			const response = await fetch(`${serverUrl}/api/v1/product/get/local/info/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
 			if (response.status == 401) {
+				console.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
@@ -148,7 +147,7 @@ class ApiService {
 
 			return responseBody;
 		} catch (error) {
-			console.log("Local fucking product error: ", error)
+			//("Local fucking product error: ", error)
 		}
 	}
 
@@ -176,14 +175,15 @@ class ApiService {
 				}
 			};
 
-			console.log("Sending request to:", `${serverUrl}/api/v1/product/get/global/info?storeId=${storeId}&page=${page}&size=${size}`);
-			console.log("Request body:", requestOptions);
+			//("Sending request to:", `${serverUrl}/api/v1/product/get/global/info?storeId=${storeId}&page=${page}&size=${size}`);
+			//("Request body:", requestOptions);
 
 			const response = await fetch(`${serverUrl}/api/v1/product/get/global/info?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
-			console.log("Response status:", response.status);
+
 
 			if (response.status == 401) {
+				console.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
@@ -194,7 +194,7 @@ class ApiService {
 
 			return await response.json(); // Return the parsed JSON directly
 		} catch (error) {
-			console.log("Error occurred: ", error);
+			//("Error occurred: ", error);
 			throw error; // Re-throwing the error for handling in the calling code
 		}
 	}
@@ -222,20 +222,21 @@ class ApiService {
 				}
 			};
 
-			console.log("Sending request to:", `${serverUrl}/api/v1/store/product/get/info?storeId=${storeId}&page=${page}&size=${size}`);
-			console.log("Request body:", requestOptions);
+			//("Sending request to:", `${serverUrl}/api/v1/store/product/get/info?storeId=${storeId}&page=${page}&size=${size}`);
+			//("Request body:", requestOptions);
 
 			const response = await fetch(`${serverUrl}/api/v1/store/product/get/info?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
-			console.log("Response status:", response.status);
+
 
 			if (response.status == 401) {
+				console.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
 
 			const responseBody = await response.json();
-			console.log("Response body:", responseBody);
+
 
 			if (!response.ok) {
 				throw new Error("Network response was not ok");
@@ -243,7 +244,7 @@ class ApiService {
 
 			return responseBody;
 		} catch (error) {
-			console.log("Error occurred: ", error);
+			//("Error occurred: ", error);
 			throw error; // Re-throwing the error for handling in the calling code
 		}
 	}
@@ -275,6 +276,7 @@ class ApiService {
 				await fetch(`${serverUrl}/api/v1/store/product/get/info/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
 			if (response.status == 401) {
+				console.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
@@ -287,7 +289,7 @@ class ApiService {
 
 			return responseBody;
 		} catch (error) {
-			console.log("Error occurred: ", error);
+			//("Error occurred: ", error);
 			throw error; // Re-throwing the error for handling in the calling code
 		}
 	}
@@ -320,12 +322,12 @@ class ApiService {
 			};
 
 			const url = `${serverUrl}/api/v1/store/sell/group/get?storeId=${storeId}&page=${page}&size=${size}&lastId=${lastId}`;
-			console.log("Sending request to:", url);
-			console.log("Request options:", requestOptions);
+			//("Sending request to:", url);
+			//("Request options:", requestOptions);
 
 			const response = await fetch(url, requestOptions);
 
-			console.log("Response status:", response.status);
+
 
 			if (response.status === 401) {
 				await this.logout(navigation);
@@ -333,7 +335,7 @@ class ApiService {
 			}
 
 			const responseBody = await response.json();
-			console.log("Response body:", responseBody);
+
 
 			if (!response.ok) {
 				throw new Error(`Network response was not ok: ${responseBody.message || response.statusText}`);
@@ -374,12 +376,12 @@ class ApiService {
 			};
 
 			const url = `${serverUrl}/api/v1/store/sell/group/get/by?fromDate=${fromDate}&toDate=${toDate}&storeId=${storeId}&page=${page}&size=${size}&lastId=${lastId}`;
-			console.log("Sending request to:", url);
-			console.log("Request options:", requestOptions);
+			//("Sending request to:", url);
+			//("Request options:", requestOptions);
 
 			const response = await fetch(url, requestOptions);
 
-			console.log("Response status:", response.status);
+
 
 			if (response.status === 401) {
 				await this.logout(navigation);
@@ -387,7 +389,7 @@ class ApiService {
 			}
 
 			const responseBody = await response.json();
-			console.log("Response body:", responseBody);
+
 
 			if (!response.ok) {
 				throw new Error(`Network response was not ok: ${responseBody.message || response.statusText}`);
@@ -426,12 +428,12 @@ class ApiService {
 			};
 
 			const url = `${serverUrl}/api/v1/store/sell/group/get/not/downloaded?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`;
-			console.log("Sending request to:", url);
-			console.log("Request options:", requestOptions);
+			//("Sending request to:", url);
+			//("Request options:", requestOptions);
 
 			const response = await fetch(url, requestOptions);
 
-			console.log("Response status:", response.status);
+
 
 			if (response.status === 401) {
 				await this.logout(navigation);
@@ -439,7 +441,7 @@ class ApiService {
 			}
 
 			const responseBody = await response.json();
-			console.log("Response body:", responseBody);
+
 
 			if (!response.ok) {
 				throw new Error(`Network response was not ok: ${responseBody.message || response.statusText}`);
@@ -480,12 +482,12 @@ class ApiService {
 			};
 
 			const url = `${serverUrl}/api/v1/store/sell/group/get/not/downloaded/by?fromDate=${fromDate}&toDate=${toDate}&lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`;
-			console.log("Sending request to:", url);
-			console.log("Request options:", requestOptions);
+			//("Sending request to:", url);
+			//("Request options:", requestOptions);
 
 			const response = await fetch(url, requestOptions);
 
-			console.log("Response status:", response.status);
+
 
 			if (response.status === 401) {
 				await this.logout(navigation);
@@ -493,7 +495,7 @@ class ApiService {
 			}
 
 			const responseBody = await response.json();
-			console.log("Response body:", responseBody);
+
 
 			if (!response.ok) {
 				throw new Error(`Network response was not ok: ${responseBody.message || response.statusText}`);
@@ -526,11 +528,11 @@ class ApiService {
 			};
 
 			const url = `http://api.backall.uz/api/v1/store/sell/group/get/lastId?storeId=${storeId}`;
-			console.log("Sending request to:", url);
-			console.log("Request options:", requestOptions);
+			//("Sending request to:", url);
+			//("Request options:", requestOptions);
 
 			const response = await fetch(url, requestOptions);
-			console.log("Response status:", response.status);
+
 
 			if (response.status === 401) {
 				await this.logout(navigation);
@@ -546,7 +548,7 @@ class ApiService {
 			}
 
 			const responseBody = await response.text();
-			console.log("Response body:", responseBody);
+
 
 			if (BigInt(responseBody) <= BigInt(Number.MAX_SAFE_INTEGER)) {
 				return Number(responseBody);
@@ -587,12 +589,12 @@ class ApiService {
 
 			// Construct the request URL
 			const url = `http://api.backall.uz/api/v1/store/sell/group/get/lastId/by?fromDate=${fromDate}&toDate=${toDate}&storeId=${storeId}`;
-			console.log("Sending request to:", url);
-			console.log("Request options:", requestOptions);
+			//("Sending request to:", url);
+			//("Request options:", requestOptions);
 
 			// Send the request
 			const response = await fetch(url, requestOptions);
-			console.log("Response status:", response.status);
+
 
 			// Handle 401 Unauthorized response
 			if (response.status === 401) {
@@ -607,7 +609,7 @@ class ApiService {
 
 			// Parse and log the response body
 			const responseBody = await response.text();
-			console.log("Response body:", responseBody);
+
 
 			if (BigInt(responseBody) <= BigInt(Number.MAX_SAFE_INTEGER)) {
 				return Number(responseBody);
@@ -644,12 +646,12 @@ class ApiService {
 
 			// Construct the request URL
 			const url = `http://api.backall.uz/api/v1/store/sell/group/get/by/${globalId}?storeId=${storeId}`;
-			console.log("Sending request to:", url);
-			console.log("Request options:", requestOptions);
+			//("Sending request to:", url);
+			//("Request options:", requestOptions);
 
 			// Send the request
 			const response = await fetch(url, requestOptions);
-			console.log("Response status:", response.status);
+
 
 			// Handle 401 Unauthorized response
 			if (response.status === 401) {
@@ -690,12 +692,12 @@ class ApiService {
 			};
 
 			const url = `${serverUrl}/api/v1/store/sell/history/get?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`;
-			console.log("Sending request to:", url);
-			console.log("Request options:", requestOptions);
+			//("Sending request to:", url);
+			//("Request options:", requestOptions);
 
 			const response = await fetch(url, requestOptions);
 
-			console.log("Response status:", response.status);
+
 
 			if (response.status === 401) {
 				await this.logout(navigation);
@@ -703,7 +705,7 @@ class ApiService {
 			}
 
 			const responseBody = await response.json();
-			console.log("Response body:", responseBody);
+
 
 			if (!response.ok) {
 				throw new Error(`Network response was not ok: ${responseBody.message || response.statusText}`);
@@ -740,19 +742,20 @@ class ApiService {
 				}
 			};
 
-			console.log("Sending request to:", `${serverUrl}/api/v1/store/sell/history/get/not/downloaded?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
-			console.log("Request body:", requestOptions);
+			//("Sending request to:", `${serverUrl}/api/v1/store/sell/history/get/not/downloaded?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
+			//("Request body:", requestOptions);
 
 			const response = await fetch(`${serverUrl}/api/v1/store/sell/history/get/not/downloaded?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
-			console.log("Response status:", response.status);
+
 			if (response.status == 401) {
+				console.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
 
 			const responseBody = await response.json();
-			console.log("Response body:", responseBody);
+
 
 			if (!response.ok) {
 				throw new Error("Network response was not ok");
@@ -760,7 +763,7 @@ class ApiService {
 
 			return responseBody;
 		} catch (error) {
-			console.log("Error occurred: ", error);
+			//("Error occurred: ", error);
 			throw error; // Re-throwing the error for handling in the calling code
 		}
 	}
@@ -789,12 +792,12 @@ class ApiService {
 
 			// Construct the request URL
 			const url = `http://api.backall.uz/api/v1/store/sell/history/get/lastId?storeId=${storeId}`;
-			console.log("Sending request to:", url);
-			console.log("Request options:", requestOptions);
+			//("Sending request to:", url);
+			//("Request options:", requestOptions);
 
 			// Send the request
 			const response = await fetch(url, requestOptions);
-			console.log("Response status:", response.status);
+
 
 			// Handle 401 Unauthorized response
 			if (response.status === 401) {
@@ -809,7 +812,7 @@ class ApiService {
 
 			// Parse and log the response body
 			const responseBody = await response.text();
-			console.log("Response body:", responseBody);
+
 
 			if (BigInt(responseBody) <= BigInt(Number.MAX_SAFE_INTEGER)) {
 				return Number(responseBody);
@@ -850,12 +853,12 @@ class ApiService {
 
 			// Construct the request URL
 			const url = `http://api.backall.uz/api/v1/store/sell/history/get/detail/by?groupId=${groupId}&storeId=${storeId}`;
-			console.log("Sending request to:", url);
-			console.log("Request options:", requestOptions);
+			//("Sending request to:", url);
+			//("Request options:", requestOptions);
 
 			// Send the request
 			const response = await fetch(url, requestOptions);
-			console.log("Response status:", response.status);
+
 
 			// Handle 401 Unauthorized response
 			if (response.status === 401) {
@@ -900,20 +903,21 @@ class ApiService {
 				}
 			};
 
-			console.log("Sending request to:", `${serverUrl}/api/v1/store/sell/amount/date/get?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
-			console.log("Request body:", requestOptions);
+			//("Sending request to:", `${serverUrl}/api/v1/store/sell/amount/date/get?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
+			//("Request body:", requestOptions);
 
 			const response = await fetch(`${serverUrl}/api/v1/store/sell/amount/date/get?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
-			console.log("Response status:", response.status);
+
 
 			if (response.status == 401) {
+				console.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
 
 			const responseBody = await response.json();
-			console.log("Response body:", responseBody);
+
 
 			if (!response.ok) {
 				throw new Error("Network response was not ok");
@@ -921,7 +925,7 @@ class ApiService {
 
 			return responseBody;
 		} catch (error) {
-			console.log("Error occurred: ", error);
+			//("Error occurred: ", error);
 			throw error; // Re-throwing the error for handling in the calling code
 		}
 	}
@@ -945,20 +949,21 @@ class ApiService {
 				}
 			};
 
-			console.log("Sending request to:", `${serverUrl}/api/v1/store/sell/amount/date/get/not/downloaded?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
-			console.log("Request body:", requestOptions);
+			//("Sending request to:", `${serverUrl}/api/v1/store/sell/amount/date/get/not/downloaded?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
+			//("Request body:", requestOptions);
 
 			const response = await fetch(`${serverUrl}/api/v1/store/sell/amount/date/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
-			console.log("Response status:", response.status);
+
 
 			if (response.status == 401) {
+				console.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
 
 			const responseBody = await response.json();
-			console.log("Response body:", responseBody);
+
 
 			if (!response.ok) {
 				throw new Error("Network response was not ok");
@@ -966,7 +971,7 @@ class ApiService {
 
 			return responseBody;
 		} catch (error) {
-			console.log("Error occurred: ", error);
+			//("Error occurred: ", error);
 			throw error; // Re-throwing the error for handling in the calling code
 		}
 	}
@@ -991,11 +996,11 @@ class ApiService {
 			};
 
 			const url = `http://api.backall.uz/api/v1/store/sell/amount/date/get/lastId?storeId=${storeId}`;
-			console.log("Sending request to:", url);
-			console.log("Request options:", requestOptions);
+			//("Sending request to:", url);
+			//("Request options:", requestOptions);
 
 			const response = await fetch(url, requestOptions);
-			console.log("Response status:", response.status);
+
 
 			if (response.status === 401) {
 				await this.logout(navigation);
@@ -1011,7 +1016,7 @@ class ApiService {
 			}
 
 			const responseBody = await response.text();
-			console.log("Response body:", responseBody);
+
 
 			if (BigInt(responseBody) <= BigInt(Number.MAX_SAFE_INTEGER)) {
 				return Number(responseBody);
@@ -1043,20 +1048,21 @@ class ApiService {
 				}
 			};
 
-			console.log("Sending request to:", `${serverUrl}/api/v1/store/sell/amount/date/get/by?date=${date}&storeId=${storeId}`);
-			console.log("Request body:", requestOptions);
+			//("Sending request to:", `${serverUrl}/api/v1/store/sell/amount/date/get/by?date=${date}&storeId=${storeId}`);
+			//("Request body:", requestOptions);
 
 			const response = await fetch(`${serverUrl}/api/v1/store/sell/amount/date/get/by?date=${date}&storeId=${storeId}`, requestOptions);
 
-			console.log("Response status:", response.status);
+
 
 			if (response.status == 401) {
+				console.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
 
 			const responseBody = await response.json();
-			console.log("Response body:", responseBody);
+
 
 			if (!response.ok) {
 				throw new Error("Network response was not ok");
@@ -1064,7 +1070,7 @@ class ApiService {
 
 			return responseBody;
 		} catch (error) {
-			console.log("Error occurred: ", error);
+			//("Error occurred: ", error);
 			throw error; // Re-throwing the error for handling in the calling code
 		}
 	}
@@ -1088,20 +1094,21 @@ class ApiService {
 				}
 			};
 
-			console.log("Sending request to:", `${serverUrl}/api/v1/store/sell/link/info?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
-			console.log("Request body:", requestOptions);
+			//("Sending request to:", `${serverUrl}/api/v1/store/sell/link/info?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
+			//("Request body:", requestOptions);
 
 			const response = await fetch(`${serverUrl}/api/v1/store/sell/link/info?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
-			console.log("Response status:", response.status);
+
 
 			if (response.status == 401) {
+				console.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
 
 			const responseBody = await response.json();
-			console.log("Response body:", responseBody);
+
 
 			if (!response.ok) {
 				throw new Error("Network response was not ok");
@@ -1109,7 +1116,7 @@ class ApiService {
 
 			return responseBody;
 		} catch (error) {
-			console.log("Error occurred: ", error);
+			//("Error occurred: ", error);
 			throw error; // Re-throwing the error for handling in the calling code
 		}
 	}
@@ -1133,21 +1140,22 @@ class ApiService {
 				}
 			};
 
-			console.log("Sending request to:", `${serverUrl}/api/v1/store/sell/link/info/not/downloaded?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
-			console.log("Request body:", requestOptions);
+			//("Sending request to:", `${serverUrl}/api/v1/store/sell/link/info/not/downloaded?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
+			//("Request body:", requestOptions);
 
 			const response =
 				await fetch(`${serverUrl}/api/v1/store/sell/link/info/not/downloaded?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
-			console.log("Response status:", response.status);
+
 
 			if (response.status == 401) {
+				console.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
 
 			const responseBody = await response.json();
-			console.log("Response body:", responseBody);
+
 
 			if (!response.ok) {
 				throw new Error("Network response was not ok");
@@ -1155,7 +1163,7 @@ class ApiService {
 
 			return responseBody;
 		} catch (error) {
-			console.log("Error occurred: ", error);
+			//("Error occurred: ", error);
 			throw error; // Re-throwing the error for handling in the calling code
 		}
 	}
@@ -1184,12 +1192,12 @@ class ApiService {
 
 			// Construct the request URL
 			const url = `http://api.backall.uz/api/v1/store/sell/link/get/lastId?storeId=${storeId}`;
-			console.log("Sending request to:", url);
-			console.log("Request options:", requestOptions);
+			//("Sending request to:", url);
+			//("Request options:", requestOptions);
 
 			// Send the request
 			const response = await fetch(url, requestOptions);
-			console.log("Response status:", response.status);
+
 
 			// Handle 401 Unauthorized response
 			if (response.status === 401) {
@@ -1203,7 +1211,7 @@ class ApiService {
 			}
 
 			const responseBody = await response.text();
-			console.log("Response body:", responseBody);
+
 
 			if (BigInt(responseBody) <= BigInt(Number.MAX_SAFE_INTEGER)) {
 				return Number(responseBody);
@@ -1237,23 +1245,24 @@ class ApiService {
 				}
 			};
 
-			console.log("Sending request to:", `${serverUrl}/api/v1/store/sell/link/info/by?groupId=${groupId}&storeId=${storeId}`);
-			console.log("Request body:", requestOptions);
+			//("Sending request to:", `${serverUrl}/api/v1/store/sell/link/info/by?groupId=${groupId}&storeId=${storeId}`);
+			//("Request body:", requestOptions);
 
 			const response = await fetch(
 				`${serverUrl}/api/v1/store/sell/link/info/by?groupId=${groupId}&storeId=${storeId}`,
 				requestOptions
 			);
 
-			console.log("Response status:", response.status);
+
 
 			if (response.status == 401) {
+				console.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
 
 			const responseBody = await response.json(); // Read JSON response only once
-			console.log("Response body:", responseBody);
+
 
 			if (!response.ok) {
 				throw new Error("Network response was not ok");
@@ -1261,7 +1270,7 @@ class ApiService {
 
 			return responseBody; // Return the JSON response
 		} catch (error) {
-			console.log("Error occurred: ", error);
+			//("Error occurred: ", error);
 			throw error; // Re-throwing the error for handling in the calling code
 		}
 	}
@@ -1287,14 +1296,15 @@ class ApiService {
 				}
 			};
 
-			console.log("Sending request to:", `${serverUrl}/api/v1/store/profit/group/get?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
-			console.log("Request body:", requestOptions);
+			//("Sending request to:", `${serverUrl}/api/v1/store/profit/group/get?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
+			//("Request body:", requestOptions);
 
 			const response = await fetch(`${serverUrl}/api/v1/store/profit/group/get?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
-			console.log("Response status:", response.status);
+
 
 			if (response.status == 401) {
+				console.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
@@ -1305,7 +1315,7 @@ class ApiService {
 
 			return await response.json(); // Return the parsed JSON directly
 		} catch (error) {
-			console.log("Error occurred: ", error);
+			//("Error occurred: ", error);
 			throw error; // Re-throwing the error for handling in the calling code
 		}
 	}
@@ -1338,12 +1348,12 @@ class ApiService {
 			};
 
 			const url = `${serverUrl}/api/v1/store/profit/group/get/by?fromDate=${fromDate}&toDate=${toDate}&storeId=${storeId}&page=${page}&size=${size}&lastId=${lastId}`;
-			console.log("Sending request to:", url);
-			console.log("Request options:", requestOptions);
+			//("Sending request to:", url);
+			//("Request options:", requestOptions);
 
 			const response = await fetch(url, requestOptions);
 
-			console.log("Response status:", response.status);
+
 
 			if (response.status === 401) {
 				await this.logout(navigation);
@@ -1351,7 +1361,7 @@ class ApiService {
 			}
 
 			const responseBody = await response.json();
-			console.log("Response body:", responseBody);
+
 
 			if (!response.ok) {
 				throw new Error(`Network response was not ok: ${responseBody.message || response.statusText}`);
@@ -1385,10 +1395,6 @@ class ApiService {
 				}
 			};
 
-			console.log(
-				"Sending request to:",
-				`${serverUrl}/api/v1/store/profit/group/get/not/downloaded?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
-			console.log("Request body:", requestOptions);
 
 			const response =
 				await fetch(
@@ -1396,9 +1402,10 @@ class ApiService {
 					requestOptions
 				);
 
-			console.log("Response status:", response.status);
+
 
 			if (response.status == 401) {
+				console.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
@@ -1409,7 +1416,7 @@ class ApiService {
 
 			return await response.json(); // Return the parsed JSON directly
 		} catch (error) {
-			console.log("Error occurred: ", error);
+			//("Error occurred: ", error);
 			throw error; // Re-throwing the error for handling in the calling code
 		}
 	}
@@ -1435,11 +1442,11 @@ class ApiService {
 			};
 
 			const url = `http://api.backall.uz/api/v1/store/profit/group/lastId?storeId=${storeId}`;
-			console.log("Sending request to:", url);
-			console.log("Request options:", requestOptions);
+			//("Sending request to:", url);
+			//("Request options:", requestOptions);
 
 			const response = await fetch(url, requestOptions);
-			console.log("Response status:", response.status);
+
 
 			if (response.status === 401) {
 				await this.logout(navigation);
@@ -1455,7 +1462,7 @@ class ApiService {
 			}
 
 			const responseBody = await response.text();
-			console.log("Response body:", responseBody);
+
 
 			if (BigInt(responseBody) <= BigInt(Number.MAX_SAFE_INTEGER)) {
 				return Number(responseBody);
@@ -1463,7 +1470,7 @@ class ApiService {
 				return BigInt(responseBody);
 			}
 		} catch (error) {
-			console.log("Error occurred: ", error);
+			//("Error occurred: ", error);
 			throw error;
 		}
 	}
@@ -1492,12 +1499,12 @@ class ApiService {
 
 			// Construct the request URL
 			const url = `http://api.backall.uz/api/v1/store/profit/group/get/by/${globalId}?storeId=${storeId}`;
-			console.log("Sending request to:", url);
-			console.log("Request options:", requestOptions);
+			//("Sending request to:", url);
+			//("Request options:", requestOptions);
 
 			// Send the request
 			const response = await fetch(url, requestOptions);
-			console.log("Response status:", response.status);
+
 
 			// Handle 401 Unauthorized response
 			if (response.status === 401) {
@@ -1538,20 +1545,21 @@ class ApiService {
 				}
 			};
 
-			console.log("Sending request to:", `${serverUrl}/api/v1/store/profit/history/get?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
-			console.log("Request body:", requestOptions);
+			//("Sending request to:", `${serverUrl}/api/v1/store/profit/history/get?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
+			//("Request body:", requestOptions);
 
 			const response = await fetch(`${serverUrl}/api/v1/store/profit/history/get?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
-			console.log("Response status:", response.status);
+
 
 			if (response.status == 401) {
+				console.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
 
 			const responseBody = await response.json(); // Read JSON response only once
-			console.log("Response body:", responseBody);
+
 
 			if (!response.ok) {
 				throw new Error("Network response was not ok");
@@ -1559,7 +1567,7 @@ class ApiService {
 
 			return responseBody; // Return the JSON response
 		} catch (error) {
-			console.log("Error occurred: ", error);
+			//("Error occurred: ", error);
 			throw error; // Re-throwing the error for handling in the calling code
 		}
 	}
@@ -1585,20 +1593,21 @@ class ApiService {
 				}
 			};
 
-			console.log("Sending request to:", `${serverUrl}/api/v1/store/profit/history/get/not/downloaded?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
-			console.log("Request body:", requestOptions);
+			//("Sending request to:", `${serverUrl}/api/v1/store/profit/history/get/not/downloaded?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
+			//("Request body:", requestOptions);
 
 			const response = await fetch(`${serverUrl}/api/v1/store/profit/history/get/not/downloaded?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
-			console.log("Response status:", response.status);
+
 
 			if (response.status == 401) {
+				console.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
 
 			const responseBody = await response.json(); // Read JSON response only once
-			console.log("Response body:", responseBody);
+
 
 			if (!response.ok) {
 				throw new Error("Network response was not ok");
@@ -1606,7 +1615,7 @@ class ApiService {
 
 			return responseBody; // Return the JSON response
 		} catch (error) {
-			console.log("Error occurred: ", error);
+			//("Error occurred: ", error);
 			throw error; // Re-throwing the error for handling in the calling code
 		}
 	}
@@ -1634,12 +1643,12 @@ class ApiService {
 			// Updated URL to match the new API endpoint
 			const url = `${serverUrl}/api/v1/store/profit/history/lastId?storeId=${storeId}`;
 
-			console.log("Sending request to:", url);
-			console.log("Request options:", requestOptions);
+			//("Sending request to:", url);
+			//("Request options:", requestOptions);
 
 			const response = await fetch(url, requestOptions);
 
-			console.log("Response status:", response.status);
+
 
 			if (response.status === 401) {
 				await this.logout(navigation);
@@ -1648,7 +1657,7 @@ class ApiService {
 
 			// Read the response body as text
 			const responseBody = await response.text();
-			console.log("Response body:", responseBody);
+
 
 			if (BigInt(responseBody) <= BigInt(Number.MAX_SAFE_INTEGER)) {
 				return Number(responseBody);
@@ -1656,7 +1665,7 @@ class ApiService {
 				return BigInt(responseBody);
 			}
 		} catch (error) {
-			console.log("Error occurred:", error);
+			//("Error occurred:", error);
 			throw error; // Re-throwing the error for handling in the calling code
 		}
 	}
@@ -1688,12 +1697,12 @@ class ApiService {
 
 			// Construct the request URL
 			const url = `http://api.backall.uz/api/v1/store/profit/history/get/detail/by?groupId=${groupId}&storeId=${storeId}`;
-			console.log("Sending request to:", url);
-			console.log("Request options:", requestOptions);
+			//("Sending request to:", url);
+			//("Request options:", requestOptions);
 
 			// Send the request
 			const response = await fetch(url, requestOptions);
-			console.log("Response status:", response.status);
+
 
 			// Handle 401 Unauthorized response
 			if (response.status === 401) {
@@ -1734,20 +1743,21 @@ class ApiService {
 				}
 			};
 
-			console.log("Sending request to:", `${serverUrl}/api/v1/store/profit/link/info?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
-			console.log("Request body:", requestOptions);
+			//("Sending request to:", `${serverUrl}/api/v1/store/profit/link/info?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
+			//("Request body:", requestOptions);
 
 			const response = await fetch(`${serverUrl}/api/v1/store/profit/link/info?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
-			console.log("Response status:", response.status);
+
 
 			if (response.status == 401) {
+				console.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
 
 			const responseBody = await response.json(); // Read JSON response only once
-			console.log("Response body:", responseBody);
+
 
 			if (!response.ok) {
 				throw new Error("Network response was not ok");
@@ -1755,7 +1765,7 @@ class ApiService {
 
 			return responseBody; // Return the JSON response
 		} catch (error) {
-			console.log("Error occurred: ", error);
+			//("Error occurred: ", error);
 			throw error; // Re-throwing the error for handling in the calling code
 		}
 	}
@@ -1781,20 +1791,21 @@ class ApiService {
 				}
 			};
 
-			console.log("Sending request to:", `${serverUrl}/api/v1/store/profit/link/info/by?groupId=${groupId}&storeId=${storeId}`);
-			console.log("Request body:", requestOptions);
+			//("Sending request to:", `${serverUrl}/api/v1/store/profit/link/info/by?groupId=${groupId}&storeId=${storeId}`);
+			//("Request body:", requestOptions);
 
 			const response = await fetch(`${serverUrl}/api/v1/store/profit/link/info/by?groupId=${groupId}&storeId=${storeId}`, requestOptions);
 
-			console.log("Response status:", response.status);
+
 
 			if (response.status == 401) {
+				console.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
 
 			const responseBody = await response.json(); // Read JSON response only once
-			console.log("Response body:", responseBody);
+
 
 			if (!response.ok) {
 				throw new Error("Network response was not ok");
@@ -1802,7 +1813,7 @@ class ApiService {
 
 			return responseBody; // Return the JSON response
 		} catch (error) {
-			console.log("Error occurred: ", error);
+			//("Error occurred: ", error);
 			throw error; // Re-throwing the error for handling in the calling code
 		}
 	}
@@ -1828,20 +1839,21 @@ class ApiService {
 				}
 			};
 
-			console.log("Sending request to:", `${serverUrl}/api/v1/store/profit/link/info/not/downloaded?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
-			console.log("Request body:", requestOptions);
+			//("Sending request to:", `${serverUrl}/api/v1/store/profit/link/info/not/downloaded?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
+			//("Request body:", requestOptions);
 
 			const response = await fetch(`${serverUrl}/api/v1/store/profit/link/info/not/downloaded?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
-			console.log("Response status:", response.status);
+
 
 			if (response.status == 401) {
+				console.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
 
 			const responseBody = await response.json(); // Read JSON response only once
-			console.log("Response body:", responseBody);
+
 
 			if (!response.ok) {
 				throw new Error("Network response was not ok");
@@ -1849,7 +1861,7 @@ class ApiService {
 
 			return responseBody; // Return the JSON response
 		} catch (error) {
-			console.log("Error occurred: ", error);
+			//("Error occurred: ", error);
 			throw error; // Re-throwing the error for handling in the calling code
 		}
 	}
@@ -1877,22 +1889,22 @@ class ApiService {
 			// Updated URL to match the new API endpoint
 			const url = `${serverUrl}/api/v1/store/profit/link/get/lastId?storeId=${storeId}`;
 
-			console.log("Sending request to:", url);
-			console.log("Request options:", requestOptions);
+			//("Sending request to:", url);
+			//("Request options:", requestOptions);
 
 			const response = await fetch(url, requestOptions);
 
-			console.log("Response status:", response.status);
+
 
 			if (response.status === 401) {
-				console.log(`Bearer ${accessToken}`, `${serverUrl}/api/v1/store/profit/link/get/lastId?storeId=${storeId}`)
+				//(`Bearer ${accessToken}`, `${serverUrl}/api/v1/store/profit/link/get/lastId?storeId=${storeId}`)
 				await this.logout(navigation);
 				return;
 			}
 
 			// Read the response body as text
 			const responseBody = await response.text();
-			console.log("Response body:", responseBody);
+
 
 			// Return the response body as an integer
 			if (BigInt(responseBody) <= BigInt(Number.MAX_SAFE_INTEGER)) {
@@ -1901,7 +1913,7 @@ class ApiService {
 				return BigInt(responseBody); // Convert to a BigInt if the number is large
 			}
 		} catch (error) {
-			console.log("Error occurred:", error);
+			//("Error occurred:", error);
 			throw error; // Re-throwing the error for handling in the calling code
 		}
 	}
@@ -1927,20 +1939,21 @@ class ApiService {
 				}
 			};
 
-			console.log("Sending request to:", `${serverUrl}/api/v1/store/profit/amount/date/get?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
-			console.log("Request body:", requestOptions);
+			//("Sending request to:", `${serverUrl}/api/v1/store/profit/amount/date/get?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
+			//("Request body:", requestOptions);
 
 			const response = await fetch(`${serverUrl}/api/v1/store/profit/amount/date/get?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
-			console.log("Response status:", response.status);
+
 
 			if (response.status == 401) {
+				console.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
 
 			const responseBody = await response.json(); // Read JSON response only once
-			console.log("Response body:", responseBody);
+
 
 			if (!response.ok) {
 				throw new Error("Network response was not ok");
@@ -1948,7 +1961,7 @@ class ApiService {
 
 			return responseBody; // Return the JSON response
 		} catch (error) {
-			console.log("Error occurred: ", error);
+			//("Error occurred: ", error);
 			throw error; // Re-throwing the error for handling in the calling code
 		}
 	}
@@ -1974,20 +1987,21 @@ class ApiService {
 				}
 			};
 
-			console.log("Sending request to:", `${serverUrl}/api/v1/store/profit/amount/date/get/not/downloaded?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
-			console.log("Request body:", requestOptions);
+			//("Sending request to:", `${serverUrl}/api/v1/store/profit/amount/date/get/not/downloaded?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`);
+			//("Request body:", requestOptions);
 
 			const response = await fetch(`${serverUrl}/api/v1/store/profit/amount/date/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
-			console.log("Response status:", response.status);
+
 
 			if (response.status == 401) {
+				console.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
 
 			const responseBody = await response.json(); // Read JSON response only once
-			console.log("Response body:", responseBody);
+
 
 			if (!response.ok) {
 				throw new Error("Network response was not ok");
@@ -1995,7 +2009,7 @@ class ApiService {
 
 			return responseBody; // Return the JSON response
 		} catch (error) {
-			console.log("Error occurred: ", error);
+			//("Error occurred: ", error);
 			throw error; // Re-throwing the error for handling in the calling code
 		}
 	}
@@ -2024,12 +2038,12 @@ class ApiService {
 			// Updated URL to match the new API endpoint
 			const url = `${serverUrl}/api/v1/store/profit/amount/date/lastId?storeId=${storeId}`;
 
-			console.log("Sending request to:", url);
-			console.log("Request options:", requestOptions);
+			//("Sending request to:", url);
+			//("Request options:", requestOptions);
 
 			const response = await fetch(url, requestOptions);
 
-			console.log("Response status:", response.status);
+
 
 			if (response.status === 401) {
 				await this.logout(navigation);
@@ -2042,7 +2056,7 @@ class ApiService {
 
 			// Read the response body as text
 			const responseBody = await response.text();
-			console.log("Response body:", responseBody);
+
 
 			// Return the response body as an integer
 			
@@ -2052,7 +2066,7 @@ class ApiService {
 				return BigInt(responseBody); // Convert to a BigInt if the number is large
 			}
 		} catch (error) {
-			console.log("Error occurred:", error);
+			//("Error occurred:", error);
 			throw error; // Re-throwing the error for handling in the calling code
 		}
 	}
@@ -2062,15 +2076,16 @@ class ApiService {
 	async sendRequest(url, requestOptions) {
 		try {
 			const response = await fetch(url, requestOptions);
-			console.log("Response status:", response.status);
+
 
 			if (response.status == 401) {
+				console.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return false;
 			}
 
 			const responseBody = await response.json();
-			console.log("Response body:", responseBody);
+
 
 			if (!response.ok) {
 				throw new Error("Network response was not ok");
@@ -2078,7 +2093,7 @@ class ApiService {
 
 			return responseBody;
 		} catch (error) {
-			console.log("Error occurred: ", error);
+			//("Error occurred: ", error);
 			throw error;
 		}
 	}
@@ -2112,8 +2127,8 @@ class ApiService {
 			body: JSON.stringify(requestBody)
 		};
 
-		console.log("Sending request to:", `${serverUrl}/api/v1/product/create`);
-		console.log("Request body:", requestOptions);
+		//("Sending request to:", `${serverUrl}/api/v1/product/create`);
+		//("Request body:", requestOptions);
 
 		return await this.sendRequest(
 			`${serverUrl}/api/v1/product/create`, requestOptions, navigation
@@ -2161,8 +2176,8 @@ class ApiService {
 			body: JSON.stringify(requestBody)
 		};
 
-		console.log("Sending request to:", `${serverUrl}/api/v1/store/product/create`);
-		console.log("Request body:", requestOptions);
+		//("Sending request to:", `${serverUrl}/api/v1/store/product/create`);
+		//("Request body:", requestOptions);
 
 		return await this.sendRequest(
 			`${serverUrl}/api/v1/store/product/create`,
@@ -2199,8 +2214,8 @@ class ApiService {
 			body: JSON.stringify(requestBody)
 		};
 
-		console.log("Sending request to:", `${serverUrl}/api/v1/store/sell/group/create`);
-		console.log("Request body:", requestOptions);
+		//("Sending request to:", `${serverUrl}/api/v1/store/sell/group/create`);
+		//("Request body:", requestOptions);
 
 		return await this.sendRequest(
 			`${serverUrl}/api/v1/store/sell/group/create`,
@@ -2348,8 +2363,8 @@ class ApiService {
 			body: JSON.stringify(requestBody)
 		};
 
-		console.log("Sending request to:", `${serverUrl}/api/v1/store/profit/group/create`);
-		console.log("Request body:", requestOptions);
+		//("Sending request to:", `${serverUrl}/api/v1/store/profit/group/create`);
+		//("Request body:", requestOptions);
 
 		return await this.sendRequest(
 			`${serverUrl}/api/v1/store/profit/group/create`, requestOptions, navigation
@@ -2480,20 +2495,21 @@ class ApiService {
 				}
 			};
 
-			console.log("Sending request to:", `${serverUrl}/api/v1/store/profit/amount/date/get/by?date=${date}&storeId=${storeId}`);
-			console.log("Request body:", requestOptions);
+			//("Sending request to:", `${serverUrl}/api/v1/store/profit/amount/date/get/by?date=${date}&storeId=${storeId}`);
+			//("Request body:", requestOptions);
 
 			const response = await fetch(`${serverUrl}/api/v1/store/profit/amount/date/get/by?date=${date}&storeId=${storeId}`, requestOptions);
 
-			console.log("Response status:", response.status);
+
 
 			if (response.status == 401) {
+				console.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
 
 			const responseBody = await response.json();
-			console.log("Response body:", responseBody);
+
 
 			if (!response.ok) {
 				throw new Error("Network response was not ok");
@@ -2501,7 +2517,7 @@ class ApiService {
 
 			return responseBody;
 		} catch (error) {
-			console.log("Error occurred: ", error);
+			//("Error occurred: ", error);
 			throw error; // Re-throwing the error for handling in the calling code
 		}
 	}
@@ -2510,7 +2526,7 @@ class ApiService {
 	async check(email, password) {
 		await AsyncStorage.setItem("isRequestInProgress", "true");
 
-		console.log(serverUrl + "/api/v1/auth/check")
+		//(serverUrl + "/api/v1/auth/check")
 		try {
 			const response = await fetch(serverUrl + "/api/v1/auth/check?email=" + email + "&password=" + password, {
 				method: "GET",
@@ -2547,7 +2563,7 @@ class ApiService {
 	async checkEmail(email) {
 		await AsyncStorage.setItem("isRequestInProgress", "true");
 
-		console.log(serverUrl + "/api/v1/auth/check?email=" + email)
+		//(serverUrl + "/api/v1/auth/check?email=" + email)
 		try {
 			const response = await fetch(serverUrl + "/api/v1/auth/check?email=" + email, {
 				method: "GET",
@@ -2619,18 +2635,6 @@ class ApiService {
 	async register(idempotencyKey, firstName, lastName, storeName, phone, email, password, pinCode) {
 		await AsyncStorage.setItem("isRequestInProgress", "true");
 
-		console.log(serverUrl + "/api/v1/auth/register");
-		console.log(
-			JSON.stringify({
-				firstname: firstName,
-				lastname: lastName,
-				storeName: storeName,
-				phone: phone,
-				email: email,
-				password: password,
-				pinCode: pinCode
-			})
-		);
 		try {
 			const response = await fetch(serverUrl + "/api/v1/auth/register", {
 				method: "POST",
@@ -2680,15 +2684,15 @@ class ApiService {
 				}
 			};
 
-			console.log("Sending request to:", `${serverUrl}/api/v1/store/sell/month/amount?storeId=${storeId}`);
-			console.log("Request body:", requestOptions);
+			//("Sending request to:", `${serverUrl}/api/v1/store/sell/month/amount?storeId=${storeId}`);
+			//("Request body:", requestOptions);
 
 			const response = await fetch(
 				`${serverUrl}/api/v1/store/profit/month/amount?storeId=${storeId}`,
 				requestOptions
 			);
 
-			console.log("Response status:", response.status);
+
 
 			if (response.status === 401) {
 				await this.logout(navigation);
@@ -2702,7 +2706,7 @@ class ApiService {
 
 			// Parse and log the response body
 			const responseBody = await response.text();
-			console.log("Response body:", responseBody);
+
 
 			if (BigInt(responseBody) <= BigInt(Number.MAX_SAFE_INTEGER)) {
 				return Number(responseBody);
@@ -2710,7 +2714,7 @@ class ApiService {
 				return BigInt(responseBody);
 			}
 		} catch (error) {
-			console.log("Error occurred: ", error);
+			//("Error occurred: ", error);
 			throw error; // Re-throwing the error for handling in the calling code
 		}
 	}
@@ -2728,15 +2732,15 @@ class ApiService {
 				}
 			};
 
-			console.log("Sending request to:", `${serverUrl}/api/v1/store/profit/month/amount?storeId=${storeId}`);
-			console.log("Request body:", requestOptions);
+			//("Sending request to:", `${serverUrl}/api/v1/store/profit/month/amount?storeId=${storeId}`);
+			//("Request body:", requestOptions);
 
 			const response = await fetch(
 				`${serverUrl}/api/v1/store/profit/month/amount?storeId=${storeId}`,
 				requestOptions
 			);
 
-			console.log("Response status:", response.status);
+
 
 			if (response.status === 401) {
 				await this.logout(navigation);
@@ -2750,7 +2754,7 @@ class ApiService {
 
 			// Parse and log the response body
 			const responseBody = await response.text();
-			console.log("Response body:", responseBody);
+
 
 			if (BigInt(responseBody) <= BigInt(Number.MAX_SAFE_INTEGER)) {
 				return Number(responseBody);
@@ -2758,7 +2762,7 @@ class ApiService {
 				return BigInt(responseBody);
 			}
 		} catch (error) {
-			console.log("Error occurred: ", error);
+			//("Error occurred: ", error);
 			throw error; // Re-throwing the error for handling in the calling code
 		}
 	}

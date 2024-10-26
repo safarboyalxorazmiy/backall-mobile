@@ -72,7 +72,8 @@ class Sell extends Component {
 			quantityInputError: false,
 			isUtilizationModalVisible: false,
 
-			autoFocus: true
+			autoFocus: true,
+			SAVE_BUTTON_AVAILABLE: true
 		};
 
 		this.keyboardDidShowListener = Keyboard.addListener(
@@ -329,7 +330,8 @@ class Sell extends Component {
 									sellingProducts: [],
 									seria: "",
 									amount: 0,
-									profit: 0
+									profit: 0,
+									SAVE_BUTTON_AVAILABLE: true
 								})
 								navigation.navigate("Basket")
 							}}
@@ -1233,6 +1235,14 @@ class Sell extends Component {
 	}
 
 	sellProducts = async () => {
+		if (this.state.SAVE_BUTTON_AVAILABLE == false) {
+			return;
+		}
+
+		this.setState({
+			SAVE_BUTTON_AVAILABLE: false
+		});
+
 		if (this.state.sellingProducts.length == 0) {
 			// TODO ERROR MESSAGE IF THERE IS NO PRODUCT ADDED
 			return;
@@ -1388,20 +1398,17 @@ class Sell extends Component {
 		});
 
 		await AsyncStorage.setItem("isNotSaved", "true");
-		await AsyncStorage.setItem("sellGroupNotSaved", "true");
-		await AsyncStorage.setItem("sellHistoryNotSaved", "true");
-		await AsyncStorage.setItem("sellHistoryGroupNotSaved", "true");
-		await AsyncStorage.setItem("sellAmountDateNotSaved", "true");
-		await AsyncStorage.setItem("profitGroupNotSaved", "true");
-		await AsyncStorage.setItem("profitHistoryNotSaved", "true");
-		await AsyncStorage.setItem("profitHistoryGroupNotSaved", "true");
-		await AsyncStorage.setItem("profitAmountDateNotSaved", "true");
+		await AsyncStorage.setItem("shoppingNotSaved", "true");
 
 		await AsyncStorage.setItem("shoppingFullyLoaded", "false");
 		await AsyncStorage.setItem("profitFullyLoaded", "false");
 		await AsyncStorage.setItem("basketFullyLoaded", "false");
 
 		await AsyncStorage.setItem("window", "Shopping");
+
+		this.setState({
+			SAVE_BUTTON_AVAILABLE: true
+		});
 
 		// Navigate screen
 		const {navigation} = this.props;

@@ -279,7 +279,9 @@ const styles = StyleSheet.create({
 });
 
 export default memo(HistoryGroup, (
-	prevProps, nextProps) =>
-	prevProps.item.histories.length === nextProps.item.histories.length
-	&& nextProps.item.histories[0].saved === false
+	prevProps, nextProps) => 
+		prevProps.item.dateInfo !== nextProps.item.dateInfo &&
+		prevProps.item.histories.length !== nextProps.item.histories.length 
+	
+	//&& nextProps.item.histories[0].saved === false 
 );

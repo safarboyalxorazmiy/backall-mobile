@@ -575,7 +575,7 @@ class Home extends Component {
 				await this.apiService.getSellGroups(
 					lastSellGroupGlobalId,
 					0,
-					1000,
+					1000000,
 					this.props.navigation
 				);
 		} catch (error) {
@@ -645,12 +645,12 @@ class Home extends Component {
 			}
 
 			response = await this.apiService.getSellAmountDate(
-				lastSellAmountGlobalId + 1, 0, 1000, this.props.navigation
+				lastSellAmountGlobalId + 1, 0, 1000000, this.props.navigation
 			);
 		} catch (error) {
 			console.error("Error fetching global products:", error);
 			this.setState({
-				lastSize: 1000,
+				lastSize: 1000000,
 				lastPage: 0
 			});
 
@@ -693,12 +693,12 @@ class Home extends Component {
 			}
 
 			response = await this.apiService.getProfitGroups(
-				lastProfitGroupGlobalId, 0, 1000, this.props.navigation
+				lastProfitGroupGlobalId, 0, 1000000, this.props.navigation
 			);
 		} catch (error) {
 			console.error("Error fetching getProfitGroups():", error);
 			this.setState({
-				lastSize: 1000,
+				lastSize: 1000000,
 				lastPage: 0
 			});
 
@@ -774,13 +774,13 @@ class Home extends Component {
 			}
 
 			response = await this.apiService.getProfitAmountDate(
-				lastProfitAmountDateGlobalId + 1, 0, 1000, this.props.navigation
+				lastProfitAmountDateGlobalId + 1, 0, 1000000, this.props.navigation
 			);
 		} catch (error) {
 			console.error("Error fetching global products:", error);
 			this.setState({
 				lastSize: 0,
-				lastPage: 1000
+				lastPage: 1000000
 			});
 
 			return false;
