@@ -16,6 +16,7 @@ import ApiService from "../../../service/ApiService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Animatable from "react-native-animatable";
 import BackIcon from "../../../assets/arrow-left-icon.svg";
+import AnimatedButton from "../../AnimatedButton";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -150,13 +151,10 @@ class Login extends Component {
 							}} animation="shake" duration={500}>
 								<Text style={{color: "red", fontFamily: "Montserrat-Regular"}}>Login va parol xato.</Text>
 							</Animatable.View> : null}
-					<TouchableOpacity onPress={async () => {
+					
+					<AnimatedButton content={"Kirish"} onPress={async () => {
 						await this.login()
-					}}>
-						<View style={styles.button}>
-							<Text style={styles.buttonText}>Kirish</Text>
-						</View>
-					</TouchableOpacity>
+					}} />
 				</View>
 				<TouchableOpacity
 					onPress={() => {
@@ -245,7 +243,8 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		fontWeight: "500",
 		fontFamily: "Montserrat-Medium"
-	}
+	},
+	
 });
 
 export default Login;
