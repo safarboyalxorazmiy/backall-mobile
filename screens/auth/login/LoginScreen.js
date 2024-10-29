@@ -21,6 +21,12 @@ import AnimatedButton from "../../AnimatedButton";
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
+import { NativeWindStyleSheet } from "nativewind";
+
+NativeWindStyleSheet.setOutput({
+	default: "native",
+});
+
 class Login extends Component {
 	constructor(props) {
 		super(props);
