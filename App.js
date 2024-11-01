@@ -1,7 +1,6 @@
 import React, {Component, createRef, memo} from "react";
 import {
 	Appearance,
-	Text,
 	TouchableOpacity,
 	View,
 	Image,
@@ -9,17 +8,20 @@ import {
 	StyleSheet,
 	AppRegistry,
 	Modal,
-	Keyboard
+	Platform,
+	Text
 } from "react-native";
-import {Platform} from "react-native";
 import NetInfo from "@react-native-community/netinfo";
 import NavigationService from "./service/NavigationService";
-import {GestureHandlerRootView} from "react-native-gesture-handler";
+import {GestureHandlerRootView, ScrollView} from "react-native-gesture-handler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {Asset} from "expo-asset";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import * as SystemUI from "expo-system-ui";
+
+import { ApplicationProvider } from '@ui-kitten/components';
+import * as eva from '@eva-design/eva';
 
 import StoreProductRepository from "./repository/StoreProductRepository";
 import SellHistoryRepository from "./repository/SellHistoryRepository";
@@ -30,9 +32,8 @@ import DatabaseRepository from "./repository/DatabaseRepository";
 import TokenService from "./service/TokenService";
 import ApiService from "./service/ApiService";
 
-import RightArrow from "./assets/right-arrow.svg";
 import RightArrowLight from "./assets/right-arrow-light.svg"
-import AuthScreen from "./screens/auth/AuthScreen";
+import PaymentForm from "./screens/PaymentForm";
 
 const tokenService = new TokenService();
 
@@ -48,6 +49,8 @@ class App extends Component {
 
 			theme: Appearance.getColorScheme(),
 			splashLoaded: false,
+
+			
 		};
 
 		if (this.props.navigation) {
@@ -210,17 +213,18 @@ class App extends Component {
 
 					// (If)
 					// Date does not equals
-					if (await AsyncStorage.getItem("lastPaymentShownDate") != dateString) {
+					// if (await AsyncStorage.getItem("lastPaymentShownDate") != dateString) {
 						// Hour does not equals and morning and evening work 
-						if (
-							(hour >= 8 && hour <= 9) || (hour >= 20 && hour <= 22) &&
-							await AsyncStorage.getItem("lastPaymentShownHour") != hour
-						) {
+						// if (
+						// 	(hour >= 0 && hour <= 9) || (hour >= 20 && hour <= 22) &&
+						// 	await AsyncStorage.getItem("lastPaymentShownHour") != hour
+						// ) {
 							this.setState({
 								notPayed: true
-							})
-						}
-					}
+							});
+							await AsyncStorage.setItem("paymentScreenOpened", "true");
+						// }
+					// }
 				}
 
 			}
@@ -588,6 +592,7 @@ class App extends Component {
 		}
 	}
 
+
 	render() {
 		const {theme, splashLoaded} = this.state;
 		if (!splashLoaded) {
@@ -622,149 +627,100 @@ class App extends Component {
 
 		return (
 			<GestureHandlerRootView style={{flex: 1}}>
-				{
-					this.state.notPayed &&
-					(<Modal visible={this.state.notPayed}>
-						<View style={{
-							width: "100%",
-							height: "100%",
-							backgroundColor: "#181926",
-							paddingTop: 60,
-							paddingHorizontal: 16
-						}}>
-							<Text style={{
-								color: "white",
-								fontFamily: "Gilroy-SemiBold",
-								fontSize: 38,
-								width: 280
-							}}>Oylik abonent to'lovi muddati keldi!</Text>
-
-							<TouchableOpacity
-								activeOpacity={1}
-								onPress={async () => {
-									let tryCount = parseInt(
-										await AsyncStorage.getItem("paymentTryCount")
-									);
-
-									if (tryCount >= 3) {
-										let isPayed = await this.apiService.getPayment(email, monthYear, navigation);
-										console.log("Payed: ", isPayed)
-
-										if (isPayed == true) {
-											this.setState({
-												notPayed: true
-											})
-										}
-
-										return;
-									} else {
-										await AsyncStorage.setItem("paymentTryCount", (tryCount + 1).toString());
-
-										const currentDate = new Date();
-
-										const year = currentDate.getFullYear();
-										const month = ("0" + (currentDate.getMonth() + 1)).slice(-2); // Adding 1 because getMonth() returns zero-based month index
-										const day = ("0" + currentDate.getDate()).slice(-2);
-										const hour = ("0" + currentDate.getHours()).slice(-2); // Get current hour
-
-										const dateString = `${year}-${month}-${day}`;
-
-
-										if (await AsyncStorage.getItem("lastPaymentShownDate") != dateString) {
-											await AsyncStorage.setItem("lastPaymentShownDate", dateString);
-										}
-
-										if (await AsyncStorage.getItem("lastPaymentShownHour") != hour.toString()) {
-											await AsyncStorage.setItem("lastPaymentShownHour", hour.toString());
-										}
-
-										this.setState({
-											notPayed: false
-										});
-									}
-								}}
-								style={{
-									width: 44,
-									height: 44,
-									borderRadius: 8,
-									backgroundColor: "#07070A",
-									display: "flex",
-									alignItems: "center",
-									justifyContent: "center",
-									position: "absolute",
-									top: 32,
-									right: 19
-								}}>
-								<RightArrowLight/>
-							</TouchableOpacity>
-
-							<Image
-								source={require("./assets/cards.png")}
-								style={{width: 367, height: 254, marginTop: 50}}
-							/>
-
-							<View style={{
-								display: "flex",
-								flexDirection: "row",
-								alignItems: "center",
-								justifyContent: "space-between",
-								paddingTop: 24,
-								borderTopWidth: 2,
-								borderTopColor: "#07070A",
-								marginTop: 40
+				<ApplicationProvider  {...eva} theme={eva.dark}>
+					{
+						this.state.notPayed &&
+						(<Modal visible={this.state.notPayed}>
+							<ScrollView style={{
+								width: "100%",
+								height: "100%",
+								backgroundColor: "#181926",
+								paddingTop: 60,
+								paddingHorizontal: 16
 							}}>
 								<Text style={{
 									color: "white",
-									fontFamily: "Gilroy-Bold",
-									fontSize: 24
-								}}>JAMI</Text>
+									fontFamily: "Gilroy-SemiBold",
+									fontSize: 38,
+									width: 280
+								}}>Oylik abonent to'lovi muddati keldi!</Text>
+								
 
-								<View style={{
-									display: "flex",
-									flexDirection: "row",
-									alignItems: "flex-end",
-								}}>
-									<Text style={{
-										color: "white",
-										fontFamily: "Gilroy-Regular",
-										fontSize: 24
-									}}>126,529.30 </Text>
 
-									<Text style={{
-										color: "white",
-										fontFamily: "Gilroy-Regular",
-										fontSize: 20
-									}}>so’m</Text>
-								</View>
-							</View>
+								<TouchableOpacity
+									activeOpacity={1}
+									onPress={async () => {
+										let tryCount = parseInt(
+											await AsyncStorage.getItem("paymentTryCount")
+										);
 
-							<TouchableOpacity
-								style={{
-									backgroundColor: "black",
-									display: "flex",
-									flexDirection: "row",
-									alignItems: "center",
-									justifyContent: "center",
-									gap: 26,
-									padding: 16,
-									borderRadius: 8,
-									marginTop: 18
-								}}
-								onPress={() => {
-									Linking.openURL("https://t.me/backall_admin");
-								}}>
-								<Text style={{
-									fontSize: 18,
-									fontFamily: "Gilroy-Black",
-									color: "white"
-								}}>TO"LASH</Text>
-								<RightArrow/>
-							</TouchableOpacity>
-						</View>
-					</Modal>)
-				}
+										if (tryCount >= 3) {
+											// tryCount ya'ni tolov qilish urunishi  
+											// 3 tadan kotta bosa bu degani 3 kun bu knopkani bosgandan keyin 
+											// boshqa bosolmidigan bopqosin.
+											let isPayed = await this.apiService.getPayment(email, monthYear, navigation);
+											console.log("Payed: ", isPayed)
 
-				<NavigationService/>
+											if (isPayed == true) {
+												this.setState({
+													notPayed: true
+												})
+											}
+
+											// Agar masheniklik qilib offline ishlataman desa 
+											// screenga kirganda payment oynasini qayta ochadigan qilib qo'yamiz
+											await AsyncStorage.setItem("paymentScreenOpened", "true");
+
+											return;
+										} else {
+											await AsyncStorage.setItem("paymentTryCount", (tryCount + 1).toString());
+
+											const currentDate = new Date();
+
+											const year = currentDate.getFullYear();
+											const month = ("0" + (currentDate.getMonth() + 1)).slice(-2); // Adding 1 because getMonth() returns zero-based month index
+											const day = ("0" + currentDate.getDate()).slice(-2);
+											const hour = ("0" + currentDate.getHours()).slice(-2); // Get current hour
+
+											const dateString = `${year}-${month}-${day}`;
+
+
+											if (await AsyncStorage.getItem("lastPaymentShownDate") != dateString) {
+												await AsyncStorage.setItem("lastPaymentShownDate", dateString);
+											}
+
+											if (await AsyncStorage.getItem("lastPaymentShownHour") != hour.toString()) {
+												await AsyncStorage.setItem("lastPaymentShownHour", hour.toString());
+											}
+
+											this.setState({
+												notPayed: false
+											});
+										}
+									}}
+									style={{
+										width: 44,
+										height: 44,
+										borderRadius: 8,
+										backgroundColor: "#07070A",
+										display: "flex",
+										alignItems: "center",
+										justifyContent: "center",
+										position: "absolute",
+										top: 32,
+										right: 19
+									}}>
+									<RightArrowLight/>
+								</TouchableOpacity>
+
+								<PaymentForm />
+							</ScrollView>
+						</Modal>)
+					}
+				</ApplicationProvider>
+
+				<NavigationService />
+				
 			</GestureHandlerRootView>
 		);
 	}
@@ -784,4 +740,4 @@ const styles = StyleSheet.create({
 
 AppRegistry.registerComponent("Backall", () => App);
 
-export default memo(App);
+export default App;

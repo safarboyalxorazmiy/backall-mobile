@@ -2732,14 +2732,10 @@ class ApiService {
 				}
 			};
 
-			//("Sending request to:", `${serverUrl}/api/v1/store/profit/month/amount?storeId=${storeId}`);
-			//("Request body:", requestOptions);
-
 			const response = await fetch(
 				`${serverUrl}/api/v1/store/profit/month/amount?storeId=${storeId}`,
 				requestOptions
 			);
-
 
 
 			if (response.status === 401) {
@@ -2752,7 +2748,6 @@ class ApiService {
 				throw new Error("Network response was not ok");
 			}
 
-			// Parse and log the response body
 			const responseBody = await response.text();
 
 
@@ -2762,9 +2757,34 @@ class ApiService {
 				return BigInt(responseBody);
 			}
 		} catch (error) {
-			//("Error occurred: ", error);
-			throw error; // Re-throwing the error for handling in the calling code
+			throw error;
 		}
+	}
+
+
+	async makePaymentRequest(number, expire, navigation) {	
+		const accessToken = await this.tokenService.retrieveAccessToken();
+
+		const requestBody = {
+			number: number,
+			expire: expire
+		};
+
+		const requestOptions = {
+			method: "POST",
+			headers: {
+				"Authorization": `Bearer ${accessToken}`,
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify(requestBody)
+		};
+
+		("Sending request to:", `${serverUrl}/payment/make`);
+		("Request body:", requestBody);
+
+		return await this.sendRequest(
+			`${serverUrl}/payment/make`, requestOptions, navigation
+		);
 	}
 }
 
