@@ -134,6 +134,7 @@ class App extends Component {
 		}
 	};
 
+	// 🚨 !important background thread 🚨
 	async checkInternetStatus() {
 		if (await AsyncStorage.getItem("isDownloaded") != "true") {
 			return;
@@ -204,19 +205,19 @@ class App extends Component {
 
 					// (If)
 					// Date does not equals
-					if (await AsyncStorage.getItem("lastPaymentShownDate") != dateString) {
+					// if (await AsyncStorage.getItem("lastPaymentShownDate") != dateString) {
 						// Hour does not equals and morning and evening work
-						if (
-							(hour >= 0 && hour <= 9) || (hour >= 20 && hour <= 22) &&
-							await AsyncStorage.getItem("lastPaymentShownHour") != hour
-						) {
+						// if (
+						// 	(hour >= 0 && hour <= 9) || (hour >= 20 && hour <= 22) &&
+						// 	await AsyncStorage.getItem("lastPaymentShownHour") != hour
+						// ) {
 							this.setState({
 								notPayed: true
 							});
 							await AsyncStorage.setItem("paymentScreenOpened", "true");
 						}
-					}
-				}
+				// 	}
+				// }
 
 			}
 		}
@@ -572,6 +573,7 @@ class App extends Component {
 		}
 	}
 
+	//###################################################
 	componentWillUnmount() {
 		if (this.unsubscribe) {
 			this.unsubscribe();

@@ -1,8 +1,10 @@
-import React, {Component, createRef} from 'react';
+import React, {Component, createRef, memo} from 'react';
 import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import {ApplicationProvider, Input, Text, Button} from '@ui-kitten/components';
 import RightArrow from "../assets/right-arrow.svg";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import Feather from '@expo/vector-icons/Feather';
+import AntDesign from '@expo/vector-icons/AntDesign';
 import ApiService from '../service/ApiService';
 import {ProgressBar} from '@ui-kitten/components';
 
@@ -20,6 +22,8 @@ class PaymentForm extends Component {
 			progress: 0,
 
 			error: true,
+			expirationError: true,
+			cardNumberError: true,
 			cardToken: null
 		};
 		this.expirationDateInput = createRef();
@@ -45,39 +49,51 @@ class PaymentForm extends Component {
 		const formattedExpirationDate = cleanedText.length > 2
 			? `${cleanedText.substring(0, 2)}/${cleanedText.substring(2, 4)}`
 			: cleanedText;
+
+		const formattedExpirationDateWithoutSlash = cleanedText.length > 2
+			? `${cleanedText.substring(0, 2)}${cleanedText.substring(2, 4)}`
+			: cleanedText;
+
+		// console.log(text.length)
 		this.setState({
-			expirationDate: formattedExpirationDate,
-			expirationDateWithoutSlash: cleanedText
+			expirationDate: formattedExpirationDate
 		});
 
 		if (cleanedText.length === 4) {
+			this.setState({
+				expirationDateWithoutSlash: cleanedText
+			});
+
+			console.log("expirationDateWithoutSlash::", cleanedText)
+
 			this.expirationDateInput.current.blur();
 			this.setState({
 				loading: true
 			});
 
-			await this.makeCodeRequest();
+			await this.makeCodeRequest(cleanedText);
 
-			this.setState({
-				loading: false
-			})
+			// this.setState({
+			// 	loading: false
+			// })
 		}
 	};
 
-	async makeCodeRequest() {
+	async makeCodeRequest(code) {
 		let result;
 		try {
 			this.setState({
 				progress: 40
 			});
 
-			result =
-				await this.apiService.makePaymentRequest(this.state.cardNumberWithoutSpaces, this.state.expirationDateWithoutSlash);
-			console.log("makeCodeRequest()::", result);
+			console.log("response started")
+			result = await this.apiService.makePaymentRequest(this.state.cardNumberWithoutSpaces, code);
 
 		} catch (error) {
 			this.setState({
-				error: true
+				error: true,
+				cardError: true,
+				expirationError: true
 			})
 		}
 
@@ -88,16 +104,28 @@ class PaymentForm extends Component {
 			return;
 		}
 
-		this.setState({
-			cardToken: result,
-			progress: 100
-		});
+		console.log(result);
+
+		console.log("response compleated")
+		console.log("makeCodeRequest()::", result);
+		if (result) {
+			this.setState({
+				cardToken: result,
+				progress: 100,
+				error: false,
+				cardNumberError: false,
+				expirationError: false
+			});
+		}
+		console.log("cardToken::", result)
 	}
 
 	async verifyPayment() {
 		if (this.state.cardToken == null) {
 			console.log("this.state.cardToken is null")
-			await this.props.completePayment()
+			this.setState({
+				error: true
+			});
 		} else {
 			try {
 				await this.apiService.verifyPaymentRequest(
@@ -110,7 +138,8 @@ class PaymentForm extends Component {
 					await this.props.completePayment();
 				} else {
 					this.setState({
-						error: true
+						error: true,
+						codeError: true
 					});
 				}
 			}
@@ -135,7 +164,7 @@ class PaymentForm extends Component {
 		return (
 			<View style={{height: 500, marginTop: 40}}>
 				<Input
-					textStyle={{color: 'white'}}
+					// textStyle={{color: 'white'}}
 					size="large"
 					placeholder="XXXX XXXX XXXX XXXX"
 					cursorColor={"white"}
@@ -143,19 +172,43 @@ class PaymentForm extends Component {
 					// caption={
 					//   (evaProps) => <Text status="danger">Karta raqam xato.</Text>
 					// }
-					status='success'
+					status={this.state.error ? "danger" : this.state.cardToken != null ? "success" : "default"}
 
 					textContentType='creditCardNumber'
-					placeholderTextColor={'white'}
+					// placeholderTextColor={'white'}
 
 					style={{backgroundColor: 'black', color: "#FFF"}}
 					value={this.state.cardNumber}
 					accessoryRight={() => {
-						return (
+						return this.state.cardNumberError ? (
+							<TouchableOpacity
+								style={{paddingLeft: 10, paddingRight: 10}}
+								onPress={() => {
+									this.setState({
+										cardNumber: "",
+										cardToken: null,
+										cardNumberError: false
+									});
+
+									if (this.state.expirationError) {
+										this.setState({
+											error: false
+										});
+									}
+
+
+								}}>
+								<AntDesign name="close" size={24} color="#FF3D71"/>
+							</TouchableOpacity>
+						) : this.state.cardToken != null ? (
+							<View style={{marginRight: 10}}>
+								<Feather name="check" size={24} color="#51F0B0"/>
+							</View>
+						) : (
 							<View style={{marginRight: 10}}>
 								<FontAwesome name="credit-card-alt" size={24} color="white"/>
 							</View>
-						);
+						)
 					}}
 					onChangeText={this.handleChange}
 					keyboardType="numeric"
@@ -165,9 +218,50 @@ class PaymentForm extends Component {
 				<Input
 					ref={this.expirationDateInput}
 					placeholder="MM/YY"
-					status='success'
+					status={this.state.expirationError ? "danger" : this.state.cardToken != null ? "success" : "default"}
 					value={this.state.expirationDate}
-					onChangeText={this.handleExpirationDateChange}
+					onChangeText={async (text) => {
+						await this.handleExpirationDateChange(text)
+					}}
+					onEndEditing={() => {
+						console.log("Editing end mf");
+						console.log(this.state.cardToken)
+						if (this.state.cardToken == null) {
+							this.setState({
+								error: true,
+								expirationError: true
+							});
+						}
+					}}
+					accessoryRight={() => {
+						return this.state.expirationError ? (
+							<TouchableOpacity
+								style={{paddingLeft: 10, paddingRight: 10}}
+								onPress={() => {
+									this.setState({
+										expirationDate: "",
+										cardToken: null,
+										expirationError: false
+									});
+
+									if (this.state.cardNumberError) {
+										this.setState({
+											error: false
+										});
+									}
+
+									this.expirationDateInput.current.focus();
+								}}>
+								<AntDesign name="close" size={24} color="#FF3D71"/>
+							</TouchableOpacity>
+						) : this.state.cardToken != null ? (
+							<View style={{marginRight: 10}}>
+								<Feather name="check" size={24} color="#51F0B0"/>
+							</View>
+						) : (
+							<></>
+						)
+					}}
 					keyboardType="numeric"
 					maxLength={5}
 					style={{marginTop: 15, backgroundColor: 'black'}}
@@ -177,9 +271,9 @@ class PaymentForm extends Component {
 				{
 					this.state.loading
 						? <ProgressBar
-								progress={this.state.progress}
-								animating={true}
-								style={{marginTop: 15}}/>
+							progress={this.state.progress}
+							animating={true}
+							style={{marginTop: 15}}/>
 						: null
 				}
 
@@ -284,4 +378,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default PaymentForm;
+export default memo(PaymentForm);

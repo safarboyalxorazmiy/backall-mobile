@@ -2734,7 +2734,13 @@ class ApiService {
 				return false;
 			}
 
-			const responseBody = await response.text();
+			let responseBody = await response.text();
+
+			console.log(
+				JSON.stringify(requestBody),
+				responseBody,
+				response.status
+			);
 
 			if (!response.ok) {
 				throw new Error("Network response was not ok");
