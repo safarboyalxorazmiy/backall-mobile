@@ -708,7 +708,7 @@ class Home extends Component {
 		}
 
 		if (!response || !response.content || response.content.length === 0) {
-			return true; // Indicate success and exit the loop
+			return true;
 		}
 
 		for (const profitGroup of response.content) {

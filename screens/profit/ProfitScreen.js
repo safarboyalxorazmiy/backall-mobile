@@ -498,6 +498,10 @@ class Profit extends Component {
 
 		if (this.state.globalFullyLoaded || this.state.loading) return;
 
+		if (!this.state.firstGroupGlobalId) {
+			return;
+		}
+
 		this.setState({loading: true});
 
 		try {
