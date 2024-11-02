@@ -34,6 +34,7 @@ import ApiService from "./ApiService";
 import AuthScreen from "../screens/auth/AuthScreen";
 import Register from "../screens/auth/register/RegisterScreen";
 import RegisterVerificationScreen from "../screens/auth/register/RegisterVerificationScreen";
+import DatabaseRepository from "../repository/DatabaseRepository";
 
 
 const Tab = createBottomTabNavigator();
@@ -104,6 +105,7 @@ class NavigationService extends Component {
 		this.storeProductRepository = new StoreProductRepository();
 		this.apiService = new ApiService();
 		this.productRepository = new ProductRepository();
+		this.databaseRepository = new DatabaseRepository();
 	}
 
 	componentDidMount() {
@@ -283,6 +285,15 @@ class NavigationService extends Component {
 							target: route.key,
 							canPreventDefault: true
 						});
+
+						let authError = await AsyncStorage.getItem("authError");
+						if (authError != null && authError == "true") {
+							console.log("LOGGED OUT BY PAYMENT SCREEN")
+							await this.databaseRepository.clear();
+							await AsyncStorage.clear();
+							navigation.navigate("Login");
+							return;	
+						}
 
 						if (!isFocused && !event.defaultPrevented) {
 							if (route.name === "Sell") {

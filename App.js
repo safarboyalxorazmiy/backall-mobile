@@ -9,7 +9,8 @@ import {
 	AppRegistry,
 	Modal,
 	Platform,
-	Text
+	Text,
+	SafeAreaView
 } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
 import NavigationService from "./service/NavigationService";
@@ -20,7 +21,7 @@ import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import * as SystemUI from "expo-system-ui";
 
-import { ApplicationProvider } from '@ui-kitten/components';
+import {ApplicationProvider} from '@ui-kitten/components';
 import * as eva from '@eva-design/eva';
 
 import StoreProductRepository from "./repository/StoreProductRepository";
@@ -48,18 +49,8 @@ class App extends Component {
 			notPayed: false,
 
 			theme: Appearance.getColorScheme(),
-			splashLoaded: false,
-
-			
+			splashLoaded: false
 		};
-
-		if (this.props.navigation) {
-			let isLoggedIn = tokenService.checkTokens();
-
-			if (!isLoggedIn) {
-				this.props.navigation.navigate("Login");
-			}
-		}
 
 		this.productRepository = new ProductRepository();
 		this.storeProductRepository = new StoreProductRepository();
@@ -87,8 +78,7 @@ class App extends Component {
 				"Gilroy-Black": require("./assets/fonts/gilroy/Gilroy-Black.ttf"),
 				"Montserrat-Regular": require("./assets/fonts/montserrat/Montserrat-Regular.ttf"),
 				"Montserrat-Bold": require("./assets/fonts/montserrat/Montserrat-Bold.ttf"),
-				"Montserrat-Medium": require("./assets/fonts/montserrat/Montserrat-Medium.ttf"),
-
+				"Montserrat-Medium": require("./assets/fonts/montserrat/Montserrat-Medium.ttf")
 			});
 
 			this.setState({fontsLoaded: true});
@@ -145,6 +135,10 @@ class App extends Component {
 	};
 
 	async checkInternetStatus() {
+		if (await AsyncStorage.getItem("isDownloaded") != "true") {
+			return;
+		}
+
 		console.log(
 			"Is connected?",
 			this.state.isConnected === null
@@ -172,9 +166,7 @@ class App extends Component {
 			let monthYear = `${month}/${year}`;
 
 			if (this.state.notPayed) {
-				const {navigation} = this.props;
-
-				let isPayed = await this.apiService.getPayment(email, monthYear, navigation);
+				let isPayed = await this.apiService.getPayment(email, monthYear);
 				console.log("Payed: ", isPayed)
 
 				if (isPayed == true) {
@@ -189,9 +181,8 @@ class App extends Component {
 				// this.touchableRef.current && this.touchableRef.current.onPress();
 				// Keyboard.dismiss();
 
-				const {navigation} = this.props;
 				let isPayed =
-					await this.apiService.getPayment(email, monthYear, navigation);
+					await this.apiService.getPayment(email, monthYear);
 
 				console.log("Payed: ", isPayed)
 
@@ -213,18 +204,18 @@ class App extends Component {
 
 					// (If)
 					// Date does not equals
-					// if (await AsyncStorage.getItem("lastPaymentShownDate") != dateString) {
-						// Hour does not equals and morning and evening work 
-						// if (
-						// 	(hour >= 0 && hour <= 9) || (hour >= 20 && hour <= 22) &&
-						// 	await AsyncStorage.getItem("lastPaymentShownHour") != hour
-						// ) {
+					if (await AsyncStorage.getItem("lastPaymentShownDate") != dateString) {
+						// Hour does not equals and morning and evening work
+						if (
+							(hour >= 0 && hour <= 9) || (hour >= 20 && hour <= 22) &&
+							await AsyncStorage.getItem("lastPaymentShownHour") != hour
+						) {
 							this.setState({
 								notPayed: true
 							});
 							await AsyncStorage.setItem("paymentScreenOpened", "true");
-						// }
-					// }
+						}
+					}
 				}
 
 			}
@@ -249,8 +240,7 @@ class App extends Component {
 							let response = await this.apiService.createLocalProduct(
 								product.serial_number,
 								product.name,
-								product.brand_name,
-								this.props.navigation
+								product.brand_name
 							);
 
 							if (!response) {
@@ -291,8 +281,7 @@ class App extends Component {
 								storeProduct.selling_price,
 								null,
 								storeProduct.count,
-								storeProduct.count_type,
-								this.props.navigation
+								storeProduct.count_type
 							);
 
 							if (!response) {
@@ -328,8 +317,7 @@ class App extends Component {
 						try {
 							let response = await this.apiService.createSellGroup(
 								sellGroup.created_date,
-								sellGroup.amount,
-								this.props.navigation
+								sellGroup.amount
 							);
 
 							if (!response) {
@@ -363,8 +351,7 @@ class App extends Component {
 								sellHistory.count,
 								sellHistory.count_type,
 								sellHistory.selling_price,
-								sellHistory.created_date,
-								this.props.navigation
+								sellHistory.created_date
 							);
 
 							if (!response) {
@@ -397,8 +384,7 @@ class App extends Component {
 
 							let response = await this.apiService.createSellHistoryGroup(
 								sellHistory[0].global_id,
-								sellGroup[0].global_id,
-								this.props.navigation
+								sellGroup[0].global_id
 							);
 
 							if (!response) {
@@ -427,8 +413,7 @@ class App extends Component {
 							let response =
 								await this.apiService.createSellAmountDate(
 									sellAmountDate.date,
-									sellAmountDate.amount,
-									this.props.navigation
+									sellAmountDate.amount
 								);
 
 							if (!response) {
@@ -453,8 +438,7 @@ class App extends Component {
 						try {
 							let response = await this.apiService.createProfitGroup(
 								profitGroup.created_date,
-								profitGroup.profit,
-								this.props.navigation
+								profitGroup.profit
 							);
 
 							if (!response) {
@@ -486,8 +470,7 @@ class App extends Component {
 								profitHistory.count,
 								profitHistory.count_type,
 								profitHistory.profit,
-								profitHistory.created_date,
-								this.props.navigation
+								profitHistory.created_date
 							);
 
 							if (!response) {
@@ -523,8 +506,7 @@ class App extends Component {
 							let response =
 								await this.apiService.createProfitHistoryGroup(
 									profitHistory[0].global_id,
-									profitGroup[0].global_id,
-									this.props.navigation
+									profitGroup[0].global_id
 								);
 
 							if (!response) {
@@ -552,9 +534,12 @@ class App extends Component {
 							let response =
 								await this.apiService.createProfitAmountDate(
 									profitAmountDate.date,
-									profitAmountDate.amount,
-									this.props.navigation
+									profitAmountDate.amount
 								);
+
+							if (!response) {
+								return;
+							}
 
 							this.amountDateRepository.updateProfitAmountDateSavedTrueById(
 								profitAmountDate.id,
@@ -575,7 +560,7 @@ class App extends Component {
 				this.setState({isSavingStarted: false});
 			} catch (e) {
 				console.error(e);
-				
+
 				await AsyncStorage.setItem("shoppingNotSaved", "true");
 				await AsyncStorage.setItem("isNotSaved", "true");
 				this.setState({isSavingStarted: false});
@@ -592,6 +577,32 @@ class App extends Component {
 		}
 	}
 
+	async completePayment() {
+		// Oynani yopish va bugun umuman boshqa tekshirmaslik uchun ohirgi sanani saqlash.
+		await AsyncStorage.setItem("paymentTryCount", (0).toString());
+
+		const currentDate = new Date();
+
+		const year = currentDate.getFullYear();
+		const month = ("0" + (currentDate.getMonth() + 1)).slice(-2); // Adding 1 because getMonth() returns zero-based month index
+		const day = ("0" + currentDate.getDate()).slice(-2);
+		const hour = ("0" + currentDate.getHours()).slice(-2); // Get current hour
+
+		const dateString = `${year}-${month}-${day}`;
+
+
+		if (await AsyncStorage.getItem("lastPaymentShownDate") != dateString) {
+			await AsyncStorage.setItem("lastPaymentShownDate", dateString);
+		}
+
+		if (await AsyncStorage.getItem("lastPaymentShownHour") != hour.toString()) {
+			await AsyncStorage.setItem("lastPaymentShownHour", hour.toString());
+		}
+
+		this.setState({
+			notPayed: false
+		});
+	}
 
 	render() {
 		const {theme, splashLoaded} = this.state;
@@ -627,100 +638,104 @@ class App extends Component {
 
 		return (
 			<GestureHandlerRootView style={{flex: 1}}>
-				<ApplicationProvider  {...eva} theme={eva.dark}>
-					{
-						this.state.notPayed &&
-						(<Modal visible={this.state.notPayed}>
-							<ScrollView style={{
-								width: "100%",
-								height: "100%",
-								backgroundColor: "#181926",
-								paddingTop: 60,
-								paddingHorizontal: 16
-							}}>
-								<Text style={{
-									color: "white",
-									fontFamily: "Gilroy-SemiBold",
-									fontSize: 38,
-									width: 280
-								}}>Oylik abonent to'lovi muddati keldi!</Text>
-								
+				<SafeAreaView>
+					<ApplicationProvider  {...eva} theme={eva.dark}>
+						{
+							this.state.notPayed &&
+							(<Modal visible={this.state.notPayed}>
+								<ScrollView style={{
+									width: "100%",
+									height: "100%",
+									backgroundColor: "#181926",
+									paddingTop: 60,
+									paddingHorizontal: 16
+								}}>
+									<Text style={{
+										color: "white",
+										fontFamily: "Gilroy-SemiBold",
+										fontSize: 38,
+										width: 280
+									}}>Oylik abonent to'lovi muddati keldi!</Text>
 
 
-								<TouchableOpacity
-									activeOpacity={1}
-									onPress={async () => {
-										let tryCount = parseInt(
-											await AsyncStorage.getItem("paymentTryCount")
-										);
+									<TouchableOpacity
+										activeOpacity={1}
+										onPress={async () => {
+											let tryCount = parseInt(
+												await AsyncStorage.getItem("paymentTryCount")
+											);
 
-										if (tryCount >= 3) {
-											// tryCount ya'ni tolov qilish urunishi  
-											// 3 tadan kotta bosa bu degani 3 kun bu knopkani bosgandan keyin 
-											// boshqa bosolmidigan bopqosin.
-											let isPayed = await this.apiService.getPayment(email, monthYear, navigation);
-											console.log("Payed: ", isPayed)
+											if (tryCount >= 3) {
+												// tryCount ya'ni tolov qilish urunishi
+												// 3 tadan kotta bosa bu degani 3 kun bu knopkani bosgandan keyin
+												// boshqa bosolmidigan bopqosin.
+												let isPayed = await this.apiService.getPayment(email, monthYear, navigation);
+												console.log("Payed: ", isPayed)
 
-											if (isPayed == true) {
+												if (isPayed == true) {
+													this.setState({
+														notPayed: true
+													})
+												}
+
+												// Agar masheniklik qilib offline ishlataman desa
+												// screenga kirganda payment oynasini qayta ochadigan qilib qo'yamiz
+												await AsyncStorage.setItem("paymentScreenOpened", "true");
+
+												return;
+											} else {
+												// Kunni oshirish.
+												await AsyncStorage.setItem("paymentTryCount", (tryCount + 1).toString());
+
+												const currentDate = new Date();
+
+												const year = currentDate.getFullYear();
+												const month = ("0" + (currentDate.getMonth() + 1)).slice(-2); // Adding 1 because getMonth() returns zero-based month index
+												const day = ("0" + currentDate.getDate()).slice(-2);
+												const hour = ("0" + currentDate.getHours()).slice(-2); // Get current hour
+
+												const dateString = `${year}-${month}-${day}`;
+
+
+												if (await AsyncStorage.getItem("lastPaymentShownDate") != dateString) {
+													await AsyncStorage.setItem("lastPaymentShownDate", dateString);
+												}
+
+												if (await AsyncStorage.getItem("lastPaymentShownHour") != hour.toString()) {
+													await AsyncStorage.setItem("lastPaymentShownHour", hour.toString());
+												}
+
 												this.setState({
-													notPayed: true
-												})
+													notPayed: false
+												});
 											}
+										}}
+										style={{
+											width: 44,
+											height: 44,
+											borderRadius: 8,
+											backgroundColor: "#07070A",
+											display: "flex",
+											alignItems: "center",
+											justifyContent: "center",
+											position: "absolute",
+											top: 12,
+											right: 19
+										}}>
+										<RightArrowLight/>
+									</TouchableOpacity>
 
-											// Agar masheniklik qilib offline ishlataman desa 
-											// screenga kirganda payment oynasini qayta ochadigan qilib qo'yamiz
-											await AsyncStorage.setItem("paymentScreenOpened", "true");
+									<PaymentForm completePayment={async () => {
+										await this.completePayment()
+									}}/>
+								</ScrollView>
+							</Modal>)
+						}
+					</ApplicationProvider>
+				</SafeAreaView>
 
-											return;
-										} else {
-											await AsyncStorage.setItem("paymentTryCount", (tryCount + 1).toString());
+				<NavigationService/>
 
-											const currentDate = new Date();
-
-											const year = currentDate.getFullYear();
-											const month = ("0" + (currentDate.getMonth() + 1)).slice(-2); // Adding 1 because getMonth() returns zero-based month index
-											const day = ("0" + currentDate.getDate()).slice(-2);
-											const hour = ("0" + currentDate.getHours()).slice(-2); // Get current hour
-
-											const dateString = `${year}-${month}-${day}`;
-
-
-											if (await AsyncStorage.getItem("lastPaymentShownDate") != dateString) {
-												await AsyncStorage.setItem("lastPaymentShownDate", dateString);
-											}
-
-											if (await AsyncStorage.getItem("lastPaymentShownHour") != hour.toString()) {
-												await AsyncStorage.setItem("lastPaymentShownHour", hour.toString());
-											}
-
-											this.setState({
-												notPayed: false
-											});
-										}
-									}}
-									style={{
-										width: 44,
-										height: 44,
-										borderRadius: 8,
-										backgroundColor: "#07070A",
-										display: "flex",
-										alignItems: "center",
-										justifyContent: "center",
-										position: "absolute",
-										top: 32,
-										right: 19
-									}}>
-									<RightArrowLight/>
-								</TouchableOpacity>
-
-								<PaymentForm />
-							</ScrollView>
-						</Modal>)
-					}
-				</ApplicationProvider>
-
-				<NavigationService />
-				
 			</GestureHandlerRootView>
 		);
 	}

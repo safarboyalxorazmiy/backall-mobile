@@ -106,6 +106,7 @@ class Home extends Component {
 		navigation.addListener("focus", async () => {
 			console.log("HOME NAVIGATED");
 
+			// Login check and download data for the first time**
 			this.unsubscribe = NetInfo.addEventListener((state) => {
 				this.setState({isConnected: state.isConnected});
 			});
@@ -167,6 +168,7 @@ class Home extends Component {
 					this.setState({notAllowed: notAllowed});
 				}
 			}
+			//####################################################
 
 			console.log("FOCUSED");
 			console.log("-------");
@@ -466,7 +468,7 @@ class Home extends Component {
 				response =
 					await this.apiService.getGlobalProducts(page, size, this.props.navigation);
 			} catch (error) {
-				console.error("Error fetching global products:", error);
+				console.error("getGlobalProducts()", error);
 				this.setState({
 					lastSize: size,
 					lastPage: page
@@ -517,7 +519,7 @@ class Home extends Component {
 			try {
 				response = await this.apiService.getStoreProducts(page, size, this.props.navigation);
 			} catch (error) {
-				console.error("Error fetching global products:", error);
+				console.error("getStoreProducts()", error);
 				this.setState({
 					lastSize: size,
 					lastPage: page
@@ -579,7 +581,7 @@ class Home extends Component {
 					this.props.navigation
 				);
 		} catch (error) {
-			console.error("Error fetching global products:", error);
+			console.error("getSellGroupsAndHistories():", error);
 			return false;
 		}
 
@@ -648,7 +650,7 @@ class Home extends Component {
 				lastSellAmountGlobalId + 1, 0, 1000000, this.props.navigation
 			);
 		} catch (error) {
-			console.error("Error fetching global products:", error);
+			console.error("getSellAmountDate():", error);
 			this.setState({
 				lastSize: 1000000,
 				lastPage: 0
@@ -708,10 +710,6 @@ class Home extends Component {
 		if (!response || !response.content || response.content.length === 0) {
 			return true; // Indicate success and exit the loop
 		}
-
-		console.log("getProfitGroups()")
-		console.log(response.content.length);
-
 
 		for (const profitGroup of response.content) {
 			try {
@@ -777,7 +775,7 @@ class Home extends Component {
 				lastProfitAmountDateGlobalId + 1, 0, 1000000, this.props.navigation
 			);
 		} catch (error) {
-			console.error("Error fetching global products:", error);
+			console.error("getProfitAmountDate():", error);
 			this.setState({
 				lastSize: 0,
 				lastPage: 1000000

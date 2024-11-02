@@ -24,16 +24,13 @@ class ApiService {
 
 	/* GET */
 
-	async getPayment(email, monthYear, navigation) {
+	async getPayment(email, monthYear) {
 		try {
 			await AsyncStorage.setItem("isRequestInProgress", "true");
 			const accessToken = await this.tokenService.retrieveAccessToken();
 
 			const requestOptions = {
 				method: "GET",
-				headers: {
-					"Authorization": `Bearer ${accessToken}`
-				}
 			};
 
 			const response =
@@ -41,14 +38,6 @@ class ApiService {
 					`${serverUrl}/payment/get?email=${email}&monthYear=${monthYear}`,
 					requestOptions
 				);
-
-
-			if (response.status == 401) {
-				console.log("unauthorized::" + response.url);
-				await AsyncStorage.setItem("isRequestInProgress", "false");
-				await this.logout(navigation);
-				return;
-			}
 
 			const responseBody = await response.json();
 
@@ -62,7 +51,6 @@ class ApiService {
 			return responseBody;
 		} catch (error) {
 			await AsyncStorage.setItem("isRequestInProgress", "false");
-			//("Local fucking product error: ", error)
 		}
 	}
 
@@ -90,7 +78,6 @@ class ApiService {
 			//("Request body:", requestOptions);
 
 			const response = await fetch(`${serverUrl}/api/v1/product/get/local/info?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
-
 
 
 			if (response.status == 401) {
@@ -181,7 +168,6 @@ class ApiService {
 			const response = await fetch(`${serverUrl}/api/v1/product/get/global/info?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
 
-
 			if (response.status == 401) {
 				console.log("unauthorized::" + response.url);
 				await this.logout(navigation);
@@ -226,7 +212,6 @@ class ApiService {
 			//("Request body:", requestOptions);
 
 			const response = await fetch(`${serverUrl}/api/v1/store/product/get/info?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
-
 
 
 			if (response.status == 401) {
@@ -328,7 +313,6 @@ class ApiService {
 			const response = await fetch(url, requestOptions);
 
 
-
 			if (response.status === 401) {
 				await this.logout(navigation);
 				return;
@@ -382,7 +366,6 @@ class ApiService {
 			const response = await fetch(url, requestOptions);
 
 
-
 			if (response.status === 401) {
 				await this.logout(navigation);
 				return;
@@ -432,7 +415,6 @@ class ApiService {
 			//("Request options:", requestOptions);
 
 			const response = await fetch(url, requestOptions);
-
 
 
 			if (response.status === 401) {
@@ -486,7 +468,6 @@ class ApiService {
 			//("Request options:", requestOptions);
 
 			const response = await fetch(url, requestOptions);
-
 
 
 			if (response.status === 401) {
@@ -696,7 +677,6 @@ class ApiService {
 			//("Request options:", requestOptions);
 
 			const response = await fetch(url, requestOptions);
-
 
 
 			if (response.status === 401) {
@@ -909,7 +889,6 @@ class ApiService {
 			const response = await fetch(`${serverUrl}/api/v1/store/sell/amount/date/get?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
 
-
 			if (response.status == 401) {
 				console.log("unauthorized::" + response.url);
 				await this.logout(navigation);
@@ -953,7 +932,6 @@ class ApiService {
 			//("Request body:", requestOptions);
 
 			const response = await fetch(`${serverUrl}/api/v1/store/sell/amount/date/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
-
 
 
 			if (response.status == 401) {
@@ -1054,7 +1032,6 @@ class ApiService {
 			const response = await fetch(`${serverUrl}/api/v1/store/sell/amount/date/get/by?date=${date}&storeId=${storeId}`, requestOptions);
 
 
-
 			if (response.status == 401) {
 				console.log("unauthorized::" + response.url);
 				await this.logout(navigation);
@@ -1098,7 +1075,6 @@ class ApiService {
 			//("Request body:", requestOptions);
 
 			const response = await fetch(`${serverUrl}/api/v1/store/sell/link/info?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
-
 
 
 			if (response.status == 401) {
@@ -1145,7 +1121,6 @@ class ApiService {
 
 			const response =
 				await fetch(`${serverUrl}/api/v1/store/sell/link/info/not/downloaded?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
-
 
 
 			if (response.status == 401) {
@@ -1254,7 +1229,6 @@ class ApiService {
 			);
 
 
-
 			if (response.status == 401) {
 				console.log("unauthorized::" + response.url);
 				await this.logout(navigation);
@@ -1300,7 +1274,6 @@ class ApiService {
 			//("Request body:", requestOptions);
 
 			const response = await fetch(`${serverUrl}/api/v1/store/profit/group/get?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
-
 
 
 			if (response.status == 401) {
@@ -1354,7 +1327,6 @@ class ApiService {
 			const response = await fetch(url, requestOptions);
 
 
-
 			if (response.status === 401) {
 				await this.logout(navigation);
 				return;
@@ -1401,7 +1373,6 @@ class ApiService {
 					`${serverUrl}/api/v1/store/profit/group/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`,
 					requestOptions
 				);
-
 
 
 			if (response.status == 401) {
@@ -1551,7 +1522,6 @@ class ApiService {
 			const response = await fetch(`${serverUrl}/api/v1/store/profit/history/get?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
 
-
 			if (response.status == 401) {
 				console.log("unauthorized::" + response.url);
 				await this.logout(navigation);
@@ -1597,7 +1567,6 @@ class ApiService {
 			//("Request body:", requestOptions);
 
 			const response = await fetch(`${serverUrl}/api/v1/store/profit/history/get/not/downloaded?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
-
 
 
 			if (response.status == 401) {
@@ -1647,7 +1616,6 @@ class ApiService {
 			//("Request options:", requestOptions);
 
 			const response = await fetch(url, requestOptions);
-
 
 
 			if (response.status === 401) {
@@ -1749,7 +1717,6 @@ class ApiService {
 			const response = await fetch(`${serverUrl}/api/v1/store/profit/link/info?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
 
-
 			if (response.status == 401) {
 				console.log("unauthorized::" + response.url);
 				await this.logout(navigation);
@@ -1797,7 +1764,6 @@ class ApiService {
 			const response = await fetch(`${serverUrl}/api/v1/store/profit/link/info/by?groupId=${groupId}&storeId=${storeId}`, requestOptions);
 
 
-
 			if (response.status == 401) {
 				console.log("unauthorized::" + response.url);
 				await this.logout(navigation);
@@ -1843,7 +1809,6 @@ class ApiService {
 			//("Request body:", requestOptions);
 
 			const response = await fetch(`${serverUrl}/api/v1/store/profit/link/info/not/downloaded?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
-
 
 
 			if (response.status == 401) {
@@ -1895,18 +1860,14 @@ class ApiService {
 			const response = await fetch(url, requestOptions);
 
 
-
 			if (response.status === 401) {
 				//(`Bearer ${accessToken}`, `${serverUrl}/api/v1/store/profit/link/get/lastId?storeId=${storeId}`)
 				await this.logout(navigation);
 				return;
 			}
 
-			// Read the response body as text
 			const responseBody = await response.text();
 
-
-			// Return the response body as an integer
 			if (BigInt(responseBody) <= BigInt(Number.MAX_SAFE_INTEGER)) {
 				return Number(responseBody); // Convert to a Number if it's safe
 			} else {
@@ -1922,8 +1883,15 @@ class ApiService {
 		lastId, page, size, navigation
 	) {
 		try {
-			const accessToken = await this.tokenService.retrieveAccessToken();
+			const accessToken =
+				await this.tokenService.retrieveAccessToken();
 			let storeId = await this.getStoreId();
+
+			for (const string of await AsyncStorage.getAllKeys()) {
+				console.log(string);
+			}
+
+			console.log("getProfitAmountDate() storeId::", storeId);
 
 			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
 				storeId = Number(storeId); // Convert to a Number if it's safe
@@ -1943,7 +1911,6 @@ class ApiService {
 			//("Request body:", requestOptions);
 
 			const response = await fetch(`${serverUrl}/api/v1/store/profit/amount/date/get?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
-
 
 
 			if (response.status == 401) {
@@ -1991,7 +1958,6 @@ class ApiService {
 			//("Request body:", requestOptions);
 
 			const response = await fetch(`${serverUrl}/api/v1/store/profit/amount/date/get/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
-
 
 
 			if (response.status == 401) {
@@ -2042,8 +2008,7 @@ class ApiService {
 			//("Request options:", requestOptions);
 
 			const response = await fetch(url, requestOptions);
-
-
+			const responseBody = await response.text();
 
 			if (response.status === 401) {
 				await this.logout(navigation);
@@ -2054,12 +2019,6 @@ class ApiService {
 				return -1;
 			}
 
-			// Read the response body as text
-			const responseBody = await response.text();
-
-
-			// Return the response body as an integer
-			
 			if (BigInt(responseBody) <= BigInt(Number.MAX_SAFE_INTEGER)) {
 				return Number(responseBody); // Convert to a Number if it's safe
 			} else {
@@ -2077,15 +2036,13 @@ class ApiService {
 		try {
 			const response = await fetch(url, requestOptions);
 
-
 			if (response.status == 401) {
 				console.log("unauthorized::" + response.url);
-				await this.logout(navigation);
+				await AsyncStorage.setItem("authError", "true");
 				return false;
 			}
 
 			const responseBody = await response.json();
-
 
 			if (!response.ok) {
 				throw new Error("Network response was not ok");
@@ -2099,7 +2056,7 @@ class ApiService {
 	}
 
 	// Function to create local product
-	async createLocalProduct(serialNumber, name, brandName, navigation) {
+	async createLocalProduct(serialNumber, name, brandName) {
 		let storeId = await this.getStoreId();
 
 		if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
@@ -2131,7 +2088,7 @@ class ApiService {
 		//("Request body:", requestOptions);
 
 		return await this.sendRequest(
-			`${serverUrl}/api/v1/product/create`, requestOptions, navigation
+			`${serverUrl}/api/v1/product/create`, requestOptions
 		);
 	}
 
@@ -2143,8 +2100,7 @@ class ApiService {
 		sellingPrice,
 		percentage,
 		count,
-		countType,
-		navigation
+		countType
 	) {
 		const accessToken = await this.tokenService.retrieveAccessToken();
 		let storeId = await this.getStoreId();
@@ -2181,8 +2137,7 @@ class ApiService {
 
 		return await this.sendRequest(
 			`${serverUrl}/api/v1/store/product/create`,
-			requestOptions,
-			navigation
+			requestOptions
 		);
 	}
 
@@ -2219,8 +2174,7 @@ class ApiService {
 
 		return await this.sendRequest(
 			`${serverUrl}/api/v1/store/sell/group/create`,
-			requestOptions,
-			navigation
+			requestOptions
 		);
 	}
 
@@ -2230,8 +2184,7 @@ class ApiService {
 		count,
 		countType,
 		sellingPrice,
-		createdDate,
-		navigation
+		createdDate
 	) {
 		const accessToken = await this.tokenService.retrieveAccessToken();
 		let storeId = await this.getStoreId();
@@ -2261,8 +2214,7 @@ class ApiService {
 
 		return await this.sendRequest(
 			`${serverUrl}/api/v1/store/sell/history/create`,
-			requestOptions,
-			navigation
+			requestOptions
 		);
 	}
 
@@ -2295,14 +2247,13 @@ class ApiService {
 
 		return await this.sendRequest(
 			`${serverUrl}/api/v1/store/sell/link/create`,
-			requestOptions,
-			navigation
+			requestOptions
 		);
 	}
 
 
 	async createSellAmountDate(
-		date, amount, navigation
+		date, amount
 	) {
 		const accessToken = await this.tokenService.retrieveAccessToken();
 		let storeId = await this.getStoreId();
@@ -2329,15 +2280,14 @@ class ApiService {
 
 		return await this.sendRequest(
 			`${serverUrl}/api/v1/store/sell/amount/date/create`,
-			requestOptions,
-			navigation
+			requestOptions
 		);
 	}
 
 
 	// ***PROFIT CREATION***
 	// Function to create profit group
-	async createProfitGroup(createdDate, profit, navigation) {
+	async createProfitGroup(createdDate, profit) {
 		const accessToken = await this.tokenService.retrieveAccessToken();
 		let storeId = await this.getStoreId();
 
@@ -2367,7 +2317,7 @@ class ApiService {
 		//("Request body:", requestOptions);
 
 		return await this.sendRequest(
-			`${serverUrl}/api/v1/store/profit/group/create`, requestOptions, navigation
+			`${serverUrl}/api/v1/store/profit/group/create`, requestOptions
 		);
 	}
 
@@ -2377,8 +2327,7 @@ class ApiService {
 		count,
 		countType,
 		profit,
-		createdDate,
-		navigation
+		createdDate
 	) {
 		const accessToken = await this.tokenService.retrieveAccessToken();
 		let storeId = await this.getStoreId();
@@ -2407,13 +2356,13 @@ class ApiService {
 		}
 
 		return await this.sendRequest(
-			`${serverUrl}/api/v1/store/profit/history/create`, requestOptions, navigation
+			`${serverUrl}/api/v1/store/profit/history/create`, requestOptions
 		);
 	}
 
 	// Function to create profit history group
 	async createProfitHistoryGroup(
-		profitHistoryId, profitGroupId, navigation
+		profitHistoryId, profitGroupId
 	) {
 		const accessToken = await this.tokenService.retrieveAccessToken();
 		let storeId = await this.getStoreId();
@@ -2439,12 +2388,12 @@ class ApiService {
 		};
 
 		return await this.sendRequest(
-			`${serverUrl}/api/v1/store/profit/link/create`, requestOptions, navigation
+			`${serverUrl}/api/v1/store/profit/link/create`, requestOptions
 		);
 	}
 
 	async createProfitAmountDate(
-		date, amount, navigation
+		date, amount
 	) {
 		const accessToken = await this.tokenService.retrieveAccessToken();
 		let storeId = await this.getStoreId();
@@ -2472,7 +2421,7 @@ class ApiService {
 		};
 
 		return await this.sendRequest(
-			`${serverUrl}/api/v1/store/profit/amount/date/create`, requestOptions, navigation
+			`${serverUrl}/api/v1/store/profit/amount/date/create`, requestOptions
 		);
 	}
 
@@ -2499,7 +2448,6 @@ class ApiService {
 			//("Request body:", requestOptions);
 
 			const response = await fetch(`${serverUrl}/api/v1/store/profit/amount/date/get/by?date=${date}&storeId=${storeId}`, requestOptions);
-
 
 
 			if (response.status == 401) {
@@ -2693,7 +2641,6 @@ class ApiService {
 			);
 
 
-
 			if (response.status === 401) {
 				await this.logout(navigation);
 				return;
@@ -2761,8 +2708,7 @@ class ApiService {
 		}
 	}
 
-
-	async makePaymentRequest(number, expire, navigation) {	
+	async makePaymentRequest(number, expire) {
 		const accessToken = await this.tokenService.retrieveAccessToken();
 
 		const requestBody = {
@@ -2779,12 +2725,63 @@ class ApiService {
 			body: JSON.stringify(requestBody)
 		};
 
-		("Sending request to:", `${serverUrl}/payment/make`);
-		("Request body:", requestBody);
+		try {
+			const response = await fetch(`${serverUrl}/payment/make`, requestOptions);
 
-		return await this.sendRequest(
-			`${serverUrl}/payment/make`, requestOptions, navigation
-		);
+			if (response.status == 401) {
+				console.log("unauthorized::" + response.url);
+				await AsyncStorage.setItem("authError", "true");
+				return false;
+			}
+
+			const responseBody = await response.text();
+
+			if (!response.ok) {
+				throw new Error("Network response was not ok");
+			}
+
+			return responseBody;
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	async verifyPaymentRequest(token, code) {
+		const accessToken = await this.tokenService.retrieveAccessToken();
+
+		const requestBody = {
+			token: token,
+			code: code
+		};
+
+		const requestOptions = {
+			method: "POST",
+			headers: {
+				"Authorization": `Bearer ${accessToken}`,
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify(requestBody)
+		};
+
+		try {
+			const response = await fetch(`${serverUrl}/payment/verify`, requestOptions);
+
+			if (response.status == 401) {
+				console.log("unauthorized::" + response.url);
+				await AsyncStorage.setItem("authError", "true");
+				throw new Error("authError");
+			}
+
+			const responseBody = await response.json();
+
+			if (!response.ok) {
+				throw new Error("Network response was not ok");
+			}
+
+			return responseBody;
+		} catch (error) {
+			throw error;
+		}
 	}
 }
 
