@@ -280,11 +280,8 @@ class AmountDateRepository {
 						if (results.rows.length > 0) {
 							resolve(results.rows.item(0).amount);
 						} else {
-							resolve(0.00); // Return null if no record found for the date
+							resolve(0.00);
 						}
-					},
-					error => {
-						reject(`Error retrieving profit amount: ${error.message}`);
 					});
 			});
 		});
@@ -301,11 +298,8 @@ class AmountDateRepository {
 						if (results.rows.length > 0) {
 							resolve(results.rows.item(0).amount);
 						} else {
-							resolve(0.00); // Return null if no record found for the date
+							resolve(0.00);
 						}
-					},
-					error => {
-						reject(`Error retrieving sell amount: ${error.message}`);
 					});
 			});
 		});

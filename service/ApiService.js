@@ -41,7 +41,7 @@ class ApiService {
 
 			const responseBody = await response.json();
 
-
+			console.log(response.status);
 			if (!response.ok) {
 				await AsyncStorage.setItem("isRequestInProgress", "false");
 				throw new Error("Network response was not ok");
@@ -312,7 +312,7 @@ class ApiService {
 
 			const response = await fetch(url, requestOptions);
 
-
+			console.log(response.status)
 			if (response.status === 401) {
 				await this.logout(navigation);
 				return;
@@ -2734,13 +2734,7 @@ class ApiService {
 				return false;
 			}
 
-			let responseBody = await response.text();
-
-			console.log(
-				JSON.stringify(requestBody),
-				responseBody,
-				response.status
-			);
+			let responseBody = await response.json();
 
 			if (!response.ok) {
 				throw new Error("Network response was not ok");

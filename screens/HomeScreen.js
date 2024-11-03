@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, {Component, createRef} from "react";
 import {StatusBar} from "expo-status-bar";
 import {
 	StyleSheet,
@@ -31,6 +31,7 @@ import CrossIcon from "../assets/cross-icon.svg";
 import ShoppingIcon from "../assets/home/shopping-icon.svg";
 import BenefitIcon from "../assets/home/benefit-icon.svg";
 import apiService from "../service/ApiService";
+import ActionSheet from 'react-native-actions-sheet';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -91,6 +92,7 @@ class Home extends Component {
 		this.storeProductRepository = new StoreProductRepository();
 		this.databaseRepository = new DatabaseRepository();
 		this.tokenService = new TokenService();
+		this.menu = new createRef();
 	}
 
 	async componentDidMount() {
@@ -98,6 +100,7 @@ class Home extends Component {
 
 		console.log("component mounted!")
 
+		await this.getAmountInfo();
 
 		this.unsubscribe = NetInfo.addEventListener((state) => {
 			this.setState({isConnected: state.isConnected});
@@ -850,15 +853,13 @@ class Home extends Component {
 						<Text style={styles.pageTitle}>Bosh sahifa</Text>
 						<TouchableOpacity
 							onPress={() => {
-								this.setState({
-									menuOpened: true
-								})
-
+								this.menu.current?.setModalVisible(true);
 							}}
 							onPressIn={() => {
 								this.setState(
 									{menuFocused: true}
 								)
+
 
 							}}
 
@@ -872,7 +873,7 @@ class Home extends Component {
 							activeOpacity={1}>
 							<View
 								style={this.state.menuFocused ? {
-									backgroundColor: "black",
+									backgroundColor: "#F4F4F4",
 									padding: 10,
 									paddingVertical: 15,
 									borderRadius: 50,
@@ -960,214 +961,122 @@ class Home extends Component {
 					<StatusBar style="auto"/>
 				</View>
 
-				<Modal
-					visible={this.state.menuOpened}
-					// animationIn={"slideInUp"}
-					// animationOut={"slideInDown"}
-					// animationInTiming={200}
-					transparent={true}>
-					<View style={{
-						position: "absolute",
-						width: "150%",
-						height: screenHeight,
-						flex: 1,
-						alignItems: "center",
-						justifyContent: "center",
-						backgroundColor: "#00000099",
-						left: -50,
-						right: -50,
-						top: 0
-					}}></View>
-
-					<View style={{
-						height: screenHeight,
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center"
+				<ActionSheet
+					ref={this.menu}
+					gestureEnabled={true}
+					indicatorStyle={{
+						width: 100,
 					}}>
-						<View style={{
-							width: screenWidth,
-							marginRight: "auto",
-							flex: 1,
-							alignItems: "center",
-							justifyContent: "flex-end",
-							marginLeft: "-5.5%"
+					
+					<View style={{
+							height: 500,
+							display: "flex",
+							justifyContent: "space-between",
+							paddingTop: 40,
 						}}>
-							<Animatable.View
-								animation="slideInUp"
-								delay={0.4}
-								// duration={1}
-								iterationCount={1}
-								direction={"alternate"}
-								// easing={"ease-in"}
-								style={!this.state.menuOpened ? {
-									marginBottom: -500
-								} : {
-									width: "100%",
-									marginBottom: (
-										screenHeight >= 750 ? 0 :
-											screenHeight >= 600 ? 10 :
-												10
-									),
-									borderRadius: 0,
-									borderTopRightRadius: 20,
-									borderTopLeftRadius: 20,
-									backgroundColor: "#FFF",
+							<View></View>
+
+							<TouchableOpacity
+								activeOpacity={1}
+								onPressIn={() => {
+									this.setState({
+										clearButtonFocused: true
+									})
+								}}
+								onPressOut={() => {
+									this.setState({
+										clearButtonFocused: false
+									})
+								}}
+								onPress={async () => {
+									// if (await AsyncStorage.getItem("isFetchingNotCompleated") == "true") {
+									// 	// Actions not saved yet
+									// 	return;
+									// }
+
+									await this.databaseRepository.clear();
+									await AsyncStorage.clear();
+
+									this.setState({
+										shoppingCardColors: ["#E59C0D", "#FDD958"],
+										profitCardColors: ["#2C8134", "#1DCB00"],
+										profitAmount: 0,
+										sellAmount: 0,
+										notAllowed: "",
+										spinner: false,
+										isConnected: null,
+										isLoading: false,
+										isDownloaded: "false",
+
+										// PRODUCT
+										lastLocalProductsPage: 0,
+										lastLocalProductsSize: 10,
+										lastGlobalProductsPage: 0,
+										lastGlobalProductsSize: 10,
+										lastStoreProductsPage: 0,
+										lastStoreProductsSize: 10,
+
+										// SELL
+										lastSellGroupsPage: 0,
+										lastSellGroupsSize: 10,
+										lastSellHistoriesPage: 0,
+										lastSellHistoriesSize: 10,
+										lastSellHistoryGroupPage: 0,
+										lastSellHistoryGroupSize: 10,
+										lastSellAmountDatePage: 0,
+										lastSellAmountDateSize: 10,
+
+										// PROFIT
+										lastProfitGroupsPage: 0,
+										lastProfitGroupsSize: 10,
+										lastProfitHistoriesPage: 0,
+										lastProfitHistoriesSize: 10,
+										lastProfitHistoryGroupPage: 0,
+										lastProfitHistoryGroupSize: 10,
+										lastProfitAmountDatePage: 0,
+										lastProfitAmountDateSize: 10,
+
+										menuOpened: false
+									})
+
+									const {navigation} = this.props;
+									let isLoggedIn = await this.tokenService.checkTokens();
+									if (!isLoggedIn) {
+										navigation.navigate("Login");
+									}
 								}}>
-								<View style={{
-									height: 500,
-									display: "flex",
-									justifyContent: "space-between",
-									paddingTop: 40,
-								}}>
-									<View style={{
-										height: 24,
-										width: "100%",
+								<View style={[
+									{
 										display: "flex",
-										alignItems: "flex-end",
-										justifyContent: "flex-end",
-										// marginBottom: 24,
-									}}>
-										<TouchableOpacity
-											onPressIn={() => {
-												this.setState({
-													crossFocused: true
-												})
-											}}
-
-											onPressOut={() => {
-												this.setState({
-													crossFocused: false
-												})
-											}}
-
-											activeOpacity={1}
-
-											onPress={async () => {
-												this.setState({menuOpened: false});
-											}}>
-
-											<View style={this.state.crossFocused ? {
-												backgroundColor: "#FAFAFA",
-												borderRadius: 50,
-												padding: 20,
-
-												// how to add transition.
-											} : {
-												backgroundColor: "transparent",
-												borderRadius: 50,
-												padding: 20
-											}}>
-												<CrossIcon/>
-											</View>
-
-										</TouchableOpacity>
-									</View>
-
-									<TouchableOpacity
-										activeOpacity={1}
-										onPressIn={() => {
-											this.setState({
-												clearButtonFocused: true
-											})
-										}}
-										onPressOut={() => {
-											this.setState({
-												clearButtonFocused: false
-											})
-										}}
-										onPress={async () => {
-											// if (await AsyncStorage.getItem("isFetchingNotCompleated") == "true") {
-											// 	// Actions not saved yet
-											// 	return;
-											// }
-
-											await this.databaseRepository.clear();
-											await AsyncStorage.clear();
-
-											this.setState({
-												shoppingCardColors: ["#E59C0D", "#FDD958"],
-												profitCardColors: ["#2C8134", "#1DCB00"],
-												profitAmount: 0,
-												sellAmount: 0,
-												notAllowed: "",
-												spinner: false,
-												isConnected: null,
-												isLoading: false,
-												isDownloaded: "false",
-
-												// PRODUCT
-												lastLocalProductsPage: 0,
-												lastLocalProductsSize: 10,
-												lastGlobalProductsPage: 0,
-												lastGlobalProductsSize: 10,
-												lastStoreProductsPage: 0,
-												lastStoreProductsSize: 10,
-
-												// SELL
-												lastSellGroupsPage: 0,
-												lastSellGroupsSize: 10,
-												lastSellHistoriesPage: 0,
-												lastSellHistoriesSize: 10,
-												lastSellHistoryGroupPage: 0,
-												lastSellHistoryGroupSize: 10,
-												lastSellAmountDatePage: 0,
-												lastSellAmountDateSize: 10,
-
-												// PROFIT
-												lastProfitGroupsPage: 0,
-												lastProfitGroupsSize: 10,
-												lastProfitHistoriesPage: 0,
-												lastProfitHistoriesSize: 10,
-												lastProfitHistoryGroupPage: 0,
-												lastProfitHistoryGroupSize: 10,
-												lastProfitAmountDatePage: 0,
-												lastProfitAmountDateSize: 10,
-
-												menuOpened: false
-											})
-
-											const {navigation} = this.props;
-											let isLoggedIn = await this.tokenService.checkTokens();
-											if (!isLoggedIn) {
-												navigation.navigate("Login");
-											}
+										alignItems: "center",
+										height: 55,
+										justifyContent: "center",
+										width: "100%",
+										paddingHorizontal: 30,
+										borderTopWidth: 1,
+										borderTopColor: "#F1F1F1",
+										flexDirection: "row",
+										gap: 17
+									}, this.state.clearButtonFocused ? {
+										backgroundColor: "#FAFAFA"
+									} : {
+										backgroundColor: "#FFF"
+									}
+								]}>
+									<LogoutIcon/>
+									<Text
+										style={{
+											fontFamily: "Gilroy-Bold",
+											fontSize: 18,
+											color: "#D93E3C",
 										}}>
-										<View style={[
-											{
-												display: "flex",
-												alignItems: "center",
-												height: 55,
-												justifyContent: "center",
-												width: "100%",
-												paddingHorizontal: 30,
-												borderTopWidth: 1,
-												borderTopColor: "#F1F1F1",
-												flexDirection: "row",
-												gap: 17
-											}, this.state.clearButtonFocused ? {
-												backgroundColor: "#FAFAFA"
-											} : {
-												backgroundColor: "#FFF"
-											}
-										]}>
-											<LogoutIcon/>
-											<Text
-												style={{
-													fontFamily: "Gilroy-Bold",
-													fontSize: 18,
-													color: "#D93E3C",
-												}}>
-												Hammasini tozalash va chiqish
-											</Text>
-										</View>
-									</TouchableOpacity>
+										Hammasini tozalash va chiqish
+									</Text>
 								</View>
-
-							</Animatable.View>
-						</View>
+							</TouchableOpacity>
 					</View>
-				</Modal>
+					
+				</ActionSheet>
 
 				{/* Role error */}
 				<Modal
@@ -1282,8 +1191,8 @@ const styles = StyleSheet.create({
 
 	menuIcon: {
 		backgroundColor: "#FFF",
-		padding: 10,
-		paddingVertical: 15,
+		padding: 12,
+		// paddingVertical: 15,
 		borderRadius: 50
 	},
 
