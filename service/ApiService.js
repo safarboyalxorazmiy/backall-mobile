@@ -2774,6 +2774,8 @@ class ApiService {
 
 			const responseBody = await response.json();
 
+			console.log(responseBody);
+
 			if (!response.ok) {
 				throw new Error("Network response was not ok");
 			}

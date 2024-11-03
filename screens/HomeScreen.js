@@ -1275,7 +1275,7 @@ const styles = StyleSheet.create({
 		fontWeight: "500",
 		// marginBottom: 10,
 		// marginTop: 10,
-		// textTransform: "uppercase"
+		textTransform: "uppercase"
 	},
 
 	cardDescription: {

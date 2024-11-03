@@ -124,7 +124,7 @@ class PaymentForm extends Component {
 			return;
 		}
 
-		console.log(result);
+		console.log(result.phone);
 
 		console.log("response compleated")
 		console.log("makeCodeRequest()::", result);
@@ -143,7 +143,7 @@ class PaymentForm extends Component {
 		console.log("cardToken::", result)
 	}
 
-	async verifyPayment() {
+	async verifyPayment(code) {
 		if (this.state.cardToken == null) {
 			console.log("this.state.cardToken is null")
 			this.setState({
@@ -151,11 +151,13 @@ class PaymentForm extends Component {
 			});
 		} else {
 			try {
+				console.log("token, code", this.state.cardToken, code);
+
 				await this.apiService.verifyPaymentRequest(
-					this.state.cardToken, this.state.code
+					this.state.cardToken, code
 				);
 
-				console.log(this.state.cardToken, this.state.code)
+				await this.props.completePayment();
 			} catch (error) {
 				if (error == "authError") {
 					await this.props.completePayment();
@@ -175,10 +177,10 @@ class PaymentForm extends Component {
 	};
 
 	handleCodeChange = async (text) => {
-		const cleanedText = text.replace(/\D/g, '').slice(0, 4);
+		const cleanedText = text.replace(/\D/g, '').slice(0, 6);
 		this.setState({code: cleanedText});
-		if (cleanedText.length === 4) {
-			await this.verifyPayment();
+		if (cleanedText.length === 6) {
+			await this.verifyPayment(text);
 			console.log('Success');
 		}
 	};
@@ -285,7 +287,7 @@ class PaymentForm extends Component {
 
 				<View style={{marginTop: 40}}>
 					<Input
-						onFocus={() => {
+						onTouchStart={() => {
 							// this.scrollView.current?.scrollToEnd();
 							this.scrollView.current?.scrollTo({x: 0, y: 200, animated: true});
 						}}
@@ -406,7 +408,7 @@ class PaymentForm extends Component {
 								value={this.state.code}
 								onChangeText={this.handleCodeChange}
 								keyboardType="numeric"
-								maxLength={5}
+								maxLength={7}
 								style={{marginTop: 50, backgroundColor: 'black'}}
 								size="large"
 
@@ -504,4 +506,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default memo(PaymentForm);
+export default PaymentForm;
