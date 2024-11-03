@@ -205,7 +205,7 @@ class App extends Component {
 
 					const dateString = `${year}-${month}-${day}`;
 
-					await AsyncStorage.removeItem("lastPaymentShownDate");
+					// await AsyncStorage.removeItem("lastPaymentShownDate");
 
 
 					let lastPaymentShownDate = await AsyncStorage.getItem("lastPaymentShownDate");

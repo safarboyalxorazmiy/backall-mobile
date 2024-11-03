@@ -32,6 +32,8 @@ import ShoppingIcon from "../assets/home/shopping-icon.svg";
 import BenefitIcon from "../assets/home/benefit-icon.svg";
 import apiService from "../service/ApiService";
 import ActionSheet from 'react-native-actions-sheet';
+import { Feather } from "@expo/vector-icons";
+import { Text as PText, TouchableRipple } from 'react-native-paper';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -41,8 +43,8 @@ class Home extends Component {
 		super(props);
 
 		this.state = {
-			shoppingCardColors: ["#E59C0D", "#FDD958"],
-			profitCardColors: ["#2C8134", "#1DCB00"],
+			shoppingCardColors: ["#D7FF01", "#D7FF01"],
+			profitCardColors: ["#272822", "#272822"],
 			profitAmount: 0,
 			sellAmount: 0,
 			notAllowed: "",
@@ -848,6 +850,8 @@ class Home extends Component {
 					}}
 				/>
 
+				
+
 				<View style={styles.container}>
 					<View style={styles.header}>
 						<Text style={styles.pageTitle}>Bosh sahifa</Text>
@@ -883,14 +887,61 @@ class Home extends Component {
 						</TouchableOpacity>
 					</View>
 
+					{/* <TouchableRipple
+						style={{
+							width: "100%",
+							height: 180,
+							backgroundColor: "#D2D7DA",
+							borderRadius: 0,
+						}}
+						onPress={() => console.log("Pressed")}
+						rippleColor="#FFF"
+					>
+						<View style={{ flex: 1, justifyContent: "space-between" }}>
+							<View
+								style={{
+									marginHorizontal: 16,
+									paddingTop: 30,
+									paddingBottom: 20,
+									borderBottomColor: "#000",
+									borderBottomWidth: 1,
+								}}
+							>
+								<Text
+									style={{
+										fontFamily: "Gilroy-Bold",
+										fontWeight: "bold",
+										fontSize: 24,
+										marginLeft: 6,
+										color: "#000",
+										width: 275,
+									}}
+								>
+									Siz bugun to'lashingiz kerak
+								</Text>
+							</View>
+
+							<View
+								style={{
+									position: "absolute",
+									bottom: 20,
+									right: 32,
+									alignItems: "center",
+								}}
+							>
+								<Feather name="arrow-up-right" size={32} color="#000" />
+							</View>
+						</View>
+					</TouchableRipple> */}
+
 					<View style={styles.cards}>
 						<TouchableOpacity
 							activeOpacity={1}
 							onPressIn={() => {
-								this.setState({shoppingCardColors: ["#E59C0D", "#E59C0D"]})
+								this.setState({shoppingCardColors: ["#D7FF01", "#D7FF01"]})
 							}}
 							onPressOut={() => {
-								this.setState({shoppingCardColors: ["#E59C0D", "#FDD958"]})
+								this.setState({shoppingCardColors: ["#D7FF01", "#D7FF01"]})
 							}}
 							onPress={() => navigation.navigate("Shopping")}>
 							<LinearGradient
@@ -898,19 +949,12 @@ class Home extends Component {
 								start={{x: 0, y: 0.5}}
 								style={styles.card}>
 
-								<View style={styles.shoppingIconWrapper}>
-									{Platform.OS === "android" || Platform.OS === "ios" ? (
-										<ShoppingIcon
-											style={styles.shoppingIcon}
-											resizeMode="cover"/>
-									) : (
-										<ShoppingIcon
-											style={styles.shoppingIcon}/>
-									)}
-								</View>
+								<ShoppingIcon
+									style={styles.shoppingIcon}
+									resizeMode="cover"/>
 
 								<Text
-									style={styles.cardTitle}>Bugungi kirim</Text>
+									style={[styles.cardTitle, {color: "#272727"}]}>Bugungi kirim</Text>
 								<Text
 									style={styles.cardDescription}>
 									{this.state.sellAmount.toLocaleString()}
@@ -923,10 +967,10 @@ class Home extends Component {
 						<TouchableOpacity
 							activeOpacity={1}
 							onPressIn={() => {
-								this.setState({profitCardColors: ["#1EC703", "#1EC703"]})
+								this.setState({profitCardColors: ["#272822", "#272822"]})
 							}}
 							onPressOut={() => {
-								this.setState({profitCardColors: ["#2C8134", "#1DCB00"]})
+								this.setState({profitCardColors: ["#272822", "#272822"]})
 							}}
 							onPress={() => {
 								navigation.navigate("Profit")
@@ -936,20 +980,14 @@ class Home extends Component {
 								colors={this.state.profitCardColors}
 								start={{x: 0, y: 0.5}}
 							>
-								<View style={styles.benefitIconWrapper}>
-									{Platform.OS === "android" || Platform.OS === "ios" ? (
-										<BenefitIcon
+								<BenefitIcon
 											style={styles.benefitIcon}
 											resizeMode="cover"/>
-									) : (
-										<BenefitIcon
-											style={styles.benefitIcon}/>
-									)}
-								</View>
+
 								<Text
-									style={styles.cardTitle}>Bugungi foyda</Text>
+									style={[styles.cardTitle, {color: "#FFF"}]}>Bugungi foyda</Text>
 								<Text
-									style={styles.cardDescription}>
+									style={[styles.cardDescription, {color: "#FFF"}]}>
 									{this.state.profitAmount.toLocaleString()}
 									<Text
 										style={styles.currency}>UZS</Text>
@@ -1202,56 +1240,22 @@ const styles = StyleSheet.create({
 		textAlign: "center",
 	},
 
-	shoppingIconWrapper: {
-		width: 141,
-		height: 141,
-		borderRadius: 100,
-		backgroundColor: "#F8E08D",
-		position: "absolute",
-		right: -70,
-		top: -70,
-		shadowColor: "rgba(0, 0, 0, 0.05)",
-		shadowOffset: {
-			width: -10,
-			height: 10,
-		},
-		shadowOpacity: 1,
-		shadowRadius: 20,
-		elevation: 5
-	},
-
 	shoppingIcon: {
 		position: "absolute",
-		bottom: 28,
-		left: 25
-	},
-
-	benefitIconWrapper: {
-		width: 141,
-		height: 141,
-		borderRadius: 100,
-		backgroundColor: "#1EC703",
-		position: "absolute",
-		right: -70,
-		top: -70,
-		elevation: 5,
-		shadowColor: "rgba(0, 0, 0, 0.05)",
-		shadowOffset: {
-			width: -10,
-			height: 10,
-		},
-		shadowRadius: 20
+		right: 29,
+		top: 22,
 	},
 
 	benefitIcon: {
 		position: "absolute",
-		bottom: 28,
-		left: 25,
+		right: 29,
+		top: 22,
 		zIndex: 1
 	},
 
 	cards: {
-		width: screenWidth - (24 + 24)
+		width: screenWidth - (24 + 24),
+		marginTop: 10
 	},
 
 	card: {
@@ -1261,30 +1265,34 @@ const styles = StyleSheet.create({
 		marginBottom: 25,
 		borderRadius: 12,
 		position: "relative",
-		overflow: "hidden"
+		overflow: "hidden",
+		height: 170
 	},
 
 	cardTitle: {
-		color: "white",
 		fontSize: 16,
 		fontFamily: "Gilroy-Medium",
 		fontWeight: "500",
-		marginBottom: 10,
-		textTransform: "uppercase"
+		// marginBottom: 10,
+		// marginTop: 10,
+		// textTransform: "uppercase"
 	},
 
 	cardDescription: {
-		color: "white",
-		fontSize: 24,
+		color: "#272727",
+		fontSize: 29,
 		fontFamily: "Gilroy-SemiBold",
-		fontWeight: "600"
+		fontWeight: "600",
+		position: "absolute",
+		bottom: 28,
+		left: 24
 	},
 
 	currency: {
 		fontSize: 16,
 		fontFamily: "Gilroy-Medium",
 		fontWeight: "500",
-		marginLeft: 4
+		marginLeft: 6
 	}
 });
 
