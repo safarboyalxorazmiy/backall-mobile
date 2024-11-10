@@ -10,7 +10,9 @@ import {
 	Modal,
 	Platform,
 	Text,
-	SafeAreaView
+	SafeAreaView,
+	Domensions,
+	InteractionManager
 } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
 import NavigationService from "./service/NavigationService";
@@ -46,7 +48,7 @@ class App extends Component {
 			fontsLoaded: false,
 			isConnected: null,
 			isSavingStarted: false,
-			notPayed: false,
+			notPayed: null,
 
 			theme: Appearance.getColorScheme(),
 			splashLoaded: false
@@ -108,7 +110,9 @@ class App extends Component {
 			});
 
 			this.logInternetStatusInterval = setInterval(
-				this.checkInternetStatus,
+				() => {
+					this.checkInternetStatus();
+				},
 				5000
 			);
 		}
@@ -136,6 +140,10 @@ class App extends Component {
 
 	// 🚨 !important background thread 🚨
 	async checkInternetStatus() {
+		if (await AsyncStorage.getItem("window") === "Calendar") {
+			return;
+		}
+		
 		if (await AsyncStorage.getItem("isDownloaded") != "true") {
 			return;
 		}
@@ -167,10 +175,12 @@ class App extends Component {
 			let monthYear = `${month}/${year}`;
 
 			if (this.state.notPayed) {
+
 				let isPayed = await this.apiService.getPayment(email, monthYear);
 				console.log("Payed: ", isPayed)
 
 				if (isPayed == true) {
+					await AsyncStorage.setItem("notPayed", "false")
 					await AsyncStorage.setItem("paymentTryCount", "0");
 
 					this.setState({
@@ -196,6 +206,8 @@ class App extends Component {
 				}
 
 				if (isPayed == false) {
+					await AsyncStorage.setItem("notPayed", "true")
+
 					const currentDate = new Date();
 
 					const year = currentDate.getFullYear();
@@ -225,9 +237,10 @@ class App extends Component {
 							this.setState({
 								notPayed: true
 							});
-							await AsyncStorage.setItem("paymentScreenOpened", "true");
 						}
 					}
+				} else {
+					await AsyncStorage.setItem("notPayed", "false")
 				}
 
 			}
@@ -583,8 +596,8 @@ class App extends Component {
 			}
 		}
 	}
-
 	//###################################################
+
 	componentWillUnmount() {
 		if (this.unsubscribe) {
 			this.unsubscribe();
@@ -638,7 +651,7 @@ class App extends Component {
 						resizeMode="contain"
 					/>
 				</View>
-			); // Or a loading indicator if preferred
+			);
 		}
 
 		const {fontsLoaded} = this.state;
@@ -660,32 +673,33 @@ class App extends Component {
 		}
 
 		return (
-			<GestureHandlerRootView style={{flex: 1}}>
-				<SafeAreaView>
-					<ApplicationProvider  {...eva} theme={eva.dark}>
-						{
-							this.state.notPayed &&
-							(
-								<Modal visible={this.state.notPayed}>
+			<ApplicationProvider  {...eva} theme={eva.light}>
+				<GestureHandlerRootView style={{flex: 1}}>
+					<SafeAreaView>
+							{
+								this.state.notPayed == true &&
+								(
+									<Modal visible={this.state.notPayed}>
 
-									<PaymentForm
-										completePayment={async () => {
-											await this.completePayment()
-										}}
-										closeModal={() => {
-											this.closeModal();
-										}}
-									/>
+										<PaymentForm
+											completePayment={async () => {
+												await this.completePayment();
+											}}
 
-								</Modal>
-							)
-						}
-					</ApplicationProvider>
-				</SafeAreaView>
+											closeModal={() => {
+												this.closeModal();
+											}}
+										/>
 
-				<NavigationService/>
+									</Modal>
+								)
+							}
+					</SafeAreaView>
 
-			</GestureHandlerRootView>
+					<NavigationService/>
+				</GestureHandlerRootView>
+			</ApplicationProvider>
+
 		);
 	}
 }

@@ -142,7 +142,9 @@ class NavigationService extends Component {
 						options={({navigation}) => ({
 							title: "",
 							headerShown: false,
+							
 						})}
+						
 					/>
 					<Tab.Screen
 						name="Basket"

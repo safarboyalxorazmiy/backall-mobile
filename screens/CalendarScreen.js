@@ -1,25 +1,31 @@
-import React, {Component, memo, useState} from "react";
+import React, { Component, memo, createRef } from "react";
 import {
 	StyleSheet,
 	Text,
 	View,
 	Dimensions,
 	TouchableOpacity,
-	Modal
+	TouchableHighlight
 } from "react-native";
-import BackIcon from "../assets/arrow-left-icon.svg"
-import DeleteIcon from "../assets/delete-icon.svg"
+import BackIcon from "../assets/arrow-left-icon.svg";
+import DeleteIcon from "../assets/delete-icon.svg";
 import CalendarIcon from "../assets/blue-calendar-icon.svg";
-import {TextInput} from "react-native-gesture-handler";
-import {Calendar} from "react-native-calendars";
+import { TextInput } from "react-native-gesture-handler";
+import ActionSheet from 'react-native-actions-sheet';
+
+import { RangeCalendar } from '@ui-kitten/components';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
+const MemoizedRangeCalendar = memo(RangeCalendar);
+const MemoizedCalendarIcon = memo(CalendarIcon);
+
 class CalendarPage extends Component {
 	constructor(props) {
 		super(props);
+
 		this.state = {
 			isModalVisible: false,
 			fromDate: this.getCurrentDateString(),
@@ -35,7 +41,13 @@ class CalendarPage extends Component {
 			toDayInputValue: this.getCurrentDay(),
 			toMonthInputValue: this.getCurrentMonth(),
 			toYearInputValue: this.getCurrentYear(),
+			range: {
+				startDate: null,
+				endDate: null
+			}
 		};
+
+		this.modal = new createRef();
 	}
 
 	// "calendarFromPage": "Profit",
@@ -409,7 +421,8 @@ class CalendarPage extends Component {
 							}}/>
 					</View>
 
-					<TouchableOpacity
+					<TouchableHighlight
+
 						style={{
 							width: 60,
 							height: 40,
@@ -418,22 +431,151 @@ class CalendarPage extends Component {
 							alignItems: "center"
 						}}
 						onPress={() => {
-							this.setState((prevState) => ({
-								isModalVisible: !prevState.isModalVisible,
-								selectingDateType: "FROM"
-							}));
+							const startTime = performance.now();
+							// this.setState({
+							// 	isModalVisible: true,
+							// 	selectingDateType: "FROM"
+							// });
+							this.modal.current?.setModalVisible(true);
+							const endTime = performance.now();
+							console.log(`Set state took ${endTime - startTime} milliseconds`);
 						}}>
-						<CalendarIcon/>
-					</TouchableOpacity>
+						<MemoizedCalendarIcon />
+					</TouchableHighlight>
 				</View>
 
-				<Modal
-					visible={this.state.isModalVisible}
-					animationType="slide"
-					transparent={true}
-					animationIn={"slideInUp"}
-					animationOut={"slideOutDown"}
-					animationInTiming={0}>
+				<ActionSheet
+					ref={this.modal}
+					gestureEnabled={true}
+					indicatorStyle={{
+						width: 100,
+					}}
+					>
+						<View
+							style={{
+								height: screenHeight,
+								display: "flex",
+								alignItems: "center",
+								justifyContent: "center"
+							}}>
+							<View
+								style={{
+									width: screenWidth - (16 * 2),
+									maxWidth: 343,
+									marginLeft: "auto",
+									marginRight: "auto",
+									flex: 1,
+									alignItems: "center",
+									justifyContent: "center"
+								}}>
+								<View
+									style={{
+										width: "100%",
+										borderRadius: 12,
+										backgroundColor: "#fff",
+									}}>
+									<View
+										style={{
+											borderBottomColor: "#CAC4D0",
+											borderBottomWidth: 1
+										}}>
+										<View
+											style={{
+												paddingTop: 16,
+												paddingLeft: 24,
+												paddingBottom: 12,
+												paddingRight: 12
+											}}>
+											<Text
+												style={{
+													fontFamily: "Gilroy-Medium",
+													fontSize: 14,
+													fontWeight: "500",
+													marginBottom: 12
+												}}>2023</Text>
+											<Text
+												style={{
+													fontFamily: "Gilroy-Medium",
+													fontSize: 24,
+													fontWeight: "500"
+												}}>Juma, 17-sen</Text>
+										</View>
+									</View>
+
+
+										<MemoizedRangeCalendar
+											range={this.state.range}
+											onSelect={(nextRange) => {
+												this.setState({ range: nextRange });
+											}}
+										/>
+
+									{/* <Calendar
+										onDayPress={this.onDayPress}
+										markedDates={{
+											[this.state.selectingDateType === "FROM" ? this.state.fromDate : this.state.toDate]: {
+												selected: true,
+												selectedColor: "blue"
+											},
+										}}
+									/> */}
+
+									<View
+										style={{
+											paddingHorizontal: 12,
+											paddingTop: 8,
+											paddingBottom: 12,
+											display: "flex",
+											flexDirection: "row",
+											justifyContent: "flex-end",
+											gap: 8
+										}}>
+										<TouchableOpacity
+											onPress={() => {
+												this.setState({
+													isModalVisible: false
+												})
+											}}
+											style={{
+												paddingHorizontal: 14,
+												paddingVertical: 10
+											}}>
+											<Text
+												style={{
+													color: "#6750A4",
+													fontWeight: "500",
+													fontSize: 14
+												}}>Bekor qilish</Text>
+										</TouchableOpacity>
+
+										<TouchableOpacity
+											onPress={() => {
+												this.setState({
+													isModalVisible: false
+												})
+											}}
+											style={{
+												paddingHorizontal: 14,
+												paddingVertical: 10
+											}}>
+											<Text
+												style={{
+													color: "#6750A4",
+													fontWeight: "500",
+													fontSize: 14
+												}}
+											>Tasdiqlash</Text>
+										</TouchableOpacity>
+									</View>
+								</View>
+							</View>
+						</View>
+				</ActionSheet>
+				{/* <Modal
+					  visible={this.state.isModalVisible}
+						animationType="slide"
+						transparent={true}
+						onRequestClose={() => this.setState({ isModalVisible: false })}>
 					<View style={{
 						position: "absolute",
 						width: screenWidth,
@@ -442,118 +584,8 @@ class CalendarPage extends Component {
 						backgroundColor: "#00000099"
 					}}></View>
 
-					<View
-						style={{
-							height: screenHeight,
-							display: "flex",
-							alignItems: "center",
-							justifyContent: "center"
-						}}>
-						<View
-							style={{
-								width: screenWidth - (16 * 2),
-								maxWidth: 343,
-								marginLeft: "auto",
-								marginRight: "auto",
-								flex: 1,
-								alignItems: "center",
-								justifyContent: "center"
-							}}>
-							<View
-								style={{
-									width: "100%",
-									borderRadius: 12,
-									backgroundColor: "#fff",
-								}}>
-								<View
-									style={{
-										borderBottomColor: "#CAC4D0",
-										borderBottomWidth: 1
-									}}>
-									<View
-										style={{
-											paddingTop: 16,
-											paddingLeft: 24,
-											paddingBottom: 12,
-											paddingRight: 12
-										}}>
-										<Text
-											style={{
-												fontFamily: "Gilroy-Medium",
-												fontSize: 14,
-												fontWeight: "500",
-												marginBottom: 12
-											}}>2023</Text>
-										<Text
-											style={{
-												fontFamily: "Gilroy-Medium",
-												fontSize: 24,
-												fontWeight: "500"
-											}}>Juma, 17-sen</Text>
-									</View>
-								</View>
-
-								<Calendar
-									onDayPress={this.onDayPress}
-									markedDates={{
-										[this.state.selectingDateType === "FROM" ? this.state.fromDate : this.state.toDate]: {
-											selected: true,
-											selectedColor: "blue"
-										},
-									}}
-								/>
-
-								<View
-									style={{
-										paddingHorizontal: 12,
-										paddingTop: 8,
-										paddingBottom: 12,
-										display: "flex",
-										flexDirection: "row",
-										justifyContent: "flex-end",
-										gap: 8
-									}}>
-									<TouchableOpacity
-										onPress={() => {
-											this.setState({
-												isModalVisible: false
-											})
-										}}
-										style={{
-											paddingHorizontal: 14,
-											paddingVertical: 10
-										}}>
-										<Text
-											style={{
-												color: "#6750A4",
-												fontWeight: "500",
-												fontSize: 14
-											}}>Bekor qilish</Text>
-									</TouchableOpacity>
-
-									<TouchableOpacity
-										onPress={() => {
-											this.setState({
-												isModalVisible: false
-											})
-										}}
-										style={{
-											paddingHorizontal: 14,
-											paddingVertical: 10
-										}}>
-										<Text
-											style={{
-												color: "#6750A4",
-												fontWeight: "500",
-												fontSize: 14
-											}}
-										>Tasdiqlash</Text>
-									</TouchableOpacity>
-								</View>
-							</View>
-						</View>
-					</View>
-				</Modal>
+					
+				</Modal> */}
 
 				<View style={{
 					marginTop: 26,
@@ -628,8 +660,10 @@ class CalendarPage extends Component {
 								isModalVisible: !prevState.isModalVisible,
 								selectingDateType: "TO"
 							}));
+
+							this.modal.current?.setModalVisible(true);
 						}}>
-						<CalendarIcon/>
+						<MemoizedCalendarIcon />
 					</TouchableOpacity>
 				</View>
 

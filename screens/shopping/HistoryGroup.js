@@ -279,9 +279,18 @@ const styles = StyleSheet.create({
 });
 
 export default memo(HistoryGroup, (
-	prevProps, nextProps) => 
-		prevProps.item.dateInfo !== nextProps.item.dateInfo &&
-		prevProps.item.histories.length !== nextProps.item.histories.length 
+	prevProps, nextProps) =>  {
+		console.log(
+			"useMemo() length::", 
+					nextProps.item.histories.length - 1 + "," + 
+					prevProps.item.histories.length
+		);
+		
+		return (
+			prevProps.item.dateInfo === nextProps.item.dateInfo &&
+			prevProps.item.histories.length - 1 === nextProps.item.histories.length 
+		)  || nextProps.item.calendar === true;
+	}
 	
 	//&& nextProps.item.histories[0].saved === false 
 );

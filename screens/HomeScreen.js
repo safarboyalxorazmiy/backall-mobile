@@ -6,7 +6,8 @@ import {
 	View,
 	Dimensions,
 	TouchableOpacity,
-	Platform
+	Platform,
+	SafeAreaView
 } from "react-native";
 import {LinearGradient} from "expo-linear-gradient";
 
@@ -30,10 +31,14 @@ import LogoutIcon from "../assets/logout-icon.svg";
 import CrossIcon from "../assets/cross-icon.svg";
 import ShoppingIcon from "../assets/home/shopping-icon.svg";
 import BenefitIcon from "../assets/home/benefit-icon.svg";
-import apiService from "../service/ApiService";
 import ActionSheet from 'react-native-actions-sheet';
 import { Feather } from "@expo/vector-icons";
-import { Text as PText, TouchableRipple } from 'react-native-paper';
+import { TouchableRipple } from 'react-native-paper';
+import PaymentForm from "./payment/PaymentForm";
+
+import {ApplicationProvider} from '@ui-kitten/components';
+import * as eva from '@eva-design/eva';
+
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -83,7 +88,10 @@ class Home extends Component {
 
 			menuFocused: false,
 			crossFocused: false,
-			menuOpened: false
+			menuOpened: false,
+			notPayed: false,
+			paymentModalVisible: false,
+			intervalStarted: false
 		}
 
 		this.amountDateRepository = new AmountDateRepository();
@@ -98,11 +106,79 @@ class Home extends Component {
 	}
 
 	async componentDidMount() {
+		console.log("Component mounted");
 		const {navigation} = this.props;
 
-		console.log("component mounted!")
-
+		await this.amountDateRepository.init();
 		await this.getAmountInfo();
+
+
+		let notPayed = await AsyncStorage.getItem("notPayed")
+		if (notPayed == "true") {
+			this.setState({notPayed: true})
+		} else {
+			this.setState({notPayed: false})
+		}
+		
+
+		// this.setState({spinner: true});
+
+		console.log("spinner::",this.state.spinner);
+		console.log("notPayed::", this.state.notPayed);
+
+		// let isDownloaded = await AsyncStorage.getItem("isDownloaded");
+		// if (isDownloaded !== "true" || isDownloaded == null) {
+		// 	await this.initializeScreen();
+
+		// 	this.setState({spinner: true});
+
+		// 	const {navigation} = this.props;
+
+		// 	let isLoggedIn = await this.tokenService.checkTokens();
+		// 	if (!isLoggedIn) {
+		// 		this.setState({spinner: false});
+		// 		navigation.navigate("Login");
+		// 	}
+
+		// 	await this.storeProductRepository.init();
+		// 	await this.sellHistoryRepository.init();
+		// 	await this.profitHistoryRepository.init();
+		// 	await this.amountDateRepository.init();
+
+		// 	if (isLoggedIn) {
+		// 		console.log("isDownloaded??", isDownloaded);
+		// 		if (isDownloaded !== "true" || isDownloaded == null) {
+		// 			// LOAD..
+		// 			console.log("ABOUT TO LOAD...");
+
+		// 			console.log("Initial isConnected:", this.state.isConnected);
+
+		// 			// Check if setInterval callback is reached
+		// 			console.log("Setting up setInterval...");
+
+		// 			if (!this.state.isConnected) {
+		// 				this.setState({spinner: false});
+		// 				navigation.navigate("Login");
+		// 				return;
+		// 			}
+
+		// 			try {
+		// 				// Has internet connection
+		// 				await this.loadProducts();
+
+		// 			} catch (error) {
+		// 				console.error("Error loading products:", error);
+		// 			} finally {
+		// 				this.setState({spinner: false});
+		// 			}
+		// 		}
+
+		// 		await this.getAmountInfo();
+
+		// 		let notAllowed = await AsyncStorage.getItem("not_allowed");
+		// 		this.setState({notAllowed: notAllowed});
+		// 	}
+		// }
 
 		this.unsubscribe = NetInfo.addEventListener((state) => {
 			this.setState({isConnected: state.isConnected});
@@ -110,7 +186,6 @@ class Home extends Component {
 
 		navigation.addListener("focus", async () => {
 			console.log("HOME NAVIGATED");
-
 			// Login check and download data for the first time**
 			this.unsubscribe = NetInfo.addEventListener((state) => {
 				this.setState({isConnected: state.isConnected});
@@ -184,115 +259,84 @@ class Home extends Component {
 
 
 			await this.getAmountInfo();
+
+			// if (this.state.intervalStarted == false) {
+			// 	let intervalId = setInterval(async () => {
+			// 		if (await AsyncStorage.getItem("window") != "Home") {
+			// 			this.setState({intervalStarted: false});
+			// 			clearInterval(intervalId);
+			// 			return;
+			// 		}
+	
+			// 		let notPayed = await AsyncStorage.getItem("notPayed");
+			// 		if (notPayed == "true") {
+			// 			console.log("not payed")
+			// 			this.setState({notPayed: true});
+			// 		} else {
+			// 			console.log("payed")
+			// 			this.setState({notPayed: false});
+			// 		}
+	
+			// 		console.log("Checking payment from HomeScreen..", notPayed);
+			// 	}, 5000)
+	
+			// 	this.setState({intervalStarted: true});
+			// }	
 		});
-
-		// let isDownloaded = await AsyncStorage.getItem("isDownloaded");
-		// if (isDownloaded !== "true" || isDownloaded == null) {
-		// 	await this.initializeScreen();
-
-		// 	this.setState({spinner: true});
-
-		// 	const {navigation} = this.props;
-
-		// 	let isLoggedIn = await this.tokenService.checkTokens();
-		// 	if (!isLoggedIn) {
-		// 		this.setState({spinner: false});
-		// 		navigation.navigate("Login");
-		// 	}
-
-		// 	await this.storeProductRepository.init();
-		// 	await this.sellHistoryRepository.init();
-		// 	await this.profitHistoryRepository.init();
-		// 	await this.amountDateRepository.init();
-
-		// 	if (isLoggedIn) {
-		// 		console.log("isDownloaded??", isDownloaded);
-		// 		if (isDownloaded !== "true" || isDownloaded == null) {
-		// 			// LOAD..
-		// 			console.log("ABOUT TO LOAD...");
-
-		// 			console.log("Initial isConnected:", this.state.isConnected);
-
-		// 			// Check if setInterval callback is reached
-		// 			console.log("Setting up setInterval...");
-
-		// 			if (!this.state.isConnected) {
-		// 				this.setState({spinner: false});
-		// 				navigation.navigate("Login");
-		// 				return;
-		// 			}
-
-		// 			try {
-		// 				// Has internet connection
-		// 				await this.loadProducts();
-
-		// 			} catch (error) {
-		// 				console.error("Error loading products:", error);
-		// 			} finally {
-		// 				this.setState({spinner: false});
-		// 			}
-		// 		}
-
-		// 		await this.getAmountInfo();
-
-		// 		let notAllowed = await AsyncStorage.getItem("not_allowed");
-		// 		this.setState({notAllowed: notAllowed});
-		// 	}
-		// }
 	}
 
 	async initializeScreen() {
-		this.setState({
-			shoppingCardColors: ["#E59C0D", "#FDD958"],
-			profitCardColors: ["#2C8134", "#1DCB00"],
-			profitAmount: 0,
-			sellAmount: 0,
-			notAllowed: "",
-			spinner: false,
-			isLoading: false,
-			isDownloaded: "false",
+		// this.setState({
+		// 	shoppingCardColors: ["#E59C0D", "#FDD958"],
+		// 	profitCardColors: ["#2C8134", "#1DCB00"],
+		// 	profitAmount: 0,
+		// 	sellAmount: 0,
+		// 	notAllowed: "",
+		// 	spinner: false,
+		// 	isLoading: false,
+		// 	isDownloaded: "false",
 
-			// PRODUCT
-			lastLocalProductsPage: 0,
-			lastLocalProductsSize: 10,
-			lastGlobalProductsPage: 0,
-			lastGlobalProductsSize: 10,
-			lastStoreProductsPage: 0,
-			lastStoreProductsSize: 10,
+		// 	// PRODUCT
+		// 	lastLocalProductsPage: 0,
+		// 	lastLocalProductsSize: 10,
+		// 	lastGlobalProductsPage: 0,
+		// 	lastGlobalProductsSize: 10,
+		// 	lastStoreProductsPage: 0,
+		// 	lastStoreProductsSize: 10,
 
-			// SELL
-			lastSellGroupsPage: 0,
-			lastSellGroupsSize: 10,
-			lastSellHistoriesPage: 0,
-			lastSellHistoriesSize: 10,
-			lastSellHistoryGroupPage: 0,
-			lastSellHistoryGroupSize: 10,
-			lastSellAmountDatePage: 0,
-			lastSellAmountDateSize: 10,
+		// 	// SELL
+		// 	lastSellGroupsPage: 0,
+		// 	lastSellGroupsSize: 10,
+		// 	lastSellHistoriesPage: 0,
+		// 	lastSellHistoriesSize: 10,
+		// 	lastSellHistoryGroupPage: 0,
+		// 	lastSellHistoryGroupSize: 10,
+		// 	lastSellAmountDatePage: 0,
+		// 	lastSellAmountDateSize: 10,
 
-			// PROFIT
-			lastProfitGroupsPage: 0,
-			lastProfitGroupsSize: 10,
-			lastProfitHistoriesPage: 0,
-			lastProfitHistoriesSize: 10,
-			lastProfitHistoryGroupPage: 0,
-			lastProfitHistoryGroupSize: 10,
-			lastProfitAmountDatePage: 0,
-			lastProfitAmountDateSize: 10,
+		// 	// PROFIT
+		// 	lastProfitGroupsPage: 0,
+		// 	lastProfitGroupsSize: 10,
+		// 	lastProfitHistoriesPage: 0,
+		// 	lastProfitHistoriesSize: 10,
+		// 	lastProfitHistoryGroupPage: 0,
+		// 	lastProfitHistoryGroupSize: 10,
+		// 	lastProfitAmountDatePage: 0,
+		// 	lastProfitAmountDateSize: 10,
 
-			menuFocused: false,
-			crossFocused: false,
-			menuOpened: false
-		});
+		// 	menuFocused: false,
+		// 	crossFocused: false,
+		// 	menuOpened: false
+		// });
 
-		this.amountDateRepository = new AmountDateRepository();
-		this.apiService = new ApiService();
-		this.productRepository = new ProductRepository();
-		this.sellHistoryRepository = new SellHistoryRepository();
-		this.profitHistoryRepository = new ProfitHistoryRepository();
-		this.storeProductRepository = new StoreProductRepository();
-		this.databaseRepository = new DatabaseRepository();
-		this.tokenService = new TokenService();
+		// this.amountDateRepository = new AmountDateRepository();
+		// this.apiService = new ApiService();
+		// this.productRepository = new ProductRepository();
+		// this.sellHistoryRepository = new SellHistoryRepository();
+		// this.profitHistoryRepository = new ProfitHistoryRepository();
+		// this.storeProductRepository = new StoreProductRepository();
+		// this.databaseRepository = new DatabaseRepository();
+		// this.tokenService = new TokenService();
 	}
 
 	componentWillUnmount() {
@@ -835,6 +879,40 @@ class Home extends Component {
 		});
 	}
 
+	async completePayment() {
+		// Oynani yopish va bugun umuman boshqa tekshirmaslik uchun ohirgi sanani saqlash.
+		await AsyncStorage.setItem("paymentTryCount", (0).toString());
+
+		const currentDate = new Date();
+
+		const year = currentDate.getFullYear();
+		const month = ("0" + (currentDate.getMonth() + 1)).slice(-2); // Adding 1 because getMonth() returns zero-based month index
+		const day = ("0" + currentDate.getDate()).slice(-2);
+		const hour = ("0" + currentDate.getHours()).slice(-2); // Get current hour
+
+		const dateString = `${year}-${month}-${day}`;
+
+
+		if (await AsyncStorage.getItem("lastPaymentShownDate") != dateString) {
+			await AsyncStorage.setItem("lastPaymentShownDate", dateString);
+		}
+
+		if (await AsyncStorage.getItem("lastPaymentShownHour") != hour.toString()) {
+			await AsyncStorage.setItem("lastPaymentShownHour", hour.toString());
+		}
+
+		this.setState({
+			paymentModalVisible: false,
+			notPayed: false
+		});
+	}
+
+	closePaymentModal() {
+		this.setState({
+			paymentModalVisible: false
+		});
+	}
+
 	render() {
 		const {navigation} = this.props;
 
@@ -850,8 +928,6 @@ class Home extends Component {
 					}}
 				/>
 
-				
-
 				<View style={styles.container}>
 					<View style={styles.header}>
 						<Text style={styles.pageTitle}>Bosh sahifa</Text>
@@ -860,17 +936,17 @@ class Home extends Component {
 								this.menu.current?.setModalVisible(true);
 							}}
 							onPressIn={() => {
-								this.setState(
-									{menuFocused: true}
-								)
+								// this.setState(
+								// 	{menuFocused: true}
+								// )
 
 
 							}}
 
 							onPressOut={() => {
-								this.setState(
-									{menuFocused: false}
-								)
+								// this.setState(
+								// 	{menuFocused: false}
+								// )
 
 							}}
 
@@ -887,14 +963,18 @@ class Home extends Component {
 						</TouchableOpacity>
 					</View>
 
-					{/* <TouchableRipple
+					{
+						this.state.notPayed ? (
+							<TouchableRipple
 						style={{
 							width: "100%",
 							height: 180,
 							backgroundColor: "#D2D7DA",
 							borderRadius: 0,
 						}}
-						onPress={() => console.log("Pressed")}
+						onPress={() => {
+							this.setState({paymentModalVisible: true});
+						}}
 						rippleColor="#FFF"
 					>
 						<View style={{ flex: 1, justifyContent: "space-between" }}>
@@ -932,7 +1012,10 @@ class Home extends Component {
 								<Feather name="arrow-up-right" size={32} color="#000" />
 							</View>
 						</View>
-					</TouchableRipple> */}
+					</TouchableRipple> 
+						) : null
+						
+					}
 
 					<View style={styles.cards}>
 						<TouchableOpacity
@@ -1190,6 +1273,23 @@ class Home extends Component {
 						</View>
 					</Animatable.View>
 				</Modal>
+				
+				<ApplicationProvider  {...eva} theme={eva.dark}>
+					<Modal
+					 	visible={this.state.paymentModalVisible} 
+						style={{width: "101%", position: "absolute", left: -20, top: -18}}>
+
+						<PaymentForm
+							completePayment={async () => {
+								await this.completePayment()
+							}}
+							closeModal={() => {
+								this.closePaymentModal();
+							}}
+						/>
+
+					</Modal>
+				</ApplicationProvider>
 			</>
 		);
 	}

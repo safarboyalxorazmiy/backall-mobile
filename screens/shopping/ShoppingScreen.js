@@ -350,8 +350,7 @@ class Shopping extends Component {
 				group.histories.push({
 					id: history.id + 10000000,
 					created_date: history.createdDate,
-					amount: history.amount,
-					saved: false
+					amount: history.amount
 				});
 
 				if (lastDate !== date) {
@@ -394,6 +393,7 @@ class Shopping extends Component {
 
 		try {
 			let sellHistories;
+			// 
 			if (this.state.fromDate != null && this.state.toDate != null) {
 				sellHistories =
 					await this.sellHistoryRepository.getTop11SellGroupByDate(this.state.lastGroupId, this.state.fromDate, this.state.toDate);
@@ -438,7 +438,7 @@ class Shopping extends Component {
 					id: history.id,
 					created_date: history.created_date,
 					amount: history.amount,
-					saved: true
+					calendar: true
 				});
 
 				grouped[groupIndex].totalAmount = lastAmount;
@@ -448,14 +448,13 @@ class Shopping extends Component {
 			const groupedCopy = grouped.map(group => ({
 				...group,
 				histories: group.histories.map(history => ({
-					...history,
-					saved: false
+					...history
 				}))
 			}));
 
 			const lastGroup = grouped[grouped.length - 1];
 			if (lastGroup) {
-				groupedCopy[groupedCopy.length - 1].histories[0].saved = true;
+				groupedCopy[groupedCopy.length - 1].histories[0].calendar = true;
 			}
 
 			const startTime = performance.now();
@@ -490,34 +489,34 @@ class Shopping extends Component {
 				return false;
 			}
 
-			let grouped = this.state.groupedHistories;
+			let grouped = [...this.state.groupedHistories];
 
 			//.log(grouped[0])
 			const {id, created_date, amount} = sellHistories[0];
 			const historyDate = created_date.split("T")[0];
 
 			if (historyDate === grouped[0].date) {
-				grouped[0].histories = [{
+				grouped[0].histories.unshift({
 					id,
 					created_date,
-					amount,
-					saved: true
-				}, ...grouped[0].histories];
+					amount
+				});
+				console.log("Length updated::", grouped[0].histories.length);
+
 				grouped[0].totalAmount = await this.amountDateRepository.getSellAmountInfoByDate(historyDate).catch(() => 0);
 			} else {
 				const formattedDate = this.formatDate(historyDate);
-				grouped = [...[{
-					date: historyDate, // Make sure this matches your structure; it was 'historyDate' in your code, but 'date' elsewhere
+
+				grouped.unshift({
+					date: historyDate, 
 					dateInfo: formattedDate,
 					histories: [...sellHistories],
 					totalAmount: await this.amountDateRepository.getSellAmountInfoByDate(historyDate).catch(() => 0)
-				}], ...grouped];
+				});
 			}
 
 			const startTime = performance.now();
-			this.setState(prevState => ({
-				groupedHistories: grouped,
-			}));
+			this.setState({groupedHistories: grouped});
 
 
 			const groupedCopy = [...grouped];
@@ -928,4 +927,4 @@ const styles = StyleSheet.create({
 	}
 });
 
-export default memo(Shopping);
+export default Shopping;
