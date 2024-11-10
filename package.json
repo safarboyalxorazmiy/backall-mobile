@@ -50,6 +50,7 @@
     "react-native-element-dropdown": "^2.10.1",
     "react-native-elements": "^3.4.3",
     "react-native-gesture-handler": "~2.12.0",
+    "react-native-gifted-charts": "^1.4.47",
     "react-native-linear-gradient": "^2.8.3",
     "react-native-loader-kit": "^2.0.8",
     "react-native-loading-spinner-overlay": "^3.0.1",

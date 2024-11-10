@@ -7,7 +7,8 @@ import {
 	Dimensions,
 	TouchableOpacity,
 	Platform,
-	SafeAreaView
+	SafeAreaView,
+	ScrollView
 } from "react-native";
 import {LinearGradient} from "expo-linear-gradient";
 
@@ -39,6 +40,9 @@ import PaymentForm from "./payment/PaymentForm";
 import {ApplicationProvider} from '@ui-kitten/components';
 import * as eva from '@eva-design/eva';
 
+import { LineChart } from "react-native-gifted-charts";
+
+const data=[ {value:50}, {value:80}, {value:90}, {value:70} ];
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -260,28 +264,28 @@ class Home extends Component {
 
 			await this.getAmountInfo();
 
-			// if (this.state.intervalStarted == false) {
-			// 	let intervalId = setInterval(async () => {
-			// 		if (await AsyncStorage.getItem("window") != "Home") {
-			// 			this.setState({intervalStarted: false});
-			// 			clearInterval(intervalId);
-			// 			return;
-			// 		}
+			if (this.state.intervalStarted == false) {
+				let intervalId = setInterval(async () => {
+					if (await AsyncStorage.getItem("window") != "Home") {
+						this.setState({intervalStarted: false});
+						clearInterval(intervalId);
+						return;
+					}
 	
-			// 		let notPayed = await AsyncStorage.getItem("notPayed");
-			// 		if (notPayed == "true") {
-			// 			console.log("not payed")
-			// 			this.setState({notPayed: true});
-			// 		} else {
-			// 			console.log("payed")
-			// 			this.setState({notPayed: false});
-			// 		}
+					let notPayed = await AsyncStorage.getItem("notPayed");
+					if (notPayed == "true") {
+						console.log("not payed")
+						this.setState({notPayed: true});
+					} else {
+						console.log("payed")
+						this.setState({notPayed: false});
+					}
 	
-			// 		console.log("Checking payment from HomeScreen..", notPayed);
-			// 	}, 5000)
+					console.log("Checking payment from HomeScreen..", notPayed);
+				}, 5000)
 	
-			// 	this.setState({intervalStarted: true});
-			// }	
+				this.setState({intervalStarted: true});
+			}	
 		});
 	}
 
@@ -917,7 +921,7 @@ class Home extends Component {
 		const {navigation} = this.props;
 
 		return (
-			<>
+			<ScrollView>
 				<Spinner
 					visible={this.state.spinner}
 					cancelable={false}
@@ -1079,6 +1083,10 @@ class Home extends Component {
 						</TouchableOpacity>
 
 					</View>
+
+
+					<LineChart data = {data} areaChart />
+
 					<StatusBar style="auto"/>
 				</View>
 
@@ -1290,7 +1298,7 @@ class Home extends Component {
 
 					</Modal>
 				</ApplicationProvider>
-			</>
+			</ScrollView>
 		);
 	}
 }
