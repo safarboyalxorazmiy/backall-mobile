@@ -109,11 +109,11 @@ class App extends Component {
 				this.setState({isConnected: state.isConnected});
 			});
 
+			await AsyncStorage.setItem("isRequestInProgress", "false");
+
 			this.logInternetStatusInterval = setInterval(
-				() => {
-					this.checkInternetStatus();
-				},
-				5000
+				this.checkInternetStatus,
+				2000
 			);
 		}
 	}
@@ -140,11 +140,13 @@ class App extends Component {
 
 	// 🚨 !important background thread 🚨
 	async checkInternetStatus() {
-		if (await AsyncStorage.getItem("window") === "Calendar") {
+		if (await AsyncStorage.getItem("window") === "Calendar" || await AsyncStorage.getItem("window") === "Sell" || await AsyncStorage.getItem("animation") === "true") {
+			console.log("Window is Calendar, Sell or animation is true");
 			return;
 		}
 		
 		if (await AsyncStorage.getItem("isDownloaded") != "true") {
+			console.log("isDownloaded is false");
 			return;
 		}
 

@@ -273,6 +273,10 @@ class Home extends Component {
 
 			if (this.state.intervalStarted == false) {
 				let intervalId = setInterval(async () => {
+					if (await AsyncStorage.getItem("animation") != "true") {
+						return;
+					}
+
 					if (await AsyncStorage.getItem("window") != "Home") {
 						this.setState({intervalStarted: false});
 						clearInterval(intervalId);
@@ -943,7 +947,8 @@ class Home extends Component {
 					<View style={styles.header}>
 						<Text style={styles.pageTitle}>Bosh sahifa</Text>
 						<TouchableOpacity
-							onPress={() => {
+							onPress={async () => {
+								await AsyncStorage.setItem("animation", "true");
 								this.menu.current?.setModalVisible(true);
 							}}
 							onPressIn={() => {
@@ -1117,6 +1122,9 @@ class Home extends Component {
 
 				<ActionSheet
 					ref={this.menu}
+					onClose={async () => {
+						await AsyncStorage.setItem("animation", "false");
+					}}
 					gestureEnabled={true}
 					indicatorStyle={{
 						width: 100,
