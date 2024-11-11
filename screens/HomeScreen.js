@@ -95,7 +95,8 @@ class Home extends Component {
 			menuOpened: false,
 			notPayed: false,
 			paymentModalVisible: false,
-			intervalStarted: false
+			intervalStarted: false,
+			diagramData: [],
 		}
 
 		this.amountDateRepository = new AmountDateRepository();
@@ -188,7 +189,13 @@ class Home extends Component {
 			this.setState({isConnected: state.isConnected});
 		});
 
+		console.log(await this.amountDateRepository.getSellAmountDate())
+		this.setState({diagramData: await this.amountDateRepository.getSellAmountDate()});
+
 		navigation.addListener("focus", async () => {
+			console.log(await this.amountDateRepository.getSellAmountDate())
+			this.setState({diagramData: await this.amountDateRepository.getSellAmountDate()});
+
 			console.log("HOME NAVIGATED");
 			// Login check and download data for the first time**
 			this.unsubscribe = NetInfo.addEventListener((state) => {
@@ -1085,7 +1092,25 @@ class Home extends Component {
 					</View>
 
 
-					<LineChart data = {data} areaChart />
+					<LineChart 
+					// isAnimated
+					// spacing={15}
+					curved
+					width={screenWidth}
+					height={600}
+					showVerticalLines
+					xAxisLabelTextStyle={{fontSize: 12, color: "red"}}
+					yAxisLabelTextStyle={{fontSize: 12, color: "red"}}
+					textShiftY={2}
+          textShiftX={-5}
+          textFontSize={13}
+          dataPointsHeight={20}
+          dataPointsWidth={6}
+					
+					showValuesAsDataPointsText={true} 
+					 data={this.state.diagramData} areaChart 
+					 
+					 />
 
 					<StatusBar style="auto"/>
 				</View>
