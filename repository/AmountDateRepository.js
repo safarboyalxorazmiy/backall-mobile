@@ -274,18 +274,20 @@ class AmountDateRepository {
 			const selectQuery = `SELECT amount as value FROM sell_amount_date order by id;`;
 			this.db.transaction(tx => {
 				tx.executeSql(selectQuery, [], (tx, results) => {
-						if (results.rows.length > 0) {
-							resolve(results.rows._array);
-						} else {
-							resolve([]); // Return null if no record found for the date
-						}
-					},
-					error => {
-						reject(`Error retrieving sell amount date: ${error.message}`);
-					});
+					if (results.rows.length > 0) {
+						// Map the results to an array of numbers
+						const values = results.rows._array.map(row => row.value);
+						resolve(values); // Return the array of values
+					} else {
+						resolve([]); // Return an empty array if no records found
+					}
+				},
+				error => {
+					reject(`Error retrieving sell amount date: ${error.message}`);
+				});
 			});
 		});
-	}
+	}	
 
 	async getProfitAmountInfoByDate(date) {
 		return new Promise((resolve, reject) => {

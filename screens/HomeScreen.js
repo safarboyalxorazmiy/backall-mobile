@@ -40,12 +40,20 @@ import PaymentForm from "./payment/PaymentForm";
 import {ApplicationProvider} from '@ui-kitten/components';
 import * as eva from '@eva-design/eva';
 
-import { LineChart } from "react-native-gifted-charts";
+import { Picker } from '@react-native-picker/picker';
+import { Ionicons } from '@expo/vector-icons';
+import { LineChart } from 'react-native-chart-kit';
 
-const data=[ {value:50}, {value:80}, {value:90}, {value:70} ];
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
+
+const languages = [
+	{ label: "English", value: "English" },
+	{ label: "O'zbekcha", value: "UzbekLatin" },
+	{ label: "Ўзбекча", value: "UzbekCyrillic" },
+	{ label: "Русский", value: "Russian" }
+];
 
 class Home extends Component {
 	constructor(props) {
@@ -96,7 +104,15 @@ class Home extends Component {
 			notPayed: false,
 			paymentModalVisible: false,
 			intervalStarted: false,
-			diagramData: [],
+			diagramData: [
+				Math.random() * 100,	// Generate a random number between 0 and 100
+				Math.random() * 100,
+				Math.random() * 100,
+				Math.random() * 100,
+				Math.random() * 100,
+				Math.random() * 100
+			],
+			language: "uz"
 		}
 
 		this.amountDateRepository = new AmountDateRepository();
@@ -108,6 +124,7 @@ class Home extends Component {
 		this.databaseRepository = new DatabaseRepository();
 		this.tokenService = new TokenService();
 		this.menu = new createRef();
+		this.langPicker = new createRef();
 	}
 
 	async componentDidMount() {
@@ -273,7 +290,7 @@ class Home extends Component {
 
 			if (this.state.intervalStarted == false) {
 				let intervalId = setInterval(async () => {
-					if (await AsyncStorage.getItem("animation") != "true") {
+					if (await AsyncStorage.getItem("animation") === "true") {
 						return;
 					}
 
@@ -944,39 +961,86 @@ class Home extends Component {
 				/>
 
 				<View style={styles.container}>
+					<View style={{
+							flex: 1,
+							// padding: 16,
+							// backgroundColor: '#FCFCFC',
+							// marginTop: 30
+						}}>
+						
+
+						<Picker
+							dropdownIconColor={"#FFF"}
+							
+							selectedValue={this.state.selectedLanguage}
+							onValueChange={(itemValue) => {
+								this.setState({selectedLanguage: itemValue});
+							}}
+							style={{display: "none"}}
+
+							itemStyle={{display: "none"}}
+							selectionColor={"red"}
+							
+							ref={this.langPicker}
+						>
+								{languages.map((language) => (
+										<Picker.Item key={language.value} label={language.label} value={language.value} />
+								))}
+						</Picker>
+					</View>
+
 					<View style={styles.header}>
 						<Text style={styles.pageTitle}>Bosh sahifa</Text>
-						<TouchableOpacity
-							onPress={async () => {
-								await AsyncStorage.setItem("animation", "true");
-								this.menu.current?.setModalVisible(true);
-							}}
-							onPressIn={() => {
-								// this.setState(
-								// 	{menuFocused: true}
-								// )
+						<View style={{display: "flex", flexDirection: "row", columnGap: 20, height: "100%"}}>
+							<TouchableOpacity 
+								onPress={async () => {
+									await AsyncStorage.setItem("animation", "true");
+									this.langPicker.current.focus()
+								}}
+								style={{
+										display: "flex", 
+										flexDirection: "row", 
+										alignItems: "center", 
+										justifyContent: "center",
+										marginBottom: 10, 
+										height: "100%"
+									}}>
+								{/* <Text style={styles.title}>SUGGESTED LANGUAGES</Text> */}
+								<Ionicons name="language" size={24} color="black" />
+							</TouchableOpacity>
+							
+							<TouchableOpacity
+								onPress={async () => {
+									await AsyncStorage.setItem("animation", "true");
+									this.menu.current?.setModalVisible(true);
+								}}
+								onPressIn={() => {
+									// this.setState(
+									// 	{menuFocused: true}
+									// )
 
 
-							}}
+								}}
 
-							onPressOut={() => {
-								// this.setState(
-								// 	{menuFocused: false}
-								// )
+								onPressOut={() => {
+									// this.setState(
+									// 	{menuFocused: false}
+									// )
 
-							}}
+								}}
 
-							activeOpacity={1}>
-							<View
-								style={this.state.menuFocused ? {
-									backgroundColor: "#F4F4F4",
-									padding: 10,
-									paddingVertical: 15,
-									borderRadius: 50,
-								} : styles.menuIcon}>
-								<MenuIcon/>
-							</View>
-						</TouchableOpacity>
+								activeOpacity={1}>
+								<View
+									style={this.state.menuFocused ? {
+										backgroundColor: "#F4F4F4",
+										padding: 10,
+										paddingVertical: 15,
+										borderRadius: 50,
+									} : styles.menuIcon}>
+									<MenuIcon/>
+								</View>
+							</TouchableOpacity>
+						</View>
 					</View>
 
 					{
@@ -1097,25 +1161,50 @@ class Home extends Component {
 					</View>
 
 
-					<LineChart 
-					// isAnimated
-					// spacing={15}
-					curved
-					width={screenWidth}
-					height={600}
-					showVerticalLines
-					xAxisLabelTextStyle={{fontSize: 12, color: "red"}}
-					yAxisLabelTextStyle={{fontSize: 12, color: "red"}}
-					textShiftY={2}
-          textShiftX={-5}
-          textFontSize={13}
-          dataPointsHeight={20}
-          dataPointsWidth={6}
-					
-					showValuesAsDataPointsText={true} 
-					 data={this.state.diagramData} areaChart 
-					 
-					 />
+					<View>
+						<LineChart
+						
+							data={{
+								labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+								datasets: [
+									{
+										data: this.state.diagramData,
+										color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, // Purple line
+										strokeWidth: 2 // optional
+									}
+								],
+								legend: ["Dataset 1"] // Update or remove the legend if needed
+							}}
+							width={Dimensions.get("window").width - 16}
+							height={250}
+							// yAxisLabel="$"
+							// yAxisSuffix="k"
+							yAxisInterval={1}
+							chartConfig={{
+								backgroundColor: "#ffffff",
+								backgroundGradientFrom: "#FFF",
+								backgroundGradientTo: "#FFF",
+								decimalPlaces: 0,
+								color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+								labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+								style: {
+									borderRadius: 16
+								},
+								propsForDots: {
+									r: "5",
+									strokeWidth: "2",
+									stroke: "#ffa726"
+								}
+							}}
+							bezier
+							style={{
+								marginVertical: 8,
+								borderRadius: 16
+							}}
+						/>
+
+					</View>
+
 
 					<StatusBar style="auto"/>
 				</View>
