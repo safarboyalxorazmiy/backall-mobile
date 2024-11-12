@@ -62,6 +62,7 @@ class Shopping extends Component {
 		this.sellHistoryRepository = new SellHistoryRepository();
 		this.amountDateRepository = new AmountDateRepository();
 		this.productRepository = new ProductRepository();
+
 		this.apiService = new ApiService();
 
 		this.onEndReached = _.debounce(this.onEndReached.bind(this), 100);
@@ -70,9 +71,16 @@ class Shopping extends Component {
 
 
 	async componentDidMount() {
-		if (await AsyncStorage.getItem("loadShopping") === "true") {
-			await this.initializeScreen();
+		// !IMPORTANT 🔭******************************
+		// Bu method bu yerda stateni component mount bo'lganda sahifani hamma ma'lumotlarini tozalash uchun yozildi.
+		// yozilmasa double element degan bug chiqayapti
+		await this.initializeScreen();
 
+		
+		// !IMPORTANT 🔭******************************
+		// Bu if bizga faqat eski user akkauntdan chiqib ketib yangi user bu telefonga login yoki register qilayotganda kerak.
+		// Bu yerda shunchaki tozalab tashlaymiz chunki bizga endi uni keragi yo'q
+		if (await AsyncStorage.getItem("loadShopping") === "true") {
 			await AsyncStorage.setItem("loadShopping", "false");
 		}
 
@@ -105,6 +113,10 @@ class Shopping extends Component {
 		const {navigation} = this.props;
 
 		navigation.addListener("focus", async () => {
+			// !IMPORTANT 🔭******************************
+			// Bu if bizga faqat eski user akkauntdan chiqib ketib yangi user bu telefonga login yoki register qilayotganda kerak.
+			// Shu holatda state bilan muammo bo'lmasligi uchun bu method yozildi.
+
 			if (await AsyncStorage.getItem("loadShopping") === "true") {
 				await this.initializeScreen();
 
@@ -255,6 +267,7 @@ class Shopping extends Component {
 		return `${day}, ${weekday}`;
 	};
 
+	// Bu method bizga screenni stateini holatini boshlang'ich holatga tushurib berish uchun yozildi.
 	async initializeScreen() {
 		this.setState({
 			sellingHistory: [],
@@ -267,6 +280,7 @@ class Shopping extends Component {
 			calendarInputContent: "--/--/----",
 			fromDate: null,
 			toDate: null,
+			prevFromDate: null, // for reloading after denpxleting
 			thisMonthSellAmount: 0.00,
 			notAllowed: "",
 
@@ -282,13 +296,20 @@ class Shopping extends Component {
 
 			loading: false,
 			globalFullyLoaded: false,
-			lastTempId: 0
+			localFullyLoaded: false
 		});
 
 		this.sellHistoryRepository = new SellHistoryRepository();
 		this.amountDateRepository = new AmountDateRepository();
 		this.productRepository = new ProductRepository();
+
 		this.apiService = new ApiService();
+
+		this.onEndReached = _.debounce(this.onEndReached.bind(this), 100);
+		this.flatListRef = React.createRef();
+
+		await this.sellHistoryRepository.init();
+		await this.amountDateRepository.init();
 	}
 
 	async loadMore() {	
