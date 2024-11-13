@@ -1,4 +1,4 @@
-import React, {Component, createRef} from "react";
+import React, {Component, createRef, memo} from "react";
 import {StatusBar} from "expo-status-bar";
 import {
 	StyleSheet,
@@ -29,7 +29,6 @@ import TokenService from "../service/TokenService";
 
 import MenuIcon from "../assets/menu-icon 2.svg";
 import LogoutIcon from "../assets/logout-icon.svg";
-import CrossIcon from "../assets/cross-icon.svg";
 import ShoppingIcon from "../assets/home/shopping-icon.svg";
 import BenefitIcon from "../assets/home/benefit-icon.svg";
 import ActionSheet from 'react-native-actions-sheet';
@@ -126,7 +125,7 @@ class Home extends Component {
 
 		// !IMPORTANT 🔭******************************
 		// Bu yerda foydalanuvchi tokeni bor yoki yo'qligini tekshiradi 
-		// agar token yo'q bo'lsa unda login oynasiga otadi
+		// agar token yo'q bo'lsa unda login oynasiga otadi.
 		let isLoggedIn = await this.tokenService.checkTokens();
 		if (!isLoggedIn) {
 			console.log("LOGGED OUT BY 401 FROM HOME")
@@ -138,7 +137,7 @@ class Home extends Component {
 		//************************************
 
 		// !IMPORTANT 🔭******************************
-		// Bu yerda agar yangi telefondan login bo'lsa ya'ni apidan 401 kelsa login oynasiga otadi
+		// Bu yerda agar yangi telefondan login bo'lsa ya'ni apidan 401 kelsa login oynasiga otadi.
 		let authError = await AsyncStorage.getItem("authError");
 		if (authError != null && authError == "true") {
 			console.log("LOGGED OUT BY 401 FROM HOME")
@@ -147,10 +146,12 @@ class Home extends Component {
 			navigation.navigate("Login");
 			return;	
 		}
+		//************************************
 
 		// !IMPORTANT 🔭******************************
 		// Logina otmiturdig'on bosa Homeni statelarini tozalab 0dan run adishi boshlimiz.
 		await this.initializeScreen();
+		//************************************
 
 		// !IMPORTANT 🔭******************************
 		// Bizar homeni yuklab bo'ldik  
@@ -158,22 +159,23 @@ class Home extends Component {
 		if (await AsyncStorage.getItem("loadHome") === "true") {			
 			await AsyncStorage.setItem("loadHome", "false");
 		}
-
-		await this.amountDateRepository.init();
-		await this.getAmountInfo();
-
-		let notPayed = await AsyncStorage.getItem("notPayed")
-		if (notPayed == "true") {
-			this.setState({notPayed: true})
-		} else {
-			this.setState({notPayed: false})
-		}
+		//************************************
 		
+		// !IMPORTANT 🔭******************************
+		// Internet bor yoki yo'qligini tekshirish.	
 		this.unsubscribe = NetInfo.addEventListener((state) => {
 			this.setState({isConnected: state.isConnected});
 		});
+
+		if (this.unsubscribe) {
+			this.unsubscribe();
+		}
+		//************************************
 		
+		// !IMPORTANT 🔭******************************
+		// Agar data backenddan skachat adilmadik bo'lsa skachat adish.
 		this.setState({spinner: true});
+		
 		let isDownloaded = await AsyncStorage.getItem("isDownloaded");
 		if (isDownloaded !== "true" || isDownloaded == null) {
 			this.setState({spinner: true});
@@ -220,10 +222,34 @@ class Home extends Component {
 				this.setState({notAllowed: notAllowed});
 			}
 		}
-		this.setState({spinner: false});
 
-		console.log(await this.amountDateRepository.getSellAmountDate())
-		this.setState({diagramData: await this.amountDateRepository.getSellAmountDate()});
+		this.setState({spinner: false});
+		//************************************
+
+		// !IMPORTANT 🔭******************************
+		// Dapadaki kirim bilan foydani go'rsatish.
+		await this.amountDateRepository.init();
+		await this.getAmountInfo();
+		//************************************
+
+		// !IMPORTANT 🔭******************************
+		// Tolov adadaovn knopkani go'rsatish.
+		let notPayed = await AsyncStorage.getItem("notPayed")
+		if (notPayed == "true") {
+			this.setState({notPayed: true})
+		} else {
+			this.setState({notPayed: false})
+		}
+		//************************************
+
+		// !IMPORTANT 🔭******************************
+		// LineChart diagramma datasini yuklab olish.
+		let sellAmountDateData = await this.amountDateRepository.getSellAmountDate();
+
+		if (this.state.diagramData != sellAmountDateData) {
+			this.setState({diagramData: sellAmountDateData});
+		}
+		//************************************
 
 		navigation.addListener("focus", async () => {
 			// !IMPORTANT 🔭******************************
@@ -240,7 +266,8 @@ class Home extends Component {
 			//************************************
 
 			console.log("HOME NAVIGATED");
-			// Login check and download data for the first time**
+			// !IMPORTANT 🔭******************************
+			// Internet bor yoki yo'qligini tekshirish.
 			this.unsubscribe = NetInfo.addEventListener((state) => {
 				this.setState({isConnected: state.isConnected});
 			});
@@ -248,7 +275,10 @@ class Home extends Component {
 			if (this.unsubscribe) {
 				this.unsubscribe();
 			}
-
+			//************************************
+			
+			// !IMPORTANT 🔭******************************
+			// Agar data backenddan skachat adilmadik bo'lsa skachat adish.
 			let isDownloaded = await AsyncStorage.getItem("isDownloaded");
 			console.log("isDownloaded::", isDownloaded);
 			if (isDownloaded !== "true" || isDownloaded == null) {
@@ -302,18 +332,28 @@ class Home extends Component {
 					this.setState({notAllowed: notAllowed});
 				}
 			}
-			//####################################################
+			//************************************
 
 			console.log("FOCUSED");
 			console.log("-------");
 
-			// ROLE ERROR
-			let notAllowed = await AsyncStorage.getItem("not_allowed");
-			this.setState({notAllowed: notAllowed});
-
-
+			// !IMPORTANT 🔭******************************
+			// Dapadaki kirim bilan foydani go'rsatish.
+			await this.amountDateRepository.init();
 			await this.getAmountInfo();
+			//************************************
 
+			// !IMPORTANT 🔭******************************
+			// LineChart diagramma datasini yuklab olish.
+			let sellAmountDateData = await this.amountDateRepository.getSellAmountDate();
+
+			if (this.state.diagramData != sellAmountDateData) {
+				this.setState({diagramData: sellAmountDateData});
+			}
+			//************************************
+
+			// !IMPORTANT 🔭******************************
+			// Tolov adadovn knopkani go'rsatish. Orqa fonda tolov adilganmi yo'qmi tekshirib durish.
 			if (this.state.intervalStarted == false) {
 				let intervalId = setInterval(async () => {
 					if (await AsyncStorage.getItem("animation") === "true") {
@@ -340,12 +380,7 @@ class Home extends Component {
 	
 				this.setState({intervalStarted: true});
 			}
-
-			let sellAmountDateData = await this.amountDateRepository.getSellAmountDate();
-
-			if (this.state.diagramData != sellAmountDateData) {
-				this.setState({diagramData: sellAmountDateData});
-			}
+			//************************************
 		});
 	}
 
@@ -996,6 +1031,8 @@ class Home extends Component {
 
 		return (
 			<ScrollView>
+				<StatusBar style="auto" backgroundColor="#fff"/>
+
 				<Spinner
 					visible={this.state.spinner}
 					cancelable={false}
@@ -1252,7 +1289,6 @@ class Home extends Component {
 					</View>
 
 
-					<StatusBar style="auto"/>
 				</View>
 
 				<ActionSheet
@@ -1572,4 +1608,4 @@ const styles = StyleSheet.create({
 	}
 });
 
-export default Home;
+export default memo(Home);
