@@ -104,14 +104,7 @@ class Home extends Component {
 			notPayed: false,
 			paymentModalVisible: false,
 			intervalStarted: false,
-			diagramData: [
-				Math.random() * 100,	// Generate a random number between 0 and 100
-				Math.random() * 100,
-				Math.random() * 100,
-				Math.random() * 100,
-				Math.random() * 100,
-				Math.random() * 100
-			],
+			diagramData: [0,0,0,0,0,0],
 			language: "uz"
 		}
 
@@ -128,12 +121,46 @@ class Home extends Component {
 	}
 
 	async componentDidMount() {
-		console.log("Component mounted");
 		const {navigation} = this.props;
+		console.log("Component mounted");
+
+		// !IMPORTANT 🔭******************************
+		// Bu yerda foydalanuvchi tokeni bor yoki yo'qligini tekshiradi 
+		// agar token yo'q bo'lsa unda login oynasiga otadi
+		let isLoggedIn = await this.tokenService.checkTokens();
+		if (!isLoggedIn) {
+			console.log("LOGGED OUT BY 401 FROM HOME")
+			await this.databaseRepository.clear();
+			await AsyncStorage.clear();
+			navigation.navigate("Login");
+			return;
+		}
+		//************************************
+
+		// !IMPORTANT 🔭******************************
+		// Bu yerda agar yangi telefondan login bo'lsa ya'ni apidan 401 kelsa login oynasiga otadi
+		let authError = await AsyncStorage.getItem("authError");
+		if (authError != null && authError == "true") {
+			console.log("LOGGED OUT BY 401 FROM HOME")
+			await this.databaseRepository.clear();
+			await AsyncStorage.clear();
+			navigation.navigate("Login");
+			return;	
+		}
+
+		// !IMPORTANT 🔭******************************
+		// Logina otmiturdig'on bosa Homeni statelarini tozalab 0dan run adishi boshlimiz.
+		await this.initializeScreen();
+
+		// !IMPORTANT 🔭******************************
+		// Bizar homeni yuklab bo'ldik  
+		// shuning uchun asyncStoragedaki logindan galadovn bu parametrni boshlang'ich holatina qaytarib qo'yamiz.
+		if (await AsyncStorage.getItem("loadHome") === "true") {			
+			await AsyncStorage.setItem("loadHome", "false");
+		}
 
 		await this.amountDateRepository.init();
 		await this.getAmountInfo();
-
 
 		let notPayed = await AsyncStorage.getItem("notPayed")
 		if (notPayed == "true") {
@@ -142,76 +169,75 @@ class Home extends Component {
 			this.setState({notPayed: false})
 		}
 		
-
-		// this.setState({spinner: true});
-
-		console.log("spinner::",this.state.spinner);
-		console.log("notPayed::", this.state.notPayed);
-
-		// let isDownloaded = await AsyncStorage.getItem("isDownloaded");
-		// if (isDownloaded !== "true" || isDownloaded == null) {
-		// 	await this.initializeScreen();
-
-		// 	this.setState({spinner: true});
-
-		// 	const {navigation} = this.props;
-
-		// 	let isLoggedIn = await this.tokenService.checkTokens();
-		// 	if (!isLoggedIn) {
-		// 		this.setState({spinner: false});
-		// 		navigation.navigate("Login");
-		// 	}
-
-		// 	await this.storeProductRepository.init();
-		// 	await this.sellHistoryRepository.init();
-		// 	await this.profitHistoryRepository.init();
-		// 	await this.amountDateRepository.init();
-
-		// 	if (isLoggedIn) {
-		// 		console.log("isDownloaded??", isDownloaded);
-		// 		if (isDownloaded !== "true" || isDownloaded == null) {
-		// 			// LOAD..
-		// 			console.log("ABOUT TO LOAD...");
-
-		// 			console.log("Initial isConnected:", this.state.isConnected);
-
-		// 			// Check if setInterval callback is reached
-		// 			console.log("Setting up setInterval...");
-
-		// 			if (!this.state.isConnected) {
-		// 				this.setState({spinner: false});
-		// 				navigation.navigate("Login");
-		// 				return;
-		// 			}
-
-		// 			try {
-		// 				// Has internet connection
-		// 				await this.loadProducts();
-
-		// 			} catch (error) {
-		// 				console.error("Error loading products:", error);
-		// 			} finally {
-		// 				this.setState({spinner: false});
-		// 			}
-		// 		}
-
-		// 		await this.getAmountInfo();
-
-		// 		let notAllowed = await AsyncStorage.getItem("not_allowed");
-		// 		this.setState({notAllowed: notAllowed});
-		// 	}
-		// }
-
 		this.unsubscribe = NetInfo.addEventListener((state) => {
 			this.setState({isConnected: state.isConnected});
 		});
+		
+		this.setState({spinner: true});
+		let isDownloaded = await AsyncStorage.getItem("isDownloaded");
+		if (isDownloaded !== "true" || isDownloaded == null) {
+			this.setState({spinner: true});
+
+			const {navigation} = this.props;
+
+			let isLoggedIn = await this.tokenService.checkTokens();
+			if (!isLoggedIn) {
+				this.setState({spinner: false});
+				navigation.navigate("Login");
+			}
+
+			if (isLoggedIn) {
+				console.log("isDownloaded??", isDownloaded);
+				if (isDownloaded !== "true" || isDownloaded == null) {
+					// LOAD..
+					console.log("ABOUT TO LOAD...");
+
+					console.log("Initial isConnected:", this.state.isConnected);
+
+					// Check if setInterval callback is reached
+					console.log("Setting up setInterval...");
+
+					if (!this.state.isConnected) {
+						this.setState({spinner: false});
+						navigation.navigate("Login");
+						return;
+					}
+
+					try {
+						// Has internet connection
+						await this.loadProducts();
+
+					} catch (error) {
+						console.error("Error loading products:", error);
+					} finally {
+						this.setState({spinner: false});
+					}
+				}
+
+				await this.getAmountInfo();
+
+				let notAllowed = await AsyncStorage.getItem("not_allowed");
+				this.setState({notAllowed: notAllowed});
+			}
+		}
+		this.setState({spinner: false});
 
 		console.log(await this.amountDateRepository.getSellAmountDate())
 		this.setState({diagramData: await this.amountDateRepository.getSellAmountDate()});
 
 		navigation.addListener("focus", async () => {
-			console.log(await this.amountDateRepository.getSellAmountDate())
-			this.setState({diagramData: await this.amountDateRepository.getSellAmountDate()});
+			// !IMPORTANT 🔭******************************
+			// Bu yerda foydalanuvchi tokeni bor yoki yo'qligini tekshiradi 
+			// agar token yo'q bo'lsa unda login oynasiga otadi
+			let isLoggedIn = await this.tokenService.checkTokens();
+			if (!isLoggedIn) {
+				console.log("LOGGED OUT BY 401 FROM HOME")
+				await this.databaseRepository.clear();
+				await AsyncStorage.clear();
+				navigation.navigate("Login");
+				return;
+			}
+			//************************************
 
 			console.log("HOME NAVIGATED");
 			// Login check and download data for the first time**
@@ -226,13 +252,13 @@ class Home extends Component {
 			let isDownloaded = await AsyncStorage.getItem("isDownloaded");
 			console.log("isDownloaded::", isDownloaded);
 			if (isDownloaded !== "true" || isDownloaded == null) {
-				await this.initializeScreen();
 				this.setState({spinner: true});
 
 				const {navigation} = this.props;
 
 				let isLoggedIn = await this.tokenService.checkTokens();
 				if (!isLoggedIn) {
+					console.log("FOCUS TOKEN CHECKING FAILED");
 					this.setState({spinner: false});
 					navigation.navigate("Login");
 				}
@@ -313,62 +339,82 @@ class Home extends Component {
 				}, 5000)
 	
 				this.setState({intervalStarted: true});
-			}	
+			}
+
+			let sellAmountDateData = await this.amountDateRepository.getSellAmountDate();
+
+			if (this.state.diagramData != sellAmountDateData) {
+				this.setState({diagramData: sellAmountDateData});
+			}
 		});
 	}
 
 	async initializeScreen() {
-		// this.setState({
-		// 	shoppingCardColors: ["#E59C0D", "#FDD958"],
-		// 	profitCardColors: ["#2C8134", "#1DCB00"],
-		// 	profitAmount: 0,
-		// 	sellAmount: 0,
-		// 	notAllowed: "",
-		// 	spinner: false,
-		// 	isLoading: false,
-		// 	isDownloaded: "false",
+		this.setState({
+			shoppingCardColors: ["#D7FF01", "#D7FF01"],
+			profitCardColors: ["#272822", "#272822"],
+			profitAmount: 0,
+			sellAmount: 0,
+			notAllowed: "",
+			spinner: false,
+			isConnected: null,
+			isLoading: false,
+			isDownloaded: "false",
 
-		// 	// PRODUCT
-		// 	lastLocalProductsPage: 0,
-		// 	lastLocalProductsSize: 10,
-		// 	lastGlobalProductsPage: 0,
-		// 	lastGlobalProductsSize: 10,
-		// 	lastStoreProductsPage: 0,
-		// 	lastStoreProductsSize: 10,
+			// PRODUCT
+			lastLocalProductsPage: 0,
+			lastLocalProductsSize: 10,
+			lastGlobalProductsPage: 0,
+			lastGlobalProductsSize: 10,
+			lastStoreProductsPage: 0,
+			lastStoreProductsSize: 10,
 
-		// 	// SELL
-		// 	lastSellGroupsPage: 0,
-		// 	lastSellGroupsSize: 10,
-		// 	lastSellHistoriesPage: 0,
-		// 	lastSellHistoriesSize: 10,
-		// 	lastSellHistoryGroupPage: 0,
-		// 	lastSellHistoryGroupSize: 10,
-		// 	lastSellAmountDatePage: 0,
-		// 	lastSellAmountDateSize: 10,
+			// SELL
+			lastSellGroupsPage: 0,
+			lastSellGroupsSize: 10,
+			lastSellHistoriesPage: 0,
+			lastSellHistoriesSize: 10,
+			lastSellHistoryGroupPage: 0,
+			lastSellHistoryGroupSize: 10,
+			lastSellAmountDatePage: 0,
+			lastSellAmountDateSize: 10,
 
-		// 	// PROFIT
-		// 	lastProfitGroupsPage: 0,
-		// 	lastProfitGroupsSize: 10,
-		// 	lastProfitHistoriesPage: 0,
-		// 	lastProfitHistoriesSize: 10,
-		// 	lastProfitHistoryGroupPage: 0,
-		// 	lastProfitHistoryGroupSize: 10,
-		// 	lastProfitAmountDatePage: 0,
-		// 	lastProfitAmountDateSize: 10,
+			// PROFIT
+			lastProfitGroupsPage: 0,
+			lastProfitGroupsSize: 10,
+			lastProfitHistoriesPage: 0,
+			lastProfitHistoriesSize: 10,
+			lastProfitHistoryGroupPage: 0,
+			lastProfitHistoryGroupSize: 10,
+			lastProfitAmountDatePage: 0,
+			lastProfitAmountDateSize: 10,
 
-		// 	menuFocused: false,
-		// 	crossFocused: false,
-		// 	menuOpened: false
-		// });
+			menuFocused: false,
+			crossFocused: false,
+			menuOpened: false,
+			notPayed: false,
+			paymentModalVisible: false,
+			intervalStarted: false,
+			diagramData: [0, 0, 0, 0, 0, 0],
+			language: "uz"
+		});
 
-		// this.amountDateRepository = new AmountDateRepository();
-		// this.apiService = new ApiService();
-		// this.productRepository = new ProductRepository();
-		// this.sellHistoryRepository = new SellHistoryRepository();
-		// this.profitHistoryRepository = new ProfitHistoryRepository();
-		// this.storeProductRepository = new StoreProductRepository();
-		// this.databaseRepository = new DatabaseRepository();
-		// this.tokenService = new TokenService();
+		this.amountDateRepository = new AmountDateRepository();
+		this.apiService = new ApiService();
+		this.productRepository = new ProductRepository();
+		this.sellHistoryRepository = new SellHistoryRepository();
+		this.profitHistoryRepository = new ProfitHistoryRepository();
+		this.storeProductRepository = new StoreProductRepository();
+		this.databaseRepository = new DatabaseRepository();
+		this.tokenService = new TokenService();
+		this.menu = new createRef();
+		this.langPicker = new createRef();
+
+		this.amountDateRepository.init();
+		this.sellHistoryRepository.init();
+		this.profitHistoryRepository.init();
+		this.storeProductRepository.init();
+		
 	}
 
 	componentWillUnmount() {
@@ -1165,7 +1211,7 @@ class Home extends Component {
 						<LineChart
 						
 							data={{
-								labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+								labels: [],
 								datasets: [
 									{
 										data: this.state.diagramData,
@@ -1173,7 +1219,7 @@ class Home extends Component {
 										strokeWidth: 2 // optional
 									}
 								],
-								legend: ["Dataset 1"] // Update or remove the legend if needed
+								legend: ["Sotuv holati"] 
 							}}
 							width={Dimensions.get("window").width - 16}
 							height={250}

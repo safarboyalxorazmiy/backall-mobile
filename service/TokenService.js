@@ -44,7 +44,7 @@ class TokenService {
 	checkTokens = async () => {
 		const access_token = await this.retrieveAccessToken();
 
-		console.log(access_token)
+		console.log(access_token);
 
 		if (access_token == null) {
 			return false;
