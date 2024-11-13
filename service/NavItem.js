@@ -29,21 +29,33 @@ const NavItem = memo(({ index, route, isFocused, onPress, styles }) => {
         </View>
       </View>
     ) : (
+      
       <TouchableRipple 
         key={index} 
-        style={styles.navItem} 
-        onPress={onPress} 
-        rippleColor="#E5E5E5">
+        style={styles.navItem}>
       <View style={styles.navItemContent}>
         {isFocused && route.name !== "Sell" && <View style={styles.activeBorder}></View>}
         {!isFocused && route.name !== "Sell" && <View style={styles.inactiveBorder}></View>}
-        <View>
-          {route.name === "Home" && (isFocused ? <DashboardIconActive /> : <DashboardIcon />)}
-          {route.name === "Basket" && (isFocused ? <BasketIconActive /> : <BasketIcon />)}
-          
-          {route.name === "Shopping" && (isFocused ? <ShoppingIconActive /> : <ShoppingIcon />)}
-          {route.name === "Profit" && (isFocused ? <WalletIconActive /> : <WalletIcon />)}
-        </View>
+
+        <TouchableRipple onPress={onPress} rippleColor="#E5E5E5" 
+        borderless={true}
+        style={{
+          width: "100%",
+          height: 60,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          marginTop: 10,
+          borderRadius: 50
+        }}>
+          <View>
+            {route.name === "Home" && (isFocused ? <DashboardIconActive /> : <DashboardIcon />)}
+            {route.name === "Basket" && (isFocused ? <BasketIconActive /> : <BasketIcon />)}
+            
+            {route.name === "Shopping" && (isFocused ? <ShoppingIconActive /> : <ShoppingIcon />)}
+            {route.name === "Profit" && (isFocused ? <WalletIconActive /> : <WalletIcon />)}
+          </View>
+        </TouchableRipple>
       </View>
     </TouchableRipple>
     )}

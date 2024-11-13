@@ -84,7 +84,6 @@ const styles = StyleSheet.create({
 		// justifyContent: "center",
 	},
 	activeBorder: {
-		marginBottom: 30,
 		width: 47,
 		height: 4,
 		borderBottomLeftRadius: 2,
@@ -92,7 +91,6 @@ const styles = StyleSheet.create({
 		backgroundColor: "black",
 	},
 	inactiveBorder: {
-		marginBottom: 30,
 		width: 47,
 		height: 4,
 		borderBottomLeftRadius: 2,
@@ -293,8 +291,6 @@ class NavigationService extends Component {
 					const isFocused = state.index === index;
 
 					const onPress = async () => {
-						await AsyncStorage.setItem("animation", "true");
-
 						const event = navigation.emit({
 							type: "tabPress",
 							target: route.key,

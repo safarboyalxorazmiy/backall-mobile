@@ -110,6 +110,8 @@ class App extends Component {
 			});
 
 			await AsyncStorage.setItem("isRequestInProgress", "false");
+			await AsyncStorage.setItem("animation", "false");
+			await AsyncStorage.setItem("window", "Home");
 
 			this.logInternetStatusInterval = setInterval(
 				this.checkInternetStatus,
