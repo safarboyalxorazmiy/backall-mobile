@@ -64,6 +64,7 @@ const styles = StyleSheet.create({
 		display: "flex",
 		flexDirection: "row",
 		justifyContent: "space-between",
+		columnGap: 0,
 		alignItems: "flex-start",
 	},
 	navItem: {
@@ -72,7 +73,15 @@ const styles = StyleSheet.create({
 		justifyContent: "flex-start",
 		height: 93,
 		width: "20%",
-		backgroundColor: "red"
+		// backgroundColor: "red"
+		
+	},
+	navItemContent: {
+		width: "100%",
+		height: "100%",
+		display: "flex",
+		alignItems: "center",
+		// justifyContent: "center",
 	},
 	activeBorder: {
 		marginBottom: 30,
