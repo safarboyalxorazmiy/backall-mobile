@@ -30,10 +30,10 @@ const NavItem = memo(({ index, route, isFocused, onPress, styles }) => {
       </View>
     ) : (
       <TouchableRipple 
-      key={index} 
-      style={styles.navItem} 
-      onPress={onPress} 
-      rippleColor="#E5E5E5">
+        key={index} 
+        style={styles.navItem} 
+        onPress={onPress} 
+        rippleColor="#E5E5E5">
       <View style={styles.navItemContent}>
         {isFocused && route.name !== "Sell" && <View style={styles.activeBorder}></View>}
         {!isFocused && route.name !== "Sell" && <View style={styles.inactiveBorder}></View>}
