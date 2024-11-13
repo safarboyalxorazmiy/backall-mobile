@@ -35,6 +35,7 @@ import AuthScreen from "../screens/auth/AuthScreen";
 import Register from "../screens/auth/register/RegisterScreen";
 import RegisterVerificationScreen from "../screens/auth/register/RegisterVerificationScreen";
 import DatabaseRepository from "../repository/DatabaseRepository";
+import NavItem from "./NavItem";
 
 
 const Tab = createBottomTabNavigator();
@@ -70,7 +71,8 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "flex-start",
 		height: 93,
-		width: "20%"
+		width: "20%",
+		backgroundColor: "red"
 	},
 	activeBorder: {
 		marginBottom: 30,
@@ -282,10 +284,12 @@ class NavigationService extends Component {
 					const isFocused = state.index === index;
 
 					const onPress = async () => {
+						await AsyncStorage.setItem("animation", "true");
+
 						const event = navigation.emit({
 							type: "tabPress",
 							target: route.key,
-							canPreventDefault: true
+							canPreventDefault: true,
 						});
 
 						let authError = await AsyncStorage.getItem("authError");
@@ -309,21 +313,14 @@ class NavigationService extends Component {
 					};
 
 					return (
-						<TouchableOpacity key={index} style={styles.navItem} onPress={onPress}>
-							{isFocused && route.name !== "Sell" && <View style={styles.activeBorder}></View>}
-							{!isFocused && route.name !== "Sell" && <View style={styles.inactiveBorder}></View>}
-							<View>
-								{route.name === "Home" && (isFocused ? <DashboardIconActive/> : <DashboardIcon/>)}
-								{route.name === "Basket" && (isFocused ? <BasketIconActive/> : <BasketIcon/>)}
-								{route.name === "Sell" && (
-									<View style={{height: 93, display: "flex", justifyContent: "center"}}>
-										<ScanIcon/>
-									</View>
-								)}
-								{route.name === "Shopping" && (isFocused ? <ShoppingIconActive/> : <ShoppingIcon/>)}
-								{route.name === "Profit" && (isFocused ? <WalletIconActive/> : <WalletIcon/>)}
-							</View>
-						</TouchableOpacity>
+						<NavItem
+							key={index}
+							index={index}
+							route={route}
+							isFocused={isFocused}
+							onPress={onPress}
+							styles={styles}
+						/>
 					);
 				})}
 			</View>

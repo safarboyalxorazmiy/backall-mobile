@@ -1486,22 +1486,20 @@ class Home extends Component {
 					</Animatable.View>
 				</Modal>
 				
-				<ApplicationProvider  {...eva} theme={eva.dark}>
-					<Modal
-					 	visible={this.state.paymentModalVisible} 
-						style={{width: "101%", position: "absolute", left: -20, top: -18}}>
+				<Modal
+					visible={this.state.paymentModalVisible} 
+					style={{width: "101%", position: "absolute", left: -20, top: -18}}>
 
-						<PaymentForm
-							completePayment={async () => {
-								await this.completePayment()
-							}}
-							closeModal={() => {
-								this.closePaymentModal();
-							}}
-						/>
+					<PaymentForm
+						completePayment={async () => {
+							await this.completePayment()
+						}}
+						closeModal={() => {
+							this.closePaymentModal();
+						}}
+					/>
 
-					</Modal>
-				</ApplicationProvider>
+				</Modal>
 			</ScrollView>
 		);
 	}
