@@ -222,10 +222,18 @@ const styles = StyleSheet.create({
 });
 
 export default memo(
-	ProfitGroup, (
-		prevProps,
-		nextProps
-	) =>
-		prevProps.item.dateInfo !== nextProps.item.dateInfo &&
-		prevProps.item.histories.length !== nextProps.item.histories.length 
+	ProfitGroup, (prevProps, nextProps) =>  {
+		console.log(
+			"useMemo() length::", 
+					nextProps.item.histories.length - 1 + "," + 
+					prevProps.item.histories.length
+		);
+		
+		return (
+			prevProps.item.dateInfo === nextProps.item.dateInfo &&
+			prevProps.item.histories.length - 1 === nextProps.item.histories.length 
+		)  || nextProps.item.calendar === true;
+	}
+	
+	//&& nextProps.item.histories[0].saved === false 
 );

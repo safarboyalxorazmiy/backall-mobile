@@ -62,7 +62,7 @@ class Profit extends Component {
 		this.amountDateRepository = new AmountDateRepository();
 		this.apiService = new ApiService();
 
-		this.onEndReached = _.debounce(this.onEndReached.bind(this), 300);
+		this.onEndReached = _.debounce(this.onEndReached.bind(this), 100);
 		this.flatListRef = React.createRef();
 	}
 
