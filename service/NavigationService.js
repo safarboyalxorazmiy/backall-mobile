@@ -144,7 +144,9 @@ class NavigationService extends Component {
 	render() {
 		return (
 			<NavigationContainer>
-				<Tab.Navigator tabBar={(props) => this._renderCustomTabBar(props)}>
+				<Tab.Navigator screenOptions={{
+					animationEnabled: false
+				}} tabBar={(props) => this._renderCustomTabBar(props)}>
 					<Tab.Screen
 						name="Home"
 						component={Home}
@@ -302,7 +304,7 @@ class NavigationService extends Component {
 							console.log("LOGGED OUT BY 401")
 							await this.databaseRepository.clear();
 							await AsyncStorage.clear();
-							navigation.navigate("Login");
+							navigation.jumpTo("Login");
 							return;	
 						}
 
@@ -313,7 +315,7 @@ class NavigationService extends Component {
 							}
 
 							await AsyncStorage.setItem("window", route.name);
-							navigation.navigate(route.name);
+							navigation.jumpTo(route.name);
 						}
 					};
 
