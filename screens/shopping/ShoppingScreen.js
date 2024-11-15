@@ -71,6 +71,8 @@ class Shopping extends Component {
 
 
 	async componentDidMount() {
+		await AsyncStorage.setItem("window", "Shopping");
+
 		// !IMPORTANT 🔭******************************
 		// Bu method bu yerda stateni component mount bo'lganda sahifani hamma ma'lumotlarini tozalash uchun yozildi.
 		// yozilmasa double element degan bug chiqayapti
@@ -113,6 +115,8 @@ class Shopping extends Component {
 		const {navigation} = this.props;
 
 		navigation.addListener("focus", async () => {
+			await AsyncStorage.setItem("window", "Shopping");
+
 			// !IMPORTANT 🔭******************************
 			// Bu if bizga faqat eski user akkauntdan chiqib ketib yangi user bu telefonga login yoki register qilayotganda kerak.
 			// Shu holatda state bilan muammo bo'lmasligi uchun bu method yozildi.

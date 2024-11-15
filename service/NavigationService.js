@@ -144,12 +144,14 @@ class NavigationService extends Component {
 	render() {
 		return (
 			<NavigationContainer>
-				<Tab.Navigator screenOptions={{
-					animationEnabled: false
-				}} tabBar={(props) => this._renderCustomTabBar(props)}>
+				<Tab.Navigator 
+					// screenOptions={{ lazy: true }}
+					screenOptions={{headerShown: false}}
+					tabBar={(props) => this._renderCustomTabBar(props)}>
 					<Tab.Screen
 						name="Home"
 						component={Home}
+						
 						options={({navigation}) => ({
 							title: "",
 							headerShown: false,
@@ -289,34 +291,38 @@ class NavigationService extends Component {
 						return null;
 					}
 
+
 					const {options} = descriptors[route.key];
 					const isFocused = state.index === index;
 
 					const onPress = async () => {
+						await AsyncStorage.setItem("animation", "false");
 						const event = navigation.emit({
 							type: "tabPress",
 							target: route.key,
 							canPreventDefault: true,
 						});
+						navigation.navigate(route.name);
 
-						let authError = await AsyncStorage.getItem("authError");
-						if (authError != null && authError == "true") {
-							console.log("LOGGED OUT BY 401")
-							await this.databaseRepository.clear();
-							await AsyncStorage.clear();
-							navigation.jumpTo("Login");
-							return;	
-						}
 
-						if (!isFocused && !event.defaultPrevented) {
-							if (route.name === "Sell") {
-								const currentRouteName = navigation.getState().routes[navigation.getState().index].name;
-								await AsyncStorage.setItem("from", currentRouteName);
-							}
+					// 	let authError = await AsyncStorage.getItem("authError");
+					// 	if (authError != null && authError == "true") {
+					// 		console.log("LOGGED OUT BY 401")
+					// 		await this.databaseRepository.clear();
+					// 		await AsyncStorage.clear();
+					// 		navigation.jumpTo("Login");
+					// 		return;	
+					// 	}
 
-							await AsyncStorage.setItem("window", route.name);
-							navigation.jumpTo(route.name);
-						}
+					// 	if (!isFocused && !event.defaultPrevented) {
+					// 		if (route.name === "Sell") {
+					// 			const currentRouteName = navigation.getState().routes[navigation.getState().index].name;
+								// await AsyncStorage.setItem("from", currentRouteName);
+					// 		}
+
+					// 		await AsyncStorage.setItem("window", route.name);
+					// 		navigation.jumpTo(route.name);
+					// 	}
 					};
 
 					return (
@@ -325,7 +331,7 @@ class NavigationService extends Component {
 							index={index}
 							route={route}
 							isFocused={isFocused}
-							onPress={onPress}
+							onPress={() => onPress()}
 							styles={styles}
 						/>
 					);

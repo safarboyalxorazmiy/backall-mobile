@@ -120,8 +120,10 @@ class Home extends Component {
 	}
 
 	async componentDidMount() {
-		const {navigation} = this.props;
 		console.log("Component mounted");
+		await AsyncStorage.setItem("window", "Home");
+		
+		const {navigation} = this.props;
 
 		// !IMPORTANT 🔭******************************
 		// Bu yerda foydalanuvchi tokeni bor yoki yo'qligini tekshiradi 
@@ -252,6 +254,8 @@ class Home extends Component {
 		//************************************
 
 		navigation.addListener("focus", async () => {
+			await AsyncStorage.setItem("window", "Home");
+
 			// !IMPORTANT 🔭******************************
 			// Bu yerda foydalanuvchi tokeni bor yoki yo'qligini tekshiradi 
 			// agar token yo'q bo'lsa unda login oynasiga otadi

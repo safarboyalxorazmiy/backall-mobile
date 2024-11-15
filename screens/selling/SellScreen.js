@@ -98,10 +98,20 @@ class Sell extends Component {
 	}
 
 	async componentDidMount() {
-		await activateKeepAwakeAsync();
 		const {navigation} = this.props;
+		await activateKeepAwakeAsync();
+		
+		let prevWindow = await AsyncStorage.getItem("window");
+		await AsyncStorage.setItem("from", prevWindow);
+		await AsyncStorage.setItem("window", "Sell");
 
 		navigation.addListener("focus", async () => {
+			await activateKeepAwakeAsync();
+
+			let prevWindow = await AsyncStorage.getItem("window");
+			await AsyncStorage.setItem("from", prevWindow);
+			await AsyncStorage.setItem("window", "Sell");
+
 			let role = await AsyncStorage.getItem("role");
 
 			if (!(role === "SELLER" || role === "SELLER_BOSS")) {

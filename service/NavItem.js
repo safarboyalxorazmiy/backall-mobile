@@ -19,6 +19,11 @@ const NavItem = memo(({ index, route, isFocused, onPress, styles }) => {
       <View style={{ height: 93, display: "flex", justifyContent: "center" }}>
         <View style={{width: 61, height: 60, borderRadius: 50, shadowRadius: 10}}>
           <TouchableRipple 
+
+            delayHoverIn={true}
+            delayLongPress={false}
+            delayHoverOut={false}
+            unstable_pressDelay={false}
             onPress={onPress} 
             rippleColor="#E5E5E5"
             rippleContainerBorderRadius={50}
@@ -30,34 +35,37 @@ const NavItem = memo(({ index, route, isFocused, onPress, styles }) => {
       </View>
     ) : (
       
-      <TouchableRipple 
-        key={index} 
-        style={styles.navItem}>
-      <View style={styles.navItemContent}>
-        {isFocused && route.name !== "Sell" && <View style={styles.activeBorder}></View>}
-        {!isFocused && route.name !== "Sell" && <View style={styles.inactiveBorder}></View>}
+      <View key={index} style={styles.navItem}>
+        <View style={styles.navItemContent}>
+          {isFocused && route.name !== "Sell" && <View style={styles.activeBorder}></View>}
+          {!isFocused && route.name !== "Sell" && <View style={styles.inactiveBorder}></View>}
 
-        <TouchableRipple onPress={onPress} rippleColor="#E5E5E5" 
-        borderless={true}
-        style={{
-          width: "100%",
-          height: 60,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          marginTop: 10,
-          borderRadius: 50
-        }}>
-          <View>
-            {route.name === "Home" && (isFocused ? <DashboardIconActive /> : <DashboardIcon />)}
-            {route.name === "Basket" && (isFocused ? <BasketIconActive /> : <BasketIcon />)}
-            
-            {route.name === "Shopping" && (isFocused ? <ShoppingIconActive /> : <ShoppingIcon />)}
-            {route.name === "Profit" && (isFocused ? <WalletIconActive /> : <WalletIcon />)}
-          </View>
-        </TouchableRipple>
+          <TouchableRipple 
+            delayHoverIn={true}
+            delayLongPress={false}
+            delayHoverOut={false}
+            unstable_pressDelay={false}
+            onPress={onPress} rippleColor="#E5E5E5" 
+            borderless={true}
+            style={{
+              width: "100%",
+              height: 60,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginTop: 10,
+              borderRadius: 50
+            }}>
+              <View>
+                {route.name === "Home" && (isFocused ? <DashboardIconActive /> : <DashboardIcon />)}
+                {route.name === "Basket" && (isFocused ? <BasketIconActive /> : <BasketIcon />)}
+                
+                {route.name === "Shopping" && (isFocused ? <ShoppingIconActive /> : <ShoppingIcon />)}
+                {route.name === "Profit" && (isFocused ? <WalletIconActive /> : <WalletIcon />)}
+              </View>
+          </TouchableRipple>
+        </View>
       </View>
-    </TouchableRipple>
     )}
     </>
   );

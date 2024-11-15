@@ -54,6 +54,7 @@ class CalendarPage extends Component {
 	// "calendarFromPage": "Shopping"
 	async componentDidMount() {
 		const {navigation} = this.props;
+		await AsyncStorage.setItem("window", "Calendar");
 
 		navigation.addListener("focus", async () => {
 			this.setState({calendarFromPage: await AsyncStorage.getItem("calendarFromPage")});

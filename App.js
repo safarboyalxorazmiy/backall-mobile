@@ -115,7 +115,7 @@ class App extends Component {
 
 			this.logInternetStatusInterval = setInterval(
 				this.checkInternetStatus,
-				2000
+				1000
 			);
 		}
 	}
@@ -143,6 +143,7 @@ class App extends Component {
 	// 🚨 !important background thread 🚨
 	async checkInternetStatus() {
 		if (await AsyncStorage.getItem("window") === "Calendar" || await AsyncStorage.getItem("window") === "Sell" || await AsyncStorage.getItem("animation") === "true") {
+			// clearInterval(this.logInternetStatusInterval)
 			console.log("Window is Calendar, Sell or animation is true");
 			return;
 		}
