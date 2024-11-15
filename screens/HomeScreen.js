@@ -1076,7 +1076,14 @@ class Home extends Component {
 					<View style={styles.header}>
 						<Text style={styles.pageTitle}>Bosh sahifa</Text>
 						<View style={{display: "flex", flexDirection: "row", columnGap: 20, height: "100%"}}>
-							<TouchableOpacity 
+						<TouchableRipple
+								delayHoverIn={true}
+								delayLongPress={false}
+								delayHoverOut={false}
+								unstable_pressDelay={false}
+								rippleColor="#E5E5E5"
+								rippleContainerBorderRadius={50}
+								borderless={true} 
 								onPress={async () => {
 									await AsyncStorage.setItem("animation", "true");
 									this.langPicker.current.focus()
@@ -1087,43 +1094,37 @@ class Home extends Component {
 										alignItems: "center", 
 										justifyContent: "center",
 										marginBottom: 10, 
-										height: "100%"
+										height: "100%",
+										padding: 10,
+										borderRadius: 50
 									}}>
 								{/* <Text style={styles.title}>SUGGESTED LANGUAGES</Text> */}
 								<Ionicons name="language" size={24} color="black" />
-							</TouchableOpacity>
+							</TouchableRipple>
 							
-							<TouchableOpacity
+							<TouchableRipple
+								delayHoverIn={true}
+								delayLongPress={false}
+								delayHoverOut={false}
+								unstable_pressDelay={false}
+								rippleColor="#E5E5E5"
+								rippleContainerBorderRadius={50}
+								borderless={true}
 								onPress={async () => {
 									await AsyncStorage.setItem("animation", "true");
 									this.menu.current?.setModalVisible(true);
 								}}
-								onPressIn={() => {
-									// this.setState(
-									// 	{menuFocused: true}
-									// )
-
-
-								}}
-
-								onPressOut={() => {
-									// this.setState(
-									// 	{menuFocused: false}
-									// )
-
-								}}
-
-								activeOpacity={1}>
-								<View
-									style={this.state.menuFocused ? {
-										backgroundColor: "#F4F4F4",
-										padding: 10,
-										paddingVertical: 15,
-										borderRadius: 50,
-									} : styles.menuIcon}>
+								style={{
+									backgroundColor: "#FFF",
+									padding: 10,
+									paddingVertical: 25,
+									borderRadius: 50,
+									display: "flex",
+									justifyContent: "center",
+									alignItems: "center"
+								}}>
 									<MenuIcon/>
-								</View>
-							</TouchableOpacity>
+							</TouchableRipple>
 						</View>
 					</View>
 
@@ -1149,8 +1150,7 @@ class Home extends Component {
 									paddingBottom: 20,
 									borderBottomColor: "#000",
 									borderBottomWidth: 1,
-								}}
-							>
+								}}>
 								<Text
 									style={{
 										fontFamily: "Gilroy-Bold",
