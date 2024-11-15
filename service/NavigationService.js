@@ -296,7 +296,7 @@ class NavigationService extends Component {
 					const isFocused = state.index === index;
 
 					const onPress = async () => {
-						await AsyncStorage.setItem("animation", "false");
+						// await AsyncStorage.setItem("animation", "false");
 						const event = navigation.emit({
 							type: "tabPress",
 							target: route.key,

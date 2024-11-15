@@ -412,7 +412,7 @@ class Sell extends Component {
 
 						<TouchableOpacity
 							style={styles.button}
-							onPress={this.sellProducts}
+							onPress={async () => {await this.sellProducts();}}
 						>
 							<Text style={styles.buttonText}>Sotuvni amalga oshirish</Text>
 						</TouchableOpacity>
@@ -1245,18 +1245,19 @@ class Sell extends Component {
 	}
 
 	sellProducts = async () => {
+		if (this.state.sellingProducts.length == 0) {
+			// TODO ERROR MESSAGE IF THERE IS NO PRODUCT ADDED
+			return;
+		}
+
 		if (this.state.SAVE_BUTTON_AVAILABLE == false) {
+			console.log("this.state.SAVE_BUTTON_AVAILABLE == false")
 			return;
 		}
 
 		this.setState({
 			SAVE_BUTTON_AVAILABLE: false
 		});
-
-		if (this.state.sellingProducts.length == 0) {
-			// TODO ERROR MESSAGE IF THERE IS NO PRODUCT ADDED
-			return;
-		}
 
 		console.log(
 			this.state.sellingProducts
