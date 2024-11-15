@@ -115,7 +115,7 @@ class App extends Component {
 
 			this.logInternetStatusInterval = setInterval(
 				this.checkInternetStatus,
-				1000
+				5000
 			);
 		}
 	}
@@ -211,6 +211,7 @@ class App extends Component {
 					await this.saveData();
 				} else {
 					console.log("Server ain't working.");
+					return;
 				}
 
 				if (isPayed == false) {
@@ -284,7 +285,6 @@ class App extends Component {
 
 							await this.productRepository.updateSavedTrueByProductId(product.id, response.id);
 						} catch (e) {
-							console.error(e);
 							await AsyncStorage.setItem("isFetchingNotCompleated", "true");
 							await AsyncStorage.setItem("isNotSaved", "true");
 							this.setState({isSavingStarted: false});
@@ -324,7 +324,7 @@ class App extends Component {
 							console.log("Response: ", response);
 							await this.storeProductRepository.updateSavedTrueById(storeProduct.id, response.id);
 						} catch (e) {
-							console.error(e);
+							
 							await AsyncStorage.setItem("isFetchingNotCompleated", "true");
 							await AsyncStorage.setItem("isNotSaved", "true");
 							this.setState({isSavingStarted: false});
@@ -363,7 +363,7 @@ class App extends Component {
 								response.id
 							);
 						} catch (e) {
-							console.error(e);
+							
 							await AsyncStorage.setItem("isFetchingNotCompleated", "true");
 							await AsyncStorage.setItem("isNotSaved", "true");
 							this.setState({isSavingStarted: false});
@@ -398,7 +398,7 @@ class App extends Component {
 								response.id
 							);
 						} catch (e) {
-							console.error(e);
+							
 							await AsyncStorage.setItem("isFetchingNotCompleated", "true");
 							await AsyncStorage.setItem("isNotSaved", "true");
 							this.setState({isSavingStarted: false});
@@ -432,7 +432,7 @@ class App extends Component {
 								response.id
 							)
 						} catch (e) {
-							console.error(e);
+							
 							await AsyncStorage.setItem("isFetchingNotCompleated", "true");
 							await AsyncStorage.setItem("isNotSaved", "true");
 							this.setState({isSavingStarted: false});
@@ -462,7 +462,7 @@ class App extends Component {
 								response.id
 							);
 						} catch (e) {
-							console.error(e);
+							
 							await AsyncStorage.setItem("isFetchingNotCompleated", "true");
 							await AsyncStorage.setItem("isNotSaved", "true");
 							this.setState({isSavingStarted: false});
@@ -488,7 +488,7 @@ class App extends Component {
 								response.id
 							);
 						} catch (e) {
-							console.error(e);
+							
 							await AsyncStorage.setItem("isFetchingNotCompleated", "true");
 							await AsyncStorage.setItem("isNotSaved", "true");
 							this.setState({isSavingStarted: false});
@@ -521,7 +521,7 @@ class App extends Component {
 								response.id
 							);
 						} catch (e) {
-							console.error(e);
+							
 							await AsyncStorage.setItem("isFetchingNotCompleated", "true");
 							await AsyncStorage.setItem("isNotSaved", "true");
 							this.setState({isSavingStarted: false});
@@ -558,7 +558,7 @@ class App extends Component {
 								response.id
 							);
 						} catch (e) {
-							console.error(e);
+							
 							await AsyncStorage.setItem("isFetchingNotCompleated", "true");
 							await AsyncStorage.setItem("isNotSaved", "true");
 							this.setState({isSavingStarted: false});
@@ -583,7 +583,7 @@ class App extends Component {
 								response.id
 							);
 						} catch (e) {
-							console.error(e);
+							
 							await AsyncStorage.setItem("isFetchingNotCompleated", "true");
 							await AsyncStorage.setItem("isNotSaved", "true");
 							this.setState({isSavingStarted: false});
@@ -596,7 +596,7 @@ class App extends Component {
 				await AsyncStorage.setItem("isFetchingNotCompleated", "false");
 				this.setState({isSavingStarted: false});
 			} catch (e) {
-				console.error(e);
+				
 
 				await AsyncStorage.setItem("shoppingNotSaved", "true");
 				await AsyncStorage.setItem("isNotSaved", "true");

@@ -630,6 +630,10 @@ class Home extends Component {
 			try {
 				response =
 					await this.apiService.getGlobalProducts(page, size, this.props.navigation);
+			
+				if (response == undefined) {
+					return false;
+				}
 			} catch (error) {
 				console.error("getGlobalProducts()", error);
 				this.setState({
@@ -681,6 +685,11 @@ class Home extends Component {
 			let response;
 			try {
 				response = await this.apiService.getStoreProducts(page, size, this.props.navigation);
+				
+				
+				if (response == undefined) {
+					return false;
+				}
 			} catch (error) {
 				console.error("getStoreProducts()", error);
 				this.setState({
@@ -743,8 +752,12 @@ class Home extends Component {
 					1000000,
 					this.props.navigation
 				);
+
+			if (response == undefined) {
+				return false;
+			}
+			
 		} catch (error) {
-			console.error("getSellGroupsAndHistories():", error);
 			return false;
 		}
 
@@ -809,9 +822,14 @@ class Home extends Component {
 				return true;
 			}
 
-			response = await this.apiService.getSellAmountDate(
-				lastSellAmountGlobalId + 1, 0, 1000000, this.props.navigation
-			);
+			response = 
+				await this.apiService.getSellAmountDate(
+					lastSellAmountGlobalId + 1, 0, 1000000, this.props.navigation
+				);
+
+			if (response == undefined) {
+				return false;
+			}
 		} catch (error) {
 			console.error("getSellAmountDate():", error);
 			this.setState({
@@ -857,9 +875,14 @@ class Home extends Component {
 				return true;
 			}
 
-			response = await this.apiService.getProfitGroups(
-				lastProfitGroupGlobalId, 0, 1000000, this.props.navigation
-			);
+			response = 
+				await this.apiService.getProfitGroups(
+					lastProfitGroupGlobalId, 0, 1000000, this.props.navigation
+				);
+			
+			if (response == undefined) {
+				return false;
+			}
 		} catch (error) {
 			console.error("Error fetching getProfitGroups():", error);
 			this.setState({
@@ -934,9 +957,14 @@ class Home extends Component {
 				return true;
 			}
 
-			response = await this.apiService.getProfitAmountDate(
-				lastProfitAmountDateGlobalId + 1, 0, 1000000, this.props.navigation
-			);
+			response = 
+				await this.apiService.getProfitAmountDate(
+					lastProfitAmountDateGlobalId + 1, 0, 1000000, this.props.navigation
+				);
+
+			if (response == undefined) {
+				return false;
+			}
 		} catch (error) {
 			console.error("getProfitAmountDate():", error);
 			this.setState({

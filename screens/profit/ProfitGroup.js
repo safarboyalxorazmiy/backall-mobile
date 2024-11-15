@@ -223,11 +223,11 @@ const styles = StyleSheet.create({
 
 export default memo(
 	ProfitGroup, (prevProps, nextProps) =>  {
-		console.log(
-			"useMemo() length::", 
-					nextProps.item.histories.length - 1 + "," + 
-					prevProps.item.histories.length
-		);
+		// console.log(
+		// 	"useMemo() length::", 
+		// 			nextProps.item.histories.length - 1 + "," + 
+		// 			prevProps.item.histories.length
+		// );
 		
 		return (
 			prevProps.item.dateInfo === nextProps.item.dateInfo &&

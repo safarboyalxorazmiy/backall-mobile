@@ -44,7 +44,7 @@ class ApiService {
 			console.log(response.status);
 			if (!response.ok) {
 				await AsyncStorage.setItem("isRequestInProgress", "false");
-				throw new Error("Network response was not ok");
+				return undefined;
 			}
 
 			await AsyncStorage.setItem("isRequestInProgress", "false");
@@ -90,7 +90,7 @@ class ApiService {
 
 
 			if (!response.ok) {
-				throw new Error("Network response was not ok");
+				return undefined;
 			}
 
 			return responseBody;
@@ -129,7 +129,7 @@ class ApiService {
 			const responseBody = await response.json();
 
 			if (!response.ok) {
-				throw new Error("Network response was not ok");
+				return undefined;
 			}
 
 			return responseBody;
@@ -175,13 +175,13 @@ class ApiService {
 			}
 
 			if (!response.ok) {
-				throw new Error("Network response was not ok");
+				return undefined;
 			}
 
 			return await response.json(); // Return the parsed JSON directly
 		} catch (error) {
 			//("Error occurred: ", error);
-			throw error; // Re-throwing the error for handling in the calling code
+			return undefined;
 		}
 	}
 
@@ -224,13 +224,13 @@ class ApiService {
 
 
 			if (!response.ok) {
-				throw new Error("Network response was not ok");
+				return undefined;
 			}
 
 			return responseBody;
 		} catch (error) {
 			//("Error occurred: ", error);
-			throw error; // Re-throwing the error for handling in the calling code
+			return undefined;
 		}
 	}
 
@@ -269,13 +269,13 @@ class ApiService {
 			const responseBody = await response.json();
 
 			if (!response.ok) {
-				throw new Error("Network response was not ok");
+				return undefined;
 			}
 
 			return responseBody;
 		} catch (error) {
 			//("Error occurred: ", error);
-			throw error; // Re-throwing the error for handling in the calling code
+			return undefined;
 		}
 	}
 
@@ -327,8 +327,7 @@ class ApiService {
 
 			return responseBody;
 		} catch (error) {
-			console.error("Error occurred:", error);
-			throw error; // Re-throwing the error for handling in the calling code
+			return undefined;
 		}
 	}
 
@@ -380,8 +379,7 @@ class ApiService {
 
 			return responseBody;
 		} catch (error) {
-			console.error("Error occurred:", error);
-			throw error; // Re-throwing the error for handling in the calling code
+			return undefined;
 		}
 	}
 
@@ -431,8 +429,7 @@ class ApiService {
 
 			return responseBody;
 		} catch (error) {
-			console.error("Error occurred:", error);
-			throw error; // Re-throwing the error for handling in the calling code
+			return undefined;
 		}
 	}
 
@@ -484,8 +481,7 @@ class ApiService {
 
 			return responseBody;
 		} catch (error) {
-			console.error("Error occurred:", error);
-			throw error; // Re-throwing the error for handling in the calling code
+			return undefined;
 		}
 	}
 
@@ -537,7 +533,6 @@ class ApiService {
 				return BigInt(responseBody);
 			}
 		} catch (error) {
-			console.error("Error occurred:", error);
 			throw error;
 		}
 	}
@@ -585,7 +580,7 @@ class ApiService {
 
 			// Check if the response is not OK
 			if (!response.ok) {
-				throw new Error(`Network response was not ok: ${response.statusText}`);
+				return undefined;
 			}
 
 			// Parse and log the response body
@@ -598,9 +593,7 @@ class ApiService {
 				return BigInt(responseBody);
 			}
 		} catch (error) {
-			console.error("Error occurred:", error);
-			throw error; // Re-throw the error for handling in the calling code
-		}
+return undefined;		}
 	}
 
 	async getSellGroupByGlobalId(globalId, navigation) {
@@ -642,14 +635,12 @@ class ApiService {
 
 			// Check if the response is not OK
 			if (!response.ok) {
-				throw new Error(`Network response was not ok: ${response.statusText}`);
+				return undefined;
 			}
 
 			return response.json();
 		} catch (error) {
-			console.error("Error occurred:", error);
-			throw error; // Re-throw the error for handling in the calling code
-		}
+return undefined;		}
 	}
 
 	async getSellHistories(lastId, page, size, navigation) {
@@ -693,8 +684,7 @@ class ApiService {
 
 			return responseBody;
 		} catch (error) {
-			console.error("Error occurred:", error);
-			throw error; // Re-throwing the error for handling in the calling code
+			return undefined;
 		}
 	}
 
@@ -738,13 +728,13 @@ class ApiService {
 
 
 			if (!response.ok) {
-				throw new Error("Network response was not ok");
+				return undefined;
 			}
 
 			return responseBody;
 		} catch (error) {
 			//("Error occurred: ", error);
-			throw error; // Re-throwing the error for handling in the calling code
+			return undefined;
 		}
 	}
 
@@ -787,7 +777,7 @@ class ApiService {
 
 			// Check if the response is not OK
 			if (!response.ok) {
-				throw new Error(`Network response was not ok: ${response.statusText}`);
+				return undefined;
 			}
 
 			// Parse and log the response body
@@ -800,9 +790,7 @@ class ApiService {
 				return BigInt(responseBody);
 			}
 		} catch (error) {
-			console.error("Error occurred:", error);
-			throw error; // Re-throw the error for handling in the calling code
-		}
+return undefined;		}
 	}
 
 
@@ -848,15 +836,13 @@ class ApiService {
 
 			// Check if the response is not OK
 			if (!response.ok) {
-				throw new Error(`Network response was not ok: ${response.statusText}`);
+				return undefined;
 			}
 
 			// Parse and log the response body
 			return response.json();
 		} catch (error) {
-			console.error("Error occurred:", error);
-			throw error; // Re-throw the error for handling in the calling code
-		}
+return undefined;		}
 	}
 
 	async getSellAmountDate(
@@ -899,13 +885,13 @@ class ApiService {
 
 
 			if (!response.ok) {
-				throw new Error("Network response was not ok");
+				return undefined;
 			}
 
 			return responseBody;
 		} catch (error) {
 			//("Error occurred: ", error);
-			throw error; // Re-throwing the error for handling in the calling code
+			return undefined;
 		}
 	}
 
@@ -944,13 +930,13 @@ class ApiService {
 
 
 			if (!response.ok) {
-				throw new Error("Network response was not ok");
+				return undefined;
 			}
 
 			return responseBody;
 		} catch (error) {
 			//("Error occurred: ", error);
-			throw error; // Re-throwing the error for handling in the calling code
+			return undefined;
 		}
 	}
 
@@ -990,7 +976,7 @@ class ApiService {
 			}
 
 			if (!response.ok) {
-				throw new Error(`Network response was not ok: ${response.statusText}`);
+				return undefined;
 			}
 
 			const responseBody = await response.text();
@@ -1002,7 +988,6 @@ class ApiService {
 				return BigInt(responseBody);
 			}
 		} catch (error) {
-			console.error("Error occurred:", error);
 			throw error;
 		}
 	}
@@ -1042,13 +1027,13 @@ class ApiService {
 
 
 			if (!response.ok) {
-				throw new Error("Network response was not ok");
+				return undefined;
 			}
 
 			return responseBody;
 		} catch (error) {
 			//("Error occurred: ", error);
-			throw error; // Re-throwing the error for handling in the calling code
+			return undefined;
 		}
 	}
 
@@ -1087,13 +1072,13 @@ class ApiService {
 
 
 			if (!response.ok) {
-				throw new Error("Network response was not ok");
+				return undefined;
 			}
 
 			return responseBody;
 		} catch (error) {
 			//("Error occurred: ", error);
-			throw error; // Re-throwing the error for handling in the calling code
+			return undefined;
 		}
 	}
 
@@ -1133,13 +1118,13 @@ class ApiService {
 
 
 			if (!response.ok) {
-				throw new Error("Network response was not ok");
+				return undefined;
 			}
 
 			return responseBody;
 		} catch (error) {
 			//("Error occurred: ", error);
-			throw error; // Re-throwing the error for handling in the calling code
+			return undefined;
 		}
 	}
 
@@ -1182,7 +1167,7 @@ class ApiService {
 
 			// Check if the response is not OK
 			if (!response.ok) {
-				throw new Error(`Network response was not ok: ${response.statusText}`);
+				return undefined;
 			}
 
 			const responseBody = await response.text();
@@ -1194,9 +1179,7 @@ class ApiService {
 				return BigInt(responseBody);
 			}
 		} catch (error) {
-			console.error("Error occurred:", error);
-			throw error; // Re-throw the error for handling in the calling code
-		}
+return undefined;		}
 	}
 
 	async getSellHistoryLinkInfoByGroupId(
@@ -1239,13 +1222,13 @@ class ApiService {
 
 
 			if (!response.ok) {
-				throw new Error("Network response was not ok");
+				return undefined;
 			}
 
 			return responseBody; // Return the JSON response
 		} catch (error) {
 			//("Error occurred: ", error);
-			throw error; // Re-throwing the error for handling in the calling code
+			return undefined;
 		}
 	}
 
@@ -1283,13 +1266,13 @@ class ApiService {
 			}
 
 			if (!response.ok) {
-				throw new Error("Network response was not ok");
+				return undefined;
 			}
 
 			return await response.json(); // Return the parsed JSON directly
 		} catch (error) {
 			//("Error occurred: ", error);
-			throw error; // Re-throwing the error for handling in the calling code
+			return undefined;
 		}
 	}
 
@@ -1341,8 +1324,7 @@ class ApiService {
 
 			return responseBody;
 		} catch (error) {
-			console.error("Error occurred:", error);
-			throw error; // Re-throwing the error for handling in the calling code
+			return undefined;
 		}
 	}
 
@@ -1382,13 +1364,13 @@ class ApiService {
 			}
 
 			if (!response.ok) {
-				throw new Error("Network response was not ok");
+				return undefined;
 			}
 
 			return await response.json(); // Return the parsed JSON directly
 		} catch (error) {
 			//("Error occurred: ", error);
-			throw error; // Re-throwing the error for handling in the calling code
+			return undefined;
 		}
 	}
 
@@ -1418,7 +1400,6 @@ class ApiService {
 
 			const response = await fetch(url, requestOptions);
 
-
 			if (response.status === 401) {
 				await this.logout(navigation);
 				return;
@@ -1429,7 +1410,7 @@ class ApiService {
 			}
 
 			if (!response.ok) {
-				throw new Error("Network response was not ok");
+				return undefined;
 			}
 
 			const responseBody = await response.text();
@@ -1485,13 +1466,12 @@ class ApiService {
 
 			// Check if the response is not OK
 			if (!response.ok) {
-				throw new Error(`Network response was not ok: ${response.statusText}`);
+				return undefined;
 			}
 
 			return response.json;
 		} catch (error) {
-			console.error("Error occurred:", error);
-			throw error; // Re-throw the error for handling in the calling code
+			return undefined;		
 		}
 	}
 
@@ -1532,13 +1512,13 @@ class ApiService {
 
 
 			if (!response.ok) {
-				throw new Error("Network response was not ok");
+				return undefined;
 			}
 
 			return responseBody; // Return the JSON response
 		} catch (error) {
 			//("Error occurred: ", error);
-			throw error; // Re-throwing the error for handling in the calling code
+			return undefined;
 		}
 	}
 
@@ -1579,13 +1559,13 @@ class ApiService {
 
 
 			if (!response.ok) {
-				throw new Error("Network response was not ok");
+				return undefined;
 			}
 
 			return responseBody; // Return the JSON response
 		} catch (error) {
 			//("Error occurred: ", error);
-			throw error; // Re-throwing the error for handling in the calling code
+			return undefined;
 		}
 	}
 
@@ -1634,7 +1614,7 @@ class ApiService {
 			}
 		} catch (error) {
 			//("Error occurred:", error);
-			throw error; // Re-throwing the error for handling in the calling code
+			return undefined;
 		}
 	}
 
@@ -1680,13 +1660,12 @@ class ApiService {
 
 			// Check if the response is not OK
 			if (!response.ok) {
-				throw new Error(`Network response was not ok: ${response.statusText}`);
+				return undefined;
 			}
 
 			return response.json();
 		} catch (error) {
-			console.error("Error occurred:", error);
-			throw error; // Re-throw the error for handling in the calling code
+			return undefined;		
 		}
 	}
 
@@ -1727,13 +1706,13 @@ class ApiService {
 
 
 			if (!response.ok) {
-				throw new Error("Network response was not ok");
+				return undefined;
 			}
 
 			return responseBody; // Return the JSON response
 		} catch (error) {
 			//("Error occurred: ", error);
-			throw error; // Re-throwing the error for handling in the calling code
+			return undefined;
 		}
 	}
 
@@ -1774,13 +1753,13 @@ class ApiService {
 
 
 			if (!response.ok) {
-				throw new Error("Network response was not ok");
+				return undefined;
 			}
 
 			return responseBody; // Return the JSON response
 		} catch (error) {
 			//("Error occurred: ", error);
-			throw error; // Re-throwing the error for handling in the calling code
+			return undefined;
 		}
 	}
 
@@ -1821,13 +1800,13 @@ class ApiService {
 
 
 			if (!response.ok) {
-				throw new Error("Network response was not ok");
+				return undefined;
 			}
 
 			return responseBody; // Return the JSON response
 		} catch (error) {
 			//("Error occurred: ", error);
-			throw error; // Re-throwing the error for handling in the calling code
+			return undefined;
 		}
 	}
 
@@ -1875,7 +1854,7 @@ class ApiService {
 			}
 		} catch (error) {
 			//("Error occurred:", error);
-			throw error; // Re-throwing the error for handling in the calling code
+			return undefined;
 		}
 	}
 
@@ -1923,13 +1902,13 @@ class ApiService {
 
 
 			if (!response.ok) {
-				throw new Error("Network response was not ok");
+				return undefined;
 			}
 
 			return responseBody; // Return the JSON response
 		} catch (error) {
 			//("Error occurred: ", error);
-			throw error; // Re-throwing the error for handling in the calling code
+			return undefined;
 		}
 	}
 
@@ -1970,13 +1949,13 @@ class ApiService {
 
 
 			if (!response.ok) {
-				throw new Error("Network response was not ok");
+				return undefined;
 			}
 
 			return responseBody; // Return the JSON response
 		} catch (error) {
 			//("Error occurred: ", error);
-			throw error; // Re-throwing the error for handling in the calling code
+			return undefined;
 		}
 	}
 
@@ -2026,7 +2005,7 @@ class ApiService {
 			}
 		} catch (error) {
 			//("Error occurred:", error);
-			throw error; // Re-throwing the error for handling in the calling code
+			return undefined;
 		}
 	}
 
@@ -2045,7 +2024,7 @@ class ApiService {
 			const responseBody = await response.json();
 
 			if (!response.ok) {
-				throw new Error("Network response was not ok");
+				return undefined;
 			}
 
 			return responseBody;
@@ -2460,13 +2439,13 @@ class ApiService {
 
 
 			if (!response.ok) {
-				throw new Error("Network response was not ok");
+				return undefined;
 			}
 
 			return responseBody;
 		} catch (error) {
 			//("Error occurred: ", error);
-			throw error; // Re-throwing the error for handling in the calling code
+			return undefined;
 		}
 	}
 
@@ -2500,9 +2479,6 @@ class ApiService {
 				return false; // Return false indicating failure
 			}
 		} catch (error) {
-			// Handle fetch errors
-			console.error("Error:", error);
-
 			await AsyncStorage.setItem("isRequestInProgress", "false");
 			return false; // Return false indicating failure
 		}
@@ -2572,9 +2548,6 @@ class ApiService {
 				return false; // Return false indicating failure
 			}
 		} catch (error) {
-			// Handle fetch errors
-			console.error("Error:", error);
-
 			await AsyncStorage.setItem("isRequestInProgress", "false");
 			return false; // Return false indicating failure
 		}
@@ -2606,14 +2579,10 @@ class ApiService {
 				await AsyncStorage.setItem("isRequestInProgress", "false")
 				return response.json();
 			} else {
-				console.error("Request failed with status:", response.status);
-
 				await AsyncStorage.setItem("isRequestInProgress", "false")
 				return false;
 			}
 		} catch (error) {
-			console.error("Error:", error);
-
 			await AsyncStorage.setItem("isRequestInProgress", "false");
 			return false;
 		}
@@ -2648,7 +2617,7 @@ class ApiService {
 
 
 			if (!response.ok) {
-				throw new Error("Network response was not ok");
+				return undefined;
 			}
 
 			// Parse and log the response body
@@ -2662,7 +2631,7 @@ class ApiService {
 			}
 		} catch (error) {
 			//("Error occurred: ", error);
-			throw error; // Re-throwing the error for handling in the calling code
+			return undefined;
 		}
 	}
 
@@ -2692,7 +2661,7 @@ class ApiService {
 
 
 			if (!response.ok) {
-				throw new Error("Network response was not ok");
+				return undefined;
 			}
 
 			const responseBody = await response.text();
@@ -2737,7 +2706,7 @@ class ApiService {
 			let responseBody = await response.json();
 
 			if (!response.ok) {
-				throw new Error("Network response was not ok");
+				return undefined;
 			}
 
 			return responseBody;
@@ -2777,7 +2746,7 @@ class ApiService {
 			console.log(responseBody);
 
 			if (!response.ok) {
-				throw new Error("Network response was not ok");
+				return undefined;
 			}
 
 			return responseBody;
