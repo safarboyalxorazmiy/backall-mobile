@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, {Component, memo} from "react";
 import {
 	StyleSheet,
 	Text,
@@ -686,16 +686,30 @@ class ProductAdd extends Component {
 					<View style={{
 						height: 250
 					}}>
-						<TouchableOpacity
+						<TouchableRipple
+							delayHoverIn={true}
+							delayLongPress={false}
+							delayHoverOut={false}
+							unstable_pressDelay={false}
+							rippleColor="#E5E5E5"
+							rippleContainerBorderRadius={50}
+							borderless={true}
 							style={[
 								{display: "block"},
 								styles.buttonDark
 							]}
 							onPress={this.createProduct}>
 							<Text style={styles.buttonDarkText}>Mahsulotni qo’shish</Text>
-						</TouchableOpacity>
+						</TouchableRipple>
 
-						<TouchableOpacity
+						<TouchableRipple
+							delayHoverIn={true}
+							delayLongPress={false}
+							delayHoverOut={false}
+							unstable_pressDelay={false}
+							rippleColor="#E5E5E5"
+							rippleContainerBorderRadius={50}
+							borderless={true}
 							style={[
 								{display: "block"},
 								styles.buttonLight
@@ -741,7 +755,7 @@ class ProductAdd extends Component {
 								navigation.navigate("Basket");
 							}}>
 							<Text style={styles.buttonLightText}>Bekor qilish</Text>
-						</TouchableOpacity>
+						</TouchableRipple>
 					</View>
 				</ScrollView>
 			</View>);
@@ -1235,4 +1249,4 @@ const styles = StyleSheet.create({
 	}
 });
 
-export default ProductAdd;
+export default memo(ProductAdd);
