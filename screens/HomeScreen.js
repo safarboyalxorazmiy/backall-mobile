@@ -60,7 +60,6 @@ class Home extends Component {
 
 		this.state = {
 			shoppingCardColors: ["#D7FF01", "#D7FF01"],
-			profitCardColors: ["#272822", "#272822"],
 			profitAmount: 0,
 			sellAmount: 0,
 			notAllowed: "",
@@ -390,8 +389,6 @@ class Home extends Component {
 
 	async initializeScreen() {
 		this.setState({
-			shoppingCardColors: ["#D7FF01", "#D7FF01"],
-			profitCardColors: ["#272822", "#272822"],
 			profitAmount: 0,
 			sellAmount: 0,
 			notAllowed: "",
@@ -1185,19 +1182,17 @@ class Home extends Component {
 					}
 
 					<View style={styles.cards}>
-						<TouchableOpacity
-							activeOpacity={1}
-							onPressIn={() => {
-								this.setState({shoppingCardColors: ["#D7FF01", "#D7FF01"]})
-							}}
-							onPressOut={() => {
-								this.setState({shoppingCardColors: ["#D7FF01", "#D7FF01"]})
-							}}
+						<TouchableRipple
+							delayHoverIn={true}
+							delayLongPress={false}
+							delayHoverOut={false}
+							unstable_pressDelay={false}
+							rippleColor="#E5E5E5"
+							rippleContainerBorderRadius={50}
+							borderless={true}
+							style={styles.card1}
 							onPress={() => navigation.navigate("Shopping")}>
-							<LinearGradient
-								colors={this.state.shoppingCardColors}
-								start={{x: 0, y: 0.5}}
-								style={styles.card}>
+							<View style={{paddingTop: 24,paddingLeft: 24, height: 170}}>
 
 								<ShoppingIcon
 									style={styles.shoppingIcon}
@@ -1211,28 +1206,23 @@ class Home extends Component {
 									<Text
 										style={styles.currency}>UZS</Text>
 								</Text>
-							</LinearGradient>
-						</TouchableOpacity>
+							</View>
+						</TouchableRipple>
 
-						<TouchableOpacity
-							activeOpacity={1}
-							onPressIn={() => {
-								this.setState({profitCardColors: ["#272822", "#272822"]})
-							}}
-							onPressOut={() => {
-								this.setState({profitCardColors: ["#272822", "#272822"]})
-							}}
-							onPress={() => {
-								navigation.navigate("Profit")
-							}}>
-							<LinearGradient
-								style={styles.card}
-								colors={this.state.profitCardColors}
-								start={{x: 0, y: 0.5}}
-							>
-								<BenefitIcon
-											style={styles.benefitIcon}
-											resizeMode="cover"/>
+						<TouchableRipple
+							delayHoverIn={true}
+							delayLongPress={false}
+							delayHoverOut={false}
+							unstable_pressDelay={false}
+							rippleColor="#E5E5E5"
+							rippleContainerBorderRadius={50}
+							borderless={true}
+							onPress={() => navigation.navigate("Profit")}
+							style={styles.card2}>
+							<View style={{paddingTop: 24,paddingLeft: 24, height: 170}}>
+							<BenefitIcon
+								style={styles.benefitIcon}
+								resizeMode="cover" />
 
 								<Text
 									style={[styles.cardTitle, {color: "#FFF"}]}>Bugungi foyda</Text>
@@ -1242,9 +1232,8 @@ class Home extends Component {
 									<Text
 										style={styles.currency}>UZS</Text>
 								</Text>
-							</LinearGradient>
-						</TouchableOpacity>
-
+							</View>
+						</TouchableRipple>
 					</View>
 
 
@@ -1335,8 +1324,6 @@ class Home extends Component {
 									await AsyncStorage.clear();
 
 									this.setState({
-										shoppingCardColors: ["#E59C0D", "#FDD958"],
-										profitCardColors: ["#2C8134", "#1DCB00"],
 										profitAmount: 0,
 										sellAmount: 0,
 										notAllowed: "",
@@ -1572,15 +1559,16 @@ const styles = StyleSheet.create({
 		marginTop: 10
 	},
 
-	card: {
-		paddingTop: 24,
-		paddingLeft: 24,
-		paddingBottom: 24,
-		marginBottom: 25,
+	card2: {
+		backgroundColor: "#272822",
+		marginBottom: 24,
 		borderRadius: 12,
-		position: "relative",
-		overflow: "hidden",
-		height: 170
+	},
+
+	card1: {
+		backgroundColor: "#D7FF01",
+		marginBottom: 24,
+		borderRadius: 12,
 	},
 
 	cardTitle: {
