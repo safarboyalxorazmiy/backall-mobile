@@ -80,6 +80,8 @@ class Basket extends Component {
 	};
 
 	async componentDidMount() {
+		await AsyncStorage.setItem("window", "Basket");
+
 		if (await AsyncStorage.getItem("loadBasket") === "true") {
 			await this.initializeScreen();
 
@@ -104,6 +106,8 @@ class Basket extends Component {
 
 		navigation.addListener("focus",
 			async () => {
+				await AsyncStorage.setItem("window", "Basket");
+
 				if (await AsyncStorage.getItem("loadBasket") === "true") {
 					await this.initializeScreen();
 
