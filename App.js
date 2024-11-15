@@ -147,7 +147,6 @@ class App extends Component {
 			await AsyncStorage.getItem("window") === "Sell" || 
 			await AsyncStorage.getItem("animation") === "true"
 		) {
-			// clearInterval(this.logInternetStatusInterval)
 			console.log("Window is Calendar, Sell or animation is true");
 			return;
 		}
