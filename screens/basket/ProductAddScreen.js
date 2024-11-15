@@ -20,6 +20,7 @@ import ProductRepository from "../../repository/ProductRepository";
 import StoreProductRepository from "../../repository/StoreProductRepository";
 
 import BackIcon from "../../assets/arrow-left-icon.svg"
+import { TouchableRipple } from 'react-native-paper';
 
 const amountData = [
 	{label: "DONA"},
@@ -323,14 +324,21 @@ class ProductAdd extends Component {
 							borderColor: "#F1F1F1"
 						}
 					]}>
-					<TouchableOpacity
+					<TouchableRipple
+						delayHoverIn={true}
+						delayLongPress={false}
+						delayHoverOut={false}
+						unstable_pressDelay={false}
+						rippleColor="#E5E5E5"
+						rippleContainerBorderRadius={50}
+						borderless={true}
 						onPress={() => {
 							navigation.navigate("Basket")
 						}}
 						style={styles.backIcon}>
 
 						<BackIcon/>
-					</TouchableOpacity>
+					</TouchableRipple>
 
 					<Text style={styles.pageTitleText}>
 						Mahsulot qo’shish

@@ -25,6 +25,7 @@ import TrashIcon from "../../assets/trash-icon.svg";
 import TrashIconBlack from "../../assets/trash-icon-black.svg";
 import * as Animatable from "react-native-animatable";
 import {activateKeepAwake, activateKeepAwakeAsync, deactivateKeepAwake} from 'expo-keep-awake';
+import { TouchableRipple } from 'react-native-paper';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -332,7 +333,14 @@ class Sell extends Component {
 			<>
 				<View style={styles.container}>
 					<View style={styles.pageTitle}>
-						<TouchableOpacity
+						<TouchableRipple
+							delayHoverIn={true}
+							delayLongPress={false}
+							delayHoverOut={false}
+							unstable_pressDelay={false}
+							rippleColor="#E5E5E5"
+							rippleContainerBorderRadius={50}
+							borderless={true}
 							onPress={() => {
 								this.setState({
 									isModalVisible: false,
@@ -348,7 +356,7 @@ class Sell extends Component {
 							style={styles.backIconWrapper}
 						>
 							<BackIcon/>
-						</TouchableOpacity>
+						</TouchableRipple>
 
 						<Text style={styles.pageTitleText}>
 							Sotiladigan mahsulotlar
@@ -410,12 +418,18 @@ class Sell extends Component {
 							<Text style={styles.price}>{this.state.amount} so'm</Text>
 						</View>
 
-						<TouchableOpacity
+						<TouchableRipple
+							delayHoverIn={true}
+							delayLongPress={false}
+							delayHoverOut={false}
+							unstable_pressDelay={false}
+							rippleColor="#E5E5E5"
+							rippleContainerBorderRadius={50}
+							borderless={true}
 							style={styles.button}
-							onPress={async () => {await this.sellProducts();}}
-						>
+							onPress={this.sellProducts}>
 							<Text style={styles.buttonText}>Sotuvni amalga oshirish</Text>
-						</TouchableOpacity>
+						</TouchableRipple>
 					</View>
 
 					<StatusBar style="auto"/>

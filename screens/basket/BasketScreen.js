@@ -23,6 +23,7 @@ import BasketIcon from "../../assets/basket-icon-light.svg";
 import Success from "../../assets/success.svg";
 import BasketItem from "./BasketItem";
 import _ from "lodash";
+import { TouchableRipple } from 'react-native-paper';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -483,13 +484,20 @@ class Basket extends Component {
 
 				{/* Add Button */}
 				{this.state.role === "SELLER" || this.state.role === "SELLER_BOSS" ? (
-					<TouchableOpacity
+					<TouchableRipple
+						delayHoverIn={true}
+						delayLongPress={false}
+						delayHoverOut={false}
+						unstable_pressDelay={false}
+						rippleColor="#E5E5E5"
+						rippleContainerBorderRadius={50}
+						borderless={true}
 						style={this.state.addButtonStyle}
 						onPress={() => {
 							navigation.navigate("ProductAdd");
 						}}>
 						<PlusIcon/>
-					</TouchableOpacity>
+					</TouchableRipple>
 				) : null}
 
 				{/* Product successfuly created modal. */}
