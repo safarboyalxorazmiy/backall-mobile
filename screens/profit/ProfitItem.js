@@ -9,6 +9,7 @@ import {
 import {memo} from 'react';
 import ProfitIcon from "../../assets/profit-icon.svg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import i18n from '../../i18n';
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -44,7 +45,7 @@ const ProfitItem = ({history, navigation}) => {
 			<View style={styles.historyProfitWrapper}>
 				<ProfitIcon style={{marginLeft: -4}}/>
 				<Text
-					style={styles.historyProfit}>{`${history.profit.toLocaleString()} so’m`}</Text>
+					style={styles.historyProfit}>{`${history.profit.toLocaleString()} ${i18n.t("sum")}`}</Text>
 			</View>
 
 			<Text

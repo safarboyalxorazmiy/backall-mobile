@@ -1,8 +1,9 @@
-import React, {memo, useState} from 'react';
+import React, {memo} from 'react';
 import {Text, TouchableOpacity, View, StyleSheet, Dimensions} from 'react-native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CalendarIcon from "../../assets/calendar-icon.svg";
 import CrossIcon from "../../assets/cross-icon-light.svg";
+import i18n from '../../i18n';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -29,7 +30,7 @@ const ProfitHeader =
 				}}>
 					<Text style={{
 						fontFamily: "Gilroy-SemiBold", fontWeight: "600", fontSize: 18, lineHeight: 24
-					}}>Foyda tarixi</Text>
+					}}>{i18n.t("profitHistory")}</Text>
 				</View>
 
 				<View style={{
@@ -45,7 +46,7 @@ const ProfitHeader =
 							fontSize: 16,
 							marginBottom: 4
 						}}>
-						Muddatni tanlang
+						{i18n.t("choosePeriod")}
 					</Text>
 
 					<View>
@@ -102,14 +103,14 @@ const ProfitHeader =
 						fontSize: 16,
 						lineHeight: 24,
 						color: "#FFF"
-					}}>Oylik foyda</Text>
+					}}>{i18n.t("monthlyProfit")}</Text>
 					<Text style={{
 						fontFamily: "Gilroy-Medium",
 						fontWeight: "500",
 						fontSize: 16,
 						lineHeight: 24,
 						color: "#FFF"
-					}}>{thisMonthProfitAmount.toLocaleString()} so’m</Text>
+					}}>{thisMonthProfitAmount.toLocaleString()} {i18n.t("sum")}</Text>
 				</View>
 			</View>
 		);

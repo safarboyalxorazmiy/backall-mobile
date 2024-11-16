@@ -5,7 +5,6 @@ import {
 	View,
 	ScrollView,
 	Dimensions,
-	TouchableOpacity,
 	TextInput,
 	Pressable,
 	Keyboard,
@@ -21,6 +20,7 @@ import StoreProductRepository from "../../repository/StoreProductRepository";
 
 import BackIcon from "../../assets/arrow-left-icon.svg"
 import { TouchableRipple } from 'react-native-paper';
+import i18n from '../../i18n';
 
 const amountData = [
 	{label: "DONA"},
@@ -341,7 +341,7 @@ class ProductAdd extends Component {
 					</TouchableRipple>
 
 					<Text style={styles.pageTitleText}>
-						Mahsulot qo’shish
+						{i18n.t("addProduct")}
 					</Text>
 				</View>
 
@@ -366,12 +366,12 @@ class ProductAdd extends Component {
 						</View> */}
 
 						<Text
-							style={styles.label}>Mahsulot seriyasi</Text>
+							style={styles.label}>{i18n.t("productSerial")}</Text>
 						<TextInput
 							autoCapitalize="none"
 							cursorColor="#222222"
 							style={this.state.serialInputStyle}
-							placeholder="Seriyasini kiriting"
+							placeholder={i18n.t("enterSerial")}
 							placeholderTextColor="#AAAAAA"
 							value={this.state.seriyaInputValue}
 
@@ -421,7 +421,7 @@ class ProductAdd extends Component {
 					</View>
 
 					<View style={styles.inputWrapper}>
-						<Text style={styles.label}>Brand nomi</Text>
+						<Text style={styles.label}>{i18n.t("brandName")}</Text>
 						<TextInput
 							autoCapitalize="none"
 							cursorColor="#222222"
@@ -436,17 +436,17 @@ class ProductAdd extends Component {
 						/>
 
 						{this.state.brandErr === true ? <Animatable.View animation="shake" duration={500}>
-							<Text style={styles.errorMsg}>Brand xato kiritildi.</Text>
+							<Text style={styles.errorMsg}>{i18n.t("incorrectBrandName")}</Text>
 						</Animatable.View> : null}
 					</View>
 
 					<View style={styles.inputWrapper}>
-						<Text style={styles.label}>Mahsulot nomi</Text>
+						<Text style={styles.label}>{i18n.t("productName")}</Text>
 						<TextInput
 							autoCapitalize="none"
 							cursorColor="#222222"
 							style={this.state.productInputStyle}
-							placeholder="Nomini kiriting"
+							placeholder={i18n.t("enterName")}
 							placeholderTextColor="#AAAAAA"
 							value={this.state.productInputValue}
 
@@ -457,19 +457,19 @@ class ProductAdd extends Component {
 
 						{this.state.productNameErr === true ?
 							<Animatable.View animation="shake" duration={500}>
-								<Text style={styles.errorMsg}>Mahsulot nomi xato kiritildi.</Text>
+								<Text style={styles.errorMsg}>{i18n.t("incorrectProductName")}</Text>
 							</Animatable.View> : null}
 					</View>
 
 					<View style={styles.inputWrapper}>
-						<Text style={styles.label}>Mahsulot miqdori</Text>
+						<Text style={styles.label}>{i18n.t("productCount")}</Text>
 						<View style={styles.amountGroup}>
 							<TextInput
 								autoCapitalize="none"
 								cursorColor="#222222"
 								keyboardType="numeric"
 								style={this.state.amountInputStyle}
-								placeholder="Miqdorini kiriting"
+								placeholder={i18n.t("enterName")}
 								placeholderTextColor="#AAAAAA"
 								value={this.state.amountInputValue}
 
@@ -537,19 +537,19 @@ class ProductAdd extends Component {
 						{
 							this.state.amountErr === true ?
 								<Animatable.View animation="shake" duration={500}>
-									<Text style={styles.errorMsg}>Mahsulot miqdori xato kiritildi.</Text>
+									<Text style={styles.errorMsg}>{i18n.t("incorrectCount")}</Text>
 								</Animatable.View> : null
 						}
 					</View>
 
 					<View style={styles.inputWrapper}>
-						<Text style={styles.label}>Tan narxi (so’mda)</Text>
+						<Text style={styles.label}>{i18n.t("netWorth")}</Text>
 						<TextInput
 							autoCapitalize="none"
 							cursorColor="#222222"
 							keyboardType="numeric"
 							style={this.state.priceInputStyle}
-							placeholder="Narxini kiriting"
+							placeholder={i18n.t("enterPrice")}
 							placeholderTextColor="#AAAAAA"
 							value={this.state.priceInputValue}
 
@@ -565,20 +565,20 @@ class ProductAdd extends Component {
 						{
 							this.state.priceInputErr === true ?
 								<Animatable.View animation="shake" duration={500}>
-									<Text style={styles.errorMsg}>Tan narxi xato kiritildi.</Text>
+									<Text style={styles.errorMsg}>{i18n.t("incorrectNetWorth")}</Text>
 								</Animatable.View> : null
 						}
 					</View>
 
 					<View style={styles.inputWrapper}>
-						<Text style={styles.label}>Sotilish narxi</Text>
+						<Text style={styles.label}>{i18n.t("sellingPrice")}</Text>
 						<View style={styles.inputGroup}>
 							<TextInput
 								autoCapitalize="none"
 								cursorColor="#222222"
 								keyboardType="numeric"
 								style={this.state.priceInput}
-								placeholder="Sotilish narxi: "
+								placeholder={i18n.t("enterSellingPrice")}
 								placeholderTextColor="#AAAAAA"
 								value={this.state.sellingPriceInputValue}
 								onChangeText={this.onChangeSellingPriceInput}
@@ -634,7 +634,7 @@ class ProductAdd extends Component {
 						</View>
 
 						{this.state.sellingPriceError === true ? <Animatable.View animation="shake" duration={500}>
-							<Text style={styles.errorMsg}>Sotilish narxi xato kiritildi.</Text>
+							<Text style={styles.errorMsg}>{i18n.t("incorrectSellingPrice")}</Text>
 						</Animatable.View> : null}
 
 						<View style={{marginTop: 16}}>
@@ -699,7 +699,7 @@ class ProductAdd extends Component {
 								styles.buttonDark
 							]}
 							onPress={this.createProduct}>
-							<Text style={styles.buttonDarkText}>Mahsulotni qo’shish</Text>
+							<Text style={styles.buttonDarkText}>{i18n.t("addProduct")}</Text>
 						</TouchableRipple>
 
 						<TouchableRipple
@@ -754,7 +754,7 @@ class ProductAdd extends Component {
 
 								navigation.navigate("Basket");
 							}}>
-							<Text style={styles.buttonLightText}>Bekor qilish</Text>
+							<Text style={styles.buttonLightText}>{i18n.t("cancel")}</Text>
 						</TouchableRipple>
 					</View>
 				</ScrollView>
@@ -893,26 +893,6 @@ class ProductAdd extends Component {
 		} else {
 		}
 	};
-
-	init = async () => {
-		for (let i = 0; i < 100; i++) {
-			let productId = await this.productRepository.createAndGetProductId(
-				(123 + i).toString(),
-				(123 + i).toString(),
-				(123 + i).toString()
-			);
-
-			await this.storeProductRepository.create(
-				productId,
-				this.state.nds,
-				Math.floor(Math.random() * 100000), // Random price between 0 and 100000
-				Math.floor(Math.random() * 100000), // Random cost between 0 and 100000
-				Math.floor(Math.random() * 100), // Random quantity between 0 and 100
-				Math.floor(Math.random() * 100), // Random stock between 0 and 100
-				"SO'M"
-			);
-		}
-	}
 }
 
 const styles = StyleSheet.create({

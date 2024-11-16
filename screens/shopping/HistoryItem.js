@@ -9,9 +9,9 @@ import {
 import {memo} from 'react';
 import SellIcon from "../../assets/sell-icon.svg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import i18n from '../../i18n';
 
 const screenWidth = Dimensions.get("window").width;
-const screenHeight = Dimensions.get("window").height;
 
 const HistoryItem = ({history, navigation}) => {
 	const getFormattedTime = (created_date) => {
@@ -46,7 +46,7 @@ const HistoryItem = ({history, navigation}) => {
 			}}>
 			<View style={styles.historyAmountWrapper}>
 				<SellIcon/>
-				<Text style={styles.historyAmount}>{`${history.amount.toLocaleString()} so’m`}</Text>
+				<Text style={styles.historyAmount}>{`${history.amount.toLocaleString()} ${i18n.t("sum")}`}</Text>
 			</View>
 
 			<Text style={styles.historyTime}>{getFormattedTime(history.created_date)}</Text>

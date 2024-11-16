@@ -12,6 +12,7 @@ import BackIcon from "../../assets/arrow-left-icon.svg";
 import SellHistoryRepository from "../../repository/SellHistoryRepository";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ApiService from "../../service/ApiService";
+import i18n from '../../i18n';
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -93,7 +94,7 @@ class ShoppingDetail extends Component {
 	}
 
 	getTime(isoString) {
-		var parsedDate = new Date(isoString);
+		let parsedDate = new Date(isoString);
 
 		let hours = parsedDate.getHours();
 		let minutes = parsedDate.getMinutes();
@@ -103,28 +104,28 @@ class ShoppingDetail extends Component {
 	}
 
 	getDay(isoString) {
-		var parsedDate = new Date(isoString);
+		let parsedDate = new Date(isoString);
 
-		var monthNames = [
-			"yanvar",
-			"fevral",
-			"mart",
-			"aprel",
-			"may",
-			"iyun",
-			"iyul",
-			"avgust",
-			"sentyabr",
-			"oktyabr",
-			"noyabr",
-			"dekabr"
+		let monthNames = [
+			i18n.t("january"),
+			i18n.t("february"),
+			i18n.t("march"),
+			i18n.t("april"),
+			i18n.t("may"),
+			i18n.t("june"),
+			i18n.t("july"),
+			i18n.t("august"),
+			i18n.t("september"),
+			i18n.t("october"),
+			i18n.t("november"),
+			i18n.t("december")			
 		];
 
-		var day = parsedDate.getDate();
-		var monthIndex = parsedDate.getMonth();
-		var monthName = monthNames[monthIndex];
+		let day = parsedDate.getDate();
+		let monthIndex = parsedDate.getMonth();
+		let monthName = monthNames[monthIndex];
 
-		var formattedResult = day + "-" + monthName;
+		let formattedResult = day + "-" + monthName;
 
 		return formattedResult;
 	}

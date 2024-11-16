@@ -7,6 +7,7 @@ import {
 } from "react-native";
 import {memo} from 'react';
 import ProfitItem from "./ProfitItem";
+import i18n from '../../i18n';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -19,7 +20,7 @@ const ProfitGroup = ({item, navigation}) => {
 
 				<Text style={styles.historyTitleText}>//</Text>
 
-				<Text style={styles.historyTitleText}>{`${item.totalAmount.toLocaleString()} so’m`}</Text>
+				<Text style={styles.historyTitleText}>{`${item.totalAmount.toLocaleString()} ${i18n.t("sum")}`}</Text>
 			</View>)}
 
 			{item.histories.map((history) => (

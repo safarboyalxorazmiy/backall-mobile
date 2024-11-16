@@ -3,15 +3,13 @@ import {
 	View,
 	Text,
 	StyleSheet,
-	Dimensions,
-	TouchableOpacity,
-	AsyncStorage
+	Dimensions
 } from "react-native";
 import {memo} from 'react';
 import HistoryItem from "./HistoryItem";
+import i18n from '../../i18n';
 
 const screenWidth = Dimensions.get("window").width;
-const screenHeight = Dimensions.get("window").height;
 
 const HistoryGroup = ({item, navigation}) => {
 	return (
@@ -21,7 +19,7 @@ const HistoryGroup = ({item, navigation}) => {
 
 				<Text style={styles.historyTitleText}>//</Text>
 
-				<Text style={styles.historyTitleText}>{`${item.totalAmount.toLocaleString()} so’m`}</Text>
+				<Text style={styles.historyTitleText}>{`${item.totalAmount.toLocaleString()} ${i18n.t("sum")}`}</Text>
 			</View>
 
 			{item.histories.map((history) => (

@@ -37,6 +37,7 @@ import ApiService from "./service/ApiService";
 
 import RightArrowLight from "./assets/right-arrow-light.svg"
 import PaymentForm from "./screens/payment/PaymentForm";
+import i18n, { loadLocale } from './i18n';
 
 const tokenService = new TokenService();
 
@@ -90,6 +91,8 @@ class App extends Component {
 	}
 
 	async componentDidMount() {
+		loadLocale();
+
 		SplashScreen.preventAutoHideAsync();
 		await this.loadResources();
 		SplashScreen.hideAsync();

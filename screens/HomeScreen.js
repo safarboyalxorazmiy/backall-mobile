@@ -6,11 +6,8 @@ import {
 	View,
 	Dimensions,
 	TouchableOpacity,
-	Platform,
-	SafeAreaView,
 	ScrollView
 } from "react-native";
-import {LinearGradient} from "expo-linear-gradient";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Modal from "react-native-modal";
@@ -39,7 +36,7 @@ import PaymentForm from "./payment/PaymentForm";
 import { Picker } from '@react-native-picker/picker';
 import { Ionicons } from '@expo/vector-icons';
 import { LineChart } from 'react-native-chart-kit';
-
+import { loadLocale, setLocale, t } from '../i18n';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -100,7 +97,7 @@ class Home extends Component {
 			paymentModalVisible: false,
 			intervalStarted: false,
 			diagramData: [0,0,0,0,0,0],
-			language: "uz"
+			selectedLanguage: loadLocale,
 		}
 
 		this.amountDateRepository = new AmountDateRepository();
@@ -1088,7 +1085,10 @@ class Home extends Component {
 							
 							selectedValue={this.state.selectedLanguage}
 							onValueChange={(itemValue) => {
-								this.setState({selectedLanguage: itemValue});
+								setLocale(itemValue);
+								this.setState({
+									selectedLanguage: itemValue
+								});
 							}}
 							style={{display: "none"}}
 
@@ -1104,7 +1104,7 @@ class Home extends Component {
 					</View>
 
 					<View style={styles.header}>
-						<Text style={styles.pageTitle}>Bosh sahifa</Text>
+						<Text style={styles.pageTitle}>{t("homePage")}</Text>
 						<View style={{display: "flex", flexDirection: "row", columnGap: 20, height: "100%"}}>
 						<TouchableRipple
 								delayHoverIn={true}
@@ -1191,7 +1191,7 @@ class Home extends Component {
 										width: 275,
 									}}
 								>
-									Siz bugun to'lashingiz kerak
+									{t("youHaveToPayToday")}
 								</Text>
 							</View>
 
@@ -1229,12 +1229,12 @@ class Home extends Component {
 									resizeMode="cover"/>
 
 								<Text
-									style={[styles.cardTitle, {color: "#272727"}]}>Bugungi kirim</Text>
+									style={[styles.cardTitle, {color: "#272727"}]}>{t("todaysIncome")}</Text>
 								<Text
 									style={styles.cardDescription}>
 									{this.state.sellAmount.toLocaleString()}
 									<Text
-										style={styles.currency}>UZS</Text>
+										style={styles.currency}>{t("sum").toUpperCase()}</Text>
 								</Text>
 							</View>
 						</TouchableRipple>
@@ -1255,12 +1255,11 @@ class Home extends Component {
 								resizeMode="cover" />
 
 								<Text
-									style={[styles.cardTitle, {color: "#FFF"}]}>Bugungi foyda</Text>
+									style={[styles.cardTitle, {color: "#FFF"}]}>{t("todaysProfit")}</Text>
 								<Text
 									style={[styles.cardDescription, {color: "#FFF"}]}>
 									{this.state.profitAmount.toLocaleString()}
-									<Text
-										style={styles.currency}>UZS</Text>
+									<Text style={styles.currency}>{t("sum").toUpperCase()}</Text>
 								</Text>
 							</View>
 						</TouchableRipple>

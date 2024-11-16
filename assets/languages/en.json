@@ -1,0 +1,75 @@
+{
+  "todaysIncome": "Today's Income",
+  "todaysProfit": "Today's Profit",
+  "youHaveToPayToday": "You have to pay today",
+  "homePage": "Home Page",
+
+  "searchProduct": "Search Product",
+  "blok": "pack",
+  "dona": "piece",
+  "kg": "kg",
+
+  "addProduct": "Add Product",
+  "productSerial": "Product's serial number",
+  "enterSerial": "Enter serial number",
+  "brandName": "Brand Name",
+  "enterBrandName": "Enter brand name",
+  "incorrectBrandName": "Incorrect brand name.",
+  "productName": "Product Name",
+  "incorrectProductName": "Incorrect product name.",
+  "enterName": "Enter name",
+  "productCount": "Product Count",
+  "incorrectCount": "Incorrect count.",
+  "enterCount": "Enter count",
+  "netWorth": "Net Worth",
+  "enterPrice": "Enter price",
+  "sellingPrice": "Selling Price",
+  "ndsTax": "NDS Tax",
+  "cancel": "Cancel",
+  
+  "productSuccessfulyCreated": "The product was successfully created!",
+  "backToBasket": "Back to basket",
+  
+  "sellingProducts": "Products to be sold",
+  "enterProductManually": "Enter product manually",
+  "orderPrice": "Order price",
+  "sum": "sum",
+  "makeASale": "Make a sale",
+  
+  
+  "worth": "Worth",
+  "enterWorth": "Enter number",
+  "priceInSelling": "Price on sale (1kg/piece)",
+  "addToBasket": "Add to Cart",
+  
+  "sellingHistory": "Sale History",
+  "choosePeriod": "Select a period",
+  "selledProducts": "Products sold",
+  "monthlyIncome": "Monthly income",
+  "monthlyProfit": "Monthly profit",
+
+  "pureProfit": "Net profit",
+  "profitOfProducts": "Remaining profit from the product",
+  
+  "confirm": "Confirm",
+  "from": "from",
+  "to": "to",
+  
+  "today": "Today",
+  "week": "Week",
+  "month": "Month",
+
+  "january": "January",
+  "february": "February",
+  "march": "March",
+  "april": "April",
+  "may": "May",
+  "june": "June",
+  "july": "July",
+  "august": "August",
+  "september": "September",
+  "october": "October",
+  "november": "November",
+  "december": "December"
+
+}

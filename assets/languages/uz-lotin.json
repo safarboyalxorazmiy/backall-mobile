@@ -1,0 +1,77 @@
+{
+  "todaysIncome": "Bugungi kirim",
+  "todaysProfit": "Bugungi foyda",
+  "youHaveToPayToday": "Siz bugun to’lashingiz kerak",
+  "homePage": "Bosh sahifa",
+
+  "searchProduct": "Mahsulot qidirish",
+  "blok": "blok",
+  "dona": "dona",
+  "kg": "kg",
+
+  "addProduct": "Mahsulot qo'shish",
+  "productSerial": "Mahsulot seriyasi",
+  "enterSerial": "Seriyani kiriting",
+  "brandName": "Brand nomi",
+  "enterBrandName": "Brand nomini kiriting",
+  "incorrectBrandName": "Brand xato kiritildi.",
+  "productName": "Mahsulot nomi",
+  "incorrectProductName": "Mahsulot xato kiritildi.",
+  "enterName": "Nomini kiriting",
+  "productCount": "Mahsulot miqdori",
+  "incorrectCount": "Mahsulot miqdori xato kiritildi.",
+  "enterCount": "Miqdorini kiriting",
+  "netWorth": "Tan narxi",
+  "incorrectNetWorth": "Tan narxi xato kiritildi.",
+  "enterPrice": "Narxini kiriting",
+  "sellingPrice": "Sotilish narxi",
+  "enterSellingPrice": "Sotilish narxini kiriting",
+  "incorrectSellingPrice": "Sotilish narxini xato kiritildi.",
+  "ndsTax": "NDS soliq",
+  "cancel": "Bekor qilish",
+
+
+  "productSuccessfulyCreated": "Mahsulot muvaffaqiyatli yaratildi!",
+  "backToBasket": "SAVATGA QAYTISH",
+
+  "sellingProducts": "Sotiladigan mahsulotlar",
+  "enterProductManually": "Mahsulotni qo’lda kiritish",
+  "orderPrice": "Buyurtma narxi",
+  "sum": "so'm",
+  "makeASale": "Sotuvni amalga oshirish",
+  
+  "worth": "Qiymati",
+  "enterWorth": "Sonini kiriting",
+  "priceInSelling": "Sotuvdagi narxi (1kg/dona)",
+  "addToBasket": "Savatga qo'shish",
+
+  "sellingHistory": "Sotuv tarixi",
+  "choosePeriod": "Muddatni tanlang",
+  "monthlyIncome": "Oylik aylanma",
+  "monthlyProfit": "Oylik foyda",
+  "selledProducts": "Sotilgan mahsulotlar",
+
+  "pureProfit": "Sof foyda",
+  "profitHistory": "Foyda tarixi",
+
+  "confirm": "Tasdiqlash",
+  "from": "dan",
+  "gacha": "gacha",
+  "today": "Bugun",
+  "week": "Hafta",
+  "month": "Oy",
+
+  "january": "Yanvar",
+  "february": "Fevral",
+  "march": "Mart",  
+  "april": "Aprel",
+  "may": "May",  
+  "june": "Iyun",  
+  "july": "Iyul",  
+  "august": "Avgust",  
+  "september": "Sentabr", 
+  "october": "Oktyabr",
+  "november": "Noyabr",
+  "december": "Dekabr"
+
+}

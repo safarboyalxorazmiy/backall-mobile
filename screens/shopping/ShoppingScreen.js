@@ -3,13 +3,10 @@ import {StatusBar} from "expo-status-bar";
 import {
 	Dimensions,
 	StyleSheet,
-	Text,
 	View,
 	FlatList,
 	ActivityIndicator
 } from "react-native";
-import * as Animatable from "react-native-animatable";
-import Modal from "react-native-modal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import SellHistoryRepository from "../../repository/SellHistoryRepository";
@@ -18,12 +15,10 @@ import ProductRepository from "../../repository/ProductRepository";
 import ApiService from "../../service/ApiService";
 
 import HistoryGroup from "./HistoryGroup";
-import {TouchableOpacity} from 'react-native-gesture-handler';
 import ShoppingHeader from "./ShoppingHeader";
 import _ from 'lodash';
 
 const screenWidth = Dimensions.get("window").width;
-const screenHeight = Dimensions.get("window").height;
 
 class Shopping extends Component {
 	constructor(props) {
@@ -42,7 +37,6 @@ class Shopping extends Component {
 			toDate: null,
 			prevFromDate: null, // for reloading after denpxleting
 			thisMonthSellAmount: 0.00,
-			notAllowed: "",
 
 			// SELL
 			lastSellGroupPage: 0,
@@ -286,7 +280,6 @@ class Shopping extends Component {
 			toDate: null,
 			prevFromDate: null, // for reloading after denpxleting
 			thisMonthSellAmount: 0.00,
-			notAllowed: "",
 
 			// SELL
 			lastSellGroupPage: 0,
@@ -625,82 +618,6 @@ class Shopping extends Component {
 						)}
 					/>
 				</View>
-
-
-				{/* Role error */}
-				<Modal
-					visible={this.state.notAllowed === "true"}
-					animationIn={"slideInUp"}
-					animationOut={"slideOutDown"}
-					animationInTiming={200}
-					transparent={true}>
-					<View style={{
-						position: "absolute",
-						width: "150%",
-						height: screenHeight,
-						flex: 1,
-						alignItems: "center",
-						justifyContent: "center",
-						backgroundColor: "#00000099",
-						left: -50,
-						right: -50,
-						top: 0
-					}}></View>
-
-					<Animatable.View
-						animation="bounceInUp" delay={0} iterationCount={1} direction="alternate"
-						style={{
-							height: screenHeight,
-							display: "flex",
-							alignItems: "center",
-							justifyContent: "center"
-						}}>
-						<View style={{
-							width: screenWidth - (16 * 2),
-							maxWidth: 343,
-							marginLeft: "auto",
-							marginRight: "auto",
-							flex: 1,
-							alignItems: "center",
-							justifyContent: "flex-end",
-							marginBottom: 120
-						}}>
-							<View style={{
-								width: "100%",
-								padding: 20,
-								borderRadius: 12,
-								backgroundColor: "#fff",
-							}}>
-								<Text style={{
-									fontFamily: "Gilroy-Regular",
-									fontSize: 18
-								}}>Siz sotuvchi emassiz..</Text>
-								<TouchableOpacity
-									style={{
-										display: "flex",
-										alignItems: "center",
-										height: 55,
-										justifyContent: "center",
-										backgroundColor: "#222",
-										width: "100%",
-										borderRadius: 12,
-										marginTop: 22
-									}}
-									onPress={async () => {
-										this.setState({notAllowed: "false"});
-										await AsyncStorage.setItem("not_allowed", "false")
-									}}>
-									<Text
-										style={{
-											fontFamily: "Gilroy-Bold",
-											fontSize: 18,
-											color: "#fff",
-										}}>Tushunarli</Text>
-								</TouchableOpacity>
-							</View>
-						</View>
-					</Animatable.View>
-				</Modal>
 
 				<StatusBar style="auto"/>
 			</View>

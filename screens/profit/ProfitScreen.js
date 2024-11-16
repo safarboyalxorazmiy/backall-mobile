@@ -2,29 +2,19 @@ import React, {Component, memo} from "react";
 import {StatusBar} from "expo-status-bar";
 import {
 	StyleSheet,
-	Text,
 	View,
-	Dimensions,
-	TouchableOpacity,
 	FlatList, ActivityIndicator
 } from "react-native";
-import * as Animatable from "react-native-animatable";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Modal from "react-native-modal";
 
 import ProductRepository from "../../repository/ProductRepository";
 import AmountDateRepository from "../../repository/AmountDateRepository";
 import ProfitHistoryRepository from "../../repository/ProfitHistoryRepository";
 import ApiService from "../../service/ApiService";
 
-import CalendarIcon from "../../assets/calendar-icon.svg";
-import CrossIcon from "../../assets/cross-icon-light.svg";
 import ProfitGroup from "./ProfitGroup";
 import _ from "lodash";
 import ProfitHeader from "./ProfitHeader";
-
-const screenWidth = Dimensions.get("window").width;
-const screenHeight = Dimensions.get("window").height;
 
 class Profit extends Component {
 	constructor(props) {
@@ -38,7 +28,6 @@ class Profit extends Component {
 			isCollecting: false,
 			calendarInputContent: "--/--/----",
 			thisMonthProfitAmount: 0.00,
-			notAllowed: "",
 			notFinished: true,
 
 			lastProfitGroupPage: 0,
@@ -465,7 +454,6 @@ class Profit extends Component {
 			isCollecting: false,
 			calendarInputContent: "--/--/----",
 			thisMonthProfitAmount: 0.00,
-			notAllowed: "",
 			notFinished: true,
 
 			lastProfitGroupPage: 0,
@@ -793,87 +781,6 @@ class Profit extends Component {
 							navigation={navigation}/>
 					)}
 				/>
-
-				{/* Role error */}
-				<Modal
-					visible={this.state.notAllowed === "true"}
-					animationIn={"slideInUp"}
-					animationOut={"slideOutDown"}
-					animationInTiming={200}
-					transparent={true}>
-					<View style={{
-						position: "absolute",
-						width: "150%",
-						height: screenHeight,
-						flex: 1,
-						alignItems: "center",
-						justifyContent: "center",
-						backgroundColor: "#00000099",
-						left: -50,
-						right: -50,
-						top: 0
-					}}></View>
-
-					<Animatable.View
-						animation="bounceInUp"
-						delay={0}
-						iterationCount={1}
-						direction="alternate"
-						style={{
-							height: screenHeight,
-							display: "flex",
-							alignItems: "center",
-							justifyContent: "center"
-						}}>
-						<View style={{
-							// width: screenWidth - (16 * 2),
-							width: "100%",
-							paddingRight: 16,
-							paddingLeft: 16,
-							maxWidth: 343,
-							marginLeft: "auto",
-							marginRight: "auto",
-							flex: 1,
-							alignItems: "center",
-							justifyContent: "flex-end",
-							marginBottom: 120
-						}}>
-							<View style={{
-								width: "100%",
-								padding: 20,
-								borderRadius: 12,
-								backgroundColor: "#fff",
-							}}>
-								<Text style={{
-									fontFamily: "Gilroy-Regular",
-									fontSize: 18
-								}}>Siz sotuvchi emassiz..</Text>
-								<TouchableOpacity
-									style={{
-										display: "flex",
-										alignItems: "center",
-										height: 55,
-										justifyContent: "center",
-										backgroundColor: "#222",
-										width: "100%",
-										borderRadius: 12,
-										marginTop: 22
-									}}
-									onPress={async () => {
-										this.setState({notAllowed: "false"});
-										await AsyncStorage.setItem("not_allowed", "false")
-									}}>
-									<Text
-										style={{
-											fontFamily: "Gilroy-Bold",
-											fontSize: 18,
-											color: "#fff",
-										}}>Tushunarli</Text>
-								</TouchableOpacity>
-							</View>
-						</View>
-					</Animatable.View>
-				</Modal>
 
 				<StatusBar style="auto"/>
 			</View>

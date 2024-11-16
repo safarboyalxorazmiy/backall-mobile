@@ -1,10 +1,11 @@
 import React, {Component} from "react";
-import {View, Text, TouchableOpacity, Image, StyleSheet, Dimensions} from "react-native";
+import {View, Text, TouchableOpacity, StyleSheet, Dimensions} from "react-native";
 import {ScrollView} from "react-native-gesture-handler";
 import BackIcon from "../../assets/arrow-left-icon.svg";
 import ProfitHistoryRepository from "../../repository/ProfitHistoryRepository";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ApiService from "../../service/ApiService";
+import i18n from "../../i18n";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -101,25 +102,25 @@ class ProfitDetail extends Component {
 		let parsedDate = new Date(isoString);
 
 		let monthNames = [
-			"yanvar",
-			"fevral",
-			"mart",
-			"aprel",
-			"may",
-			"iyun",
-			"iyul",
-			"avgust",
-			"sentyabr",
-			"oktyabr",
-			"noyabr",
-			"dekabr"
+			i18n.t("january"),
+			i18n.t("february"),
+			i18n.t("march"),
+			i18n.t("april"),
+			i18n.t("may"),
+			i18n.t("june"),
+			i18n.t("july"),
+			i18n.t("august"),
+			i18n.t("september"),
+			i18n.t("october"),
+			i18n.t("november"),
+			i18n.t("december")			
 		];
 
-		var day = parsedDate.getDate();
-		var monthIndex = parsedDate.getMonth();
-		var monthName = monthNames[monthIndex];
+		let day = parsedDate.getDate();
+		let monthIndex = parsedDate.getMonth();
+		let monthName = monthNames[monthIndex];
 
-		var formattedResult = day + "-" + monthName;
+		let formattedResult = day + "-" + monthName;
 
 		return formattedResult;
 	}
@@ -139,7 +140,7 @@ class ProfitDetail extends Component {
 							<BackIcon/>
 						</TouchableOpacity>
 
-						<Text style={styles.title}>Mahsulotdan qolgan foyda</Text>
+						<Text style={styles.title}>{i18n.t("profit")}</Text>
 					</View>
 
 					<View style={styles.infoBar}>

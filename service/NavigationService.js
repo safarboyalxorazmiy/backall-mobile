@@ -14,7 +14,6 @@ import ProductAdd from "../screens/basket/ProductAddScreen";
 import ProfitDetail from "../screens/profit/ProfitDetailScreen";
 import CalendarPage from "../screens/CalendarScreen";
 import ShoppingDetail from "../screens/shopping/ShoppingDetailScreen";
-import ProductEdit from "../screens/basket/ProductEditScreen";
 import LoginVerificationScreen from "../screens/auth/login/LoginVerificationScreen";
 
 import DashboardIcon from "../assets/navbar/dashboard-icon.svg";
@@ -49,8 +48,7 @@ const routesWithoutNavbar = [
 	"ProductAdd",
 	"ShoppingDetail",
 	"ProfitDetail",
-	"Calendar",
-	"ProductEdit",
+	"Calendar"
 ];
 
 const styles = StyleSheet.create({
@@ -243,14 +241,6 @@ class NavigationService extends Component {
 					<Tab.Screen
 						name="ProductAdd"
 						component={ProductAdd}
-						options={({navigation}) => ({
-							title: "",
-							headerShown: false,
-						})}
-					/>
-					<Tab.Screen
-						name="ProductEdit"
-						component={ProductEdit}
 						options={({navigation}) => ({
 							title: "",
 							headerShown: false,

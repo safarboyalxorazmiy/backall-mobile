@@ -3,6 +3,7 @@ import { Text, TouchableOpacity, View, StyleSheet, Dimensions } from 'react-nati
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CalendarIcon from "../../assets/calendar-icon.svg";
 import CrossIcon from "../../assets/cross-icon-light.svg";
+import i18n from '../../i18n';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -16,11 +17,11 @@ const ShoppingHeader = memo(({ navigation, calendarInputContent, thisMonthSellAm
 	return (
 		<>
 			<View style={styles.pageTitle}>
-				<Text style={styles.pageTitleText}>Sotuv tarixi</Text>
+				<Text style={styles.pageTitleText}>{i18n.t("sellingHistory")}</Text>
 			</View>
 
 			<View style={styles.calendarWrapper}>
-				<Text style={styles.calendarLabel}>Muddatni tanlang</Text>
+				<Text style={styles.calendarLabel}>{i18n.t("choosePeriod")}</Text>
 
 				<View>
 					<TouchableOpacity
@@ -51,8 +52,8 @@ const ShoppingHeader = memo(({ navigation, calendarInputContent, thisMonthSellAm
 			</View>
 
 			<View style={styles.summaryContainer}>
-				<Text style={styles.summaryText}>Oylik aylanma</Text>
-				<Text style={styles.summaryAmount}>{`${thisMonthSellAmount.toLocaleString()} so’m`}</Text>
+				<Text style={styles.summaryText}>{i18n.t("monthlyIncome")}</Text>
+				<Text style={styles.summaryAmount}>{`${thisMonthSellAmount.toLocaleString()} ${i18n.t("sum")}`}</Text>
 			</View>
 		</>
 	);

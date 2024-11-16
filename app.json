@@ -49,6 +49,9 @@
     "channel": "default",
     "updates": {
       "url": "https://u.expo.dev/488daa54-ef3c-48ff-b4cb-744370363af0"
-    }
+    },
+    "plugins": [
+      "expo-localization"
+    ]
   }
 }

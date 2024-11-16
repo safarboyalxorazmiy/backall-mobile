@@ -1,0 +1,74 @@
+{
+  "todaysIncome": "Сегодняшний приход",
+  "todaysProfit": "Сегодняшняя прибыль",
+  "youHaveToPayToday": "Срок оплаты сегодня",
+  "homePage": "Главная страница",
+
+  "searchProduct": "Поиск продукта",
+  "blok": "блок",
+  "dona": "штука",
+  "kg": "кг",
+
+  "addProduct": "Добавить продукт",
+  "productSerial": "Серийный номер товара",
+  "enterSerial": "Введите серийный номер",
+  "brandName": "Название бренда",
+  "enterBrandName": "Введите название бренда",
+  "incorrectBrandName": "Неправильное название бренда.",
+  "productName": "Название продукта",
+  "incorrectProductName": "Неправильное название продукта.",
+  "enterName": "Введите название",
+  "productCount": "Количество продукта",
+  "incorrectCount": "Неправильное количество.",
+  "enterCount": "Введите количество",
+  "netWorth": "Чистая стоимость",
+  "enterPrice": "Введите цену",
+  "sellingPrice": "Цена продажи",
+  "ndsTax": "НДС",
+  "cancel": "Отмена",
+
+  "productSuccessfullyCreated": "Продукт успешно создан!",
+  "backToBasket": "Вернуться в корзину",
+
+  "sellingProducts": "Продаваемая продукция",
+  "enterProductManually": "Введите продукт вручную",
+  "orderPrice": "Цена заказа",
+  "sum": "сум",
+  "makeASale": "Совершить продажу",
+
+  "worth": "Стоимость",
+  "enterWorth": "Введите стоимость",
+  "priceInSelling": "Цена в продаже (1 кг/штука)",
+  "addToBasket": "Добавить в корзину",
+
+  "sellingHistory": "История продаж",
+  "choosePeriod": "Выберите период",
+  "selledProducts": "Проданные продукты",
+  "monthlyIncome": "Месячный доход",
+  "monthlyProfit": "Месячная прибыль",
+
+  "pureProfit": "Чистая прибыль",
+  "profitOfProducts": "Остаток прибыли от продукта",
+
+  "confirm": "Подтвердить",
+  "from": "от",
+  "to": "до",
+
+  "today": "Сегодня",
+  "week": "Неделя",
+  "month": "Месяц",
+
+  "january": "Январь",
+  "february": "Февраль",
+  "march": "Март",
+  "april": "Апрель",
+  "may": "Май",
+  "june": "Июнь",
+  "july": "Июль",
+  "august": "Август",
+  "september": "Сентябрь",
+  "october": "Октябрь",
+  "november": "Ноябрь",
+  "december": "Декабрь"
+
+}

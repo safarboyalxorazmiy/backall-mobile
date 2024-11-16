@@ -4,10 +4,9 @@ import {
 	Text,
 	StyleSheet,
 	Dimensions,
-	TouchableOpacity,
-	AsyncStorage
 } from "react-native";
 import {memo} from 'react';
+import i18n from '../../i18n';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -16,7 +15,7 @@ const BasketItem = ({product, index}) => {
 	return (
 		<View key={index} style={index % 2 === 0 ? styles.product : styles.productOdd}>
 			<Text style={styles.productTitle}>{product.brand_name} {product.name}</Text>
-			<Text style={styles.productCount}>{product.count} {product.count_type}</Text>
+			<Text style={styles.productCount}>{product.count} {i18n.t(product.count_type.toLowerCase())}</Text>
 		</View>
 	);
 };
