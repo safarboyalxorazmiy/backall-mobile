@@ -317,6 +317,10 @@ class Shopping extends Component {
 	}
 
 	async loadMore() {	
+		if (await AsyncStorage.getItem("window") != "Shopping") {
+			return;
+		}
+		
 		if (this.state.localFullyLoaded === false) {
 			this.setState({loading: true});
 			let isLoaded = await this.loadLocalSellGroups();

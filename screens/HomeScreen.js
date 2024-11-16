@@ -36,9 +36,6 @@ import { Feather } from "@expo/vector-icons";
 import { TouchableRipple } from 'react-native-paper';
 import PaymentForm from "./payment/PaymentForm";
 
-import {ApplicationProvider} from '@ui-kitten/components';
-import * as eva from '@eva-design/eva';
-
 import { Picker } from '@react-native-picker/picker';
 import { Ionicons } from '@expo/vector-icons';
 import { LineChart } from 'react-native-chart-kit';
@@ -551,6 +548,11 @@ class Home extends Component {
 				this.setState({spinner: true})
 				isDownloaded = isDownloaded && await this.getProfitAmountDate();
 				this.setState({spinner: true})
+
+				if (isDownloaded == false) {
+					this.props.navigation.navigate("Login");
+					return;
+				}
 
 				// storing result of product storing
 				await AsyncStorage.setItem("isDownloaded", isDownloaded.toString());
