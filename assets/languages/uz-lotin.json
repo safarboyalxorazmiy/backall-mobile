@@ -56,7 +56,8 @@
 
   "confirm": "Tasdiqlash",
   "from": "dan",
-  "gacha": "gacha",
+  "to": "gacha",
+
   "today": "Bugun",
   "week": "Hafta",
   "month": "Oy",

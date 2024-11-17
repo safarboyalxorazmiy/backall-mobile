@@ -4,6 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import CalendarIcon from "../../assets/calendar-icon.svg";
 import CrossIcon from "../../assets/cross-icon-light.svg";
 import i18n from '../../i18n';
+import { TouchableRipple } from 'react-native-paper';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -24,7 +25,14 @@ const ShoppingHeader = memo(({ navigation, calendarInputContent, thisMonthSellAm
 				<Text style={styles.calendarLabel}>{i18n.t("choosePeriod")}</Text>
 
 				<View>
-					<TouchableOpacity
+					<TouchableRipple
+						delayHoverIn={true}
+						delayLongPress={false}
+						delayHoverOut={false}
+						unstable_pressDelay={false}
+						rippleColor="#E5E5E5"
+						rippleContainerBorderRadius={50}
+						borderless={true}
 						onPress={handlePress}
 						style={[
 							calendarInputContent === "--/--/----" ?
@@ -41,7 +49,7 @@ const ShoppingHeader = memo(({ navigation, calendarInputContent, thisMonthSellAm
 						>
 							{calendarInputContent}
 						</Text>
-					</TouchableOpacity>
+					</TouchableRipple>
 
 					{calendarInputContent === "--/--/----" ? (
 						<CalendarIcon style={styles.calendarIcon} resizeMode="cover" />

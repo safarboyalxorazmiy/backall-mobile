@@ -496,8 +496,7 @@ class Home extends Component {
 					sellAmount: sellAmount.amount,
 					profitAmount: profitAmount.amount
 				})
-			} catch (e) {
-			}
+			} catch (e) { }
 
 
 			try {

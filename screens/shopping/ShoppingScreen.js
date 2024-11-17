@@ -173,8 +173,8 @@ class Shopping extends Component {
 			await this.getDateInfo();
 
 			if (this.state.fromDate != null && this.state.toDate != null) {
-				//.log("fromDate:", this.state.fromDate);
-				//.log("toDate:", this.state.toDate);
+				console.log("fromDate:", this.state.fromDate);
+				console.log("toDate:", this.state.toDate);
 
 				this.setState({
 					loading: true
@@ -200,7 +200,7 @@ class Shopping extends Component {
 					lastGroupId: lastGroupId
 				});
 
-				await this.loadLocalSellGroups();
+				this.onEndReached();
 
 				this.setState({
 					loading: false
@@ -322,6 +322,8 @@ class Shopping extends Component {
 			}
 		}
 
+		console.log("localFullyLoaded === true; returned");
+
 		if (this.state.globalFullyLoaded || this.state.loading) return;
 
 		if (!this.state.firstGroupGlobalId) {
@@ -425,6 +427,7 @@ class Shopping extends Component {
 			}
 
 			if (sellHistories.length === 0) {
+				console.log("sellHistories.length === 0; returned");
 				this.setState({
 					loading: false,
 					localFullyLoaded: true
@@ -570,7 +573,10 @@ class Shopping extends Component {
 
 	async onEndReached() {
 		//.log("onEndReached()");
-		if (this.state.loading) return;
+		if (this.state.loading) {
+			console.log("Loading true returned")
+			return
+		};
 
 		this.loadMore();
 	}

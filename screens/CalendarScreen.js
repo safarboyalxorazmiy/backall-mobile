@@ -16,6 +16,7 @@ import ActionSheet from 'react-native-actions-sheet';
 import { RangeCalendar } from '@ui-kitten/components';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import i18n from '../i18n';
+import { TouchableRipple } from "react-native-paper";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -52,6 +53,8 @@ class CalendarPage extends Component {
 	async componentDidMount() {
 		const {navigation} = this.props;
 		await AsyncStorage.setItem("window", "Calendar");
+
+		this.setState({calendarFromPage: await AsyncStorage.getItem("calendarFromPage")});
 
 		navigation.addListener("focus", async () => {
 			this.setState({calendarFromPage: await AsyncStorage.getItem("calendarFromPage")});
@@ -283,15 +286,29 @@ class CalendarPage extends Component {
 		return (
 			<View style={styles.container}>
 				<View style={styles.header}>
-					<TouchableOpacity
+					<TouchableRipple
+						delayHoverIn={true}
+						delayLongPress={false}
+						delayHoverOut={false}
+						unstable_pressDelay={false}
+						rippleColor="#E5E5E5"
+						rippleContainerBorderRadius={50}
+						borderless={true}
 						onPress={() => navigation.navigate(this.state.calendarFromPage)}
 						style={styles.backButton}>
 						<BackIcon/>
-					</TouchableOpacity>
+					</TouchableRipple>
 
 					<Text style={styles.title}>Sotilgan mahsulotlar</Text>
 
-					<TouchableOpacity
+					<TouchableRipple
+						delayHoverIn={true}
+						delayLongPress={false}
+						delayHoverOut={false}
+						unstable_pressDelay={false}
+						rippleColor="#E5E5E5"
+						rippleContainerBorderRadius={50}
+						borderless={true}
 						onPress={async () => {
 							await AsyncStorage.removeItem(this.state.calendarFromPage + "FromDate");
 							await AsyncStorage.removeItem(this.state.calendarFromPage + "ToDate");
@@ -303,7 +320,7 @@ class CalendarPage extends Component {
 						style={styles.deleteIcon}
 					>
 						<DeleteIcon/>
-					</TouchableOpacity>
+					</TouchableRipple>
 				</View>
 
 				<View
@@ -314,7 +331,14 @@ class CalendarPage extends Component {
 						flexDirection: "row",
 						marginTop: 24
 					}}>
-					<TouchableOpacity
+					<TouchableRipple
+						delayHoverIn={true}
+						delayLongPress={false}
+						delayHoverOut={false}
+						unstable_pressDelay={false}
+						rippleColor="#E5E5E5"
+						rippleContainerBorderRadius={50}
+						borderless={true}
 						style={{
 							width: (screenWidth / 3) - (16 * 2),
 							padding: 10,
@@ -353,9 +377,16 @@ class CalendarPage extends Component {
 							}}>
 							{i18n.t("today")}
 						</Text>
-					</TouchableOpacity>
+					</TouchableRipple>
 
-					<TouchableOpacity
+					<TouchableRipple
+						delayHoverIn={true}
+						delayLongPress={false}
+						delayHoverOut={false}
+						unstable_pressDelay={false}
+						rippleColor="#E5E5E5"
+						rippleContainerBorderRadius={50}
+						borderless={true}
 						style={{
 							width: (screenWidth / 3) - (16 * 2),
 							padding: 10,
@@ -377,9 +408,16 @@ class CalendarPage extends Component {
 							}}>
 							{i18n.t("week")}
 						</Text>
-					</TouchableOpacity>
+					</TouchableRipple>
 
-					<TouchableOpacity
+					<TouchableRipple
+						delayHoverIn={true}
+						delayLongPress={false}
+						delayHoverOut={false}
+						unstable_pressDelay={false}
+						rippleColor="#E5E5E5"
+						rippleContainerBorderRadius={50}
+						borderless={true}
 						style={{
 							width: (screenWidth / 3) - (16 * 2),
 							padding: 10,
@@ -399,7 +437,7 @@ class CalendarPage extends Component {
 							}}>
 							{i18n.t("month")}
 						</Text>
-					</TouchableOpacity>
+					</TouchableRipple>
 				</View>
 
 				<View
@@ -573,14 +611,21 @@ class CalendarPage extends Component {
 												}}>{i18n.t("cancel")}</Text>
 										</TouchableOpacity>
 
-										<TouchableOpacity
+										<TouchableRipple
+											delayHoverIn={true}
+											delayLongPress={false}
+											delayHoverOut={false}
+											unstable_pressDelay={false}
+											rippleColor="#E5E5E5"
+											rippleContainerBorderRadius={50}
+											borderless={true}
 											onPress={() => {
 												if (this.state.range.startDate != null) {												
 													this.setState({
 														fromMonthInputValue: this.getMonth(this.state.range.startDate),
 														fromDayInputValue: this.getDay(this.state.range.startDate),
 														fromYearInputValue: this.getYear(this.state.range.startDate),
-														fromDate: this.state.range.startDate.toString(),
+														fromDate: this.state.range.startDate.toISOString(),
 													});
 												} 
 												
@@ -589,7 +634,7 @@ class CalendarPage extends Component {
 														toMonthInputValue: this.getMonth(this.state.range.endDate),
 														toDayInputValue: this.getDay(this.state.range.endDate),
 														toYearInputValue: this.getYear(this.state.range.endDate),
-														toDate: this.state.range.endDate.toString(),
+														toDate: this.state.range.endDate.toISOString(),
 													})
 												}
 
@@ -606,7 +651,7 @@ class CalendarPage extends Component {
 													fontSize: 14
 												}}
 											>{i18n.t("confirm")}</Text>
-										</TouchableOpacity>
+										</TouchableRipple>
 									</View>
 								</View>
 							</View>
@@ -688,7 +733,14 @@ class CalendarPage extends Component {
 					</TouchableOpacity>
 				</View>
 
-				<TouchableOpacity
+				<TouchableRipple
+					delayHoverIn={true}
+					delayLongPress={false}
+					delayHoverOut={false}
+					unstable_pressDelay={false}
+					rippleColor="#E5E5E5"
+					rippleContainerBorderRadius={50}
+					borderless={true}
 					style={{
 						width: screenWidth - (16 * 2),
 						backgroundColor: "#222222",
@@ -719,7 +771,7 @@ class CalendarPage extends Component {
 						fontWeight: "500",
 						lineHeight: 24
 					}}>{i18n.t("confirm")}</Text>
-				</TouchableOpacity>
+				</TouchableRipple>
 			</View>
 		);
 	}

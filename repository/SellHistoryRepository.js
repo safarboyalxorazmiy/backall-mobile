@@ -481,7 +481,8 @@ class SellHistoryRepository {
               AND DATE(created_date) = '${fromDate}'
             ORDER BY id DESC
             limit 11;`
-			} else if (fromUTCDate > toUTCDate) {
+			} 
+			else if (fromUTCDate > toUTCDate) {
 				fromDateObj.setUTCHours(23, 59, 59, 999); // Set to start of the day in UTC
 				const fromUTCDate = fromDateObj.toISOString().slice(0, 19).replace('T', ' ');
 
@@ -494,7 +495,8 @@ class SellHistoryRepository {
                    AND DATE(created_date) BETWEEN '${toDate}' AND '${fromDate}'
                  ORDER BY id DESC
                  limit 11;`;
-			} else {
+			} 
+			else {
 				query = `SELECT *
                  FROM sell_group
                  WHERE id <= ${lastHistoryId}
@@ -1255,13 +1257,15 @@ class SellHistoryRepository {
                  WHERE DATE(created_date) = '${fromDate}'
                  ORDER BY id DESC
                  LIMIT 1;`
-			} else if (fromUTCDate > toUTCDate) {
+			} 
+			else if (fromUTCDate > toUTCDate) {
 				query = `SELECT *
                  FROM sell_group
                  WHERE DATE(created_date) BETWEEN '${toDate}' AND '${fromDate}'
                  ORDER BY id DESC
                  LIMIT 1;`;
-			} else {
+			} 
+			else {
 				query = `SELECT *
                  FROM sell_group
                  WHERE DATE(created_date) BETWEEN '${fromDate}' AND '${toDate}'
@@ -1311,13 +1315,15 @@ class SellHistoryRepository {
                  WHERE DATE(created_date) = '${fromDate}'
                  ORDER BY ID ASC
                  LIMIT 1;`
-			} else if (fromUTCDate > toUTCDate) {
+			} 
+			else if (fromUTCDate > toUTCDate) {
 				query = `SELECT *
                FROM sell_group
                WHERE DATE(created_date) BETWEEN '${toDate}' AND '${fromDate}'
                ORDER BY ID ASC
                LIMIT 1;`;
-			} else {
+			} 
+			else {
 				query = `SELECT *
                FROM sell_group
                WHERE DATE(created_date) BETWEEN '${fromDate}' AND '${toDate}'
