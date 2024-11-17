@@ -71,6 +71,10 @@
   "november": "Ноябрь",
   "december": "Декабрь",
 
-  "paymentModalTitle": "Месячный абонентский платеж прибыл!"
-
+  "paymentModalTitle": "Месячный абонентский платеж прибыл!",
+  "enterCardDetails": "Введите данные вашей карты",
+  "total": "Общий",
+  "sellState": "Состояние продаж",
+  "day": "kun",
+  "year": "yil"
 }

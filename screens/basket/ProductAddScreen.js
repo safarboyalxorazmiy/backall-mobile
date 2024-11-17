@@ -427,7 +427,7 @@ class ProductAdd extends Component {
 							cursorColor="#222222"
 							style={this.state.brandInputStyle}
 							value={this.state.brandInputValue}
-							placeholder="Brand nomini kiriting"
+							placeholder={i18n.t("enterBrandName")}
 							placeholderTextColor="#AAAAAA"
 
 							onChangeText={this.onChangeBrandInput}

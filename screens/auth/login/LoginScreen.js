@@ -76,7 +76,7 @@ class Login extends Component {
 	};
 
 	render() {
-		const {email, password, loading} = this.state;
+		const {email, password} = this.state;
 		return (
 			<ScrollView contentContainerStyle={styles.container}>
 				<TouchableOpacity

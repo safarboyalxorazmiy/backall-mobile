@@ -71,5 +71,11 @@
   "october": "October",
   "november": "November",
   "december": "December",
-  "paymentModalTitle": "Monthly subscriber payment deadline has arrived!"
+
+  "paymentModalTitle": "Monthly subscriber payment deadline has arrived!",
+  "enterCardDetails": "Karta ma'lumotlarini kiriting",
+  "total": "Jami",
+  "sellState": "Sotuv holati",
+  "day": "kun",
+  "year": "yil"
 }

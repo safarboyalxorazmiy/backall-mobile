@@ -72,6 +72,10 @@
   "november": "ноябрь",
   "december": "декабрь",
 
-  "paymentModalTitle": "Ойлик абонент тўлови муддати келди!"
-  
+  "paymentModalTitle": "Ойлик абонент тўлови муддати келди!",
+  "enterCardDetails": "Карта маълумотларини киритинг",
+  "total": "Жами",
+  "sellState": "Сотув ҳолати",
+  "day": "кун",
+  "year": "йил"
 }

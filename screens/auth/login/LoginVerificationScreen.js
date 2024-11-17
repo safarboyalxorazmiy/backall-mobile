@@ -1,6 +1,5 @@
 import React, {Component, memo} from "react";
 import {StyleSheet, View, Text, TouchableOpacity, TextInput, Dimensions} from "react-native";
-import GreenCircle from "../../../assets/small-green-circle.svg";
 import BlackCircle from "../../../assets/small-black-circle.svg";
 import RedCircle from "../../../assets/small-red-circle.svg"
 import BackspaceIcon from "../../../assets/backspace-icon.svg";
@@ -8,7 +7,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import ApiService from "../../../service/ApiService";
 import TokenService from "../../../service/TokenService";
 
-const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
 class LoginVerificationScreen extends Component {

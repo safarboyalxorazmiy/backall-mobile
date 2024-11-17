@@ -36,7 +36,7 @@ import PaymentForm from "./payment/PaymentForm";
 import { Picker } from '@react-native-picker/picker';
 import { Ionicons } from '@expo/vector-icons';
 import { LineChart } from 'react-native-chart-kit';
-import { loadLocale, setLocale, t } from '../i18n';
+import i18n, { loadLocale, setLocale, t } from '../i18n';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -1281,7 +1281,7 @@ class Home extends Component {
 										strokeWidth: 2 // optional
 									}
 								],
-								legend: ["Sotuv holati"] 
+								legend: [i18n.t("sellState")] 
 							}}
 							width={Dimensions.get("window").width - 16}
 							height={250}

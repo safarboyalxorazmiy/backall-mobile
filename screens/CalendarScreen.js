@@ -1,4 +1,4 @@
-import React, { Component, memo, createRef } from "react";
+import React, { Component, createRef } from "react";
 import {
 	StyleSheet,
 	Text,
@@ -15,19 +15,16 @@ import ActionSheet from 'react-native-actions-sheet';
 
 import { RangeCalendar } from '@ui-kitten/components';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import i18n from '../i18n';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
-
-const MemoizedRangeCalendar = memo(RangeCalendar);
-const MemoizedCalendarIcon = memo(CalendarIcon);
 
 class CalendarPage extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			isModalVisible: false,
 			fromDate: this.getCurrentDateString(),
 			toDate: this.getCurrentDateString(),
 			dateType: "Bugun", // Bugun, Hafta, Oy
@@ -75,8 +72,18 @@ class CalendarPage extends Component {
 	getCurrentMonth() {
 		const date = new Date();
 		const uzbekMonths = [
-			"yanvar", "fevral", "mart", "aprel", "may", "iyun",
-			"iyul", "avgust", "sentabr", "oktabr", "noyabr", "dekabr"
+			i18n.t("january"),
+			i18n.t("february"),
+			i18n.t("march"),
+			i18n.t("april"),
+			i18n.t("may"),
+			i18n.t("june"),
+			i18n.t("july"),
+			i18n.t("august"),
+			i18n.t("september"),
+			i18n.t("october"),
+			i18n.t("november"),
+			i18n.t("december")			
 		];
 		const monthIndex = date.getMonth(); // Returns 0 for January, 11 for December
 		const lowerCaseMonth = uzbekMonths[monthIndex];
@@ -85,6 +92,16 @@ class CalendarPage extends Component {
 
 	getCurrentDay() {
 		const date = new Date();
+		const options = {day: "numeric"};
+		const formattedDate = date.toLocaleDateString("uz-UZ", options);
+
+		const [day] = formattedDate.split(" ");
+		const paddedDay = String(day).padStart(2, "0");
+		return paddedDay;
+	}
+
+	getDay(dateString) {
+		const date = new Date(dateString);
 		const options = {day: "numeric"};
 		const formattedDate = date.toLocaleDateString("uz-UZ", options);
 
@@ -102,22 +119,52 @@ class CalendarPage extends Component {
 		return year;
 	}
 
+	getYear(dateString) {
+		const date = new Date(dateString);
+		const options = {year: "numeric"};
+		const formattedDate = date.toLocaleDateString("uz-UZ", options);
+
+		const [year] = formattedDate.split(" ");
+		return year;
+	}
+
 	getMonth(dateString) {
 		const dateObj = new Date(dateString);
-		const options = {month: "long"};
-		const formattedDate = dateObj.toLocaleDateString("uz-UZ", options);
 
-		const [month] = formattedDate.split(" ");
-		const lowerCaseMonth = month.charAt(0).toLowerCase() + month.slice(1);
+		const monthNamesUzbek = [
+			i18n.t("january"),
+			i18n.t("february"),
+			i18n.t("march"),
+			i18n.t("april"),
+			i18n.t("may"),
+			i18n.t("june"),
+			i18n.t("july"),
+			i18n.t("august"),
+			i18n.t("september"),
+			i18n.t("october"),
+			i18n.t("november"),
+			i18n.t("december")
+		];
 
-		return lowerCaseMonth;
+		return monthNamesUzbek[dateObj.getMonth()];
 	}
+
 
 	getMonthIndexWithName(name) {
 		name = name.toLowerCase();
 		const monthNamesUzbek = [
-			"yanvar", "fevral", "mart", "aprel", "may", "iyun",
-			"iyul", "avgust", "sentabr", "oktyabr", "noyabr", "dekabr"
+			i18n.t("january"),
+			i18n.t("february"),
+			i18n.t("march"),
+			i18n.t("april"),
+			i18n.t("may"),
+			i18n.t("june"),
+			i18n.t("july"),
+			i18n.t("august"),
+			i18n.t("september"),
+			i18n.t("october"),
+			i18n.t("november"),
+			i18n.t("december")
 		];
 
 		const monthIndex = monthNamesUzbek.indexOf(name);
@@ -304,7 +351,7 @@ class CalendarPage extends Component {
 								fontWeight: "500",
 								color: this.state.dateType == "Bugun" ? "#FFF" : "#000"
 							}}>
-							Bugun
+							{i18n.t("today")}
 						</Text>
 					</TouchableOpacity>
 
@@ -328,7 +375,7 @@ class CalendarPage extends Component {
 								fontWeight: "500",
 								color: this.state.dateType == "Hafta" ? "#FFF" : "#000"
 							}}>
-							Hafta
+							{i18n.t("week")}
 						</Text>
 					</TouchableOpacity>
 
@@ -350,7 +397,7 @@ class CalendarPage extends Component {
 								fontWeight: "500",
 								color: this.state.dateType == "Oy" ? "#FFF" : "#000"
 							}}>
-							Oy
+							{i18n.t("month")}
 						</Text>
 					</TouchableOpacity>
 				</View>
@@ -364,7 +411,7 @@ class CalendarPage extends Component {
 						style={{
 							fontFamily: "Gilroy-SemiBold",
 							fontWeight: "600"
-						}}>Davrni tanlang</Text>
+						}}>{i18n.t("choosePeriod")}</Text>
 				</View>
 
 				<View style={{
@@ -374,11 +421,11 @@ class CalendarPage extends Component {
 					flexDirection: "row",
 					justifyContent: "space-between"
 				}}>
-					<Text style={styles.label}>dan</Text>
+					<Text style={styles.label}>{i18n.t("from")}</Text>
 
 					<View style={{display: "flex", flexDirection: "row", gap: 12}}>
 						<TextInput
-							placeholder="kun"
+							placeholder={i18n.t("day").toLocaleLowerCase()}
 							value={this.state.fromDayInputValue}
 							cursorColor={"black"}
 							style={styles.input}
@@ -391,7 +438,7 @@ class CalendarPage extends Component {
 							}}/>
 
 						<TextInput
-							placeholder="oy"
+							placeholder={i18n.t("month").toLocaleLowerCase()}
 							value={this.state.fromMonthInputValue}
 							cursorColor={"black"}
 							style={[styles.input, {width: 66}]}
@@ -407,7 +454,7 @@ class CalendarPage extends Component {
 
 
 						<TextInput
-							placeholder="yil"
+							placeholder={i18n.t("year").toLocaleLowerCase()}
 							value={this.state.fromYearInputValue}
 							cursorColor={"black"}
 							style={styles.input}
@@ -432,16 +479,17 @@ class CalendarPage extends Component {
 							alignItems: "center"
 						}}
 						onPress={() => {
-							const startTime = performance.now();
 							// this.setState({
 							// 	isModalVisible: true,
 							// 	selectingDateType: "FROM"
 							// });
+							this.setState({
+								selectingDateType: "FROM"
+							});
+
 							this.modal.current?.setModalVisible(true);
-							const endTime = performance.now();
-							console.log(`Set state took ${endTime - startTime} milliseconds`);
 						}}>
-						<MemoizedCalendarIcon />
+						<CalendarIcon />
 					</TouchableHighlight>
 				</View>
 
@@ -450,8 +498,7 @@ class CalendarPage extends Component {
 					gestureEnabled={true}
 					indicatorStyle={{
 						width: 100,
-					}}
-					>
+					}}>
 						<View
 							style={{
 								height: screenHeight,
@@ -480,36 +527,15 @@ class CalendarPage extends Component {
 											borderBottomColor: "#CAC4D0",
 											borderBottomWidth: 1
 										}}>
-										<View
-											style={{
-												paddingTop: 16,
-												paddingLeft: 24,
-												paddingBottom: 12,
-												paddingRight: 12
-											}}>
-											<Text
-												style={{
-													fontFamily: "Gilroy-Medium",
-													fontSize: 14,
-													fontWeight: "500",
-													marginBottom: 12
-												}}>2023</Text>
-											<Text
-												style={{
-													fontFamily: "Gilroy-Medium",
-													fontSize: 24,
-													fontWeight: "500"
-												}}>Juma, 17-sen</Text>
-										</View>
 									</View>
 
 
-										<MemoizedRangeCalendar
-											range={this.state.range}
-											onSelect={(nextRange) => {
-												this.setState({ range: nextRange });
-											}}
-										/>
+									<RangeCalendar
+										range={this.state.range}
+										onSelect={(nextRange) => {
+											this.setState({range: nextRange});											
+										}}
+									/>
 
 									{/* <Calendar
 										onDayPress={this.onDayPress}
@@ -533,9 +559,7 @@ class CalendarPage extends Component {
 										}}>
 										<TouchableOpacity
 											onPress={() => {
-												this.setState({
-													isModalVisible: false
-												})
+												this.modal.current?.setModalVisible(false);
 											}}
 											style={{
 												paddingHorizontal: 14,
@@ -546,14 +570,30 @@ class CalendarPage extends Component {
 													color: "#6750A4",
 													fontWeight: "500",
 													fontSize: 14
-												}}>Bekor qilish</Text>
+												}}>{i18n.t("cancel")}</Text>
 										</TouchableOpacity>
 
 										<TouchableOpacity
 											onPress={() => {
-												this.setState({
-													isModalVisible: false
-												})
+												if (this.state.range.startDate != null) {												
+													this.setState({
+														fromMonthInputValue: this.getMonth(this.state.range.startDate),
+														fromDayInputValue: this.getDay(this.state.range.startDate),
+														fromYearInputValue: this.getYear(this.state.range.startDate),
+														fromDate: this.state.range.startDate.toString(),
+													});
+												} 
+												
+												if (this.state.range.endDate != null) {
+													this.setState({
+														toMonthInputValue: this.getMonth(this.state.range.endDate),
+														toDayInputValue: this.getDay(this.state.range.endDate),
+														toYearInputValue: this.getYear(this.state.range.endDate),
+														toDate: this.state.range.endDate.toString(),
+													})
+												}
+
+												this.modal.current?.setModalVisible(false);
 											}}
 											style={{
 												paddingHorizontal: 14,
@@ -565,28 +605,13 @@ class CalendarPage extends Component {
 													fontWeight: "500",
 													fontSize: 14
 												}}
-											>Tasdiqlash</Text>
+											>{i18n.t("confirm")}</Text>
 										</TouchableOpacity>
 									</View>
 								</View>
 							</View>
 						</View>
 				</ActionSheet>
-				{/* <Modal
-					  visible={this.state.isModalVisible}
-						animationType="slide"
-						transparent={true}
-						onRequestClose={() => this.setState({ isModalVisible: false })}>
-					<View style={{
-						position: "absolute",
-						width: screenWidth,
-						height: screenHeight,
-						flex: 1,
-						backgroundColor: "#00000099"
-					}}></View>
-
-					
-				</Modal> */}
 
 				<View style={{
 					marginTop: 26,
@@ -595,7 +620,7 @@ class CalendarPage extends Component {
 					flexDirection: "row",
 					justifyContent: "space-between"
 				}}>
-					<Text style={styles.label}>gacha</Text>
+					<Text style={styles.label}>{i18n.t("to")}</Text>
 
 					<View style={{
 						display: "flex",
@@ -657,14 +682,9 @@ class CalendarPage extends Component {
 							alignItems: "center",
 						}}
 						onPress={() => {
-							this.setState((prevState) => ({
-								isModalVisible: !prevState.isModalVisible,
-								selectingDateType: "TO"
-							}));
-
 							this.modal.current?.setModalVisible(true);
 						}}>
-						<MemoizedCalendarIcon />
+						<CalendarIcon />
 					</TouchableOpacity>
 				</View>
 
@@ -698,7 +718,7 @@ class CalendarPage extends Component {
 						fontFamily: "Gilroy-Medium",
 						fontWeight: "500",
 						lineHeight: 24
-					}}>Tasdiqlash</Text>
+					}}>{i18n.t("confirm")}</Text>
 				</TouchableOpacity>
 			</View>
 		);
@@ -764,4 +784,4 @@ const styles = StyleSheet.create({
 	}
 });
 
-export default memo(CalendarPage);
+export default CalendarPage;
