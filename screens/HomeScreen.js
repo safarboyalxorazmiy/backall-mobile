@@ -97,7 +97,7 @@ class Home extends Component {
 			paymentModalVisible: false,
 			intervalStarted: false,
 			diagramData: [0,0,0,0,0,0],
-			selectedLanguage: loadLocale,
+			selectedLanguage: loadLocale(),
 		}
 
 		this.amountDateRepository = new AmountDateRepository();
@@ -461,119 +461,121 @@ class Home extends Component {
 			this.amountDateRepository.init()
 		]);
 
-		if (!this.state.isLoading) {
+		if (this.state.isLoading == true) {
+			return;
+		}
+
+		try {
+			console.log("LOADING STARTED");
+
+			this.setState({isLoading: true}); // loading started
+
+			// Get the current date
+			const currentDate = new Date();
+
+			// Extract year, month, and day
+			const year = currentDate.getFullYear();
+			const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Month is zero-indexed, so add 1
+			const day = String(currentDate.getDate()).padStart(2, "0");
+
+			// Format the date as yyyy-mm-dd
+			const formattedDate = `${year}-${month}-${day}`;
+
 			try {
-				console.log("LOADING STARTED");
+				let sellAmount = await this.apiService.getSellAmountByDate(
+					formattedDate,
+					this.props.navigation
+				);
 
-				this.setState({isLoading: true}); // loading started
-
-				// Get the current date
-				const currentDate = new Date();
-
-				// Extract year, month, and day
-				const year = currentDate.getFullYear();
-				const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Month is zero-indexed, so add 1
-				const day = String(currentDate.getDate()).padStart(2, "0");
-
-				// Format the date as yyyy-mm-dd
-				const formattedDate = `${year}-${month}-${day}`;
-
-				try {
-					let sellAmount = await this.apiService.getSellAmountByDate(
-						formattedDate,
-						this.props.navigation
-					);
-
-					let profitAmount = await this.apiService.getProfitAmountByDate(
-						formattedDate,
-						this.props.navigation
-					);
-
-					this.setState({
-						sellAmount: sellAmount.amount,
-						profitAmount: profitAmount.amount
-					})
-				} catch (e) {
-				}
-
-
-				try {
-					// STORING CURRENT MONTHLY AMOUNTS
-					let currentDate = new Date()
-					const currentMonth = currentDate.getMonth();
-					await AsyncStorage.setItem("month", currentMonth + "");
-
-					let sellMonthAmount = await this.apiService.getSellMonthAmount(this.props.navigation);
-					let profitMonthAmount = await this.apiService.getProfitMonthAmount(this.props.navigation);
-
-					console.log("sellMonthAmount:: ", sellMonthAmount);
-					console.log("profitMonthAmount:: ", profitMonthAmount);
-					await AsyncStorage.setItem(
-						"month_sell_amount",
-						sellMonthAmount.toString() + ""
-					);
-
-					await AsyncStorage.setItem(
-						"month_profit_amount",
-						profitMonthAmount.toString() + ""
-					);
-				} catch (e) {
-					await AsyncStorage.setItem(
-						"month_sell_amount",
-						0 + ""
-					);
-
-					await AsyncStorage.setItem(
-						"month_profit_amount",
-						0 + ""
-					);
-				}
-
-				let isDownloaded = true;
-
-				isDownloaded = isDownloaded && await this.getLocalProducts();
-				this.setState({spinner: true})
-				isDownloaded = isDownloaded && await this.getGlobalProducts();
-				this.setState({spinner: true})
-				isDownloaded = isDownloaded && await this.getStoreProducts();
-				this.setState({spinner: true})
-				isDownloaded = isDownloaded && await this.getSellGroupsAndHistories();
-				this.setState({spinner: true})
-				isDownloaded = isDownloaded && await this.getSellAmountDate();
-				this.setState({spinner: true})
-				isDownloaded = isDownloaded && await this.getProfitGroupsAndHistories();
-				this.setState({spinner: true})
-				isDownloaded = isDownloaded && await this.getProfitAmountDate();
-				this.setState({spinner: true})
-
-				if (isDownloaded == false) {
-					this.props.navigation.navigate("Login");
-					return;
-				}
-
-				// storing result of product storing
-				await AsyncStorage.setItem("isDownloaded", isDownloaded.toString());
-				console.log("LOADING", isDownloaded.toString());
+				let profitAmount = await this.apiService.getProfitAmountByDate(
+					formattedDate,
+					this.props.navigation
+				);
 
 				this.setState({
-					isLoading: false, // loading finished
-					isDownloaded: isDownloaded.toString()
-				});
-				console.log("LOADING FINISHED");
-
+					sellAmount: sellAmount.amount,
+					profitAmount: profitAmount.amount
+				})
 			} catch (e) {
-				console.log("LOADING ERRORED");
-				console.error(e);
-
-				this.setState({
-					isLoading: false,
-					isDownloaded: "false"
-				});
-				console.log("LOADING FINISHED");
-
-				// Storing result of product storing
-				await AsyncStorage.setItem("isDownloaded", "false");
 			}
+
+
+			try {
+				// STORING CURRENT MONTHLY AMOUNTS
+				let currentDate = new Date()
+				const currentMonth = currentDate.getMonth();
+				await AsyncStorage.setItem("month", currentMonth + "");
+
+				let sellMonthAmount = await this.apiService.getSellMonthAmount(this.props.navigation);
+				let profitMonthAmount = await this.apiService.getProfitMonthAmount(this.props.navigation);
+
+				console.log("sellMonthAmount:: ", sellMonthAmount);
+				console.log("profitMonthAmount:: ", profitMonthAmount);
+				await AsyncStorage.setItem(
+					"month_sell_amount",
+					sellMonthAmount.toString() + ""
+				);
+
+				await AsyncStorage.setItem(
+					"month_profit_amount",
+					profitMonthAmount.toString() + ""
+				);
+			} catch (e) {
+				await AsyncStorage.setItem(
+					"month_sell_amount",
+					0 + ""
+				);
+
+				await AsyncStorage.setItem(
+					"month_profit_amount",
+					0 + ""
+				);
+			}
+
+			let isDownloaded = true;
+
+			isDownloaded = isDownloaded && await this.getLocalProducts();
+			this.setState({spinner: true})
+			isDownloaded = isDownloaded && await this.getGlobalProducts();
+			this.setState({spinner: true})
+			isDownloaded = isDownloaded && await this.getStoreProducts();
+			this.setState({spinner: true})
+			isDownloaded = isDownloaded && await this.getSellGroupsAndHistories();
+			this.setState({spinner: true})
+			isDownloaded = isDownloaded && await this.getSellAmountDate();
+			this.setState({spinner: true})
+			isDownloaded = isDownloaded && await this.getProfitGroupsAndHistories();
+			this.setState({spinner: true})
+			isDownloaded = isDownloaded && await this.getProfitAmountDate();
+			this.setState({spinner: true})
+
+			if (isDownloaded == false) {
+				this.props.navigation.navigate("Login");
+				return;
+			}
+
+			// storing result of product storing
+			await AsyncStorage.setItem("isDownloaded", isDownloaded.toString());
+			console.log("LOADING", isDownloaded.toString());
+
+			this.setState({
+				isLoading: false, // loading finished
+				isDownloaded: isDownloaded.toString()
+			});
+			console.log("LOADING FINISHED");
+
+		} catch (e) {
+			console.log("LOADING ERRORED");
+			console.error(e);
+
+			this.setState({
+				isLoading: false,
+				isDownloaded: "false"
+			});
+			console.log("LOADING FINISHED");
+
+			// Storing result of product storing
+			await AsyncStorage.setItem("isDownloaded", "false");
 		}
 	}
 
@@ -1089,6 +1091,7 @@ class Home extends Component {
 								this.setState({
 									selectedLanguage: itemValue
 								});
+								loadLocale();
 							}}
 							style={{display: "none"}}
 

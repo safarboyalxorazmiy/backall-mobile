@@ -72,6 +72,10 @@
   "september": "Sentabr", 
   "october": "Oktyabr",
   "november": "Noyabr",
-  "december": "Dekabr"
+  "december": "Dekabr",
 
+  "paymentModalTitle": "Oylik abonent to'lovi muddati keldi!",
+  "enterCardDetails": "Karta ma'lumotlarini kiriting",
+  "total": "Jami",
+  
 }

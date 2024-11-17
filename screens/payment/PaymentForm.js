@@ -1,17 +1,14 @@
 import React, {Component, createRef, memo} from 'react';
 import {View, StyleSheet, TouchableOpacity} from 'react-native';
-import {ApplicationProvider, Input, Text, Button} from '@ui-kitten/components';
-import RightArrow from "../../assets/right-arrow.svg";
+import {Input, Text} from '@ui-kitten/components';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Feather from '@expo/vector-icons/Feather';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import ApiService from '../../service/ApiService';
 import {ProgressBar} from '@ui-kitten/components';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import RightArrowLight from "../../assets/right-arrow-light.svg";
 import {ScrollView} from "react-native-gesture-handler";
-import MarqueeText from "./MarqueeText";
+import i18n from '../../i18n';
 
 class PaymentForm extends Component {
 	constructor(props) {
@@ -200,7 +197,7 @@ class PaymentForm extends Component {
 					fontSize: 38,
 					width: 280,
 					marginTop: 100,
-				}}>Oylik abonent to'lovi muddati keldi!</Text>
+				}}>{i18n.t("paymentModalTitle")}</Text>
 
 				{
 					this.state.CLOSE_BUTTON_VISIBLE == true ? (
@@ -295,7 +292,7 @@ class PaymentForm extends Component {
 						size="large"
 						placeholder="XXXX XXXX XXXX XXXX"
 						cursorColor={"white"}
-						label={evaProps => <Text {...evaProps}>Karta ma'lumotlarini kiriting:</Text>}
+						label={evaProps => <Text {...evaProps}>{i18n.t("enterCardDetails")}</Text>}
 						// caption={
 						//   (evaProps) => <Text status="danger">Karta raqam xato.</Text>
 						// }
@@ -431,7 +428,7 @@ class PaymentForm extends Component {
 								color: "white",
 								fontFamily: "Gilroy-Bold",
 								fontSize: 24
-							}}>JAMI</Text>
+							}}>{i18n.t("total")}</Text>
 
 							<View style={{
 								display: "flex",
@@ -448,7 +445,7 @@ class PaymentForm extends Component {
 									color: "white",
 									fontFamily: "Gilroy-Regular",
 									fontSize: 20
-								}}>so’m</Text>
+								}}>{i18n.t("sum")}</Text>
 							</View>
 						</View>
 

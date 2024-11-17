@@ -69,6 +69,8 @@
   "september": "Сентябрь",
   "october": "Октябрь",
   "november": "Ноябрь",
-  "december": "Декабрь"
+  "december": "Декабрь",
+
+  "paymentModalTitle": "Месячный абонентский платеж прибыл!"
 
 }

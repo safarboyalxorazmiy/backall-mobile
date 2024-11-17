@@ -35,7 +35,7 @@
   "sellingProducts": "Сотиладиган маҳсулотлар",
   "enterProductManually": "Маҳсулотни қўлда киритиш",
   "orderPrice": "Буюртма нархи",
-  "сум": "сўм",
+  "sum": "сўм",
   "makeASale": "Сотувни амалга ошириш",
 
   "worth": "Qiymati",
@@ -70,6 +70,8 @@
   "september": "сентябрь",
   "october": "октябрь",
   "november": "ноябрь",
-  "december": "декабрь"
+  "december": "декабрь",
+
+  "paymentModalTitle": "Ойлик абонент тўлови муддати келди!"
   
 }
