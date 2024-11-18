@@ -179,7 +179,6 @@ class Shopping extends Component {
 				await this.loadTop1LocalSellGroups();
 				this.scrollToTop();
 				await AsyncStorage.setItem("shoppingFullyLoaded", "true");	
-				
 			}
 
 			// Getting date removing date
@@ -190,7 +189,8 @@ class Shopping extends Component {
 				console.log("toDate:", this.state.toDate);
 
 				this.setState({
-					loading: true
+					loading: true,
+					localFullyLoaded: false
 				});
 
 				this.setState({
@@ -241,6 +241,8 @@ class Shopping extends Component {
 				this.setState({loading: true});
 				await this.loadLocalSellGroups();
 			}
+
+			this.onEndReached();
 		});
 	}
 
@@ -321,6 +323,7 @@ class Shopping extends Component {
 
 	async loadMore() {	
 		if (await AsyncStorage.getItem("window") != "Shopping") {
+			this.setState({loading: false, localFullyLoaded: false});
 			return;
 		}
 		
@@ -418,6 +421,7 @@ class Shopping extends Component {
 		//.log("loading");
 
 		if (this.state.lastGroupId <= 0) {
+			console.log("this.state.lastGroupId <= 0; returned");
 			this.setState({
 				loading: false,
 				localFullyLoaded: true
@@ -589,7 +593,7 @@ class Shopping extends Component {
 		//.log("onEndReached()");
 		if (this.state.loading) {
 			console.log("Loading true returned")
-			return
+			return;
 		};
 
 		this.loadMore();
@@ -597,6 +601,10 @@ class Shopping extends Component {
 
 	scrollToTop = () => {
 		this.flatListRef.current?.scrollToOffset({animated: true, offset: 0});
+	};
+
+	scrollToEnd = () => {
+		this.flatListRef.current?.scrollToEnd({animated: true});
 	};
 
 	render() {
