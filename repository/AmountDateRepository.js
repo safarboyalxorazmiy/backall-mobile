@@ -271,7 +271,16 @@ class AmountDateRepository {
 
 	async getSellAmountDate() {
 		return new Promise((resolve, reject) => {
-			const selectQuery = `SELECT amount as value FROM sell_amount_date LIMIT 30;`;
+			const selectQuery = `
+				SELECT * 
+				FROM (
+					SELECT id, amount AS value 
+					FROM sell_amount_date 
+					ORDER BY id DESC 
+					LIMIT 30
+				) subquery 
+				ORDER BY id ASC;
+			`;
 			this.db.transaction(tx => {
 				tx.executeSql(selectQuery, [], (tx, results) => {
 					if (results.rows.length > 0) {

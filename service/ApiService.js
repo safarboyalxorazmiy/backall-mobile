@@ -2738,7 +2738,7 @@ return undefined;		}
 			if (response.status == 401) {
 				console.log("unauthorized::" + response.url);
 				await AsyncStorage.setItem("authError", "true");
-				throw new Error("authError");
+				return "authError";
 			}
 
 			const responseBody = await response.json();

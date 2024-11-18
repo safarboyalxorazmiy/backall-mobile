@@ -35,9 +35,8 @@ import DatabaseRepository from "./repository/DatabaseRepository";
 import TokenService from "./service/TokenService";
 import ApiService from "./service/ApiService";
 
-import RightArrowLight from "./assets/right-arrow-light.svg"
 import PaymentForm from "./screens/payment/PaymentForm";
-import i18n, { loadLocale } from './i18n';
+import { loadLocale } from './i18n';
 
 const tokenService = new TokenService();
 
@@ -62,7 +61,6 @@ class App extends Component {
 		this.amountDateRepository = new AmountDateRepository();
 		this.apiService = new ApiService();
 
-		// Bind methods to maintain correct context
 		this.loadCustomFonts = this.loadCustomFonts.bind(this);
 		this.checkInternetStatus = this.checkInternetStatus.bind(this);
 		this.saveData = this.saveData.bind(this);

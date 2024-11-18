@@ -118,6 +118,18 @@ class Shopping extends Component {
 			if (await AsyncStorage.getItem("loadShopping") === "true") {
 				await this.initializeScreen();
 
+				let lastSellGroup = await this.sellHistoryRepository.getLastSellGroup();
+				let lastGroupId = lastSellGroup.id;
+
+				let firstSellGroup = await this.sellHistoryRepository.getFirstSellGroup();
+
+				this.setState({
+					firstGroupGlobalId: firstSellGroup.global_id,
+					lastGroupId: lastGroupId
+				});
+
+				this.onEndReached();
+
 				await AsyncStorage.setItem("loadShopping", "false");
 			}
 
@@ -166,7 +178,8 @@ class Shopping extends Component {
 
 				await this.loadTop1LocalSellGroups();
 				this.scrollToTop();
-				await AsyncStorage.setItem("shoppingFullyLoaded", "true");
+				await AsyncStorage.setItem("shoppingFullyLoaded", "true");	
+				
 			}
 
 			// Getting date removing date
@@ -301,9 +314,6 @@ class Shopping extends Component {
 		this.productRepository = new ProductRepository();
 
 		this.apiService = new ApiService();
-
-		this.onEndReached = _.debounce(this.onEndReached.bind(this), 100);
-		this.flatListRef = React.createRef();
 
 		await this.sellHistoryRepository.init();
 		await this.amountDateRepository.init();
@@ -521,6 +531,10 @@ class Shopping extends Component {
 			const historyDate = created_date.split("T")[0];
 
 			if (historyDate === grouped[0].date) {
+				if (grouped[0].histories[0].id === id) {
+					return;
+				}
+				
 				grouped[0].histories.unshift({
 					id,
 					created_date,

@@ -156,31 +156,31 @@ class DatabaseRepository {
 	}
 
 	async clear() {
-		if (this.db !== null) {
-			try {
-				await this.db.transaction(async (tx) => {
-					await this.executeQueries(tx, [
-						// DROP TABLES
-						`DROP TABLE IF EXISTS profit_amount_date;`,
-						`DROP TABLE IF EXISTS sell_amount_date;`,
+        if (this.db !== null) {
+        try {
+            await this.db.transaction((tx) => {
+                const queries = [
+                `DELETE FROM profit_amount_date;`,
+                `DELETE FROM sell_amount_date;`,
+                `DELETE FROM profit_history_group;`,
+                `DELETE FROM profit_group;`,
+                `DELETE FROM profit_history;`,
+                `DELETE FROM sell_history_group;`,
+                `DELETE FROM sell_group;`,
+                `DELETE FROM sell_history;`,
+                `DELETE FROM store_product;`,
+                `DELETE FROM product;`
+                ];
 
-						`DROP TABLE IF EXISTS profit_history_group;`,
-						`DROP TABLE IF EXISTS profit_group;`,
-						`DROP TABLE IF EXISTS profit_history;`,
-
-						`DROP TABLE IF EXISTS sell_history_group;`,
-						`DROP TABLE IF EXISTS sell_group;`,
-						`DROP TABLE IF EXISTS sell_history;`,
-
-						`DROP TABLE IF EXISTS store_product;`,
-						`DROP TABLE IF EXISTS product;`
-					]);
-				});
-			} catch (error) {
-				console.error('Error initializing database:', error);
-			}
-		}
-	}
+                queries.forEach((query) => {
+                tx.executeSql(query);
+                });
+            });
+            console.log('Database cleared successfully.');
+        } catch (error) { }
+        }
+    }
+    
 
 	getDatabase() {
 		return this.db;

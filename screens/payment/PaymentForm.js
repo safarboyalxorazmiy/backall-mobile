@@ -14,10 +14,10 @@ class PaymentForm extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			cardNumber: "",
-			cardNumberWithoutSpaces: "",
-			expirationDate: "",
-			expirationDateWithoutSlash: "",
+			cardNumber: props.cardNumber || "",
+			cardNumberWithoutSpaces: props.cardNumberWithoutSpaces || "",
+			expirationDate: props.expirationDate || "",
+			expirationDateWithoutSlash: props.expirationDateWithoutSlash || "",
 			code: "",
 
 			loading: false,
@@ -26,7 +26,7 @@ class PaymentForm extends Component {
 			error: false,
 			expirationError: false,
 			cardNumberError: false,
-			cardToken: null,
+			cardToken: props.cardToken || null,
 			CLOSE_BUTTON_VISIBLE: true
 		};
 
@@ -37,7 +37,7 @@ class PaymentForm extends Component {
 		this.apiService = new ApiService();
 	}
 
-	handleChange = (text) => {
+	handleChange = async (text) => {
 		let formattedNumber = text.replace(/\D/g, '').replace(/(.{4})/g, '$1 ').trim();
 		let cardNumberWithoutSpaces = formattedNumber.replace(/\s/g, '');
 
@@ -45,6 +45,10 @@ class PaymentForm extends Component {
 			cardNumber: formattedNumber,
 			cardNumberWithoutSpaces: cardNumberWithoutSpaces
 		});
+
+		await AsyncStorage.setItem("cardNumber", formattedNumber);
+		await AsyncStorage.setItem("cardNumberWithoutSpaces", cardNumberWithoutSpaces);
+
 		if (formattedNumber.length === 19) {
 			this.expirationDateInput.current.focus();
 		}
@@ -56,14 +60,14 @@ class PaymentForm extends Component {
 			? `${cleanedText.substring(0, 2)}/${cleanedText.substring(2, 4)}`
 			: cleanedText;
 
-		const formattedExpirationDateWithoutSlash = cleanedText.length > 2
-			? `${cleanedText.substring(0, 2)}${cleanedText.substring(2, 4)}`
-			: cleanedText;
 
 		// console.log(text.length)
 		this.setState({
 			expirationDate: formattedExpirationDate
 		});
+
+		await AsyncStorage.setItem("expirationDate", formattedExpirationDate);
+		await AsyncStorage.setItem("expirationDateWithoutSlash", cleanedText);
 
 		if (cleanedText.length === 4) {
 			this.setState({
@@ -134,6 +138,7 @@ class PaymentForm extends Component {
 				cardNumberError: false,
 				expirationError: false
 			});
+			await AsyncStorage.setItem("cardToken", result.token);
 			this.codeInput.current.focus();
 			this.scrollView.current?.scrollTo({x: 0, y: 400, animated: true});
 		}
@@ -147,24 +152,29 @@ class PaymentForm extends Component {
 				error: true
 			});
 		} else {
-			try {
-				console.log("token, code", this.state.cardToken, code);
+			console.log("token, code", this.state.cardToken, code);
 
-				await this.apiService.verifyPaymentRequest(
-					this.state.cardToken, code
-				);
+			let result = await this.apiService.verifyPaymentRequest(
+				this.state.cardToken, code
+			);
 
+			if (result == "authError") {
 				await this.props.completePayment();
-			} catch (error) {
-				if (error == "authError") {
-					await this.props.completePayment();
-				} else {
-					this.setState({
-						error: true,
-						codeError: true
-					});
-				}
 			}
+
+			if (result) {
+				await this.props.completePayment();
+
+				// Tolov qilindi endi bu oynani boshqa ochish shartmas
+				await AsyncStorage.setItem("paymentScreenOpened", "false");
+				await AsyncStorage.setItem("isNewUser", "false");	
+				return;
+			}
+
+			this.setState({
+				error: true,
+				codeError: true
+			});
 		}
 	}
 
@@ -184,13 +194,16 @@ class PaymentForm extends Component {
 
 	render() {
 		return (
-			<ScrollView ref={this.scrollView} style={{
-				width: "100%",
-				height: "100%",
-				backgroundColor: "#181926",
-				paddingHorizontal: 16
-			}} onScroll={(e => {
-			})}>
+			<ScrollView   
+				keyboardShouldPersistTaps="always" 
+				contentContainerStyle={{ flexGrow: 1 }} 
+				ref={this.scrollView} 
+				style={{
+					width: "100%",
+					// height: "100%",
+					backgroundColor: "#181926",
+					paddingHorizontal: 16
+				}}>
 				<Text style={{
 					color: "white",
 					fontFamily: "Gilroy-SemiBold",
@@ -204,6 +217,15 @@ class PaymentForm extends Component {
 						<TouchableOpacity
 							activeOpacity={1}
 							onPress={async () => {
+
+								if (await AsyncStorage.getItem("isNewUser") === "true") {
+									this.setState({
+										CLOSE_BUTTON_VISIBLE: false
+									});
+
+									return;
+								}
+
 								let tryCount = parseInt(
 									await AsyncStorage.getItem("paymentTryCount")
 								);
@@ -231,10 +253,10 @@ class PaymentForm extends Component {
 										CLOSE_BUTTON_VISIBLE: false
 									})
 
+									
 									// Agar masheniklik qilib offline ishlataman desa
 									// screenga kirganda payment oynasini qayta ochadigan qilib qo'yamiz
 									await AsyncStorage.setItem("paymentScreenOpened", "true");
-
 									return;
 								} else {
 									// Kunni oshirish.
@@ -260,6 +282,8 @@ class PaymentForm extends Component {
 									if (await AsyncStorage.getItem("lastPaymentShownHour") != hour.toString()) {
 										await AsyncStorage.setItem("lastPaymentShownHour", hour.toString());
 									}
+
+									await AsyncStorage.setItem("paymentScreenOpened", "false");
 
 									this.props.closeModal();
 								}
@@ -300,7 +324,8 @@ class PaymentForm extends Component {
 
 						textContentType='creditCardNumber'
 						placeholderTextColor={'#929cae'}
-
+						selectionColor={"#FFF"}
+						textStyle={{color: "#FFF"}}
 						style={{backgroundColor: 'black', color: "#FFF"}}
 						value={this.state.cardNumber}
 						accessoryRight={() => {
@@ -343,6 +368,7 @@ class PaymentForm extends Component {
 						ref={this.expirationDateInput}
 						placeholder="MM/YY"
 						placeholderTextColor={"#929cae"}
+						textStyle={{color: "#FFF"}}
 						status={this.state.expirationError ? "danger" : this.state.cardToken != null ? "success" : "default"}
 						value={this.state.expirationDate}
 						onChangeText={async (text) => {
@@ -399,6 +425,7 @@ class PaymentForm extends Component {
 					{
 						this.state.cardToken != null ? (
 							<Input
+							textStyle={{color: "#FFF"}}
 								ref={this.codeInput}
 								label={evaProps => <Text {...evaProps}>Kodni kiriting:</Text>}
 								placeholder="XXXX"

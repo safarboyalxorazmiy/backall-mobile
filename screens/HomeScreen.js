@@ -56,7 +56,6 @@ class Home extends Component {
 			shoppingCardColors: ["#D7FF01", "#D7FF01"],
 			profitAmount: 0,
 			sellAmount: 0,
-			notAllowed: "",
 			spinner: false,
 			isConnected: null,
 			isLoading: false,
@@ -97,7 +96,7 @@ class Home extends Component {
 			paymentModalVisible: false,
 			intervalStarted: false,
 			diagramData: [0,0,0,0,0,0],
-			selectedLanguage: loadLocale(),
+			selectedLanguage: loadLocale()
 		}
 
 		this.amountDateRepository = new AmountDateRepository();
@@ -180,6 +179,8 @@ class Home extends Component {
 			let isLoggedIn = await this.tokenService.checkTokens();
 			if (!isLoggedIn) {
 				this.setState({spinner: false});
+				this.databaseRepository.clear();
+				await AsyncStorage.clear();
 				navigation.navigate("Login");
 			}
 
@@ -196,6 +197,8 @@ class Home extends Component {
 
 					if (!this.state.isConnected) {
 						this.setState({spinner: false});
+						this.databaseRepository.clear();
+						await AsyncStorage.clear();		
 						navigation.navigate("Login");
 						return;
 					}
@@ -212,9 +215,6 @@ class Home extends Component {
 				}
 
 				await this.getAmountInfo();
-
-				let notAllowed = await AsyncStorage.getItem("not_allowed");
-				this.setState({notAllowed: notAllowed});
 			}
 		}
 
@@ -226,6 +226,26 @@ class Home extends Component {
 		await this.amountDateRepository.init();
 		await this.getAmountInfo();
 		//************************************
+
+		// !IMPORTANT 🔭******************************
+		// Agar yangi user bo'lsa payment oynasini ochadigan qilib qo'yamiz
+
+		// Agar masheniklik qilib offline ishlataman desa
+		// screenga kirganda payment oynasini qayta ochadigan qilib qo'yamiz
+		// await AsyncStorage.setItem("paymentScreenOpened", "true");
+
+		if (await AsyncStorage.getItem("isNewUser") == "true" || await AsyncStorage.getItem("paymentScreenOpened") == "true") {
+			await AsyncStorage.setItem("paymentScreenOpened", "true");
+			this.setState({
+				paymentModalVisible: true,
+				cardNumber: await AsyncStorage.getItem("cardNumber"),
+				cardNumberWithoutSpaces: await AsyncStorage.getItem("cardNumberWithoutSpaces"),
+				expirationDate: await AsyncStorage.getItem("expirationDate"),
+				expirationDateWithoutSlash: await AsyncStorage.getItem("expirationDateWithoutSlash"),
+				cardToken: await AsyncStorage.getItem("cardToken"),
+			});
+			return;
+		}
 
 		// !IMPORTANT 🔭******************************
 		// Tolov adadaovn knopkani go'rsatish.
@@ -287,6 +307,8 @@ class Home extends Component {
 				if (!isLoggedIn) {
 					console.log("FOCUS TOKEN CHECKING FAILED");
 					this.setState({spinner: false});
+					this.databaseRepository.clear();
+					await AsyncStorage.clear();	
 					navigation.navigate("Login");
 				}
 
@@ -308,6 +330,8 @@ class Home extends Component {
 
 						if (!this.state.isConnected) {
 							this.setState({spinner: false});
+							this.databaseRepository.clear();
+							await AsyncStorage.clear();			
 							navigation.navigate("Login");
 							return;
 						}
@@ -324,9 +348,6 @@ class Home extends Component {
 					}
 
 					await this.getAmountInfo();
-
-					let notAllowed = await AsyncStorage.getItem("not_allowed");
-					this.setState({notAllowed: notAllowed});
 				}
 			}
 			//************************************
@@ -348,6 +369,20 @@ class Home extends Component {
 				this.setState({diagramData: sellAmountDateData});
 			}
 			//************************************
+
+			// !IMPORTANT 🔭******************************
+			// If that is new user show payment modal untill he pays
+			if (await AsyncStorage.getItem("isNewUser") == "true") {
+				this.setState({
+					paymentModalVisible: true,
+					cardNumber: await AsyncStorage.getItem("cardNumber"),
+					cardNumberWithoutSpaces: await AsyncStorage.getItem("cardNumberWithoutSpaces"),
+					expirationDate: await AsyncStorage.getItem("expirationDate"),
+					expirationDateWithoutSlash: await AsyncStorage.getItem("expirationDateWithoutSlash"),
+					cardToken: await AsyncStorage.getItem("cardToken"),
+				});
+				return;
+			}
 
 			// !IMPORTANT 🔭******************************
 			// Tolov adadovn knopkani go'rsatish. Orqa fonda tolov adilganmi yo'qmi tekshirib durish.
@@ -385,7 +420,6 @@ class Home extends Component {
 		this.setState({
 			profitAmount: 0,
 			sellAmount: 0,
-			notAllowed: "",
 			spinner: false,
 			isConnected: null,
 			isLoading: false,
@@ -549,6 +583,8 @@ class Home extends Component {
 			this.setState({spinner: true})
 
 			if (isDownloaded == false) {
+				this.databaseRepository.clear();
+				await AsyncStorage.clear();
 				this.props.navigation.navigate("Login");
 				return;
 			}
@@ -564,9 +600,6 @@ class Home extends Component {
 			console.log("LOADING FINISHED");
 
 		} catch (e) {
-			console.log("LOADING ERRORED");
-			console.error(e);
-
 			this.setState({
 				isLoading: false,
 				isDownloaded: "false"
@@ -1163,17 +1196,25 @@ class Home extends Component {
 					{
 						this.state.notPayed ? (
 							<TouchableRipple
-						style={{
-							width: "100%",
-							height: 180,
-							backgroundColor: "#D2D7DA",
-							borderRadius: 0,
-						}}
-						onPress={() => {
-							this.setState({paymentModalVisible: true});
-						}}
-						rippleColor="#FFF"
-					>
+								style={{
+									width: "100%",
+									height: 180,
+									backgroundColor: "#D2D7DA",
+									borderRadius: 0,
+								}}
+								onPress={async () => {
+									await AsyncStorage.setItem("paymentScreenOpened", "true");
+
+									this.setState({
+										paymentModalVisible: true,
+										cardNumber: await AsyncStorage.getItem("cardNumber"),
+										cardNumberWithoutSpaces: await AsyncStorage.getItem("cardNumberWithoutSpaces"),
+										expirationDate: await AsyncStorage.getItem("expirationDate"),
+										expirationDateWithoutSlash: await AsyncStorage.getItem("expirationDateWithoutSlash"),
+										cardToken: await AsyncStorage.getItem("cardToken"),
+									});
+								}}
+								rippleColor="#FFF">
 						<View style={{ flex: 1, justifyContent: "space-between" }}>
 							<View
 								style={{
@@ -1357,7 +1398,6 @@ class Home extends Component {
 									this.setState({
 										profitAmount: 0,
 										sellAmount: 0,
-										notAllowed: "",
 										spinner: false,
 										isConnected: null,
 										isLoading: false,
@@ -1432,86 +1472,16 @@ class Home extends Component {
 					</View>
 					
 				</ActionSheet>
-
-				{/* Role error */}
-				<Modal
-					visible={this.state.notAllowed === "true"}
-					animationIn={"slideInUp"}
-					animationOut={"slideOutDown"}
-					animationInTiming={200}
-					transparent={true}>
-					<View style={{
-						position: "absolute",
-						width: "150%",
-						height: screenHeight,
-						flex: 1,
-						alignItems: "center",
-						justifyContent: "center",
-						backgroundColor: "#00000099",
-						left: -50,
-						right: -50,
-						top: 0
-					}}></View>
-
-					<Animatable.View
-						animation="bounceInUp" delay={0} iterationCount={1} direction="alternate"
-						style={{
-							height: screenHeight,
-							display: "flex",
-							alignItems: "center",
-							justifyContent: "center"
-						}}>
-						<View style={{
-							width: screenWidth - (16 * 2),
-							maxWidth: 343,
-							marginLeft: "auto",
-							marginRight: "auto",
-							flex: 1,
-							alignItems: "center",
-							justifyContent: "flex-end",
-							marginBottom: 120
-						}}>
-							<View style={{
-								width: "100%",
-								padding: 20,
-								borderRadius: 12,
-								backgroundColor: "#fff",
-							}}>
-								<Text style={{
-									fontFamily: "Gilroy-Regular",
-									fontSize: 18
-								}}>Siz sotuvchi emassiz..</Text>
-								<TouchableOpacity
-									style={{
-										display: "flex",
-										alignItems: "center",
-										height: 55,
-										justifyContent: "center",
-										backgroundColor: "#222",
-										width: "100%",
-										borderRadius: 12,
-										marginTop: 22
-									}}
-									onPress={async () => {
-										this.setState({notAllowed: "false"});
-										await AsyncStorage.setItem("not_allowed", "false")
-									}}>
-									<Text
-										style={{
-											fontFamily: "Gilroy-Bold",
-											fontSize: 18,
-											color: "#fff",
-										}}>Tushunarli</Text>
-								</TouchableOpacity>
-							</View>
-						</View>
-					</Animatable.View>
-				</Modal>
 				
 				<Modal
 					visible={this.state.paymentModalVisible} 
-					style={{width: "101%", position: "absolute", left: -20, top: -18}}>
+					// transparent={true}
+					style={{width: "101%", height: screenHeight}}
+					>
 
+				<View
+					style={{width: "101%", height: screenHeight, position: "relative", left: -20, top: 0, overflow: "scroll"}}
+					>
 					<PaymentForm
 						completePayment={async () => {
 							await this.completePayment()
@@ -1519,7 +1489,14 @@ class Home extends Component {
 						closeModal={() => {
 							this.closePaymentModal();
 						}}
+						cardNumber={this.state.cardNumber}
+						cardNumberWithoutSpaces={this.state.cardNumberWithoutSpaces}
+						expirationDate={this.state.expirationDate}
+						expirationDateWithoutSlash={this.state.expirationDateWithoutSlash}
+						cardToken={this.state.cardToken}
+
 					/>
+				</View>
 
 				</Modal>
 			</ScrollView>
