@@ -376,11 +376,13 @@ class Profit extends Component {
 				});
 
 				console.log("Profit mounted");
-
-				this.setState({loading: true});
-				await this.loadLocalProfitGroups();
-
 				await AsyncStorage.setItem("profitFullyLoaded", "true");
+
+				await this.loadLocalProfitGroups();
+				this.setState({
+					localFullyLoaded: false,
+					loading: false
+				});
 			}
 
 			// Getting date removing date
@@ -391,7 +393,8 @@ class Profit extends Component {
 				console.log("toDate:", this.state.toDate);
 
 				this.setState({
-					loading: true
+					loading: true,
+					localFullyLoaded: false
 				});
 
 				this.setState({
@@ -442,11 +445,13 @@ class Profit extends Component {
 				this.setState({loading: true});
 				await this.loadLocalProfitGroups();
 			}
+
+			this.onEndReached();
 		});
 	}
 
 	async initializeScreen() {
-		this.setState({
+		this.state = {
 			profitHistory: [],
 			groupedHistories: [],
 			currentMonthTotal: 0,
@@ -466,7 +471,11 @@ class Profit extends Component {
 			lastProfitHistoryGroupSize: 10,
 			lastProfitAmountDatePage: 0,
 			lastProfitAmountDateSize: 10,
-		})
+
+			loading: false,
+			globalFullyLoaded: false,
+			localFullyLoaded: false
+		}
 
 		this.productRepository = new ProductRepository();
 		this.profitHistoryRepository = new ProfitHistoryRepository();
@@ -475,6 +484,11 @@ class Profit extends Component {
 	}
 
 	async loadMore() {
+		if (await AsyncStorage.getItem("window") != "Profit") {
+			this.setState({loading: false, localFullyLoaded: false});
+			return;
+		}
+
 		if (this.state.loading) {
 			console.log("already loading");
 			return;
