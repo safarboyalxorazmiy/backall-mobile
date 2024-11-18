@@ -6,7 +6,7 @@ import BackspaceIcon from "../../../assets/backspace-icon.svg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ApiService from "../../../service/ApiService";
 import TokenService from "../../../service/TokenService";
-import { v4 as uuidv4 } from 'uuid';
+import uuid from 'react-native-uuid';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -27,7 +27,7 @@ class RegisterVerificationScreen extends Component {
 	}
 
 	generateIdempotencyKey() {
-    return uuidv4();
+    return uuid.v4();
 	}
 
 	handleKeyPress = async (key) => {
@@ -84,6 +84,8 @@ class RegisterVerificationScreen extends Component {
 				await AsyncStorage.setItem("loadShopping", "true");
 				await AsyncStorage.setItem("loadBasket", "true");
 				await AsyncStorage.setItem("isDownloaded", "false");
+
+				await AsyncStorage.setItem("isNewUser", true + "");
 
 				await navigation.navigate("Home");
 			} else {
