@@ -482,7 +482,7 @@ class ProductAdd extends Component {
 								<Dropdown
 									data={amountData}
 									labelField="label"
-									valueField="label"
+									valueField="value"
 									value={this.state.amountType}
 									onChange={this.handleAmountTypeSelect}
 

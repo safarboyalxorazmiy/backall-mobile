@@ -36,7 +36,7 @@
   "sum": "sum",
   "makeASale": "Make a sale",
   
-  "profitHistory": "Foyda tarixi",
+  "profitHistory": "Profit History",
   
   "worth": "Worth",
   "enterWorth": "Enter number",
@@ -50,7 +50,7 @@
   "monthlyProfit": "Monthly profit",
 
   "pureProfit": "Net profit",
-  "profitOfProducts": "Remaining profit from the product",
+  "profitOfProducts": "Profit of products",
   
   "confirm": "Confirm",
   "from": "from",
@@ -73,10 +73,10 @@
   "november": "November",
   "december": "December",
 
-  "paymentModalTitle": "Monthly subscriber payment deadline has arrived!",
-  "enterCardDetails": "Karta ma'lumotlarini kiriting",
-  "total": "Jami",
-  "sellState": "Sotuv holati",
-  "day": "kun",
-  "year": "yil"
+  "paymentModalTitle": "The monthly subscription fee deadline has arrived!",
+  "enterCardDetails": "Enter card details",
+  "total": "Total",
+  "sellState": "Sales status",
+  "day": "day",
+  "year": "year"
 }
