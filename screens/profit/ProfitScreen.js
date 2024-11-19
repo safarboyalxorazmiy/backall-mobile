@@ -82,209 +82,6 @@ class Profit extends Component {
 		return `${day}, ${weekday}`;
 	};
 
-	// Save not downloaded profit data
-	// PROFIT
-	async getProfitGroupNotDownloaded() {
-		console.log("GETTING PROFIT NOT DOWNLOADED GROUPS ⏳⏳⏳");
-
-		let profitGroups = [];
-		let size = this.state.lastProfitGroupsSize;
-		let page = this.state.lastProfitGroupsPage;
-
-		while (true) {
-			let response;
-			try {
-				response = await this.apiService.getProfitGroupsNotDownloaded(page, size, this.props.navigation);
-			} catch (error) {
-				console.error("Error fetching getProfitGroups():", error);
-				this.setState({
-					lastSize: size,
-					lastPage: page
-				});
-
-				return false; // Indicate failure
-			}
-
-			if (!response || !response.content || response.content.length === 0) {
-				console.log(profitGroups);
-				break; // Indicate success and exit the loop
-			}
-
-			for (const profitGroup of response.content) {
-				try {
-					await this.profitHistoryRepository.createProfitGroupWithAllValues(
-						profitGroup.createdDate,
-						profitGroup.profit,
-						profitGroup.id,
-						true
-					);
-				} catch (error) {
-					console.error("Error getProfitGroups:", error);
-					// Continue with next product
-					continue;
-				}
-			}
-
-			page++;
-			profitGroups.push(response);
-		}
-
-		return profitGroups.length != 0;
-	}
-
-	async getProfitHistoriesNotDownloaded() {
-		console.log("GETTING PROFIT HISTORIES NOT DOWNLOADED ⏳⏳⏳");
-
-		let profitHistories = [];
-		let size = this.state.lastProfitHistoriesSize;
-		let page = this.state.lastProfitHistoriesPage;
-
-		while (true) {
-			let response;
-			try {
-				response = await this.apiService.getProfitHistoriesNotDownloaded(page, size, this.props.navigation);
-			} catch (error) {
-				console.error("Error fetching global products:", error);
-				this.setState({
-					lastSize: size,
-					lastPage: page
-				});
-
-				return false; // Indicate failure
-			}
-
-			if (!response || !response.content || response.content.length === 0) {
-				console.log(profitHistories);
-				break; // Indicate success and exit the loop
-			}
-
-			for (const profitHistory of response.content) {
-				console.log("PROFIT HISTORY FROM BACKEND::", profitHistory);
-				try {
-					let localProductsById = await this.productRepository.findProductsByGlobalId(profitHistory.productId);
-
-					console.log("LOCAL PRODUCTS FOUND::", localProductsById);
-
-					await this.profitHistoryRepository.createProfitHistoryWithAllValues(
-						localProductsById[0].id,
-						profitHistory.id,
-						profitHistory.count,
-						profitHistory.countType,
-						profitHistory.profit,
-						profitHistory.createdDate,
-						true
-					);
-				} catch (error) {
-					console.error("Error getProfitHistories:", error);
-					continue;
-				}
-			}
-
-			page++;
-			profitHistories.push(response);
-		}
-
-		return profitHistories.length != 0;
-	}
-
-	async getProfitHistoryGroupNotDownloaded() {
-		console.log("GETTING PROFIT HISTORY GROUP ⏳⏳⏳")
-		let profitHistoryGroup = [];
-		let size = this.state.lastProfitHistoryGroupSize;
-		let page = this.state.lastProfitHistoryGroupPage;
-
-		while (true) {
-			let response;
-			try {
-				response = await this.apiService.getProfitHistoryGroupNotDownloaded(page, size, this.props.navigation);
-			} catch (error) {
-				console.error("Error fetching global products:", error);
-				this.setState({
-					lastSize: size,
-					lastPage: page
-				});
-
-				return false; // Indicate failure
-			}
-
-			if (!response || !response.content || response.content.length === 0) {
-				console.log(profitHistoryGroup);
-				break; // Indicate success and exit the loop
-			}
-
-			for (const profitHistoryGroup of response.content) {
-				let profitGroupId = await this.profitHistoryRepository.findProfitGroupByGlobalId(profitHistoryGroup.profitGroupId);
-				let profitHistoryId = await this.profitHistoryRepository.findProfitHistoryByGlobalId(profitHistoryGroup.profitHistoryId);
-
-				try {
-					await this.profitHistoryRepository.createProfitHistoryGroupWithAllValues(
-						profitHistoryId[0].id,
-						profitGroupId[0].id,
-						profitHistoryGroup.id,
-						true
-					);
-				} catch (error) {
-					console.error("Error getProfitHistoryGroup:", error);
-					// Continue with next product
-					continue;
-				}
-			}
-
-			page++;
-			profitHistoryGroup.push(response);
-		}
-
-		return profitHistoryGroup.length != 0;
-	}
-
-	async getProfitAmountDateNotDownloaded() {
-		console.log("GETTING PROFIT AMOUNT DATE NOT DOWNLOADED ⏳⏳⏳");
-
-		let profitAmountDate = [];
-		let size = this.state.lastProfitAmountDateSize;
-		let page = this.state.lastProfitAmountDatePage;
-
-		while (true) {
-			let response;
-			try {
-				response = await this.apiService.getProfitAmountDateNotDownloaded(page, size, this.props.navigation);
-			} catch (error) {
-				console.error("Error fetching global products:", error);
-				this.setState({
-					lastSize: size,
-					lastPage: page
-				});
-
-				return false; // Indicate failure
-			}
-
-			if (!response || !response.content || response.content.length === 0) {
-				console.log(profitAmountDate);
-				break; // Indicate success and exit the loop
-			}
-
-			for (const profitAmountDate of response.content) {
-				try {
-					await this.amountDateRepository.createProfitAmountWithAllValues(
-						profitAmountDate.amount,
-						profitAmountDate.date,
-						profitAmountDate.id,
-						true
-					);
-				} catch (error) {
-					console.error("Error getProfitAmountDate:", error);
-					// Continue with next product
-					continue;
-				}
-			}
-
-			page++;
-			profitAmountDate.push(response);
-		}
-
-		return profitAmountDate.length != 0;
-	}
-
 	async componentDidMount() {
 		await AsyncStorage.setItem("window", "Profit");
 
@@ -306,7 +103,7 @@ class Profit extends Component {
 		}
 
 		let lastProfitGroup = await this.profitHistoryRepository.getLastProfitGroup();
-		let lastGroupId = lastProfitGroup.id;
+		let lastGroupId = lastProfitGroup.id || 0;
 
 		let firstProfitGroup = await this.profitHistoryRepository.getFirstProfitGroup();
 
@@ -360,7 +157,7 @@ class Profit extends Component {
 				await this.getDateInfo();
 
 				let lastProfitGroup = await this.profitHistoryRepository.getLastProfitGroup();
-				let lastGroupId = lastProfitGroup.id;
+				let lastGroupId = lastProfitGroup.id || 0;
 
 				if ((lastGroupId - 1000000) > 0) {
 					await this.profitHistoryRepository.deleteByGroupIdLessThan(lastGroupId - 1000000);
@@ -410,7 +207,7 @@ class Profit extends Component {
 					await this.profitHistoryRepository.getLastProfitHistoryGroupByDate(
 						this.state.fromDate, this.state.toDate
 					);
-				let lastGroupId = lastGroup.id;
+				let lastGroupId = lastGroup.id || 0;
 
 				this.setState({
 					firstGroupGlobalId: firstProfitGroup.global_id,
@@ -428,7 +225,7 @@ class Profit extends Component {
 			// reloading after removing date
 			else if (this.state.prevFromDate != null) {
 				let lastProfitGroup = await this.profitHistoryRepository.getLastProfitGroup();
-				let lastGroupId = lastProfitGroup.id;
+				let lastGroupId = lastProfitGroup.id || 0;
 
 				let firstProfitGroup = await this.profitHistoryRepository.getFirstProfitGroup();
 
@@ -572,7 +369,7 @@ class Profit extends Component {
 			this.setState(prevState => ({
 				profitHistory: [...prevState.profitHistory, ...response.content],
 				groupedHistories: grouped,
-				firstGroupGlobalId: response.content[0].id,
+				firstGroupGlobalId: response.content[0].id || 0,
 			}));
 		} catch (error) {
 			console.error("Error fetching global products:", error);

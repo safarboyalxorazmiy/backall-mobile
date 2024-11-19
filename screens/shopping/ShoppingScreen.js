@@ -92,7 +92,7 @@ class Shopping extends Component {
 		}
 
 		let lastSellGroup = await this.sellHistoryRepository.getLastSellGroup();
-		let lastGroupId = lastSellGroup.id;
+		let lastGroupId = lastSellGroup.id || 0;
 
 		let firstSellGroup = await this.sellHistoryRepository.getFirstSellGroup();
 
@@ -119,7 +119,7 @@ class Shopping extends Component {
 				await this.initializeScreen();
 
 				let lastSellGroup = await this.sellHistoryRepository.getLastSellGroup();
-				let lastGroupId = lastSellGroup.id;
+				let lastGroupId = lastSellGroup.id || 0;
 
 				let firstSellGroup = await this.sellHistoryRepository.getFirstSellGroup();
 
@@ -162,7 +162,7 @@ class Shopping extends Component {
 				await this.getDateInfo();
 
 				let lastSellGroup = await this.sellHistoryRepository.getLastSellGroup();
-				let lastGroupId = lastSellGroup.id;
+				let lastGroupId = lastSellGroup.id || 0;
 
 				if ((lastGroupId - 1000000) > 0) {
 					await this.sellHistoryRepository.deleteByGroupIdLessThan(lastGroupId - 1000000);
@@ -206,7 +206,7 @@ class Shopping extends Component {
 					await this.sellHistoryRepository.getLastSellHistoryGroupByDate(
 						this.state.fromDate, this.state.toDate
 					);
-				let lastGroupId = lastGroup.id;
+				let lastGroupId = lastGroup.id || 0;
 
 				this.setState({
 					firstGroupGlobalId: firstSellGroup.global_id,
@@ -224,7 +224,7 @@ class Shopping extends Component {
 			// reloading after removing date
 			else if (this.state.prevFromDate != null) {
 				let lastSellGroup = await this.sellHistoryRepository.getLastSellGroup();
-				let lastGroupId = lastSellGroup.id;
+				let lastGroupId = lastSellGroup.id || 0;
 
 				let firstSellGroup = await this.sellHistoryRepository.getFirstSellGroup();
 
@@ -535,7 +535,7 @@ class Shopping extends Component {
 			const historyDate = created_date.split("T")[0];
 
 			if (historyDate === grouped[0].date) {
-				if (grouped[0].histories[0].id === id) {
+				if ((grouped[0].histories[0].id || 0) === id) {
 					return;
 				}
 				
