@@ -190,13 +190,10 @@ class Shopping extends Component {
 
 				this.setState({
 					loading: true,
-					localFullyLoaded: false
-				});
-
-				this.setState({
+					localFullyLoaded: false,
 					groupedHistories: [],
 					sellingHistory: []
-				})
+				});
 
 				let firstSellGroup = await this.sellHistoryRepository.getFirstSellGroupByDate(
 					this.state.fromDate,

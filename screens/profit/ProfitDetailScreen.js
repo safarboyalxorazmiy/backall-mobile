@@ -29,9 +29,12 @@ class ProfitDetail extends Component {
 
 	async componentDidMount() {
 		const {navigation} = this.props;
+		await AsyncStorage.setItem("window", "ProfitDetail");
 
 		await this.getDetails();
 		navigation.addListener("focus", async () => {
+			await AsyncStorage.setItem("window", "ProfitDetail");
+
 			this.setState({
 				groupId: null,
 				profitHistoryDetail: [],

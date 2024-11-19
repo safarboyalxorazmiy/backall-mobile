@@ -31,6 +31,7 @@ const ProfitItem = ({history, navigation}) => {
 			key={history.id}
 			style={styles.history}
 			onPress={async () => {
+				await AsyncStorage.setItem("window", "ProfitDetail");
 				let historyId = history.id + "";
 
 				console.log(historyId);

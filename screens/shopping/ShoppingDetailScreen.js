@@ -36,9 +36,12 @@ class ShoppingDetail extends Component {
 
 	async componentDidMount() {
 		const {navigation} = this.props;
+		await AsyncStorage.setItem("window", "ShoppingDetail");
 
 		await this.getDetails();
 		navigation.addListener("focus", async () => {
+			await AsyncStorage.setItem("window", "ShoppingDetail");
+
 			this.setState({
 				sellGroupId: null,
 				sellHistoryDetail: [],

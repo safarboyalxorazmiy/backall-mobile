@@ -32,6 +32,7 @@ const HistoryItem = ({history, navigation}) => {
 			key={history.id}
 			style={styles.history}
 			onPress={async () => {
+				await AsyncStorage.setItem("window", "ShoppingDetail");
 				let historyId = history.id + "";
 
 				console.log(historyId);
