@@ -2746,7 +2746,16 @@ return undefined;		}
 				return undefined;
 			}
 
-			return response;
+			const result = await response.text();
+
+			// Check if the result is a valid boolean
+			if (result === 'true') {
+				return true;
+			} else if (result === 'false') {
+				return false;
+			} else {
+				return undefined;
+			}
 		} catch (error) {
 			throw error;
 		}

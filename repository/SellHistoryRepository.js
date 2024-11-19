@@ -57,7 +57,6 @@ class SellHistoryRepository {
 
 	async createSellGroup(amount) {
 		let currentDate = new Date();
-		const localDate = new Date(currentDate.getTime() - (currentDate.getTimezoneOffset() * 60000)).toISOString();
 		try {
 			const query = `
           INSERT INTO sell_group (created_date, global_id, amount, saved)
@@ -66,7 +65,7 @@ class SellHistoryRepository {
 
 			// Execute the query
 			await this.db.transaction(async (tx) => {
-				await tx.executeSql(query, [localDate, amount]);
+				await tx.executeSql(query, [currentDate.toISOString(), amount]);
 			});
 
 			console.log("Sell group created successfully.");
@@ -182,7 +181,9 @@ class SellHistoryRepository {
 	async createSellHistory(product_id, count, count_type, selling_price) {
 		try {
 			let created_date = new Date();
-			const localDate = new Date(created_date.getTime() - (created_date.getTimezoneOffset() * 60000)).toISOString();
+			
+			console.log("Timezone offset: " + created_date.getTimezoneOffset());
+			
 			const query = `
           INSERT INTO sell_history (product_id,
                                     count,
@@ -203,7 +204,7 @@ class SellHistoryRepository {
 							count,
 							count_type,
 							selling_price,
-							localDate
+							created_date.toISOString()
 						],
 						async (_, result) => {
 							console.log('Sell history created successfully.');
@@ -211,7 +212,7 @@ class SellHistoryRepository {
 							console.log(await this.getAll());
 							console.log("=================");
 
-							let lastIdOfSellHistory = await this.getLastIdOfSellHistory(product_id, localDate);
+							let lastIdOfSellHistory = await this.getLastIdOfSellHistory(product_id, created_date.toISOString());
 							console.log(lastIdOfSellHistory);
 							resolve(lastIdOfSellHistory.id);
 						},
