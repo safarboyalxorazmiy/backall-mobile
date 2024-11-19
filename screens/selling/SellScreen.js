@@ -22,10 +22,10 @@ import ProfitHistoryRepository from "../../repository/ProfitHistoryRepository";
 import AmountDateRepository from "../../repository/AmountDateRepository";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import TrashIcon from "../../assets/trash-icon.svg";
-import TrashIconBlack from "../../assets/trash-icon-black.svg";
 import * as Animatable from "react-native-animatable";
-import {activateKeepAwake, activateKeepAwakeAsync, deactivateKeepAwake} from 'expo-keep-awake';
+import {activateKeepAwakeAsync, deactivateKeepAwake} from 'expo-keep-awake';
 import { TouchableRipple } from 'react-native-paper';
+import DeleteIcon from "../../assets/delete-icon.svg";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -362,16 +362,30 @@ class Sell extends Component {
 							Sotiladigan mahsulotlar
 						</Text>
 
-						<TouchableOpacity
+						<TouchableRipple
+							delayHoverIn={true}
+							delayLongPress={false}
+							delayHoverOut={false}
+							unstable_pressDelay={false}
+							rippleColor="#E5E5E5"
+							rippleContainerBorderRadius={50}
+							borderless={true}
 							style={{
-								paddingRight: 8
+								backgroundColor: "#F5F5F7",
+								paddingVertical: 10,
+								paddingHorizontal: 10,
+								borderRadius: 8,
 							}}
-							onPressIn={() => {
+							onPress={() => {
 								// OPEN UTILIZATION MODAL
+								if (this.state.isUtilizationModalVisible == true) {
+									return;
+								}
+
 								this.setState({isUtilizationModalVisible: true});
 							}}>
-							<TrashIconBlack/>
-						</TouchableOpacity>
+								<DeleteIcon />
+						</TouchableRipple>
 					</View>
 
 					<TextInput
@@ -403,12 +417,18 @@ class Sell extends Component {
 						keyExtractor={keyExtractor}
 					/>
 
-					<TouchableOpacity
+					<TouchableRipple
+						delayHoverIn={true}
+						delayLongPress={false}
+						delayHoverOut={false}
+						unstable_pressDelay={false}
+						rippleColor="#E5E5E5"
+						rippleContainerBorderRadius={50}
+						borderless={true}
 						style={styles.productAddButton}
-						onPress={this.toggleModal}
-					>
+						onPress={this.toggleModal}>
 						<Text style={styles.productAddButtonText}>Mahsulotni qo’lda kiritish</Text>
-					</TouchableOpacity>
+					</TouchableRipple>
 
 					<View style={styles.footer}>
 						<View
@@ -848,10 +868,15 @@ class Sell extends Component {
 						visible={this.state.isUtilizationModalVisible}
 						animationType="slide"
 						style={{}}
+						onRequestClose={() => {
+							this.setState({isUtilizationModalVisible: false})
+						}}
 						transparent={true}>
 						<TouchableOpacity
 							activeOpacity={1}
-							onPress={this.toggleModal}>
+							onPress={() => {
+								this.setState({isUtilizationModalVisible: false})
+							}}>
 							<View style={{
 								position: "absolute",
 								width: screenWidth,
@@ -927,8 +952,12 @@ class Sell extends Component {
 											autoCorrect={false}
 
 											onChangeText={async (value) => {
+												this.setState({
+													productNameInputValue: value
+												});
+
 												let text = value;
-												if (text.length > 1) {
+												if (text.length < 1) {
 													this.setState({
 														recommenderProducts: [],
 														isQuantityInputFocused: false,
@@ -1138,7 +1167,14 @@ class Sell extends Component {
 											value={this.state.priceInputValue}/>
 									</View>
 
-									<TouchableOpacity
+									<TouchableRipple
+										delayHoverIn={true}
+										delayLongPress={false}
+										delayHoverOut={false}
+										unstable_pressDelay={false}
+										rippleColor="#E5E5E5"
+										rippleContainerBorderRadius={50}
+										borderless={true}
 										style={styles.modalButton}
 										onPress={() => {
 											let selectedProduct = this.state.selectedProduct;
@@ -1248,7 +1284,7 @@ class Sell extends Component {
 										}}>
 										<Text
 											style={styles.modalButtonText}>Utilizatsiya qilish</Text>
-									</TouchableOpacity>
+									</TouchableRipple>
 								</View>
 							</View>
 						</View>
