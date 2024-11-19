@@ -2741,15 +2741,12 @@ return undefined;		}
 				return "authError";
 			}
 
-			const responseBody = await response.json();
-
-			console.log(responseBody);
 
 			if (!response.ok) {
 				return undefined;
 			}
 
-			return responseBody;
+			return response;
 		} catch (error) {
 			throw error;
 		}

@@ -9,6 +9,7 @@ import {ProgressBar} from '@ui-kitten/components';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {ScrollView} from "react-native-gesture-handler";
 import i18n from '../../i18n';
+import { TouchableRipple } from 'react-native-paper';
 
 class PaymentForm extends Component {
 	constructor(props) {
@@ -214,7 +215,14 @@ class PaymentForm extends Component {
 
 				{
 					this.state.CLOSE_BUTTON_VISIBLE == true ? (
-						<TouchableOpacity
+						<TouchableRipple
+							delayHoverIn={true}
+							delayLongPress={false}
+							delayHoverOut={false}
+							unstable_pressDelay={false}
+							rippleColor="#E5E5E5"
+							rippleContainerBorderRadius={50}
+							borderless={true}
 							activeOpacity={1}
 							onPress={async () => {
 
@@ -302,7 +310,7 @@ class PaymentForm extends Component {
 								borderRadius: 50
 							}}>
 							<AntDesign name="close" size={24} color="white"/>
-						</TouchableOpacity>
+						</TouchableRipple>
 					) : null
 				}
 
