@@ -68,7 +68,7 @@ class SellHistoryRepository {
 				await tx.executeSql(query, [currentDate.toISOString(), amount]);
 			});
 
-			console.log("Sell group created successfully.");
+			console.log("Sell group created successfully. Day:", currentDate.getDate(), currentDate.toISOString());
 
 			const lastSellHistoryGroup = await this.getLastSellGroup();
 			return lastSellHistoryGroup.id;
@@ -479,7 +479,7 @@ class SellHistoryRepository {
             SELECT *
             FROM sell_group
             WHERE id <= ${lastHistoryId}
-              AND DATE(created_date) = '${fromDate}'
+              AND DATE(created_date) == '${fromDate}'
             ORDER BY id DESC
             limit 11;`
 			} 
@@ -970,7 +970,6 @@ class SellHistoryRepository {
 			});
 
 			if (!result || !result.rows || result.rows.length === 0) {
-				console.log('No sell history found for groupId:', groupId);
 				return [];
 			}
 
@@ -1173,7 +1172,6 @@ class SellHistoryRepository {
 		}
 
 		if (sellHistoryGroups.length === 0) {
-			console.log("No sell history groups found to delete.");
 			return false;
 		}
 
@@ -1253,9 +1251,10 @@ class SellHistoryRepository {
 		try {
 			let query;
 			if (toDate == fromDate) {
+				console.log(fromDate);
 				query = `SELECT *
                  FROM sell_group
-                 WHERE DATE(created_date) = '${fromDate}'
+                 WHERE DATE(created_date) == '${fromDate}'
                  ORDER BY id DESC
                  LIMIT 1;`
 			} 
@@ -1286,7 +1285,6 @@ class SellHistoryRepository {
 			});
 
 			if (!result || !result.rows || !result.rows._array || result.rows._array.length === 0) {
-				console.error("No sell history found for the specified date range.");
 				return null; // Return null or handle the case when no records are found
 			}
 
@@ -1313,8 +1311,8 @@ class SellHistoryRepository {
 			if (toDate == fromDate) {
 				query = `SELECT *
                  FROM sell_group
-                 WHERE DATE(created_date) = '${fromDate}'
-                 ORDER BY ID ASC
+                 WHERE DATE(created_date) == '${fromDate}'
+                 ORDER BY ID DESC
                  LIMIT 1;`
 			} 
 			else if (fromUTCDate > toUTCDate) {
@@ -1355,8 +1353,7 @@ class SellHistoryRepository {
 			return rows;
 		}
 		catch (error) {
-			console.error("Error getFirstSellGroupByDate:", error);
-			throw error;
+			return null;
 		}
 	}
 }

@@ -42,6 +42,8 @@
   "addToBasket": "Добавить в корзину",
 
   "sellingHistory": "История продаж",
+  "profitHistory": "История преимуществ",
+
   "choosePeriod": "Выберите период",
   "selledProducts": "Проданные продукты",
   "monthlyIncome": "Месячный доход",
@@ -70,11 +72,27 @@
   "october": "Октябрь",
   "november": "Ноябрь",
   "december": "Декабрь",
+  
+  "monday": "понедельник",
+  "tuesday": "вторник",
+  "wednesday": "среда",
+  "thursday": "четверг",
+  "friday": "пятница",
+  "saturday": "суббота",
+  "sunday": "воскресенье",
 
   "paymentModalTitle": "Пришло время ежемесячной абонентской платы!",
   "enterCardDetails": "Введите данные вашей карты",
   "total": "Общий",
   "sellState": "Состояние продаж",
   "day": "день",
-  "year": "год"
+  "year": "год",
+  
+  "bugunIncome": "Сегодняшний доход",
+  "oyIncome": "Ежемесячный доход",
+  "haftaIncome": "Еженедельный доход",
+  "bugunProfit": "Сегодняшняя прибыль",
+  "oyProfit": "Ежемесячная прибыль",
+  "haftaProfit": "Еженедельная прибыль",
+  "clearEverythingAndLogout": "Очистить все и выйти"
 }

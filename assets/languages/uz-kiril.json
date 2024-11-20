@@ -72,10 +72,26 @@
   "november": "ноябрь",
   "december": "декабрь",
 
+  "monday": "Душанба",
+  "tuesday": "Сешанба",
+  "wednesday": "Chorshanba",
+  "thursday": "Payshanba",
+  "friday": "Жума",
+  "saturday": "Шанба",
+  "sunday": "Якшанба",
+
   "paymentModalTitle": "Ойлик абонент тўлови муддати келди!",
   "enterCardDetails": "Карта маълумотларини киритинг",
   "total": "Жами",
   "sellState": "Сотув ҳолати",
   "day": "кун",
-  "year": "йил"
+  "year": "йил",
+      
+  "bugunIncome": "Бугунги кирим",
+  "oyIncome": "Ойлик кирим",
+  "haftaIncome": "Ҳафталик кирим",
+  "bugunProfit": "Бугунги фойда",
+  "oyProfit": "Ойлик фойда",
+  "haftaProfit": "Ҳафталик фойда",
+  "clearEverythingAndLogout": "Ҳаммасини тозалаш ва чиқиш"
 }

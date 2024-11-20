@@ -1465,7 +1465,7 @@ class Home extends Component {
 											fontSize: 18,
 											color: "#D93E3C",
 										}}>
-										Hammasini tozalash va chiqish
+										{i18n.t("clearEverythingAndLogout")}
 									</Text>
 								</View>
 							</TouchableOpacity>

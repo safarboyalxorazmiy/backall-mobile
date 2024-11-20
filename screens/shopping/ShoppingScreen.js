@@ -17,6 +17,7 @@ import ApiService from "../../service/ApiService";
 import HistoryGroup from "./HistoryGroup";
 import ShoppingHeader from "./ShoppingHeader";
 import _ from 'lodash';
+import i18n from '../../i18n';
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -88,11 +89,14 @@ class Shopping extends Component {
 		let lastStoredMonth = parseInt(await AsyncStorage.getItem("month"));
 
 		if (currentMonth === lastStoredMonth) {
-			this.setState({thisMonthSellAmount: thisMonthSellAmount});
+			this.setState({
+				thisMonthSellAmount: thisMonthSellAmount,
+				incomeTitle: i18n.t("oyIncome")
+			});
 		}
 
 		let lastSellGroup = await this.sellHistoryRepository.getLastSellGroup();
-		let lastGroupId = lastSellGroup.id || 0;
+		let lastGroupId = lastSellGroup.id;
 
 		let firstSellGroup = await this.sellHistoryRepository.getFirstSellGroup();
 
@@ -119,13 +123,14 @@ class Shopping extends Component {
 				await this.initializeScreen();
 
 				let lastSellGroup = await this.sellHistoryRepository.getLastSellGroup();
-				let lastGroupId = lastSellGroup.id || 0;
+				let lastGroupId = lastSellGroup.id;
 
 				let firstSellGroup = await this.sellHistoryRepository.getFirstSellGroup();
 
 				this.setState({
 					firstGroupGlobalId: firstSellGroup.global_id,
-					lastGroupId: lastGroupId
+					lastGroupId: lastGroupId,
+					incomeTitle: i18n.t("oyIncome")
 				});
 
 				this.onEndReached();
@@ -141,7 +146,10 @@ class Shopping extends Component {
 			let lastStoredMonth = parseInt(await AsyncStorage.getItem("month"));
 
 			if (currentMonth === lastStoredMonth) {
-				this.setState({thisMonthSellAmount: thisMonthSellAmount});
+				this.setState({
+					thisMonthSellAmount: thisMonthSellAmount,
+					incomeTitle: i18n.t("oyIncome")
+				});
 			}
 
 			// If there is no history get histories
@@ -162,7 +170,7 @@ class Shopping extends Component {
 				await this.getDateInfo();
 
 				let lastSellGroup = await this.sellHistoryRepository.getLastSellGroup();
-				let lastGroupId = lastSellGroup.id || 0;
+				let lastGroupId = lastSellGroup.id;
 
 				if ((lastGroupId - 1000000) > 0) {
 					await this.sellHistoryRepository.deleteByGroupIdLessThan(lastGroupId - 1000000);
@@ -195,6 +203,33 @@ class Shopping extends Component {
 					sellingHistory: []
 				});
 
+				let amount = 
+					await this.amountDateRepository.getSumSellAmountByDate(this.state.fromDate, this.state.toDate);
+				let dateType = await AsyncStorage.getItem("dateType");
+
+				if (dateType == "" || dateType == null) {
+					this.setState({
+						incomeTitle: i18n.t("oyIncome")
+					});
+				} else {
+					this.setState({
+						incomeTitle: i18n.t(dateType + "Income")
+					});
+				}
+
+				if (amount == null || amount.length < 0 || amount[0] == null || amount[0].total_amount == null) {
+					this.setState({
+						loading: false,
+						thisMonthSellAmount: 0,
+					});
+
+					return;
+				}
+
+				this.setState({
+					thisMonthSellAmount: amount[0].total_amount
+				});
+
 				let firstSellGroup = await this.sellHistoryRepository.getFirstSellGroupByDate(
 					this.state.fromDate,
 					this.state.toDate
@@ -203,7 +238,7 @@ class Shopping extends Component {
 					await this.sellHistoryRepository.getLastSellHistoryGroupByDate(
 						this.state.fromDate, this.state.toDate
 					);
-				let lastGroupId = lastGroup.id || 0;
+				let lastGroupId = lastGroup.id;
 
 				this.setState({
 					firstGroupGlobalId: firstSellGroup.global_id,
@@ -221,7 +256,7 @@ class Shopping extends Component {
 			// reloading after removing date
 			else if (this.state.prevFromDate != null) {
 				let lastSellGroup = await this.sellHistoryRepository.getLastSellGroup();
-				let lastGroupId = lastSellGroup.id || 0;
+				let lastGroupId = lastSellGroup.id;
 
 				let firstSellGroup = await this.sellHistoryRepository.getFirstSellGroup();
 
@@ -230,7 +265,8 @@ class Shopping extends Component {
 					sellingHistory: [],
 					firstGroupGlobalId: firstSellGroup.global_id,
 					lastGroupId: lastGroupId,
-					prevFromDate: null
+					prevFromDate: null,
+					incomeTitle: i18n.t("oyIncome")
 				});
 
 				//.log("Shopping mounted");
@@ -269,13 +305,21 @@ class Shopping extends Component {
 	formatDate = (dateString) => {
 		const date = new Date(dateString);
 		const options = {day: "numeric", month: "long", weekday: "long"};
-		const formattedDate = date.toLocaleDateString("uz", options);
+		
+		const formattedDate = date.toLocaleDateString("en", options);
 
 		let [weekday, day] = formattedDate.split(", ");
 
 		weekday = weekday.charAt(0).toUpperCase() + weekday.slice(1);
+		
+		month = i18n.t(day.split(" ")[0].toLocaleLowerCase());
+		monthNameWithNumber = month.charAt(0).toUpperCase() + month.slice(1) + " " + day.split(" ")[1];
+		day = monthNameWithNumber;
+		weekday = i18n.t(weekday.toLocaleLowerCase());
+
 		return `${day}, ${weekday}`;
 	};
+
 
 	// Bu method bizga screenni stateini holatini boshlang'ich holatga tushurib berish uchun yozildi.
 	async initializeScreen() {
@@ -305,7 +349,8 @@ class Shopping extends Component {
 
 			loading: false,
 			globalFullyLoaded: false,
-			localFullyLoaded: false
+			localFullyLoaded: false,
+			incomeTitle: ""
 		});
 
 		this.sellHistoryRepository = new SellHistoryRepository();
@@ -372,7 +417,12 @@ class Shopping extends Component {
 			let lastDate, lastAmount;
 
 			for (const history of response.content) {
-				const date = history.createdDate.split("T")[0];
+				if (history == null) {
+					continue;
+				}
+
+				const currentDate = new Date(history.created_date);
+				const date = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`;
 				let group = grouped.find(group => group.date === date);
 
 				if (!group) {
@@ -382,7 +432,7 @@ class Shopping extends Component {
 				}
 
 				group.histories.push({
-					id: history.id + 10000000,
+					id: (history.id) + 10000000,
 					created_date: history.createdDate,
 					amount: history.amount
 				});
@@ -451,7 +501,9 @@ class Shopping extends Component {
 			let lastAmount = 0;
 
 			for (const history of sellHistories) {
-				const date = history.created_date.split("T")[0];
+				const currentDate = new Date(history.created_date);
+				const date = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`;
+
 				let groupIndex = grouped.findIndex(group => group.date === date);
 
 				if (groupIndex === -1) {
@@ -466,6 +518,7 @@ class Shopping extends Component {
 				}
 
 				if (lastDate !== date) {
+					console.log(date)
 					lastAmount = await this.amountDateRepository.getSellAmountInfoByDate(date).catch(() => 0);
 					lastDate = date;
 				}
@@ -521,7 +574,7 @@ class Shopping extends Component {
 		try {
 			const sellHistories = await this.sellHistoryRepository.getTop1SellGroup();
 
-			if (!sellHistories[0]) {
+			if (sellHistories[0] == null) {
 				return false;
 			}
 
@@ -529,10 +582,12 @@ class Shopping extends Component {
 
 			//.log(grouped[0])
 			const {id, created_date, amount} = sellHistories[0];
-			const historyDate = created_date.split("T")[0];
+			
+			const currentDate = new Date(created_date);
+			const historyDate = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`;
 
-			if (historyDate === grouped[0].date) {
-				if ((grouped[0].histories[0].id || 0) === id) {
+			if (historyDate === grouped[0].date) { 
+				if ((grouped[0].histories[0].id) === id) {
 					return;
 				}
 				
@@ -576,9 +631,6 @@ class Shopping extends Component {
 				groupedHistories: groupedCopy
 			});
 
-			const endTime = performance.now();
-			//.log(`Execution time: ${endTime - startTime} milliseconds`);
-
 			return true;
 		} catch (error) {
 			//.error('Error fetching sell histories:', error);
@@ -621,6 +673,7 @@ class Shopping extends Component {
 						ListHeaderComponent={
 							<ShoppingHeader
 								navigation={this.props.navigation}
+								incomeTitle={this.state.incomeTitle}
 								calendarInputContent={this.state.calendarInputContent}
 								thisMonthSellAmount={this.state.thisMonthSellAmount}
 							/>

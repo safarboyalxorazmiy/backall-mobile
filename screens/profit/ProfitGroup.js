@@ -233,7 +233,7 @@ export default memo(
 		return (
 			prevProps.item.dateInfo === nextProps.item.dateInfo &&
 			prevProps.item.histories.length - 1 === nextProps.item.histories.length 
-		)  || nextProps.item.calendar === true;
+		);
 	}
 	
 	//&& nextProps.item.histories[0].saved === false 

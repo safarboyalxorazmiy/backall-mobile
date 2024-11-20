@@ -887,7 +887,6 @@ class ProfitHistoryRepository {
 			});
 
 			if (!result || !result.rows || result.rows.length === 0) {
-				console.log('No profit history found for groupId:', groupId);
 				return [];
 			}
 
@@ -899,7 +898,6 @@ class ProfitHistoryRepository {
 				let profitHistoryInfo = await this.getProfitHistoryInfoById(historyGroupLinked.history_id);
 
 				if (!profitHistoryInfo || profitHistoryInfo.length === 0) {
-					console.log('No profit history info found for history ID:', historyGroupLinked.history_id);
 					continue;
 				}
 
@@ -907,7 +905,6 @@ class ProfitHistoryRepository {
 				let product = await this.productRepository.getProductNameAndBrandById(currentProfitHistoryInfo.product_id);
 
 				if (!product) {
-					console.log('No product found for product ID:', currentProfitHistoryInfo.product_id);
 					continue;
 				}
 
@@ -1092,7 +1089,6 @@ class ProfitHistoryRepository {
 		}
 
 		if (profitHistoryGroups.length === 0) {
-			console.log("No profit history groups found to delete.");
 			return false;
 		}
 
@@ -1237,7 +1233,6 @@ class ProfitHistoryRepository {
 			});
 
 			if (!result || !result.rows || !result.rows._array || result.rows._array.length === 0) {
-				console.error("No profit history found for the specified date range.");
 				return null; // Return null or handle the case when no records are found
 			}
 

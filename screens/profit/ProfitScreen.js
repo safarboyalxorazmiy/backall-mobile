@@ -15,6 +15,7 @@ import ApiService from "../../service/ApiService";
 import ProfitGroup from "./ProfitGroup";
 import _ from "lodash";
 import ProfitHeader from "./ProfitHeader";
+import i18n from '../../i18n';
 
 class Profit extends Component {
 	constructor(props) {
@@ -74,11 +75,18 @@ class Profit extends Component {
 	formatDate = (dateString) => {
 		const date = new Date(dateString);
 		const options = {day: "numeric", month: "long", weekday: "long"};
-		const formattedDate = date.toLocaleDateString("uz", options);
+		
+		const formattedDate = date.toLocaleDateString("en", options);
 
 		let [weekday, day] = formattedDate.split(", ");
 
 		weekday = weekday.charAt(0).toUpperCase() + weekday.slice(1);
+		
+		month = i18n.t(day.split(" ")[0].toLocaleLowerCase());
+		monthNameWithNumber = month.charAt(0).toUpperCase() + month.slice(1) + " " + day.split(" ")[1];
+		day = monthNameWithNumber;
+		weekday = i18n.t(weekday.toLocaleLowerCase());
+
 		return `${day}, ${weekday}`;
 	};
 
@@ -87,6 +95,10 @@ class Profit extends Component {
 
 		if (await AsyncStorage.getItem("loadProfit") === "true") {
 			await this.initializeScreen();
+
+			this.setState({
+				incomeTitle: i18n.t("oyIncome")
+			})
 
 			await AsyncStorage.setItem("loadProfit", "false");
 		}
@@ -99,7 +111,10 @@ class Profit extends Component {
 		let lastStoredMonth = parseInt(await AsyncStorage.getItem("month"));
 
 		if (currentMonth === lastStoredMonth) {
-			this.setState({thisMonthProfitAmount: thisMonthProfitAmount});
+			this.setState({
+				thisMonthProfitAmount: thisMonthProfitAmount,
+				incomeTitle: i18n.t("oyIncome")
+			});
 		}
 
 		let lastProfitGroup = await this.profitHistoryRepository.getLastProfitGroup();
@@ -191,13 +206,37 @@ class Profit extends Component {
 
 				this.setState({
 					loading: true,
-					localFullyLoaded: false
-				});
-
-				this.setState({
+					localFullyLoaded: false,
 					groupedHistories: [],
 					profitHistory: []
-				})
+				});
+				
+				let amount = 
+					await this.amountDateRepository.getSumProfitAmountByDate(this.state.fromDate, this.state.toDate);
+				let dateType = await AsyncStorage.getItem("dateType");
+
+				if (dateType == "" || dateType == null) {
+					this.setState({
+						incomeTitle: i18n.t("oyProfit")
+					});
+				} else {
+					this.setState({
+						incomeTitle: i18n.t(dateType + "Profit")
+					});
+				}
+
+				if (amount == null || amount.length < 0 || amount[0].total_amount == null) {
+					this.setState({
+						loading: false,
+						thisMonthSellAmount: 0,
+					});
+
+					return;
+				}
+
+				this.setState({
+					thisMonthSellAmount: amount[0].total_amount
+				});
 
 				let firstProfitGroup = await this.profitHistoryRepository.getFirstProfitGroupByDate(
 					this.state.fromDate,
@@ -243,7 +282,15 @@ class Profit extends Component {
 				await this.loadLocalProfitGroups();
 			}
 
+			
+
 			this.onEndReached();
+
+			this.setState({
+				loading: false
+			});
+
+			return;
 		});
 	}
 
@@ -271,7 +318,8 @@ class Profit extends Component {
 
 			loading: false,
 			globalFullyLoaded: false,
-			localFullyLoaded: false
+			localFullyLoaded: false,
+			incomeTitle: ""
 		}
 
 		this.productRepository = new ProductRepository();
@@ -336,7 +384,8 @@ class Profit extends Component {
 			let lastDate, lastAmount;
 
 			for (const history of response.content) {
-				const date = history.createdDate.split("T")[0];
+				const currentDate = new Date(history.created_date);
+				const date = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`;
 				let group = grouped.find(group => group.date === date);
 
 				if (!group) {
@@ -349,7 +398,7 @@ class Profit extends Component {
 					id: history.id,
 					created_date: history.createdDate,
 					profit: history.profit,
-					saved: false
+					calendar: false
 				});
 
 				if (lastDate !== date) {
@@ -412,7 +461,8 @@ class Profit extends Component {
 			let lastAmount = 0;
 
 			for (const history of profitHistories) {
-				const date = history.created_date.split("T")[0];
+				const currentDate = new Date(history.created_date);
+				const date = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`;
 				let groupIndex = grouped.findIndex(group => group.date === date);
 
 				if (groupIndex === -1) {
@@ -435,7 +485,7 @@ class Profit extends Component {
 					id: history.id,
 					created_date: history.created_date,
 					profit: history.profit,
-					saved: true
+					calendar: true
 				});
 
 				grouped[groupIndex].totalAmount = lastAmount;
@@ -446,13 +496,13 @@ class Profit extends Component {
 				...group,
 				histories: group.histories.map(history => ({
 					...history,
-					saved: false
+					calendar: false
 				}))
 			}));
 
 			const lastGroup = grouped[grouped.length - 1];
 			if (lastGroup) {
-				groupedCopy[groupedCopy.length - 1].histories[0].saved = true;
+				groupedCopy[groupedCopy.length - 1].histories[0].calendar = true;
 			}
 
 			const startTime = performance.now();
@@ -491,14 +541,16 @@ class Profit extends Component {
 
 			console.log(grouped[0])
 			const {id, created_date, amount} = profitHistories[0];
-			const historyDate = created_date.split("T")[0];
+			const currentDate = new Date(created_date);
+			const historyDate = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`;
+
 
 			if (historyDate === grouped[0].date) {
 				grouped[0].histories = [{
 					id,
 					created_date,
 					amount,
-					saved: true
+					calendar: true
 				}, ...grouped[0].histories];
 			} else {
 				const formattedDate = this.formatDate(historyDate);
@@ -520,9 +572,9 @@ class Profit extends Component {
 			const lastItem = groupedCopy.pop();
 
 			groupedCopy.forEach(group => {
-				if (group.histories[0].saved) {
+				if (group.histories[0].calendar) {
 					group.histories.forEach(history => {
-						history.saved = false;
+						history.calendar = false;
 					});
 				}
 			});
@@ -545,7 +597,7 @@ class Profit extends Component {
 
 	async onEndReached() {
 		console.log("onEndReached()");
-		if (!this.state.loading) {
+		if (this.state.loading) {
 			await this.loadMore();
 		}
 	}
@@ -570,6 +622,7 @@ class Profit extends Component {
 
 					ListHeaderComponent={() => (
 						<ProfitHeader
+							incomeTitle={this.state.incomeTitle}
 							calendarInputContent={this.state.calendarInputContent}
 							navigation={this.props.navigation}
 							thisMonthProfitAmount={this.state.thisMonthProfitAmount}

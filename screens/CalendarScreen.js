@@ -299,7 +299,7 @@ class CalendarPage extends Component {
 						<BackIcon/>
 					</TouchableRipple>
 
-					<Text style={styles.title}>Sotilgan mahsulotlar</Text>
+					<Text style={styles.title}>{i18n.t("selledProducts")}</Text>
 
 					<TouchableRipple
 						delayHoverIn={true}
@@ -571,7 +571,7 @@ class CalendarPage extends Component {
 									<RangeCalendar
 										range={this.state.range}
 										onSelect={(nextRange) => {
-											this.setState({range: nextRange});											
+											this.setState({range: nextRange, dateType: ""});
 										}}
 									/>
 
@@ -762,6 +762,8 @@ class CalendarPage extends Component {
 						)
 
 						await AsyncStorage.setItem("window", this.state.calendarFromPage);
+						await AsyncStorage.setItem("dateType", this.state.dateType.toLocaleLowerCase());
+						console.log(this.state.dateType.toLocaleLowerCase())
 						navigation.navigate(this.state.calendarFromPage);
 					}}>
 					<Text style={{

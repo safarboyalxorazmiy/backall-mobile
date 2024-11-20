@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { Text, TouchableOpacity, View, StyleSheet, Dimensions } from 'react-native';
+import { Text, View, StyleSheet, Dimensions } from 'react-native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CalendarIcon from "../../assets/calendar-icon.svg";
 import CrossIcon from "../../assets/cross-icon-light.svg";
@@ -8,7 +8,7 @@ import { TouchableRipple } from 'react-native-paper';
 
 const screenWidth = Dimensions.get('window').width;
 
-const ShoppingHeader = memo(({ navigation, calendarInputContent, thisMonthSellAmount }) => {
+const ShoppingHeader = memo(({ navigation, calendarInputContent, incomeTitle, thisMonthSellAmount }) => {
 	const handlePress = async () => {
 		await AsyncStorage.setItem("window", "Calendar");
 		await AsyncStorage.setItem("calendarFromPage", "Shopping");
@@ -24,8 +24,7 @@ const ShoppingHeader = memo(({ navigation, calendarInputContent, thisMonthSellAm
 			<View style={styles.calendarWrapper}>
 				<Text style={styles.calendarLabel}>{i18n.t("choosePeriod")}</Text>
 
-				<View>
-					<TouchableRipple
+				<TouchableRipple
 						delayHoverIn={true}
 						delayLongPress={false}
 						delayHoverOut={false}
@@ -33,7 +32,9 @@ const ShoppingHeader = memo(({ navigation, calendarInputContent, thisMonthSellAm
 						rippleColor="#E5E5E5"
 						rippleContainerBorderRadius={50}
 						borderless={true}
-						onPress={handlePress}
+						onPress={handlePress}>
+					<View>
+					<View
 						style={[
 							calendarInputContent === "--/--/----" ?
 								styles.calendarInput :
@@ -49,7 +50,7 @@ const ShoppingHeader = memo(({ navigation, calendarInputContent, thisMonthSellAm
 						>
 							{calendarInputContent}
 						</Text>
-					</TouchableRipple>
+					</View>
 
 					{calendarInputContent === "--/--/----" ? (
 						<CalendarIcon style={styles.calendarIcon} resizeMode="cover" />
@@ -57,13 +58,14 @@ const ShoppingHeader = memo(({ navigation, calendarInputContent, thisMonthSellAm
 						<CrossIcon style={styles.calendarIcon} resizeMode="cover" />
 					)}
 				</View>
+				</TouchableRipple>
 			</View>
 
 			<View style={styles.summaryContainer}>
-				<Text style={styles.summaryText}>{i18n.t("monthlyIncome")}</Text>
+				<Text style={styles.summaryText}>{incomeTitle}</Text>
 				<Text style={styles.summaryAmount}>{`${thisMonthSellAmount.toLocaleString()} ${i18n.t("sum")}`}</Text>
 			</View>
-		</>
+		</>		
 	);
 });
 

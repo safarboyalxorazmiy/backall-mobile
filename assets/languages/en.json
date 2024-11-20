@@ -72,11 +72,28 @@
   "october": "October",
   "november": "November",
   "december": "December",
+  
+  "monday": "Monday",
+  "tuesday": "Tuesday",
+  "wednesday": "Wednesday",
+  "thursday": "Thursday",
+  "friday": "Friday",
+  "saturday": "Saturday",
+  "sunday": "Sunday",
 
   "paymentModalTitle": "The monthly subscription fee deadline has arrived!",
   "enterCardDetails": "Enter card details",
   "total": "Total",
   "sellState": "Sales status",
   "day": "day",
-  "year": "year"
+  "year": "year",
+
+  "bugunIncome": "Today's Income",
+  "oyIncome": "Monthly Income",
+  "haftaIncome": "Weekly Income",
+
+  "bugunProfit": "Today's Profit",
+  "oyProfit": "Monthly Profit",
+  "haftaProfit": "Weekly Profit",
+  "clearEverythingAndLogout": "Clear everything and logout"
 }

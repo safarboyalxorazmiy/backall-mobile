@@ -4,18 +4,19 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import CalendarIcon from "../../assets/calendar-icon.svg";
 import CrossIcon from "../../assets/cross-icon-light.svg";
 import i18n from '../../i18n';
+import { TouchableRipple } from 'react-native-paper';
 
 const screenWidth = Dimensions.get('window').width;
 
-const ProfitHeader =
-	memo(({
-		      navigation,
-		      calendarInputContent,
-		      thisMonthProfitAmount
-	      }) => {
+const ProfitHeader = memo(({navigation, incomeTitle, calendarInputContent, thisMonthProfitAmount}) => {
+	const handlePress = async () => {
+		await AsyncStorage.setItem("window", "Calendar");
+		await AsyncStorage.setItem("calendarFromPage", "Profit");
+		navigation.navigate("Calendar");
+	};
 
-		return (
-
+	
+	return (
 			<View style={{width: "100%"}}>
 				<View style={{
 					borderBottomColor: "#AFAFAF",
@@ -49,15 +50,16 @@ const ProfitHeader =
 						{i18n.t("choosePeriod")}
 					</Text>
 
-					<View>
-						<TouchableOpacity
-							onPress={async () => {
-								await AsyncStorage.setItem("window", "Calendar");
-								await AsyncStorage.setItem(
-									"calendarFromPage", "Profit"
-								);
-								navigation.navigate("Calendar")
-							}}
+					<TouchableRipple delayHoverIn={true}
+							delayLongPress={false}
+							delayHoverOut={false}
+							unstable_pressDelay={false}
+							rippleColor="#E5E5E5"
+							rippleContainerBorderRadius={50}
+							borderless={true}
+							onPress={handlePress}>
+						<View>
+						<View
 							style={[
 								calendarInputContent === "--/--/----" ?
 									styles.calendarInput : styles.calendarInputActive
@@ -67,7 +69,7 @@ const ProfitHeader =
 									calendarInputContent === "--/--/----" ?
 										styles.calendarInputPlaceholder : styles.calendarInputPlaceholderActive
 								]}>{calendarInputContent}</Text>
-						</TouchableOpacity>
+						</View>
 
 						{
 							calendarInputContent === "--/--/----" ? (
@@ -80,8 +82,8 @@ const ProfitHeader =
 									resizeMode="cover"/>
 							)
 						}
-					</View>
-				</View>
+						</View>
+				</TouchableRipple>
 
 				<View style={{
 					marginTop: 12,
@@ -103,7 +105,7 @@ const ProfitHeader =
 						fontSize: 16,
 						lineHeight: 24,
 						color: "#FFF"
-					}}>{i18n.t("monthlyProfit")}</Text>
+					}}>{incomeTitle}</Text>
 					<Text style={{
 						fontFamily: "Gilroy-Medium",
 						fontWeight: "500",
@@ -112,6 +114,7 @@ const ProfitHeader =
 						color: "#FFF"
 					}}>{thisMonthProfitAmount.toLocaleString()} {i18n.t("sum")}</Text>
 				</View>
+			</View>
 			</View>
 		);
 	});

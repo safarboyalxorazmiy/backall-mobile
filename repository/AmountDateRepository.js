@@ -298,6 +298,91 @@ class AmountDateRepository {
 		});
 	}	
 
+	async getSumSellAmountByDate(fromDate, toDate) {
+    const normalizeToUTC = (date, isStartOfDay) => {
+        const dateObj = new Date(date);
+        dateObj.setHours(isStartOfDay ? 0 : 23, isStartOfDay ? 0 : 59, isStartOfDay ? 0 : 59, isStartOfDay ? 0 : 999);
+        return new Date(dateObj.getTime() - dateObj.getTimezoneOffset() * 60000)
+					.toISOString()
+					.slice(0, 19)
+					.replace("T", " ");
+    };
+
+    const fromUTCDate = normalizeToUTC(fromDate, true); // Start of fromDate in UTC
+    const toUTCDate = normalizeToUTC(toDate, false); // End of toDate in UTC
+
+    let startDate = fromUTCDate;
+    let endDate = toUTCDate;
+    if (fromUTCDate > toUTCDate) {
+        startDate = toUTCDate;
+        endDate = fromUTCDate;
+    }
+
+    const query = fromDate === toDate
+        ? `SELECT SUM(amount) AS total_amount FROM sell_amount_date WHERE DATE(date) = '${fromDate}';`
+        : `SELECT SUM(amount) AS total_amount FROM sell_amount_date WHERE DATE(date) BETWEEN '${startDate}' AND '${endDate}';`;
+
+    try {
+			const result = await new Promise((resolve, reject) => {
+					this.db.transaction((tx) => {
+							tx.executeSql(
+								query,
+								[],
+								(_, resultSet) => resolve(resultSet),
+								(_, error) => reject(error)
+							);
+					});
+			});
+
+			return result?.rows?._array ?? [];
+    } catch (error) {
+      return null;
+    }
+	}
+
+	async getSumProfitAmountByDate(fromDate, toDate) {
+    const normalizeToUTC = (date, isStartOfDay) => {
+        const dateObj = new Date(date);
+        dateObj.setHours(isStartOfDay ? 0 : 23, isStartOfDay ? 0 : 59, isStartOfDay ? 0 : 59, isStartOfDay ? 0 : 999);
+        return new Date(dateObj.getTime() - dateObj.getTimezoneOffset() * 60000)
+            .toISOString()
+            .slice(0, 19)
+            .replace("T", " ");
+    };
+
+    const fromUTCDate = normalizeToUTC(fromDate, true); // Start of fromDate in UTC
+    const toUTCDate = normalizeToUTC(toDate, false); // End of toDate in UTC
+
+    let startDate = fromUTCDate;
+    let endDate = toUTCDate;
+    if (fromUTCDate > toUTCDate) {
+        startDate = toUTCDate;
+        endDate = fromUTCDate;
+    }
+
+    const query = fromDate === toDate
+        ? `SELECT SUM(amount) AS total_amount FROM profit_amount_date WHERE DATE(date) = '${fromDate}';`
+        : `SELECT SUM(amount) AS total_amount FROM profit_amount_date WHERE DATE(date) BETWEEN '${startDate}' AND '${endDate}';`;
+
+    try {
+        const result = await new Promise((resolve, reject) => {
+            this.db.transaction((tx) => {
+                tx.executeSql(
+                    query,
+                    [],
+                    (_, resultSet) => resolve(resultSet),
+                    (_, error) => reject(error)
+                );
+            });
+        });
+
+        return result?.rows?._array ?? [];
+    } catch (error) {
+			return null;
+		}
+	}
+
+
 	async getProfitAmountInfoByDate(date) {
 		return new Promise((resolve, reject) => {
 			const selectQuery =

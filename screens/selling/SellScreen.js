@@ -71,7 +71,9 @@ class Sell extends Component {
 			quantityInputValue: "",
 			priceInputValue: "",
 			quantityInputError: false,
+			productNameInputError: false,
 			isUtilizationModalVisible: false,
+			
 
 			autoFocus: true,
 			SAVE_BUTTON_AVAILABLE: true
@@ -194,7 +196,8 @@ class Sell extends Component {
 
 		this.setState({
 			productNameInputValue: product.brand_name + " " + product.name,
-			selectedProduct: product
+			selectedProduct: product,
+			productNameInputError: false
 		})
 
 		this.defineInputContentStyle(true);
@@ -638,6 +641,12 @@ class Sell extends Component {
 													)
 												}
 											</View>
+											{
+											this.state.productNameInputError ?
+												<Animatable.View animation="shake" duration={500}>
+													<Text style={{color: "red"}}>Novi bi.</Text>
+												</Animatable.View> : null
+											}
 										</View>
 									</View>
 
@@ -1041,7 +1050,7 @@ class Sell extends Component {
 
 																	onPressIn={() => {
 																		this.setState({
-																			scaleValue: 0.9
+																			scaleValue: 0.9,
 																		});
 																	}}
 
@@ -1071,6 +1080,12 @@ class Sell extends Component {
 												}
 											</View>
 										</View>
+										{
+											this.state.productNameInputError ?
+												<Animatable.View animation="shake" duration={500}>
+													<Text style={{color: "red"}}>Mahsulotni tanlash kerak.</Text>
+												</Animatable.View> : null
+										}
 									</View>
 
 									<View style={styles.inputBlock}>
@@ -1087,11 +1102,16 @@ class Sell extends Component {
 											}}
 
 											onChangeText={(value) => {
+												if (Object.keys(this.state.selectedProduct).length === 0 || !this.state.selectedProduct) {
+													this.setState({productNameInputError: true})
+													return;
+												}
+
 												this.setState({quantityInputValue: value});
 												// FIST OF ALL GET CURRENT SELLING PRICE.
 												let sellingPrice = this.state.selectedProduct.selling_price;
-												console.log((parseInt(value) * sellingPrice))
-												this.setState({priceInputValue: (parseInt(value) * sellingPrice) + ""})
+												console.log((parseInt(value) * sellingPrice));
+												this.setState({priceInputValue: (parseInt(value) * sellingPrice) + ""});
 											}}
 
 											style={{
@@ -1137,6 +1157,11 @@ class Sell extends Component {
 											}}
 
 											onChangeText={(value) => {
+												if (Object.keys(this.state.selectedProduct).length === 0 || !this.state.selectedProduct) {
+													this.setState({productNameInputError: true})
+													return;
+												}
+
 												this.setState({priceInputValue: value})
 												let productSellingPrice = this.state.selectedProduct.selling_price;
 												let quantity = (parseFloat(value) / productSellingPrice).toFixed(2);
@@ -1178,8 +1203,20 @@ class Sell extends Component {
 										style={styles.modalButton}
 										onPress={() => {
 											let selectedProduct = this.state.selectedProduct;
-											if (!selectedProduct) {
-												// TODO RED ERROR
+											console.log(selectedProduct)
+
+											let error = false;
+											if (Object.keys(selectedProduct).length === 0 || !this.state.selectedProduct) {
+												this.setState({productNameInputError: true})
+												error = true;
+											}
+
+											if (!this.state.quantityInputValue) {
+												this.setState({quantityInputError: true})
+												error = true;
+											}
+
+											if (error == true) {
 												return;
 											}
 
