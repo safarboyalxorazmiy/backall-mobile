@@ -95,5 +95,18 @@
   "bugunProfit": "Today's Profit",
   "oyProfit": "Monthly Profit",
   "haftaProfit": "Weekly Profit",
-  "clearEverythingAndLogout": "Clear everything and logout"
+  "clearEverythingAndLogout": "Clear everything and logout",
+
+  
+  "productMustBeSelected": "Product must be selected",
+  "quantity": "Quantity",
+  "enterQuantity": "Enter quantity",
+  "quantityIsNotEnough": "Quantity is not enough",
+  "makeAnUtilization": "Utilize",
+  "enterPriceInSelling": "Enter the price of 1 kg/piece",
+  "litr": "litr",
+  "enterSellingPrice": "Enter selling price",
+  "incorrectNetWorth": "Incorrect net worth.",
+  "incorrectSellingPrice": "Incorrect selling price."
+  
 }

@@ -26,6 +26,7 @@ import * as Animatable from "react-native-animatable";
 import {activateKeepAwakeAsync, deactivateKeepAwake} from 'expo-keep-awake';
 import { TouchableRipple } from 'react-native-paper';
 import DeleteIcon from "../../assets/delete-icon.svg";
+import i18n from "../../i18n";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -362,7 +363,7 @@ class Sell extends Component {
 						</TouchableRipple>
 
 						<Text style={styles.pageTitleText}>
-							Sotiladigan mahsulotlar
+							{i18n.t("sellingProducts")}
 						</Text>
 
 						<TouchableRipple
@@ -430,15 +431,15 @@ class Sell extends Component {
 						borderless={true}
 						style={styles.productAddButton}
 						onPress={this.toggleModal}>
-						<Text style={styles.productAddButtonText}>Mahsulotni qo’lda kiritish</Text>
+						<Text style={styles.productAddButtonText}>{i18n.t("enterProductManually")}</Text>
 					</TouchableRipple>
 
 					<View style={styles.footer}>
 						<View
 							style={styles.footerTitle}
 						>
-							<Text style={styles.priceTitle}>Buyurtma narxi</Text>
-							<Text style={styles.price}>{this.state.amount} so'm</Text>
+							<Text style={styles.priceTitle}>{i18n.t("orderPrice")}</Text>
+							<Text style={styles.price}>{this.state.amount} {i18n.t("sum")}</Text>
 						</View>
 
 						<TouchableRipple
@@ -451,7 +452,7 @@ class Sell extends Component {
 							borderless={true}
 							style={styles.button}
 							onPress={this.sellProducts}>
-							<Text style={styles.buttonText}>Sotuvni amalga oshirish</Text>
+							<Text style={styles.buttonText}>{i18n.t("makeASale")}</Text>
 						</TouchableRipple>
 					</View>
 
@@ -534,7 +535,7 @@ class Sell extends Component {
 									</TouchableOpacity>
 
 									<View>
-										<Text style={styles.modalLabel}>Mahsulot nomi</Text>
+										<Text style={styles.modalLabel}>{i18n.t("productName")}</Text>
 										<TextInput
 											autoCapitalize="none"
 											onChangeText={async (value) => {
@@ -592,7 +593,7 @@ class Sell extends Component {
 
 											cursorColor={"#222"}
 
-											placeholder="Nomini kiriting"
+											placeholder={i18n.t("enterName")}
 
 											placeholderTextColor="#AAAAAA"
 
@@ -644,14 +645,14 @@ class Sell extends Component {
 											{
 											this.state.productNameInputError ?
 												<Animatable.View animation="shake" duration={500}>
-													<Text style={{color: "red"}}>Novi bi.</Text>
+													<Text style={{color: "red"}}>{i18n.t("productMustBeSelected")}</Text>
 												</Animatable.View> : null
 											}
 										</View>
 									</View>
 
 									<View style={styles.inputBlock}>
-										<Text style={styles.modalLabel}>Miqdori</Text>
+										<Text style={styles.modalLabel}>{i18n.t("quantity")}</Text>
 										<TextInput
 											autoCapitalize="none"
 
@@ -686,7 +687,7 @@ class Sell extends Component {
 
 											cursorColor={"#222"}
 
-											placeholder="Sonini kiriting"
+											placeholder={i18n.t("enterQuantity")}
 
 											keyboardType="numeric"
 
@@ -695,7 +696,7 @@ class Sell extends Component {
 										{
 											this.state.quantityInputError ?
 												<Animatable.View animation="shake" duration={500}>
-													<Text style={{color: "red"}}>Miqdor yetarli emas.</Text>
+													<Text style={{color: "red"}}>{i18n.t("quantityIsNotEnough")}</Text>
 												</Animatable.View> : null
 										}
 									</View>
@@ -712,7 +713,7 @@ class Sell extends Component {
 									*/}
 
 									<View style={styles.inputBlock}>
-										<Text style={styles.modalLabel}>Sotuvdagi narxi (1 kg/dona/litr)</Text>
+										<Text style={styles.modalLabel}>{i18n.t("priceInSelling")}</Text>
 										<TextInput
 											autoCapitalize="none"
 
@@ -744,7 +745,7 @@ class Sell extends Component {
 												marginTop: 4
 											}}
 
-											placeholder="1 kg/dona narxini kiriting"
+											placeholder={i18n.t("enterPriceInSelling")}
 
 											placeholderTextColor="#AAAAAA"
 
@@ -866,7 +867,7 @@ class Sell extends Component {
 											this.toggleModal();
 										}}>
 										<Text
-											style={styles.modalButtonText}>Savatga qo’shish</Text>
+											style={styles.modalButtonText}>{i18n.t("addToBasket")}</Text>
 									</TouchableOpacity>
 								</View>
 							</View>
@@ -954,7 +955,7 @@ class Sell extends Component {
 
 
 									<View>
-										<Text style={styles.modalLabel}>Mahsulot nomi</Text>
+										<Text style={styles.modalLabel}>{i18n.t("productName")}</Text>
 										<TextInput
 											autoCapitalize="none"
 											autoComplete={"off"}
@@ -1031,7 +1032,7 @@ class Sell extends Component {
 
 											cursorColor={"#222"}
 
-											placeholder="Nomini kiriting"
+											placeholder={i18n.t("enterName")}
 
 											placeholderTextColor="#AAAAAA"
 
@@ -1083,13 +1084,13 @@ class Sell extends Component {
 										{
 											this.state.productNameInputError ?
 												<Animatable.View animation="shake" duration={500}>
-													<Text style={{color: "red"}}>Mahsulotni tanlash kerak.</Text>
+													<Text style={{color: "red"}}>{i18n.t("productMustBeSelected")}</Text>
 												</Animatable.View> : null
 										}
 									</View>
 
 									<View style={styles.inputBlock}>
-										<Text style={styles.modalLabel}>Miqdori</Text>
+										<Text style={styles.modalLabel}>{i18n.t("quantity")}</Text>
 										<TextInput
 											autoCapitalize="none"
 
@@ -1129,7 +1130,7 @@ class Sell extends Component {
 
 											cursorColor={"#222"}
 
-											placeholder="Sonini kiriting"
+											placeholder={i18n.t("enterQuantity")}
 
 											keyboardType="numeric"
 
@@ -1138,13 +1139,13 @@ class Sell extends Component {
 										{
 											this.state.quantityInputError ?
 												<Animatable.View animation="shake" duration={500}>
-													<Text style={{color: "red"}}>Miqdor yetarli emas.</Text>
+													<Text style={{color: "red"}}>{i18n.t("quantityIsNotEnough")}</Text>
 												</Animatable.View> : null
 										}
 									</View>
 
 									<View style={styles.inputBlock}>
-										<Text style={styles.modalLabel}>Sotuvdagi narxi (1 kg/dona/litr)</Text>
+										<Text style={styles.modalLabel}>{i18n.t("priceInSelling")}</Text>
 										<TextInput
 											autoCapitalize="none"
 
@@ -1181,7 +1182,7 @@ class Sell extends Component {
 												marginTop: 4
 											}}
 
-											placeholder="1 kg/dona narxini kiriting"
+											placeholder={i18n.t("enterPriceInSelling")}
 
 											placeholderTextColor="#AAAAAA"
 
@@ -1320,7 +1321,7 @@ class Sell extends Component {
 											}));
 										}}>
 										<Text
-											style={styles.modalButtonText}>Utilizatsiya qilish</Text>
+											style={styles.modalButtonText}>{i18n.t("makeAnUtilization")}</Text>
 									</TouchableRipple>
 								</View>
 							</View>

@@ -1,5 +1,5 @@
 import React, {memo} from 'react';
-import {Text, TouchableOpacity, View, StyleSheet, Dimensions} from 'react-native';
+import {Text, View, StyleSheet, Dimensions} from 'react-native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CalendarIcon from "../../assets/calendar-icon.svg";
 import CrossIcon from "../../assets/cross-icon-light.svg";
@@ -17,7 +17,7 @@ const ProfitHeader = memo(({navigation, incomeTitle, calendarInputContent, thisM
 
 	
 	return (
-			<View style={{width: "100%"}}>
+			<>
 				<View style={{
 					borderBottomColor: "#AFAFAF",
 					borderBottomWidth: 1,
@@ -50,38 +50,39 @@ const ProfitHeader = memo(({navigation, incomeTitle, calendarInputContent, thisM
 						{i18n.t("choosePeriod")}
 					</Text>
 
-					<TouchableRipple delayHoverIn={true}
-							delayLongPress={false}
-							delayHoverOut={false}
-							unstable_pressDelay={false}
-							rippleColor="#E5E5E5"
-							rippleContainerBorderRadius={50}
-							borderless={true}
-							onPress={handlePress}>
+					<TouchableRipple 
+						delayHoverIn={true}
+						delayLongPress={false}
+						delayHoverOut={false}
+						unstable_pressDelay={false}
+						rippleColor="#E5E5E5"
+						rippleContainerBorderRadius={50}
+						borderless={true}
+						onPress={handlePress}>
 						<View>
-						<View
-							style={[
-								calendarInputContent === "--/--/----" ?
-									styles.calendarInput : styles.calendarInputActive
-							]}>
-							<Text
+							<View
 								style={[
 									calendarInputContent === "--/--/----" ?
-										styles.calendarInputPlaceholder : styles.calendarInputPlaceholderActive
-								]}>{calendarInputContent}</Text>
-						</View>
+										styles.calendarInput : styles.calendarInputActive
+								]}>
+								<Text
+									style={[
+										calendarInputContent === "--/--/----" ?
+											styles.calendarInputPlaceholder : styles.calendarInputPlaceholderActive
+									]}>{calendarInputContent}</Text>
+							</View>
 
-						{
-							calendarInputContent === "--/--/----" ? (
-								<CalendarIcon
-									style={styles.calendarIcon}
-									resizeMode="cover"/>
-							) : (
-								<CrossIcon
-									style={styles.calendarIcon}
-									resizeMode="cover"/>
-							)
-						}
+							{
+								calendarInputContent === "--/--/----" ? (
+									<CalendarIcon
+										style={styles.calendarIcon}
+										resizeMode="cover"/>
+								) : (
+									<CrossIcon
+										style={styles.calendarIcon}
+										resizeMode="cover"/>
+								)
+							}
 						</View>
 				</TouchableRipple>
 
@@ -114,8 +115,8 @@ const ProfitHeader = memo(({navigation, incomeTitle, calendarInputContent, thisM
 						color: "#FFF"
 					}}>{thisMonthProfitAmount.toLocaleString()} {i18n.t("sum")}</Text>
 				</View>
-			</View>
-			</View>
+				</View>
+			</>
 		);
 	});
 

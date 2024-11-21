@@ -3,7 +3,8 @@ import {StatusBar} from "expo-status-bar";
 import {
 	StyleSheet,
 	View,
-	FlatList, ActivityIndicator
+	FlatList, 
+	ActivityIndicator
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -13,8 +14,8 @@ import ProfitHistoryRepository from "../../repository/ProfitHistoryRepository";
 import ApiService from "../../service/ApiService";
 
 import ProfitGroup from "./ProfitGroup";
-import _ from "lodash";
 import ProfitHeader from "./ProfitHeader";
+import _ from "lodash";
 import i18n from '../../i18n';
 
 class Profit extends Component {
@@ -25,11 +26,15 @@ class Profit extends Component {
 			profitHistory: [],
 			groupedHistories: [],
 			currentMonthTotal: 0,
+			lastDate: new Date(),
 			lastGroupId: 0,
-			isCollecting: false,
+			firstGroupGlobalId: 0,
+
 			calendarInputContent: "--/--/----",
+			fromDate: null,
+			toDate: null,
+			prevFromDate: null,
 			thisMonthProfitAmount: 0.00,
-			notFinished: true,
 
 			lastProfitGroupPage: 0,
 
@@ -44,7 +49,8 @@ class Profit extends Component {
 
 			loading: false,
 			globalFullyLoaded: false,
-			localFullyLoaded: false
+			localFullyLoaded: false,
+			incomeTitle: ""
 		}
 
 		this.productRepository = new ProductRepository();
@@ -56,50 +62,25 @@ class Profit extends Component {
 		this.flatListRef = React.createRef();
 	}
 
-	async getDateInfo() {
-		this.setState({
-			fromDate: await AsyncStorage.getItem("ProfitFromDate"), toDate: await AsyncStorage.getItem("ProfitToDate")
-		});
-
-		if (this.state.fromDate != null && this.state.toDate != null) {
-			let fromDate = this.state.fromDate.replace(/-/g, "/");
-			let toDate = this.state.toDate.replace(/-/g, "/");
-
-			console.log(fromDate + " - " + toDate);
-			this.setState({calendarInputContent: fromDate + " - " + toDate});
-		} else {
-			this.setState({calendarInputContent: "--/--/----"});
-		}
-	}
-
-	formatDate = (dateString) => {
-		const date = new Date(dateString);
-		const options = {day: "numeric", month: "long", weekday: "long"};
-		
-		const formattedDate = date.toLocaleDateString("en", options);
-
-		let [weekday, day] = formattedDate.split(", ");
-
-		weekday = weekday.charAt(0).toUpperCase() + weekday.slice(1);
-		
-		month = i18n.t(day.split(" ")[0].toLocaleLowerCase());
-		monthNameWithNumber = month.charAt(0).toUpperCase() + month.slice(1) + " " + day.split(" ")[1];
-		day = monthNameWithNumber;
-		weekday = i18n.t(weekday.toLocaleLowerCase());
-
-		return `${day}, ${weekday}`;
-	};
-
 	async componentDidMount() {
 		await AsyncStorage.setItem("window", "Profit");
 
 		if (await AsyncStorage.getItem("loadProfit") === "true") {
 			await this.initializeScreen();
 
-			this.setState({
-				incomeTitle: i18n.t("oyIncome")
-			})
+			let lastSellGroup = await this.sellHistoryRepository.getLastSellGroup();
+			let lastGroupId = lastSellGroup.id;
 
+			let firstSellGroup = await this.sellHistoryRepository.getFirstSellGroup();
+
+			this.setState({
+				firstGroupGlobalId: firstSellGroup.global_id,
+				lastGroupId: lastGroupId,
+				incomeTitle: i18n.t("oyIncome")
+			});
+
+			this.onEndReached();
+			
 			await AsyncStorage.setItem("loadProfit", "false");
 		}
 
@@ -151,7 +132,10 @@ class Profit extends Component {
 			let lastStoredMonth = parseInt(await AsyncStorage.getItem("month"));
 
 			if (currentMonth === lastStoredMonth) {
-				this.setState({thisMonthProfitAmount: thisMonthProfitAmount});
+				this.setState({
+					thisMonthProfitAmount: thisMonthProfitAmount,
+					incomeTitle: i18n.t("oyIncome")
+				});
 			}
 
 			// If there is no history get histories
@@ -253,7 +237,7 @@ class Profit extends Component {
 					lastGroupId: lastGroupId
 				});
 
-				await this.loadLocalProfitGroups();
+				this.onEndReached();
 
 				this.setState({
 					loading: false
@@ -273,7 +257,8 @@ class Profit extends Component {
 					profitHistory: [],
 					firstGroupGlobalId: firstProfitGroup.global_id,
 					lastGroupId: lastGroupId,
-					prevFromDate: null
+					prevFromDate: null,
+					incomeTitle: i18n.t("oyIncome")
 				});
 
 				console.log("Profit mounted");
@@ -282,17 +267,43 @@ class Profit extends Component {
 				await this.loadLocalProfitGroups();
 			}
 
-			
-
 			this.onEndReached();
-
-			this.setState({
-				loading: false
-			});
-
-			return;
 		});
 	}
+
+	async getDateInfo() {
+		this.setState({
+			fromDate: await AsyncStorage.getItem("ProfitFromDate"), toDate: await AsyncStorage.getItem("ProfitToDate")
+		});
+
+		if (this.state.fromDate != null && this.state.toDate != null) {
+			let fromDate = this.state.fromDate.replace(/-/g, "/");
+			let toDate = this.state.toDate.replace(/-/g, "/");
+
+			console.log(fromDate + " - " + toDate);
+			this.setState({calendarInputContent: fromDate + " - " + toDate});
+		} else {
+			this.setState({calendarInputContent: "--/--/----"});
+		}
+	}
+
+	formatDate = (dateString) => {
+		const date = new Date(dateString);
+		const options = {day: "numeric", month: "long", weekday: "long"};
+		
+		const formattedDate = date.toLocaleDateString("en", options);
+
+		let [weekday, day] = formattedDate.split(", ");
+
+		weekday = weekday.charAt(0).toUpperCase() + weekday.slice(1);
+		
+		month = i18n.t(day.split(" ")[0].toLocaleLowerCase());
+		monthNameWithNumber = month.charAt(0).toUpperCase() + month.slice(1) + " " + day.split(" ")[1];
+		day = monthNameWithNumber;
+		weekday = i18n.t(weekday.toLocaleLowerCase());
+
+		return `${day}, ${weekday}`;
+	};
 
 	async initializeScreen() {
 		this.state = {
@@ -303,7 +314,6 @@ class Profit extends Component {
 			isCollecting: false,
 			calendarInputContent: "--/--/----",
 			thisMonthProfitAmount: 0.00,
-			notFinished: true,
 
 			lastProfitGroupPage: 0,
 
@@ -334,12 +344,7 @@ class Profit extends Component {
 			return;
 		}
 
-		if (this.state.loading) {
-			console.log("already loading");
-			return;
-		}
-
-		if (this.state.localFullyLoaded === false) {
+		if (this.state.localFullyLoaded == false) {
 			this.setState({loading: true});
 			let isLoaded = await this.loadLocalProfitGroups();
 			if (isLoaded) {
@@ -428,8 +433,6 @@ class Profit extends Component {
 	}
 
 	async loadLocalProfitGroups() {
-		console.log("loading");
-
 		if (this.state.lastGroupId <= 0) {
 			this.setState({
 				loading: false,
@@ -495,8 +498,7 @@ class Profit extends Component {
 			const groupedCopy = grouped.map(group => ({
 				...group,
 				histories: group.histories.map(history => ({
-					...history,
-					calendar: false
+					...history
 				}))
 			}));
 
@@ -505,8 +507,6 @@ class Profit extends Component {
 				groupedCopy[groupedCopy.length - 1].histories[0].calendar = true;
 			}
 
-			const startTime = performance.now();
-
 			this.setState(prevState => ({
 				profitHistory: [...prevState.profitHistory, ...profitHistories],
 				groupedHistories: groupedCopy,
@@ -514,15 +514,11 @@ class Profit extends Component {
 				loading: false
 			}));
 
-			const endTime = performance.now();
-			console.log(`Execution time: ${endTime - startTime} milliseconds`);
-
 			return true;
 		} catch (error) {
 			this.setState({
 				loading: false
 			});
-			console.error('Error fetching profit histories:', error);
 			return false;
 		}
 	}
@@ -596,10 +592,12 @@ class Profit extends Component {
 	}
 
 	async onEndReached() {
-		console.log("onEndReached()");
 		if (this.state.loading) {
-			await this.loadMore();
-		}
+			console.log("Loading true returned")
+			return;
+		};
+
+		await this.loadMore();
 	}
 
 	scrollToTop = () => {
@@ -611,40 +609,41 @@ class Profit extends Component {
 
 		return (
 			<View style={styles.container}>
-				<FlatList
-					ref={this.flatListRef}
-					data={this.state.groupedHistories}
-					keyExtractor={(item) => item.date}
-					onEndReachedThreshold={40}
-					onEndReached={this.onEndReached}
-					initialNumToRender={100}
-					style={{width: "100%"}}
+				<View style={{width: "100%", height: "100%"}}>
+					<FlatList
+						ref={this.flatListRef}
+						data={this.state.groupedHistories}
+						keyExtractor={(item) => item.date}
+						onEndReachedThreshold={40}
+						onEndReached={this.onEndReached}
+						initialNumToRender={100}
 
-					ListHeaderComponent={() => (
-						<ProfitHeader
-							incomeTitle={this.state.incomeTitle}
-							calendarInputContent={this.state.calendarInputContent}
-							navigation={this.props.navigation}
-							thisMonthProfitAmount={this.state.thisMonthProfitAmount}
-						/>
-					)}
+						ListHeaderComponent={
+							<ProfitHeader
+								navigation={this.props.navigation}
+								incomeTitle={this.state.incomeTitle}
+								calendarInputContent={this.state.calendarInputContent}
+								thisMonthProfitAmount={this.state.thisMonthProfitAmount}
+							/>
+						}
 
-					ListFooterComponent={() => {
-						if (!this.state.loading) return null;
-						return (
-							<View style={{padding: 10}}>
-								<ActivityIndicator size="large" color={"#9A50AD"}/>
-							</View>
-						);
-					}}
+						ListFooterComponent={() => {
+							if (!this.state.loading) return null;
+							return (
+								<View style={{padding: 10}}>
+									<ActivityIndicator size="large" color={"#9A50AD"}/>
+								</View>
+							);
+						}}
 
-					renderItem={({item}) => (
-						<ProfitGroup
-							key={item.date}
-							item={item}
-							navigation={navigation}/>
-					)}
-				/>
+						renderItem={({item}) => (
+							<ProfitGroup
+								key={item.date}
+								item={item}
+								navigation={navigation}/>
+						)}
+					/>
+				</View>
 
 				<StatusBar style="auto"/>
 			</View>
@@ -852,4 +851,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default memo(Profit);
+export default Profit;

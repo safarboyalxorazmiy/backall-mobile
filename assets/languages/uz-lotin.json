@@ -96,5 +96,13 @@
   "bugunProfit": "Bugungi foyda",
   "oyProfit": "Oylik foyda",
   "haftaProfit": "Haftalik foyda",
-  "clearEverythingAndLogout": "Hammasini tozalash va chiqish"
+  "clearEverythingAndLogout": "Hammasini tozalash va chiqish",
+
+  "productMustBeSelected": "Mahsulot tanlangan bo’lishi kerak",
+  "quantity": "Miqdor",
+  "enterQuantity": "Miqdorini kiriting",
+  "quantityIsNotEnough": "Miqdori yetarli emas",
+  "makeAnUtilization": "Utilizatsiya qilish",
+  "enterPriceInSelling": "1 kg/dona narxini kiriting",
+  "litr": "litr"
 }

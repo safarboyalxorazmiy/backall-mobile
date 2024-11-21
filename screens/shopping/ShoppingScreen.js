@@ -51,13 +51,13 @@ class Shopping extends Component {
 
 			loading: false,
 			globalFullyLoaded: false,
-			localFullyLoaded: false
+			localFullyLoaded: false,
+			incomeTitle: ""
 		};
 
 		this.sellHistoryRepository = new SellHistoryRepository();
 		this.amountDateRepository = new AmountDateRepository();
 		this.productRepository = new ProductRepository();
-
 		this.apiService = new ApiService();
 
 		this.onEndReached = _.debounce(this.onEndReached.bind(this), 100);
@@ -546,8 +546,6 @@ class Shopping extends Component {
 				groupedCopy[groupedCopy.length - 1].histories[0].calendar = true;
 			}
 
-			const startTime = performance.now();
-
 			this.setState(prevState => ({
 				sellingHistory: [...prevState.sellingHistory, ...sellHistories],
 				groupedHistories: groupedCopy,
@@ -555,15 +553,11 @@ class Shopping extends Component {
 				loading: false
 			}));
 
-			const endTime = performance.now();
-			//.log(`Execution time: ${endTime - startTime} milliseconds`);
-
 			return true;
 		} catch (error) {
 			this.setState({
 				loading: false
 			});
-			//.error('Error fetching sell histories:', error);
 			return false;
 		}
 	}
@@ -650,10 +644,6 @@ class Shopping extends Component {
 
 	scrollToTop = () => {
 		this.flatListRef.current?.scrollToOffset({animated: true, offset: 0});
-	};
-
-	scrollToEnd = () => {
-		this.flatListRef.current?.scrollToEnd({animated: true});
 	};
 
 	render() {

@@ -93,5 +93,13 @@
   "bugunProfit": "Бугунги фойда",
   "oyProfit": "Ойлик фойда",
   "haftaProfit": "Ҳафталик фойда",
-  "clearEverythingAndLogout": "Ҳаммасини тозалаш ва чиқиш"
+  "clearEverythingAndLogout": "Ҳаммасини тозалаш ва чиқиш",
+
+  "productMustBeSelected": "Маҳсулот танланган бўлиши керак",
+  "quantity": "Миқдор",
+  "enterQuantity": "Миқдорни киритинг",
+  "quantityIsNotEnough": "Миқдори етарли эмас",
+  "makeAnUtilization": "Утилизация қилиш",
+  "enterPriceInSelling": "1 кг/дона нархини киритинг",
+  "litr": "litr"
 }

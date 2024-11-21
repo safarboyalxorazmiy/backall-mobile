@@ -94,5 +94,14 @@
   "bugunProfit": "Сегодняшняя прибыль",
   "oyProfit": "Ежемесячная прибыль",
   "haftaProfit": "Еженедельная прибыль",
-  "clearEverythingAndLogout": "Очистить все и выйти"
+  "clearEverythingAndLogout": "Очистить все и выйти",
+
+  "productMustBeSelected": "Продукт должен быть выбран",
+  "quantity": "Количество",
+  "enterQuantity": "Введите количество",
+  "quantityIsNotEnough": "Недостаточное количество",
+  "makeAnUtilization": "Утилизировать",
+  "enterPriceInSelling": "Bвести цену 1 кг/шт",
+  "litr": "litr",
+  "enterSellingPrice": "Введите цену продажи"
 }

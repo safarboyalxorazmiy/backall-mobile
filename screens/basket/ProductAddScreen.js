@@ -22,17 +22,6 @@ import BackIcon from "../../assets/arrow-left-icon.svg"
 import { TouchableRipple } from 'react-native-paper';
 import i18n from '../../i18n';
 
-const amountData = [
-	{label: "DONA"},
-	{label: "KG"},
-	{label: "LITR"}
-];
-
-const priceData = [
-	{label: "%"},
-	{label: "SO'M"}
-];
-
 const screenWidth = Dimensions.get("window").width;
 const myScrollViewRef = React.createRef();
 
@@ -77,8 +66,8 @@ class ProductAdd extends Component {
 
 			ndsWrapperStyle: styles.ndsWrapper,
 
-			amountType: "DONA",
-			sellingPriceType: "SO'M",
+			amountType: "dona",
+			sellingPriceType: "so'm",
 
 			profitCalculation: "",
 			profitCalculationIsVisible: false,
@@ -309,6 +298,17 @@ class ProductAdd extends Component {
 	};
 
 	render() {
+		const amountData = [
+			{label: i18n.t('dona'), value: "dona"},
+			{label: i18n.t("kg"), value: "kg"},
+			{label: i18n.t("litr"), value: "litr"}
+		];
+		
+		const priceData = [
+			{label: "%", value: "%"},
+			{label: i18n.t("sum"), value: "so'm"}
+		];
+
 		const {navigation} = this.props;
 
 		return (
@@ -594,7 +594,7 @@ class ProductAdd extends Component {
 								<Dropdown
 									data={priceData}
 									labelField="label"
-									valueField="label"
+									valueField="value"
 									value={this.state.sellingPriceType}
 									onChange={this.handleSellingPriceTypeSelect}
 
@@ -663,7 +663,7 @@ class ProductAdd extends Component {
 							<Text style={{
 								fontSize: 16,
 								fontFamily: "Gilroy-Medium"
-							}}>NDS soliq</Text>
+							}}>{i18n.t("ndsTax")}</Text>
 
 							<ToggleSwitch
 								onColor="#65C466"

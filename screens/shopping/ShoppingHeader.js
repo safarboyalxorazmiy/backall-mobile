@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { memo } from 'react';
 import { Text, View, StyleSheet, Dimensions } from 'react-native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CalendarIcon from "../../assets/calendar-icon.svg";

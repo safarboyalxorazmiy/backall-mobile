@@ -243,9 +243,7 @@ const styles = StyleSheet.create({
 
 
 export default memo(
-	ProfitItem, (
-		prevProps,
-		nextProps
-	) =>
+	ProfitItem, 
+	(prevProps, nextProps) =>
 		prevProps.history.id === nextProps.history.id
 );
