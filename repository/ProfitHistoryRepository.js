@@ -755,6 +755,7 @@ class ProfitHistoryRepository {
 			toDateObj.getTime() - toDateObj.getTimezoneOffset() * 60000
 		).toISOString().slice(0, 19).replace('T', ' ');
 
+		
 		try {
 			let query;
 			if (toDate == fromDate) {
@@ -762,7 +763,7 @@ class ProfitHistoryRepository {
             SELECT *
             FROM profit_group
             WHERE id <= ${lastHistoryId}
-              AND DATE(created_date) = '${fromDate}'
+							AND DATE(created_date) >= DATE('${fromDateObj.toISOString()}')
             ORDER BY id DESC
             limit 11;`
 			} else if (fromUTCDate > toUTCDate) {
@@ -803,6 +804,7 @@ class ProfitHistoryRepository {
 			}
 
 			const rows = result.rows._array;
+			console.log("getTop11ProfitGroupByDate():: ", rows);
 			return rows;
 		} catch (error) {
 			console.error("Error retrieving profit history:", error);
@@ -1204,7 +1206,8 @@ class ProfitHistoryRepository {
 			if (toDate == fromDate) {
 				query = `SELECT *
                  FROM profit_group
-                 WHERE DATE(created_date) = '${fromDate}'
+                 WHERE 
+								 	DATE(created_date) == '${fromDate}' 
                  ORDER BY id DESC
                  LIMIT 1;`
 			} else if (fromUTCDate > toUTCDate) {
@@ -1237,7 +1240,6 @@ class ProfitHistoryRepository {
 			}
 
 			const row = result.rows._array[0];
-
 			return row;
 		} catch (error) {
 			console.error("Error retrieving profit history:", error);
@@ -1257,21 +1259,22 @@ class ProfitHistoryRepository {
 		try {
 			let query;
 			if (toDate == fromDate) {
-				query = `SELECT *
-                 FROM profit_group
-                 WHERE DATE(created_date) = '${fromDate}'
-                 ORDER BY ID ASC
-                 LIMIT 1;`
+				query = `SELECT * 
+								FROM profit_group 
+								WHERE 
+									DATE(created_date) == '${fromDate}'
+								ORDER BY ID DESC
+								LIMIT 1;`
 			} else if (fromUTCDate > toUTCDate) {
 				query = `SELECT *
                  FROM profit_group
-                 WHERE DATE(created_date) BETWEEN '${toDate}' AND '${fromDate}'
+                 WHERE DATE(created_date) BETWEEN '${toDate} 23:59:59' AND '${fromDate} 00:00:00'
                  ORDER BY ID ASC
                  LIMIT 1;`;
 			} else {
 				query = `SELECT *
                  FROM profit_group
-                 WHERE DATE(created_date) BETWEEN '${fromDate}' AND '${toDate}'
+                 WHERE DATE(created_date) BETWEEN '${fromDate} 00:00:00' AND '${toDate} 23:59:59'
                  ORDER BY ID ASC
                  LIMIT 1;`;
 			}

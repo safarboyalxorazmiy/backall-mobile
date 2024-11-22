@@ -107,8 +107,8 @@ class Shopping extends Component {
 
 		//.log("Shopping mounted");
 
-		this.setState({loading: true});
-		await this.loadLocalSellGroups();
+
+		this.onEndReached();
 
 		const {navigation} = this.props;
 

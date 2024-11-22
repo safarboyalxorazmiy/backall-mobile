@@ -65,22 +65,16 @@ class Profit extends Component {
 	async componentDidMount() {
 		await AsyncStorage.setItem("window", "Profit");
 
-		if (await AsyncStorage.getItem("loadProfit") === "true") {
-			await this.initializeScreen();
+		// !IMPORTANT 🔭******************************
+		// Bu method bu yerda stateni component mount bo'lganda sahifani hamma ma'lumotlarini tozalash uchun yozildi.
+		// yozilmasa double element degan bug chiqayapti
+		await this.initializeScreen();
 
-			let lastSellGroup = await this.sellHistoryRepository.getLastSellGroup();
-			let lastGroupId = lastSellGroup.id;
 
-			let firstSellGroup = await this.sellHistoryRepository.getFirstSellGroup();
-
-			this.setState({
-				firstGroupGlobalId: firstSellGroup.global_id,
-				lastGroupId: lastGroupId,
-				incomeTitle: i18n.t("oyIncome")
-			});
-
-			this.onEndReached();
-			
+		// !IMPORTANT 🔭******************************
+		// Bu if bizga faqat eski user akkauntdan chiqib ketib yangi user bu telefonga login yoki register qilayotganda kerak.
+		// Bu yerda shunchaki tozalab tashlaymiz chunki bizga endi uni keragi yo'q
+		if (await AsyncStorage.getItem("loadProfit") === "true") {		
 			await AsyncStorage.setItem("loadProfit", "false");
 		}
 
@@ -110,8 +104,7 @@ class Profit extends Component {
 
 		console.log("Profit mounted");
 
-		this.setState({loading: true});
-		await this.loadLocalProfitGroups();
+		this.onEndReached();
 
 		const {navigation} = this.props;
 
@@ -230,19 +223,16 @@ class Profit extends Component {
 					await this.profitHistoryRepository.getLastProfitHistoryGroupByDate(
 						this.state.fromDate, this.state.toDate
 					);
-				let lastGroupId = lastGroup.id || 0;
+				let lastGroupId = lastGroup.id;
 
 				this.setState({
 					firstGroupGlobalId: firstProfitGroup.global_id,
 					lastGroupId: lastGroupId
 				});
 
+				
+				this.setState({loading: false});
 				this.onEndReached();
-
-				this.setState({
-					loading: false
-				});
-
 				return;
 			}
 			// reloading after removing date
@@ -597,7 +587,8 @@ class Profit extends Component {
 			return;
 		};
 
-		await this.loadMore();
+		console.log("Loading..")
+		this.loadMore();
 	}
 
 	scrollToTop = () => {

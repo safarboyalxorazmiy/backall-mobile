@@ -1311,7 +1311,7 @@ class SellHistoryRepository {
 			if (toDate == fromDate) {
 				query = `SELECT *
                  FROM sell_group
-                 WHERE DATE(created_date) == '${fromDate}'
+                 WHERE DATE(created_date) == DATE('${fromDateObj.toISOString()}'
                  ORDER BY ID DESC
                  LIMIT 1;`
 			} 
