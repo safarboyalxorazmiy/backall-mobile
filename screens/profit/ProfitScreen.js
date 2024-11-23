@@ -88,7 +88,7 @@ class Profit extends Component {
 		if (currentMonth === lastStoredMonth) {
 			this.setState({
 				thisMonthProfitAmount: thisMonthProfitAmount,
-				incomeTitle: i18n.t("oyIncome")
+				incomeTitle: i18n.t("oyProfit")
 			});
 		}
 
@@ -127,7 +127,7 @@ class Profit extends Component {
 			if (currentMonth === lastStoredMonth) {
 				this.setState({
 					thisMonthProfitAmount: thisMonthProfitAmount,
-					incomeTitle: i18n.t("oyIncome")
+					incomeTitle: i18n.t("oyProfit")
 				});
 			}
 
@@ -227,11 +227,10 @@ class Profit extends Component {
 
 				this.setState({
 					firstGroupGlobalId: firstProfitGroup.global_id,
-					lastGroupId: lastGroupId
+					lastGroupId: lastGroupId,
+					loading: false
 				});
 
-				
-				this.setState({loading: false});
 				this.onEndReached();
 				return;
 			}
@@ -248,13 +247,12 @@ class Profit extends Component {
 					firstGroupGlobalId: firstProfitGroup.global_id,
 					lastGroupId: lastGroupId,
 					prevFromDate: null,
-					incomeTitle: i18n.t("oyIncome")
+					incomeTitle: i18n.t("oyProfit"),
+					loading: false
 				});
 
-				console.log("Profit mounted");
-
-				this.setState({loading: true});
-				await this.loadLocalProfitGroups();
+				this.onEndReached();
+				return;
 			}
 
 			this.onEndReached();

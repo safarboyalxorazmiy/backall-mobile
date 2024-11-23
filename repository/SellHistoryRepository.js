@@ -31,6 +31,7 @@ class SellHistoryRepository {
            (
                id           INTEGER PRIMARY KEY AUTOINCREMENT,
                created_date TIMESTAMP,
+							 date         TEXT NOT NULL,
                amount       DOUBLE,
                global_id    INTEGER,
                saved        boolean
@@ -56,19 +57,19 @@ class SellHistoryRepository {
 	}
 
 	async createSellGroup(amount) {
-		let currentDate = new Date();
+		let current_date = new Date();
+		const date = `${current_date.getFullYear()}-${(current_date.getMonth() + 1).toString().padStart(2, '0')}-${current_date.getDate().toString().padStart(2, '0')}`;
+
 		try {
 			const query = `
-          INSERT INTO sell_group (created_date, global_id, amount, saved)
-          VALUES (?, null, ?, 0);
+          INSERT INTO sell_group (created_date, date, global_id, amount, saved)
+          VALUES (?, ?, null, ?, 0);
 			`;
 
 			// Execute the query
 			await this.db.transaction(async (tx) => {
-				await tx.executeSql(query, [currentDate.toISOString(), amount]);
+				await tx.executeSql(query, [current_date.toISOString(), date, amount]);
 			});
-
-			console.log("Sell group created successfully. Day:", currentDate.getDate(), currentDate.toISOString());
 
 			const lastSellHistoryGroup = await this.getLastSellGroup();
 			return lastSellHistoryGroup.id;
@@ -84,25 +85,30 @@ class SellHistoryRepository {
 		global_id,
 		saved
 	) {
+		let current_date = new Date(created_date);
+		const date = `${current_date.getFullYear()}-${(current_date.getMonth() + 1).toString().padStart(2, '0')}-${current_date.getDate().toString().padStart(2, '0')}`;
+
 		try {
 			const query = `
-          INSERT INTO sell_group (created_date, global_id, amount, saved)
-          VALUES (?, ?, ?, ?);
+          INSERT INTO sell_group (created_date, date, global_id, amount, saved)
+          VALUES (?, ?, ?, ?, ?);
 			`;
 
 			// Execute the query
 			await this.db.transaction(async (tx) => {
 				await tx.executeSql(query, [
 					created_date,
+					date,
 					global_id,
 					amount,
 					saved ? 1 : 0
 				]);
 			});
 
-			console.log("Sell group created successfully.");
+			console.log("Sell group created successfully.", created_date, "\n", date, "\n", global_id, "\n", amount,	"\n", saved);
 
 			const lastSellHistoryGroup = await this.getLastSellGroup();
+			console.log("createSellHistoryGroupWithAllValues:", lastSellHistoryGroup);
 			return lastSellHistoryGroup.id;
 		} catch (error) {
 			console.error("Error createSellHistoryGroupWithAllValues:", error);
@@ -115,7 +121,7 @@ class SellHistoryRepository {
 			const query = `
           SELECT *
           FROM sell_group
-          ORDER BY ID DESC
+          ORDER BY id DESC
           LIMIT 1;
 			`;
 
@@ -149,7 +155,7 @@ class SellHistoryRepository {
 			const query = `
           SELECT *
           FROM sell_group
-          ORDER BY ID ASC
+          ORDER BY id ASC
           LIMIT 1;
 			`;
 
@@ -181,9 +187,7 @@ class SellHistoryRepository {
 	async createSellHistory(product_id, count, count_type, selling_price) {
 		try {
 			let created_date = new Date();
-			
-			console.log("Timezone offset: " + created_date.getTimezoneOffset());
-			
+						
 			const query = `
           INSERT INTO sell_history (product_id,
                                     count,
@@ -329,7 +333,7 @@ class SellHistoryRepository {
           FROM sell_history
           where product_id = ?
             AND created_date = ?
-          ORDER BY ID DESC
+          ORDER BY id DESC
           LIMIT 1;
 			`;
 
@@ -461,47 +465,42 @@ class SellHistoryRepository {
 
 	async getTop11SellGroupByDate(lastHistoryId, fromDate, toDate) {
 		let fromDateObj = new Date(fromDate);
-		fromDateObj.setHours(0, 0, 0, 0); // Set to the end of the day
-		const fromUTCDate = new Date(
-			fromDateObj.getTime() - fromDateObj.getTimezoneOffset() * 60000
-		).toISOString().slice(0, 19).replace('T', ' ');
-
+		fromDateObj.setUTCHours(0, 0, 0, 0); // Set to start of the day in UTC
+		const fromUTCDate = fromDateObj.toISOString().slice(0, 19).replace('T', ' ');
+		
 		let toDateObj = new Date(toDate);
-		toDateObj.setHours(23, 59, 59, 999); // Set to the beginning of the day
-		const toUTCDate = new Date(
-			toDateObj.getTime() - toDateObj.getTimezoneOffset() * 60000
-		).toISOString().slice(0, 19).replace('T', ' ');
+		toDateObj.setUTCHours(23, 59, 59, 999); // Set to end of the day in UTC
+		const toUTCDate = toDateObj.toISOString().slice(0, 19).replace('T', ' ');
 
 		try {
 			let query;
 			if (toDate == fromDate) {
-				query = `
-            SELECT *
-            FROM sell_group
-            WHERE id <= ${lastHistoryId}
-              AND DATE(created_date) == '${fromDate}'
-            ORDER BY id DESC
-            limit 11;`
+				query = `SELECT *
+								FROM sell_group
+								WHERE id <= ${lastHistoryId}
+									AND DATE(date) = DATE('${fromDate}')
+								ORDER BY id DESC
+								limit 11;`
 			} 
 			else if (fromUTCDate > toUTCDate) {
-				fromDateObj.setUTCHours(23, 59, 59, 999); // Set to start of the day in UTC
-				const fromUTCDate = fromDateObj.toISOString().slice(0, 19).replace('T', ' ');
-
-				toDateObj.setUTCHours(0, 0, 0, 0); // Set to end of the day in UTC
-				const toUTCDate = toDateObj.toISOString().slice(0, 19).replace('T', ' ');
-
 				query = `SELECT *
                  FROM sell_group
-                 WHERE id <= ${lastHistoryId}
-                   AND DATE(created_date) BETWEEN '${toDate}' AND '${fromDate}'
+                 WHERE 
+								 	id <= ${lastHistoryId}
+									AND DATE(date) 
+									BETWEEN DATE('${toDate}') 
+											AND DATE('${fromDate}') 
                  ORDER BY id DESC
                  limit 11;`;
-			} 
+			} 			
 			else {
 				query = `SELECT *
                  FROM sell_group
                  WHERE id <= ${lastHistoryId}
-                   AND DATE(created_date) BETWEEN '${fromDate}' AND '${toDate}'
+                  AND DATE(date) 
+									BETWEEN 
+										DATE('${fromDate}') AND 
+										DATE('${toDate}') 
                  ORDER BY id DESC
                  limit 11;`;
 			}
@@ -525,45 +524,6 @@ class SellHistoryRepository {
 			return rows;
 		} catch (error) {
 			console.error("Error retrieving sell history:", error);
-			throw error;
-		}
-	}
-
-	async findAll(lastHistoryId) {
-		try {
-			const query = `
-          SELECT DATE(created_date)                  AS date_key,
-                 strftime('%B %d, %Y', created_date) AS date_info,
-                 SUM(amount)                         AS total_amount,
-                 GROUP_CONCAT(id)                    AS history_ids,
-                 GROUP_CONCAT(amount)                AS history_amounts,
-                 GROUP_CONCAT(created_date)          AS history_created_dates
-          FROM sell_group
-          GROUP BY date_key
-          ORDER BY date_key DESC
-          LIMIT 10; -- Limiting results to 10 for example
-          ;
-			`;
-
-			const result = await new Promise((resolve, reject) => {
-				this.db.transaction((tx) => {
-					tx.executeSql(
-						query,
-						[],
-						(_, resultSet) => resolve(resultSet),
-						(_, error) => reject(error)
-					);
-				});
-			});
-
-			if (!result || !result.rows || !result.rows._array) {
-				throw new Error("Unexpected result structure");
-			}
-
-			const rows = result.rows._array;
-			return rows;
-		} catch (error) {
-			console.error("Error getAllSellGroup:", error);
 			throw error;
 		}
 	}
@@ -954,7 +914,7 @@ class SellHistoryRepository {
           SELECT *
           FROM sell_history_group
           WHERE group_id = ?
-          ORDER BY ID DESC
+          ORDER BY id DESC
           LIMIT 1;
 			`;
 
@@ -1237,38 +1197,39 @@ class SellHistoryRepository {
 
 	async getLastSellHistoryGroupByDate(fromDate, toDate) {
 		let fromDateObj = new Date(fromDate);
-		fromDateObj.setHours(0, 0, 0, 0); // Set to the end of the day
-		const fromUTCDate = new Date(
-			fromDateObj.getTime() - fromDateObj.getTimezoneOffset() * 60000
-		).toISOString().slice(0, 19).replace('T', ' ');
-
+		fromDateObj.setUTCHours(0, 0, 0, 0); // Set to start of the day in UTC
+		const fromUTCDate = fromDateObj.toISOString().slice(0, 19).replace('T', ' ');
+		
 		let toDateObj = new Date(toDate);
-		toDateObj.setHours(23, 59, 59, 999); // Set to the beginning of the day
-		const toUTCDate = new Date(
-			toDateObj.getTime() - toDateObj.getTimezoneOffset() * 60000
-		).toISOString().slice(0, 19).replace('T', ' ');
-
+		toDateObj.setUTCHours(23, 59, 59, 999); // Set to end of the day in UTC
+		const toUTCDate = toDateObj.toISOString().slice(0, 19).replace('T', ' ');
+		
 		try {
 			let query;
 			if (toDate == fromDate) {
-				console.log(fromDate);
 				query = `SELECT *
                  FROM sell_group
-                 WHERE DATE(created_date) == '${fromDate}'
+                 WHERE DATE(date) = DATE('${fromDate}')
                  ORDER BY id DESC
                  LIMIT 1;`
 			} 
 			else if (fromUTCDate > toUTCDate) {
 				query = `SELECT *
                  FROM sell_group
-                 WHERE DATE(created_date) BETWEEN '${toDate}' AND '${fromDate}'
+                 WHERE 
+									DATE(date) 
+										BETWEEN DATE('${toDate}') 
+												AND DATE('${fromDate}') 
                  ORDER BY id DESC
                  LIMIT 1;`;
 			} 
 			else {
 				query = `SELECT *
                  FROM sell_group
-                 WHERE DATE(created_date) BETWEEN '${fromDate}' AND '${toDate}'
+                 WHERE 
+								 	DATE(date) 
+									BETWEEN DATE('${fromDate}') 
+											AND DATE('${toDate}') 
                  ORDER BY id DESC
                  LIMIT 1;`;
 			}
@@ -1301,6 +1262,7 @@ class SellHistoryRepository {
 		let fromDateObj = new Date(fromDate);
 		fromDateObj.setUTCHours(0, 0, 0, 0); // Set to start of the day in UTC
 		const fromUTCDate = fromDateObj.toISOString().slice(0, 19).replace('T', ' ');
+		
 
 		let toDateObj = new Date(toDate);
 		toDateObj.setUTCHours(23, 59, 59, 999); // Set to end of the day in UTC
@@ -1308,25 +1270,30 @@ class SellHistoryRepository {
 
 		try {
 			let query;
-			if (toDate == fromDate) {
+			if (toDate == fromDate) {		
 				query = `SELECT *
                  FROM sell_group
-                 WHERE DATE(created_date) == DATE('${fromDateObj.toISOString()}'
-                 ORDER BY ID DESC
+                 WHERE DATE(date) = DATE('${fromDate}')
+                 ORDER BY id DESC
                  LIMIT 1;`
 			} 
 			else if (fromUTCDate > toUTCDate) {
 				query = `SELECT *
                FROM sell_group
-               WHERE DATE(created_date) BETWEEN '${toDate}' AND '${fromDate}'
-               ORDER BY ID ASC
+								WHERE 
+								 	DATE(date) 
+									BETWEEN DATE('${toDate}') 
+											AND DATE('${fromDate}')                
+               ORDER BY id ASC
                LIMIT 1;`;
 			} 
 			else {
-				query = `SELECT *
-               FROM sell_group
-               WHERE DATE(created_date) BETWEEN '${fromDate}' AND '${toDate}'
-               ORDER BY ID ASC
+				query = `SELECT * FROM sell_group
+								WHERE 
+								 	DATE(date) 
+									BETWEEN DATE('${fromDate}') 
+											AND DATE('${toDate}')                
+								ORDER BY id ASC
                LIMIT 1;`;
 			}
 

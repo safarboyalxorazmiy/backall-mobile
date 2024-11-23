@@ -29,6 +29,7 @@ class ProfitHistoryRepository {
            (
                id           INTEGER PRIMARY KEY AUTOINCREMENT,
                created_date TIMESTAMP,
+							 date         TEXT NOT NULL,
                profit       DOUBLE,
                global_id    INTEGER,
                saved        BOOLEAN
@@ -55,15 +56,16 @@ class ProfitHistoryRepository {
 
 	async createProfitGroup(profit) {
 		let current_date = new Date();
+		const date = `${current_date.getFullYear()}-${(current_date.getMonth() + 1).toString().padStart(2, '0')}-${current_date.getDate().toString().padStart(2, '0')}`;
 
 		try {
 			const query = `
-          INSERT INTO profit_group (created_date, profit, global_id, saved)
-          VALUES (?, ?, null, 0);`;
+          INSERT INTO profit_group (created_date, date, profit, global_id, saved)
+          VALUES (?, ?, ?, null, 0);`;
 
 			// Execute the query
 			await this.db.transaction(async (tx) => {
-				tx.executeSql(query, [current_date.toISOString(), profit]);
+				tx.executeSql(query, [current_date.toISOString(), date, profit]);
 			});
 
 			let lastProfitHistoryGroup = await this.getLastProfitHistoryGroupId();
@@ -81,14 +83,18 @@ class ProfitHistoryRepository {
 		saved
 	) {
 		try {
+			let current_date = new Date(created_date);
+			const date = `${current_date.getFullYear()}-${(current_date.getMonth() + 1).toString().padStart(2, '0')}-${current_date.getDate().toString().padStart(2, '0')}`;
+
 			const query = `
-          INSERT INTO profit_group (created_date, profit, global_id, saved)
-          VALUES (?, ?, ?, ?);`;
+          INSERT INTO profit_group (created_date, date, profit, global_id, saved)
+          VALUES (?, ?, ?, ?, ?);`;
 
 			// Execute the query
 			await this.db.transaction(async (tx) => {
 				await tx.executeSql(query, [
 					created_date,
+					date,
 					profit,
 					global_id,
 					saved ? 1 : 0
@@ -108,7 +114,7 @@ class ProfitHistoryRepository {
 			const query = `
           SELECT *
           FROM profit_group
-          ORDER BY ID DESC
+          ORDER BY id DESC
           LIMIT 1;
 			`;
 
@@ -680,7 +686,7 @@ class ProfitHistoryRepository {
           FROM profit_history
           WHERE product_id = ?
             AND created_date = ?
-          ORDER BY ID DESC
+          ORDER BY id DESC
           LIMIT 1;
 			`;
 
@@ -744,46 +750,38 @@ class ProfitHistoryRepository {
 
 	async getTop11ProfitGroupByDate(lastHistoryId, fromDate, toDate) {
 		let fromDateObj = new Date(fromDate);
-		fromDateObj.setHours(0, 0, 0, 0); // Set to the end of the day
-		const fromUTCDate = new Date(
-			fromDateObj.getTime() - fromDateObj.getTimezoneOffset() * 60000
-		).toISOString().slice(0, 19).replace('T', ' ');
+		fromDateObj.setUTCHours(0, 0, 0, 0); // Set to start of the day in UTC
+		const fromUTCDate = fromDateObj.toISOString().slice(0, 19).replace('T', ' ');
+		const fromDateISOString = new Date(fromDateObj.getTime() - fromDateObj.getTimezoneOffset() * 60000).toISOString().slice(0, -1); 
 
 		let toDateObj = new Date(toDate);
-		toDateObj.setHours(23, 59, 59, 999); // Set to the beginning of the day
-		const toUTCDate = new Date(
-			toDateObj.getTime() - toDateObj.getTimezoneOffset() * 60000
-		).toISOString().slice(0, 19).replace('T', ' ');
+		toDateObj.setUTCHours(23, 59, 59, 999); // Set to end of the day in UTC
+		const toUTCDate = toDateObj.toISOString().slice(0, 19).replace('T', ' ');
+		const toDateISOString = new Date(toDateObj.getTime() - toDateObj.getTimezoneOffset() * 60000).toISOString().slice(0, -1); 
 
-		
 		try {
 			let query;
 			if (toDate == fromDate) {
-				query = `
-            SELECT *
+				query = `SELECT *
             FROM profit_group
             WHERE id <= ${lastHistoryId}
-							AND DATE(created_date) >= DATE('${fromDateObj.toISOString()}')
+              AND DATE(date) = DATE('${fromDate}')
             ORDER BY id DESC
             limit 11;`
 			} else if (fromUTCDate > toUTCDate) {
-				fromDateObj.setUTCHours(23, 59, 59, 999); // Set to start of the day in UTC
-				const fromUTCDate = fromDateObj.toISOString().slice(0, 19).replace('T', ' ');
-
-				toDateObj.setUTCHours(0, 0, 0, 0); // Set to end of the day in UTC
-				const toUTCDate = toDateObj.toISOString().slice(0, 19).replace('T', ' ');
-
 				query = `SELECT *
                  FROM profit_group
                  WHERE id <= ${lastHistoryId}
-                   AND DATE(created_date) BETWEEN '${toDate}' AND '${fromDate}'
+									AND DATE(date) BETWEEN DATE('${toDate}') 
+									AND DATE('${fromDate}') 
                  ORDER BY id DESC
                  limit 11;`;
 			} else {
 				query = `SELECT *
                  FROM profit_group
                  WHERE id <= ${lastHistoryId}
-                   AND DATE(created_date) BETWEEN '${fromDate}' AND '${toDate}'
+                  AND DATE(date) BETWEEN DATE('${fromDate}') 
+									AND DATE('${toDate}') 
                  ORDER BY id DESC
                  limit 11;`;
 			}
@@ -873,7 +871,7 @@ class ProfitHistoryRepository {
           SELECT *
           FROM profit_history_group
           WHERE group_id = ?
-          ORDER BY ID DESC
+          ORDER BY id DESC
           LIMIT 1;
 			`;
 
@@ -993,7 +991,7 @@ class ProfitHistoryRepository {
 			const query = `
           SELECT *
           FROM profit_group
-          ORDER BY ID DESC
+          ORDER BY id DESC
           LIMIT 1;
 			`;
 
@@ -1027,7 +1025,7 @@ class ProfitHistoryRepository {
 			const query = `
           SELECT *
           FROM profit_group
-          ORDER BY ID ASC
+          ORDER BY id ASC
           LIMIT 1;
 			`;
 
@@ -1190,36 +1188,37 @@ class ProfitHistoryRepository {
 
 	async getLastProfitHistoryGroupByDate(fromDate, toDate) {
 		let fromDateObj = new Date(fromDate);
-		fromDateObj.setHours(0, 0, 0, 0); // Set to the end of the day
-		const fromUTCDate = new Date(
-			fromDateObj.getTime() - fromDateObj.getTimezoneOffset() * 60000
-		).toISOString().slice(0, 19).replace('T', ' ');
+		fromDateObj.setUTCHours(0, 0, 0, 0); // Set to start of the day in UTC
+		const fromUTCDate = fromDateObj.toISOString().slice(0, 19).replace('T', ' ');
 
 		let toDateObj = new Date(toDate);
-		toDateObj.setHours(23, 59, 59, 999); // Set to the beginning of the day
-		const toUTCDate = new Date(
-			toDateObj.getTime() - toDateObj.getTimezoneOffset() * 60000
-		).toISOString().slice(0, 19).replace('T', ' ');
+		toDateObj.setUTCHours(23, 59, 59, 999); // Set to end of the day in UTC
+		const toUTCDate = toDateObj.toISOString().slice(0, 19).replace('T', ' ');
 
 		try {
 			let query;
 			if (toDate == fromDate) {
 				query = `SELECT *
                  FROM profit_group
-                 WHERE 
-								 	DATE(created_date) == '${fromDate}' 
+                 WHERE DATE(date) >= DATE('${fromDate}')
                  ORDER BY id DESC
                  LIMIT 1;`
 			} else if (fromUTCDate > toUTCDate) {
 				query = `SELECT *
                  FROM profit_group
-                 WHERE DATE(created_date) BETWEEN '${toDate}' AND '${fromDate}'
+                 WHERE 
+									DATE(date) 
+										BETWEEN DATE('${toDate}') 
+												AND DATE('${fromDate}') 
                  ORDER BY id DESC
                  LIMIT 1;`;
 			} else {
 				query = `SELECT *
                  FROM profit_group
-                 WHERE DATE(created_date) BETWEEN '${fromDate}' AND '${toDate}'
+                 WHERE 
+								 	DATE(date) 
+									BETWEEN DATE('${fromDate}') 
+											AND DATE('${toDate}') 
                  ORDER BY id DESC
                  LIMIT 1;`;
 			}
@@ -1251,32 +1250,41 @@ class ProfitHistoryRepository {
 		let fromDateObj = new Date(fromDate);
 		fromDateObj.setUTCHours(0, 0, 0, 0); // Set to start of the day in UTC
 		const fromUTCDate = fromDateObj.toISOString().slice(0, 19).replace('T', ' ');
+		const fromDateISOString = new Date(fromDateObj.getTime() - fromDateObj.getTimezoneOffset() * 60000).toISOString().slice(0, -1); 
 
 		let toDateObj = new Date(toDate);
 		toDateObj.setUTCHours(23, 59, 59, 999); // Set to end of the day in UTC
 		const toUTCDate = toDateObj.toISOString().slice(0, 19).replace('T', ' ');
+		const toDateISOString = new Date(toDateObj.getTime() - toDateObj.getTimezoneOffset() * 60000).toISOString().slice(0, -1); 
+
 
 		try {
 			let query;
 			if (toDate == fromDate) {
-				query = `SELECT * 
-								FROM profit_group 
+				query = `SELECT *
+                 FROM profit_group
+                 WHERE DATE(date) >= DATE('${fromDateISOString}')
+                 ORDER BY id DESC
+                 LIMIT 1;`
+			} 
+			else if (fromUTCDate > toUTCDate) {
+				query = `SELECT *
+               FROM profit_group
 								WHERE 
-									DATE(created_date) == '${fromDate}'
-								ORDER BY ID DESC
-								LIMIT 1;`
-			} else if (fromUTCDate > toUTCDate) {
-				query = `SELECT *
-                 FROM profit_group
-                 WHERE DATE(created_date) BETWEEN '${toDate} 23:59:59' AND '${fromDate} 00:00:00'
-                 ORDER BY ID ASC
-                 LIMIT 1;`;
-			} else {
-				query = `SELECT *
-                 FROM profit_group
-                 WHERE DATE(created_date) BETWEEN '${fromDate} 00:00:00' AND '${toDate} 23:59:59'
-                 ORDER BY ID ASC
-                 LIMIT 1;`;
+								 	DATE(date) 
+									BETWEEN DATE('${toDate}') 
+											AND DATE('${fromDate}')                
+               ORDER BY id ASC
+               LIMIT 1;`;
+			} 	
+			else {
+				query = `SELECT * FROM profit_group
+								WHERE 
+								 	DATE(date) 
+									BETWEEN DATE('${fromDate}') 
+											AND DATE('${toDate}')                
+								ORDER BY id ASC
+               LIMIT 1;`;
 			}
 
 			const result = await new Promise((resolve, reject) => {

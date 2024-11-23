@@ -38,7 +38,7 @@ class DatabaseRepository {
                  count         DOUBLE,
                  count_type    TEXT,
                  global_id     INTEGER,
-                 saved         boolean,
+                 saved         BOOLEAN,
                  FOREIGN KEY (product_id) REFERENCES product (id)
              );`,
 
@@ -59,6 +59,7 @@ class DatabaseRepository {
              (
                  id           INTEGER PRIMARY KEY AUTOINCREMENT,
                  created_date TIMESTAMP,
+                 date         TEXT NOT NULL,
                  amount       DOUBLE,
                  global_id    INTEGER,
                  saved        boolean
@@ -91,6 +92,7 @@ class DatabaseRepository {
              (
                  id           INTEGER PRIMARY KEY AUTOINCREMENT,
                  created_date TIMESTAMP,
+                 date         TEXT NOT NULL,
                  profit       DOUBLE,
                  global_id    INTEGER,
                  saved        boolean,

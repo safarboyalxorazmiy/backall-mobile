@@ -173,6 +173,7 @@ class Home extends Component {
 		let isDownloaded = await AsyncStorage.getItem("isDownloaded");
 		if (isDownloaded !== "true" || isDownloaded == null) {
 			this.setState({spinner: true});
+			this.databaseRepository.clear();
 
 			const {navigation} = this.props;
 
@@ -299,6 +300,7 @@ class Home extends Component {
 			let isDownloaded = await AsyncStorage.getItem("isDownloaded");
 			console.log("isDownloaded::", isDownloaded);
 			if (isDownloaded !== "true" || isDownloaded == null) {
+				this.databaseRepository.clear();
 				this.setState({spinner: true});
 
 				const {navigation} = this.props;

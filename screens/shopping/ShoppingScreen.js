@@ -102,7 +102,9 @@ class Shopping extends Component {
 
 		this.setState({
 			firstGroupGlobalId: firstSellGroup.global_id,
-			lastGroupId: lastGroupId
+			lastGroupId: lastGroupId,
+			loading: false,
+			localFullyLoaded: false
 		});
 
 		//.log("Shopping mounted");
@@ -130,7 +132,9 @@ class Shopping extends Component {
 				this.setState({
 					firstGroupGlobalId: firstSellGroup.global_id,
 					lastGroupId: lastGroupId,
-					incomeTitle: i18n.t("oyIncome")
+					incomeTitle: i18n.t("oyIncome"),
+					loading: false,
+					localFullyLoaded: false
 				});
 
 				this.onEndReached();
@@ -150,12 +154,6 @@ class Shopping extends Component {
 					thisMonthSellAmount: thisMonthSellAmount,
 					incomeTitle: i18n.t("oyIncome")
 				});
-			}
-
-			// If there is no history get histories
-			if (this.state.groupedHistories.length <= 0) {
-				this.setState({loading: true, localFullyLoaded: false});
-				await this.loadLocalSellGroups();
 			}
 
 			// New history created load new items **
@@ -184,9 +182,19 @@ class Shopping extends Component {
 					globalFullyLoaded: false
 				});
 
+				// If there is no history get histories
+				if (this.state.groupedHistories.length <= 0) {
+					this.setState({loading: false, localFullyLoaded: false});
+					this.onEndReached();
+					this.scrollToTop();
+					return;
+				}
+
+				// If there is history load top 1
 				await this.loadTop1LocalSellGroups();
 				this.scrollToTop();
 				await AsyncStorage.setItem("shoppingFullyLoaded", "true");	
+				return;
 			}
 
 			// Getting date removing date
@@ -242,15 +250,11 @@ class Shopping extends Component {
 
 				this.setState({
 					firstGroupGlobalId: firstSellGroup.global_id,
-					lastGroupId: lastGroupId
-				});
-
-				this.onEndReached();
-
-				this.setState({
+					lastGroupId: lastGroupId,
 					loading: false
 				});
 
+				this.onEndReached();
 				return;
 			}
 			// reloading after removing date
@@ -266,16 +270,18 @@ class Shopping extends Component {
 					firstGroupGlobalId: firstSellGroup.global_id,
 					lastGroupId: lastGroupId,
 					prevFromDate: null,
-					incomeTitle: i18n.t("oyIncome")
+					incomeTitle: i18n.t("oyIncome"),
+					loading: false,
+					localFullyLoaded: false
 				});
 
-				//.log("Shopping mounted");
-
-				this.setState({loading: true});
-				await this.loadLocalSellGroups();
+				this.onEndReached();
+				return;
 			}
 
 			this.onEndReached();
+
+			
 		});
 	}
 
@@ -363,12 +369,12 @@ class Shopping extends Component {
 		await this.amountDateRepository.init();
 	}
 
-	async loadMore() {	
+	async loadMore() {
 		if (await AsyncStorage.getItem("window") != "Shopping") {
 			this.setState({loading: false, localFullyLoaded: false});
 			return;
 		}
-		
+
 		if (this.state.localFullyLoaded === false) {
 			this.setState({loading: true});
 			let isLoaded = await this.loadLocalSellGroups();
@@ -546,6 +552,11 @@ class Shopping extends Component {
 				groupedCopy[groupedCopy.length - 1].histories[0].calendar = true;
 			}
 
+			if (await AsyncStorage.getItem("window") != "Shopping") {
+				this.setState({loading: false, localFullyLoaded: false});
+				return;
+			}
+
 			this.setState(prevState => ({
 				sellingHistory: [...prevState.sellingHistory, ...sellHistories],
 				groupedHistories: groupedCopy,
@@ -577,6 +588,7 @@ class Shopping extends Component {
 			//.log(grouped[0])
 			const {id, created_date, amount} = sellHistories[0];
 			
+			console.log("created_date::", created_date);
 			const currentDate = new Date(created_date);
 			const historyDate = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`;
 

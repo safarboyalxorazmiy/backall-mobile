@@ -276,10 +276,10 @@ class AmountDateRepository {
 				FROM (
 					SELECT id, amount AS value 
 					FROM sell_amount_date 
-					ORDER BY id DESC 
+					ORDER BY id ASC 
 					LIMIT 30
 				) subquery 
-				ORDER BY id ASC;
+				ORDER BY id DESC;
 			`;
 			this.db.transaction(tx => {
 				tx.executeSql(selectQuery, [], (tx, results) => {

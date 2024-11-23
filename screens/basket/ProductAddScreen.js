@@ -91,11 +91,11 @@ class ProductAdd extends Component {
 	}
 
 	handleAmountTypeSelect = (value) => {
-		this.setState({amountType: value.label});
+		this.setState({amountType: value.value});
 	};
 
 	handleSellingPriceTypeSelect = (value) => {
-		this.setState({sellingPriceType: value.label});
+		this.setState({sellingPriceType: value.value});
 	}
 
 	defineInputContentStyle = (hide) => {
@@ -253,7 +253,7 @@ class ProductAdd extends Component {
 	}
 
 	onEndEditingSellingPriceInput = () => {
-		if (this.state.sellingPriceType === "SO'M") {
+		if (this.state.sellingPriceType === "so'm") {
 			if (
 				this.state.priceInputValue == ""
 			) {
