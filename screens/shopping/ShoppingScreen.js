@@ -60,7 +60,7 @@ class Shopping extends Component {
 		this.productRepository = new ProductRepository();
 		this.apiService = new ApiService();
 
-		this.onEndReached = _.debounce(this.onEndReached.bind(this), 100);
+		this.onEndReached = _.debounce(this.onEndReached.bind(this), 400);
 		this.flatListRef = React.createRef();
 	}
 
@@ -83,6 +83,7 @@ class Shopping extends Component {
 
 		/* Month sell amount setting value ** */
 		let thisMonthSellAmount = parseInt(await AsyncStorage.getItem("month_sell_amount"));
+		thisMonthSellAmount = isNaN(thisMonthSellAmount) ? 0 : thisMonthSellAmount;
 
 		let currentDate = new Date();
 		let currentMonth = currentDate.getMonth();
@@ -161,6 +162,27 @@ class Shopping extends Component {
 				await AsyncStorage.getItem("shoppingFullyLoaded") !== null &&
 				await AsyncStorage.getItem("shoppingFullyLoaded") !== "true"
 			) {
+				if (this.state.prevFromDate != null) {
+					let lastSellGroup = await this.sellHistoryRepository.getLastSellGroup();
+					let lastGroupId = lastSellGroup.id;
+	
+					let firstSellGroup = await this.sellHistoryRepository.getFirstSellGroup();
+	
+					this.setState({
+						groupedHistories: [],
+						sellingHistory: [],
+						firstGroupGlobalId: firstSellGroup.global_id,
+						lastGroupId: lastGroupId,
+						prevFromDate: null,
+						incomeTitle: i18n.t("oyIncome"),
+						loading: false,
+						localFullyLoaded: false
+					});
+	
+					this.onEndReached();
+					return;
+				}
+				
 				// Remove date
 				await AsyncStorage.removeItem("ShoppingFromDate");
 				await AsyncStorage.removeItem("ShoppingToDate");
@@ -254,6 +276,7 @@ class Shopping extends Component {
 					loading: false
 				});
 
+				await AsyncStorage.setItem("newCalendarShopping", "false");
 				this.onEndReached();
 				return;
 			}
@@ -278,6 +301,11 @@ class Shopping extends Component {
 				this.onEndReached();
 				return;
 			}
+
+			if (this.state.loading) {
+				await AsyncStorage.setItem("window", "Shopping");
+				return;
+			};
 
 			this.onEndReached();
 
@@ -370,7 +398,7 @@ class Shopping extends Component {
 	}
 
 	async loadMore() {
-		if (await AsyncStorage.getItem("window") != "Shopping") {
+		if (await AsyncStorage.getItem("window") != "Shopping" || await AsyncStorage.getItem("newCalendarShopping") == "true") {
 			this.setState({loading: false, localFullyLoaded: false});
 			return;
 		}
@@ -395,7 +423,7 @@ class Shopping extends Component {
 
 		try {
 			let response;
-			if (this.state.fromDate && this.state.toDate) {
+			if (this.state.fromDate != null && this.state.toDate != null) {
 				response = await this.apiService.getSellGroupsByDate(
 					this.state.firstGroupGlobalId,
 					this.state.fromDate,
@@ -552,11 +580,11 @@ class Shopping extends Component {
 				groupedCopy[groupedCopy.length - 1].histories[0].calendar = true;
 			}
 
-			if (await AsyncStorage.getItem("window") != "Shopping") {
+			if (await AsyncStorage.getItem("window") != "Shopping" || await AsyncStorage.getItem("newCalendarShopping") == "true") {
 				this.setState({loading: false, localFullyLoaded: false});
 				return;
 			}
-
+	
 			this.setState(prevState => ({
 				sellingHistory: [...prevState.sellingHistory, ...sellHistories],
 				groupedHistories: groupedCopy,
@@ -645,6 +673,11 @@ class Shopping extends Component {
 	}
 
 	async onEndReached() {
+		if (await AsyncStorage.getItem("window") != "Shopping" || await AsyncStorage.getItem("newCalendarShopping") == "true") {
+			this.setState({loading: false, localFullyLoaded: false});
+			return;
+		}
+
 		//.log("onEndReached()");
 		if (this.state.loading) {
 			console.log("Loading true returned")

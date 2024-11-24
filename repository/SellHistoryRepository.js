@@ -477,7 +477,7 @@ class SellHistoryRepository {
 			if (toDate == fromDate) {
 				query = `SELECT *
 								FROM sell_group
-								WHERE id <= ${lastHistoryId}
+								WHERE id < ${lastHistoryId}
 									AND DATE(date) = DATE('${fromDate}')
 								ORDER BY id DESC
 								limit 11;`
@@ -1274,7 +1274,7 @@ class SellHistoryRepository {
 				query = `SELECT *
                  FROM sell_group
                  WHERE DATE(date) = DATE('${fromDate}')
-                 ORDER BY id DESC
+                 ORDER BY id ASC
                  LIMIT 1;`
 			} 
 			else if (fromUTCDate > toUTCDate) {

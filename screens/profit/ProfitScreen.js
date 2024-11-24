@@ -58,7 +58,7 @@ class Profit extends Component {
 		this.amountDateRepository = new AmountDateRepository();
 		this.apiService = new ApiService();
 
-		this.onEndReached = _.debounce(this.onEndReached.bind(this), 100);
+		this.onEndReached = _.debounce(this.onEndReached.bind(this), 400);
 		this.flatListRef = React.createRef();
 	}
 
@@ -80,6 +80,7 @@ class Profit extends Component {
 
 		/* Month profit amount setting value ** */
 		let thisMonthProfitAmount = parseInt(await AsyncStorage.getItem("month_profit_amount"));
+		thisMonthProfitAmount = isNaN(thisMonthProfitAmount) ? 0 : thisMonthProfitAmount;
 
 		let currentDate = new Date();
 		let currentMonth = currentDate.getMonth();
@@ -93,13 +94,15 @@ class Profit extends Component {
 		}
 
 		let lastProfitGroup = await this.profitHistoryRepository.getLastProfitGroup();
-		let lastGroupId = lastProfitGroup.id || 0;
+		let lastGroupId = lastProfitGroup.id;
 
 		let firstProfitGroup = await this.profitHistoryRepository.getFirstProfitGroup();
 
 		this.setState({
 			firstGroupGlobalId: firstProfitGroup.global_id,
-			lastGroupId: lastGroupId
+			lastGroupId: lastGroupId,
+			loading: false,
+			localFullyLoaded: false
 		});
 
 		console.log("Profit mounted");
@@ -109,32 +112,14 @@ class Profit extends Component {
 		const {navigation} = this.props;
 
 		navigation.addListener("focus", async () => {
+		
+
 			await AsyncStorage.setItem("window", "Profit");
 
 			if (await AsyncStorage.getItem("loadProfit") === "true") {
 				await this.initializeScreen();
 
 				await AsyncStorage.setItem("loadProfit", "false");
-			}
-
-			/* Month profit amount setting value ** */
-			let thisMonthProfitAmount = parseInt(await AsyncStorage.getItem("month_profit_amount"));
-
-			let currentDate = new Date();
-			let currentMonth = currentDate.getMonth();
-			let lastStoredMonth = parseInt(await AsyncStorage.getItem("month"));
-
-			if (currentMonth === lastStoredMonth) {
-				this.setState({
-					thisMonthProfitAmount: thisMonthProfitAmount,
-					incomeTitle: i18n.t("oyProfit")
-				});
-			}
-
-			// If there is no history get histories
-			if (this.state.groupedHistories.length <= 0) {
-				this.setState({loading: true, localFullyLoaded: false});
-				await this.loadLocalProfitGroups();
 			}
 
 			// New history created load new items **
@@ -167,11 +152,11 @@ class Profit extends Component {
 				console.log("Profit mounted");
 				await AsyncStorage.setItem("profitFullyLoaded", "true");
 
-				await this.loadLocalProfitGroups();
 				this.setState({
-					localFullyLoaded: false,
-					loading: false
+					loading: false,
+					localFullyLoaded: false
 				});
+				this.onEndReached();
 			}
 
 			// Getting date removing date
@@ -183,9 +168,7 @@ class Profit extends Component {
 
 				this.setState({
 					loading: true,
-					localFullyLoaded: false,
-					groupedHistories: [],
-					profitHistory: []
+					localFullyLoaded: false
 				});
 				
 				let amount = 
@@ -205,14 +188,14 @@ class Profit extends Component {
 				if (amount == null || amount.length < 0 || amount[0].total_amount == null) {
 					this.setState({
 						loading: false,
-						thisMonthSellAmount: 0,
+						thisMonthProfitAmount: 0,
 					});
 
 					return;
 				}
 
 				this.setState({
-					thisMonthSellAmount: amount[0].total_amount
+					thisMonthProfitAmount: amount[0].total_amount
 				});
 
 				let firstProfitGroup = await this.profitHistoryRepository.getFirstProfitGroupByDate(
@@ -228,9 +211,13 @@ class Profit extends Component {
 				this.setState({
 					firstGroupGlobalId: firstProfitGroup.global_id,
 					lastGroupId: lastGroupId,
-					loading: false
+					loading: false,
+					localFullyLoaded: false,
+					groupedHistories: [],
+					profitHistory: []
 				});
 
+				await AsyncStorage.setItem("newCalendarProfit", "false");
 				this.onEndReached();
 				return;
 			}
@@ -255,6 +242,26 @@ class Profit extends Component {
 				return;
 			}
 
+			/* Month profit amount setting value ** */
+			let thisMonthProfitAmount = parseInt(await AsyncStorage.getItem("month_profit_amount"));
+			thisMonthProfitAmount = isNaN(thisMonthProfitAmount) ? 0 : thisMonthProfitAmount;
+
+			let currentDate = new Date();
+			let currentMonth = currentDate.getMonth();
+			let lastStoredMonth = parseInt(await AsyncStorage.getItem("month"));
+
+			if (currentMonth === lastStoredMonth) {
+				this.setState({
+					thisMonthProfitAmount: thisMonthProfitAmount,
+					incomeTitle: i18n.t("oyProfit")
+				});
+			}
+
+			if (this.state.loading) {
+				await AsyncStorage.setItem("window", "Profit");
+				return;
+			};
+			
 			this.onEndReached();
 		});
 	}
@@ -327,7 +334,7 @@ class Profit extends Component {
 	}
 
 	async loadMore() {
-		if (await AsyncStorage.getItem("window") != "Profit") {
+		if (await AsyncStorage.getItem("window") != "Profit" || await AsyncStorage.getItem("newCalendarProfit") == "true") {
 			this.setState({loading: false, localFullyLoaded: false});
 			return;
 		}
@@ -433,7 +440,11 @@ class Profit extends Component {
 			let profitHistories;
 			if (this.state.fromDate != null && this.state.toDate != null) {
 				profitHistories =
-					await this.profitHistoryRepository.getTop11ProfitGroupByDate(this.state.lastGroupId, this.state.fromDate, this.state.toDate);
+					await this.profitHistoryRepository.getTop11ProfitGroupByDate(
+						this.state.lastGroupId, 
+						this.state.fromDate, 
+						this.state.toDate
+					);
 			} else {
 				profitHistories =
 					await this.profitHistoryRepository.getTop11ProfitGroup(this.state.lastGroupId);
@@ -495,6 +506,11 @@ class Profit extends Component {
 				groupedCopy[groupedCopy.length - 1].histories[0].calendar = true;
 			}
 
+			if (await AsyncStorage.getItem("window") != "Profit" || await AsyncStorage.getItem("newCalendarProfit") == "true") {
+				this.setState({loading: false, localFullyLoaded: false});
+				return;
+			}	
+
 			this.setState(prevState => ({
 				profitHistory: [...prevState.profitHistory, ...profitHistories],
 				groupedHistories: groupedCopy,
@@ -511,76 +527,13 @@ class Profit extends Component {
 		}
 	}
 
-	async loadTop1LocalProfitGroups() {
-		console.log("loading");
-
-		try {
-			const profitHistories = await this.profitHistoryRepository.getTop1ProfitGroup();
-
-			if (!profitHistories[0]) {
-				return false;
-			}
-
-			let grouped = this.state.groupedHistories;
-
-			console.log(grouped[0])
-			const {id, created_date, amount} = profitHistories[0];
-			const currentDate = new Date(created_date);
-			const historyDate = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`;
-
-
-			if (historyDate === grouped[0].date) {
-				grouped[0].histories = [{
-					id,
-					created_date,
-					amount,
-					calendar: true
-				}, ...grouped[0].histories];
-			} else {
-				const formattedDate = this.formatDate(historyDate);
-				grouped.push({
-					date: historyDate, // Make sure this matches your structure; it was 'historyDate' in your code, but 'date' elsewhere
-					dateInfo: formattedDate,
-					histories: profitHistories,
-					totalAmount: 0
-				});
-			}
-
-			const startTime = performance.now();
-			this.setState(prevState => ({
-				groupedHistories: grouped,
-			}));
-
-
-			const groupedCopy = [...grouped];
-			const lastItem = groupedCopy.pop();
-
-			groupedCopy.forEach(group => {
-				if (group.histories[0].calendar) {
-					group.histories.forEach(history => {
-						history.calendar = false;
-					});
-				}
-			});
-
-			groupedCopy.push(lastItem);
-
-			this.setState({
-				groupedHistories: groupedCopy
-			});
-
-			const endTime = performance.now();
-			console.log(`Execution time: ${endTime - startTime} milliseconds`);
-
-			return true;
-		} catch (error) {
-			console.error('Error fetching profit histories:', error);
-			return false;
-		}
-	}
-
 	async onEndReached() {
-		if (this.state.loading) {
+		if (await AsyncStorage.getItem("window") != "Profit" || await AsyncStorage.getItem("newCalendarProfit") == "true") {
+			this.setState({loading: false, localFullyLoaded: false});
+			return;
+		}
+
+		if (this.state.loading == true) {
 			console.log("Loading true returned")
 			return;
 		};
@@ -840,4 +793,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default Profit;
+export default memo(Profit);

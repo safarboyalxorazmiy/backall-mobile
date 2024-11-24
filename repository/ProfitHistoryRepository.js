@@ -752,19 +752,17 @@ class ProfitHistoryRepository {
 		let fromDateObj = new Date(fromDate);
 		fromDateObj.setUTCHours(0, 0, 0, 0); // Set to start of the day in UTC
 		const fromUTCDate = fromDateObj.toISOString().slice(0, 19).replace('T', ' ');
-		const fromDateISOString = new Date(fromDateObj.getTime() - fromDateObj.getTimezoneOffset() * 60000).toISOString().slice(0, -1); 
 
 		let toDateObj = new Date(toDate);
 		toDateObj.setUTCHours(23, 59, 59, 999); // Set to end of the day in UTC
 		const toUTCDate = toDateObj.toISOString().slice(0, 19).replace('T', ' ');
-		const toDateISOString = new Date(toDateObj.getTime() - toDateObj.getTimezoneOffset() * 60000).toISOString().slice(0, -1); 
 
 		try {
 			let query;
 			if (toDate == fromDate) {
 				query = `SELECT *
             FROM profit_group
-            WHERE id <= ${lastHistoryId}
+            WHERE id < ${lastHistoryId}
               AND DATE(date) = DATE('${fromDate}')
             ORDER BY id DESC
             limit 11;`
@@ -772,16 +770,18 @@ class ProfitHistoryRepository {
 				query = `SELECT *
                  FROM profit_group
                  WHERE id <= ${lastHistoryId}
-									AND DATE(date) BETWEEN DATE('${toDate}') 
-									AND DATE('${fromDate}') 
+									AND DATE(date) 
+									BETWEEN DATE('${toDate}') 
+											AND DATE('${fromDate}') 
                  ORDER BY id DESC
                  limit 11;`;
 			} else {
 				query = `SELECT *
                  FROM profit_group
                  WHERE id <= ${lastHistoryId}
-                  AND DATE(date) BETWEEN DATE('${fromDate}') 
-									AND DATE('${toDate}') 
+                  AND DATE(date) 
+									BETWEEN DATE('${fromDate}') 
+											AND DATE('${toDate}') 
                  ORDER BY id DESC
                  limit 11;`;
 			}
@@ -802,7 +802,6 @@ class ProfitHistoryRepository {
 			}
 
 			const rows = result.rows._array;
-			console.log("getTop11ProfitGroupByDate():: ", rows);
 			return rows;
 		} catch (error) {
 			console.error("Error retrieving profit history:", error);
@@ -1200,7 +1199,7 @@ class ProfitHistoryRepository {
 			if (toDate == fromDate) {
 				query = `SELECT *
                  FROM profit_group
-                 WHERE DATE(date) >= DATE('${fromDate}')
+                 WHERE DATE(date) = DATE('${fromDate}')
                  ORDER BY id DESC
                  LIMIT 1;`
 			} else if (fromUTCDate > toUTCDate) {
@@ -1263,8 +1262,8 @@ class ProfitHistoryRepository {
 			if (toDate == fromDate) {
 				query = `SELECT *
                  FROM profit_group
-                 WHERE DATE(date) >= DATE('${fromDateISOString}')
-                 ORDER BY id DESC
+                 WHERE DATE(date) = DATE('${fromDate}')
+                 ORDER BY id ASC
                  LIMIT 1;`
 			} 
 			else if (fromUTCDate > toUTCDate) {

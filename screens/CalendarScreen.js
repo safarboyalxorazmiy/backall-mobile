@@ -57,6 +57,8 @@ class CalendarPage extends Component {
 		this.setState({calendarFromPage: await AsyncStorage.getItem("calendarFromPage")});
 
 		navigation.addListener("focus", async () => {
+			await AsyncStorage.setItem("window", "Calendar");
+		
 			this.setState({calendarFromPage: await AsyncStorage.getItem("calendarFromPage")});
 		});
 	}
@@ -763,7 +765,8 @@ class CalendarPage extends Component {
 
 						await AsyncStorage.setItem("window", this.state.calendarFromPage);
 						await AsyncStorage.setItem("dateType", this.state.dateType.toLocaleLowerCase());
-						console.log(this.state.dateType.toLocaleLowerCase())
+						console.log(this.state.dateType.toLocaleLowerCase());
+						await AsyncStorage.setItem("newCalendar", "true");
 						navigation.navigate(this.state.calendarFromPage);
 					}}>
 					<Text style={{

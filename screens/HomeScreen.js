@@ -114,6 +114,7 @@ class Home extends Component {
 	async componentDidMount() {
 		console.log("Component mounted");
 		await AsyncStorage.setItem("window", "Home");
+		await this.databaseRepository.init();
 		
 		const {navigation} = this.props;
 
@@ -269,7 +270,7 @@ class Home extends Component {
 
 		navigation.addListener("focus", async () => {
 			await AsyncStorage.setItem("window", "Home");
-
+			await this.databaseRepository.init();
 			// !IMPORTANT 🔭******************************
 			// Bu yerda foydalanuvchi tokeni bor yoki yo'qligini tekshiradi 
 			// agar token yo'q bo'lsa unda login oynasiga otadi
@@ -1120,11 +1121,14 @@ class Home extends Component {
 							dropdownIconColor={"#FFF"}
 							
 							selectedValue={this.state.selectedLanguage}
-							onValueChange={(itemValue) => {
+							onValueChange={async (itemValue) => {
 								setLocale(itemValue);
 								this.setState({
 									selectedLanguage: itemValue
 								});
+								await AsyncStorage.setItem("loadShopping", "true");
+								await AsyncStorage.setItem("loadProfit", "true");
+								await AsyncStorage.setItem("loadBasket", "true");
 								loadLocale();
 							}}
 							style={{display: "none"}}
