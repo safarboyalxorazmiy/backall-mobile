@@ -407,7 +407,7 @@ class Shopping extends Component {
 	async loadMore() {
 		if (await AsyncStorage.getItem("window") != "Shopping") {
 			console.log("Loader turned off in loadMore")
-			this.setState({loading: false});
+			this.stopLoader();
 			return;
 		}
 
@@ -590,7 +590,7 @@ class Shopping extends Component {
 
 			if (await AsyncStorage.getItem("window") != "Shopping") {
 				console.log("Loader turned off in loadLocalSellGroups()")
-				this.setState({loading: false});
+				this.stopLoader();
 				return;
 			}
 	
@@ -691,8 +691,7 @@ class Shopping extends Component {
 
 	async onEndReached() {
 		if (await AsyncStorage.getItem("window") != "Shopping") {
-			console.log("Loader turned off in onEndReached");
-			this.setState({loading: false});
+			this.stopLoader();
 			return;
 		}
 
@@ -724,6 +723,9 @@ class Shopping extends Component {
 
 						ListHeaderComponent={
 							<ShoppingHeader
+								stopLoader={() => {
+									this.stopLoader();
+								}}
 								navigation={this.props.navigation}
 								incomeTitle={this.state.incomeTitle}
 								calendarInputContent={this.state.calendarInputContent}

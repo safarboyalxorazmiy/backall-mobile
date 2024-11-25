@@ -12,7 +12,7 @@ import i18n from '../../i18n';
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
-const ProfitGroup = ({item, navigation}) => {
+const ProfitGroup = ({item, navigation, stopLoader}) => {
 	return (
 		<View>
 			{(<View style={styles.historyTitleWrapper}>
@@ -27,7 +27,9 @@ const ProfitGroup = ({item, navigation}) => {
 				<ProfitItem
 					key={history.id}
 					history={history}
-					navigation={navigation}/>
+					navigation={navigation}
+					stopLoader={stopLoader}
+					/>
 			))}
 		</View>
 	);

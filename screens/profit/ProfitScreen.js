@@ -112,6 +112,12 @@ class Profit extends Component {
 		const {navigation} = this.props;
 
 		navigation.addListener("focus", async () => {
+			this.stopLoader();
+
+			if (this.state.loading) {
+				return;
+			}
+
 			await AsyncStorage.setItem("window", "Profit");
 
 			if (await AsyncStorage.getItem("loadProfit") === "true") {
@@ -332,8 +338,8 @@ class Profit extends Component {
 	}
 
 	async loadMore() {
-		if (await AsyncStorage.getItem("window") != "Profit" || await AsyncStorage.getItem("newCalendarProfit") == "true") {
-			this.setState({loading: false, localFullyLoaded: false});
+		if (await AsyncStorage.getItem("window") != "Profit") {
+			this.stopLoader();
 			return;
 		}
 
@@ -504,8 +510,8 @@ class Profit extends Component {
 				groupedCopy[groupedCopy.length - 1].histories[0].calendar = true;
 			}
 
-			if (await AsyncStorage.getItem("window") != "Profit" || await AsyncStorage.getItem("newCalendarProfit") == "true") {
-				this.setState({loading: false, localFullyLoaded: false});
+			if (await AsyncStorage.getItem("window") != "Profit") {
+				this.stopLoader();
 				return;
 			}	
 
@@ -525,9 +531,17 @@ class Profit extends Component {
 		}
 	}
 
+	stopLoader() {
+		this.setState({
+			loading: false
+		});
+
+		this.onEndReached.cancel();
+	}
+
 	async onEndReached() {
-		if (await AsyncStorage.getItem("window") != "Profit" || await AsyncStorage.getItem("newCalendarProfit") == "true") {
-			this.setState({loading: false, localFullyLoaded: false});
+		if (await AsyncStorage.getItem("window") != "Profit") {
+			this.stopLoader();
 			return;
 		}
 
@@ -560,6 +574,9 @@ class Profit extends Component {
 
 						ListHeaderComponent={
 							<ProfitHeader
+								stopLoader={() => {
+									this.stopLoader();
+								}}
 								navigation={this.props.navigation}
 								incomeTitle={this.state.incomeTitle}
 								calendarInputContent={this.state.calendarInputContent}
@@ -580,6 +597,9 @@ class Profit extends Component {
 							<ProfitGroup
 								key={item.date}
 								item={item}
+								stopLoader={() => {
+									this.stopLoader();
+								}}
 								navigation={navigation}/>
 						)}
 					/>

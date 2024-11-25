@@ -13,7 +13,7 @@ import i18n from '../../i18n';
 
 const screenWidth = Dimensions.get("window").width;
 
-const ProfitItem = ({history, navigation}) => {
+const ProfitItem = ({history, navigation, stopLoader}) => {
 	const getFormattedTime = (created_date) => {
 		let date = new Date(created_date);
 		let hours = date.getHours();
@@ -31,6 +31,8 @@ const ProfitItem = ({history, navigation}) => {
 			key={history.id}
 			style={styles.history}
 			onPress={async () => {
+				stopLoader();
+				
 				await AsyncStorage.setItem("window", "ProfitDetail");
 				let historyId = history.id + "";
 
