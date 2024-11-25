@@ -42,8 +42,8 @@ class ShoppingDetail extends Component {
 
 		await this.getDetails();
 		navigation.addListener("focus", async () => {
-			await AsyncStorage.setItem("stopLoader", "true");
 			await AsyncStorage.setItem("window", "ShoppingDetail");
+			await AsyncStorage.setItem("lastWindow", "ProfitDetail");
 
 			this.setState({
 				sellGroupId: null,

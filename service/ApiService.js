@@ -312,12 +312,6 @@ class ApiService {
 
 			const response = await fetch(url, requestOptions);
 
-			console.log(response.status)
-			if (response.status === 401) {
-				await this.logout(navigation);
-				return;
-			}
-
 			const responseBody = await response.json();
 
 
@@ -363,12 +357,6 @@ class ApiService {
 			//("Request options:", requestOptions);
 
 			const response = await fetch(url, requestOptions);
-
-
-			if (response.status === 401) {
-				await this.logout(navigation);
-				return;
-			}
 
 			const responseBody = await response.json();
 

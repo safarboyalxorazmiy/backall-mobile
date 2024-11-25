@@ -167,6 +167,12 @@ class Profit extends Component {
 			await this.getDateInfo();
 
 			if (this.state.fromDate != null && this.state.toDate != null) {
+				if (await AsyncStorage.getItem("lastWindow") == "ShoppingDetail") {
+					await AsyncStorage.removeItem("lastWindow");
+					this.onEndReached();
+					return;
+				}
+				
 				console.log("fromDate:", this.state.fromDate);
 				console.log("toDate:", this.state.toDate);
 

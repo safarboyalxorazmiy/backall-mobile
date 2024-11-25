@@ -483,6 +483,7 @@ class CalendarPage extends Component {
 							cursorColor={"black"}
 							style={[styles.input, {width: 66}]}
 							onChangeText={(value) => {
+								return;
 								this.setState({fromMonthInputValue: value}, () => {
 									let monthIndex = this.getMonthIndexWithName(value);
 									if (monthIndex !== -1) {
@@ -499,6 +500,7 @@ class CalendarPage extends Component {
 							cursorColor={"black"}
 							style={styles.input}
 							onChangeText={(value) => {
+								return;
 								this.setState({fromYearInputValue: value}, () => {
 									const monthDay = this.state.fromDate.substring(5);
 									const newToDate = `${value}-${monthDay}`;
@@ -624,19 +626,19 @@ class CalendarPage extends Component {
 											onPress={() => {
 												if (this.state.range.startDate != null) {												
 													this.setState({
-														fromMonthInputValue: this.getMonth(this.state.range.startDate),
-														fromDayInputValue: this.getDay(this.state.range.startDate),
-														fromYearInputValue: this.getYear(this.state.range.startDate),
-														fromDate: this.state.range.startDate.toISOString(),
+														toMonthInputValue: this.getMonth(this.state.range.startDate),
+														toDayInputValue: this.getDay(this.state.range.startDate),
+														toYearInputValue: this.getYear(this.state.range.startDate),
+														toDate: this.state.range.startDate.toISOString(),
 													});
 												} 
 												
 												if (this.state.range.endDate != null) {
 													this.setState({
-														toMonthInputValue: this.getMonth(this.state.range.endDate),
-														toDayInputValue: this.getDay(this.state.range.endDate),
-														toYearInputValue: this.getYear(this.state.range.endDate),
-														toDate: this.state.range.endDate.toISOString(),
+														fromMonthInputValue: this.getMonth(this.state.range.endDate),
+														fromDayInputValue: this.getDay(this.state.range.endDate),
+														fromYearInputValue: this.getYear(this.state.range.endDate),
+														fromDate: this.state.range.endDate.toISOString(),
 													})
 												}
 
@@ -675,7 +677,7 @@ class CalendarPage extends Component {
 						gap: 12
 					}}>
 						<TextInput
-							placeholder="kun"
+							placeholder={i18n.t("day").toLocaleLowerCase()}
 							value={this.state.toDayInputValue}
 							cursorColor={"black"}
 							style={styles.input}
@@ -689,7 +691,7 @@ class CalendarPage extends Component {
 						/>
 
 						<TextInput
-							placeholder="oy"
+							placeholder={i18n.t("month").toLocaleLowerCase()}
 							value={this.state.toMonthInputValue}
 							cursorColor={"black"}
 							style={[
@@ -697,6 +699,8 @@ class CalendarPage extends Component {
 								{width: 66}
 							]}
 							onChangeText={(value) => {
+								return;
+								
 								this.setState({toMonthInputValue: value}, () => {
 									let monthIndex = this.getMonthIndexWithName(value);
 									if (monthIndex != -1) {
@@ -707,7 +711,7 @@ class CalendarPage extends Component {
 							}}/>
 
 						<TextInput
-							placeholder="yil"
+							placeholder={i18n.t("year").toLocaleLowerCase()}
 							value={this.state.toYearInputValue}
 							cursorColor={"black"}
 							style={styles.input}

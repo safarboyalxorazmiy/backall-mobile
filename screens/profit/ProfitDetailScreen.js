@@ -35,6 +35,7 @@ class ProfitDetail extends Component {
 		await this.getDetails();
 		navigation.addListener("focus", async () => {
 			await AsyncStorage.setItem("window", "ProfitDetail");
+			await AsyncStorage.setItem("lastWindow", "ProfitDetail");
 
 			this.setState({
 				groupId: null,
