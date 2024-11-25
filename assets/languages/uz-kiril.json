@@ -101,5 +101,8 @@
   "quantityIsNotEnough": "Миқдори етарли эмас",
   "makeAnUtilization": "Утилизация қилиш",
   "enterPriceInSelling": "1 кг/дона нархини киритинг",
-  "litr": "litr"
+  "litr": "litr",
+  "count": "Сони",
+  "totalProfit": "Жами фойда",
+  "selledPrice": "Сотилган нархи"
 }

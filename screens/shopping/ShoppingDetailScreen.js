@@ -13,6 +13,7 @@ import SellHistoryRepository from "../../repository/SellHistoryRepository";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ApiService from "../../service/ApiService";
 import i18n from '../../i18n';
+import { TouchableRipple } from "react-native-paper";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -36,10 +37,12 @@ class ShoppingDetail extends Component {
 
 	async componentDidMount() {
 		const {navigation} = this.props;
+		await AsyncStorage.setItem("stopLoader", "true");
 		await AsyncStorage.setItem("window", "ShoppingDetail");
 
 		await this.getDetails();
 		navigation.addListener("focus", async () => {
+			await AsyncStorage.setItem("stopLoader", "true");
 			await AsyncStorage.setItem("window", "ShoppingDetail");
 
 			this.setState({
@@ -141,12 +144,20 @@ class ShoppingDetail extends Component {
 			<ScrollView style={styles.body}>
 				<View style={styles.container}>
 					<View style={styles.header}>
-						<TouchableOpacity
-							onPress={() => navigation.navigate("Shopping")}
+						<TouchableRipple
+							delayHoverIn={true}
+							delayLongPress={false}
+							delayHoverOut={false}
+							unstable_pressDelay={false}
+							rippleColor={"rgba(0, 0, 0, .32)"}
+							borderless={true}
+							onPress={() => {
+								navigation.navigate("Shopping");
+							}}
 							style={styles.backButton}
 						>
 							<BackIcon/>
-						</TouchableOpacity>
+						</TouchableRipple>
 
 						<Text style={styles.title}>Sotilgan mahsulotlar</Text>
 					</View>
@@ -180,16 +191,16 @@ class ShoppingDetail extends Component {
 									<Text style={styles.sellTitle}>{item.productName}</Text>
 
 									<View style={styles.sellRow}>
-										<Text style={styles.sellText}>Soni</Text>
-										<Text style={styles.sellPrice}>{item.count} {item.count_type}</Text>
+										<Text style={styles.sellText}>{i18n.t("count")}</Text>
+										<Text style={styles.sellPrice}>{item.count} {i18n.t(item.count_type.toLowerCase())}</Text>
 									</View>
 
 									<View style={styles.sellRow}>
-										<Text style={styles.sellText}>Sotilgan narxi</Text>
+										<Text style={styles.sellText}>{i18n.t("selledPrice")}</Text>
 										<Text style={styles.sellPrice}>
 											{
 												(item.count * item.selling_price).toLocaleString()
-											} so’m
+											} {i18n.t("sum")}
 										</Text>
 									</View>
 								</View>

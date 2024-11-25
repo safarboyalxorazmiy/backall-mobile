@@ -11,7 +11,7 @@ import i18n from '../../i18n';
 
 const screenWidth = Dimensions.get("window").width;
 
-const HistoryGroup = ({item, navigation}) => {
+const HistoryGroup = ({item, navigation, stopLoader}) => {
 	return (
 		<>
 			<View style={styles.historyTitleWrapper}>
@@ -23,7 +23,7 @@ const HistoryGroup = ({item, navigation}) => {
 			</View>
 
 			{item.histories.map((history) => (
-				<HistoryItem key={history.id} history={history} navigation={navigation}/>
+				<HistoryItem stopLoader={stopLoader} key={history.id} history={history} navigation={navigation}/>
 			))}
 		</>
 	);

@@ -66,7 +66,9 @@ class Shopping extends Component {
 
 
 	async componentDidMount() {
+		console.log("Component mounted mf")
 		await AsyncStorage.setItem("window", "Shopping");
+		await AsyncStorage.setItem("stopLoader", "false");
 
 		// !IMPORTANT 🔭******************************
 		// Bu method bu yerda stateni component mount bo'lganda sahifani hamma ma'lumotlarini tozalash uchun yozildi.
@@ -115,7 +117,13 @@ class Shopping extends Component {
 
 		const {navigation} = this.props;
 
-		navigation.addListener("focus", async () => {
+		navigation.addListener("focus", async () => {	
+			this.stopLoader();
+			
+			if (this.state.loading) {
+				return;
+			}		
+
 			await AsyncStorage.setItem("window", "Shopping");
 
 			// !IMPORTANT 🔭******************************
@@ -302,15 +310,14 @@ class Shopping extends Component {
 				return;
 			}
 
-			if (this.state.loading) {
-				await AsyncStorage.setItem("window", "Shopping");
-				return;
-			};
-
 			this.onEndReached();
-
-			
 		});
+	}
+
+	componentWillUnmount() {
+    if (this.onEndReached) {
+			this.onEndReached.cancel();
+    }
 	}
 
 	async getDateInfo() {
@@ -398,8 +405,9 @@ class Shopping extends Component {
 	}
 
 	async loadMore() {
-		if (await AsyncStorage.getItem("window") != "Shopping" || await AsyncStorage.getItem("newCalendarShopping") == "true") {
-			this.setState({loading: false, localFullyLoaded: false});
+		if (await AsyncStorage.getItem("window") != "Shopping") {
+			console.log("Loader turned off in loadMore")
+			this.setState({loading: false});
 			return;
 		}
 
@@ -580,8 +588,9 @@ class Shopping extends Component {
 				groupedCopy[groupedCopy.length - 1].histories[0].calendar = true;
 			}
 
-			if (await AsyncStorage.getItem("window") != "Shopping" || await AsyncStorage.getItem("newCalendarShopping") == "true") {
-				this.setState({loading: false, localFullyLoaded: false});
+			if (await AsyncStorage.getItem("window") != "Shopping") {
+				console.log("Loader turned off in loadLocalSellGroups()")
+				this.setState({loading: false});
 				return;
 			}
 	
@@ -672,15 +681,23 @@ class Shopping extends Component {
 		}
 	}
 
+	stopLoader() {
+		this.setState({
+			loading: false
+		});
+
+		this.onEndReached.cancel();
+	}
+
 	async onEndReached() {
-		if (await AsyncStorage.getItem("window") != "Shopping" || await AsyncStorage.getItem("newCalendarShopping") == "true") {
-			this.setState({loading: false, localFullyLoaded: false});
+		if (await AsyncStorage.getItem("window") != "Shopping") {
+			console.log("Loader turned off in onEndReached");
+			this.setState({loading: false});
 			return;
 		}
 
-		//.log("onEndReached()");
 		if (this.state.loading) {
-			console.log("Loading true returned")
+			console.log("Loading true ; stopped");
 			return;
 		};
 
@@ -727,6 +744,9 @@ class Shopping extends Component {
 							<HistoryGroup
 								key={item.date}
 								item={item}
+								stopLoader={() => {
+									this.stopLoader();
+								}}
 								navigation={navigation}/>
 						)}
 					/>

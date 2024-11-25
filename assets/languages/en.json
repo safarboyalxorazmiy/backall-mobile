@@ -107,6 +107,8 @@
   "litr": "litr",
   "enterSellingPrice": "Enter selling price",
   "incorrectNetWorth": "Incorrect net worth.",
-  "incorrectSellingPrice": "Incorrect selling price."
-  
+  "incorrectSellingPrice": "Incorrect selling price.",
+  "count": "Count",
+  "totalProfit": "Total profit",
+  "selledPrice": "Selled price"
 }

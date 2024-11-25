@@ -104,5 +104,8 @@
   "quantityIsNotEnough": "Miqdori yetarli emas",
   "makeAnUtilization": "Utilizatsiya qilish",
   "enterPriceInSelling": "1 kg/dona narxini kiriting",
-  "litr": "litr"
+  "litr": "litr",
+  "count": "Soni",
+  "totalProfit": "Qolgan foyda",
+  "selledPrice": "Sotilgan narxi"
 }

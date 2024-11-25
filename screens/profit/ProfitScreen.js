@@ -112,8 +112,6 @@ class Profit extends Component {
 		const {navigation} = this.props;
 
 		navigation.addListener("focus", async () => {
-		
-
 			await AsyncStorage.setItem("window", "Profit");
 
 			if (await AsyncStorage.getItem("loadProfit") === "true") {

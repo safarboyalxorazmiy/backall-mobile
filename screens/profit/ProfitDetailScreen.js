@@ -6,6 +6,7 @@ import ProfitHistoryRepository from "../../repository/ProfitHistoryRepository";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ApiService from "../../service/ApiService";
 import i18n from "../../i18n";
+import { TouchableRipple } from "react-native-paper";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -135,19 +136,25 @@ class ProfitDetail extends Component {
 			<ScrollView style={styles.body}>
 				<View style={styles.container}>
 					<View style={styles.header}>
-						<TouchableOpacity
+						<TouchableRipple
+							delayHoverIn={true}
+							delayLongPress={false}
+							delayHoverOut={false}
+							unstable_pressDelay={false}
+							rippleColor={"rgba(0, 0, 0, .32)"}
+							borderless={true}
 							onPress={() => {
 								navigation.navigate("Profit")
 							}}
 							style={styles.backButton}>
 							<BackIcon/>
-						</TouchableOpacity>
+						</TouchableRipple>
 
-						<Text style={styles.title}>{i18n.t("profit")}</Text>
+						<Text style={styles.title}>{i18n.t("profitHistory")}</Text>
 					</View>
 
 					<View style={styles.infoBar}>
-						<Text style={styles.infoText}>{this.state.groupDetail.profit} so’m</Text>
+						<Text style={styles.infoText}>{this.state.groupDetail.profit} {i18n.t("sum")}</Text>
 						<Text style={styles.infoDivider}>//</Text>
 						<Text style={styles.infoText}>{this.getTime(this.state.groupDetail.created_date)}</Text>
 						<Text style={styles.infoDivider}>//</Text>
@@ -175,13 +182,13 @@ class ProfitDetail extends Component {
 									<Text style={styles.profitTitle}>{item.productName}</Text>
 
 									<View style={styles.profitRow}>
-										<Text style={styles.profitText}>Soni</Text>
-										<Text style={styles.profitPrice}>{item.count} {item.count_type}</Text>
+										<Text style={styles.profitText}>{i18n.t("count")}</Text>
+										<Text style={styles.profitPrice}>{item.count} {i18n.t(item.count_type.toLowerCase())}</Text>
 									</View>
 
 									<View style={styles.profitRow}>
-										<Text style={styles.profitText}>Qolgan foyda</Text>
-										<Text style={styles.profitPrice}>+{item.profit.toLocaleString()} so’m</Text>
+										<Text style={styles.profitText}>{i18n.t("totalProfit")}</Text>
+										<Text style={styles.profitPrice}>+{item.profit.toLocaleString()} {i18n.t("sum")}</Text>
 									</View>
 								</View>
 							))
