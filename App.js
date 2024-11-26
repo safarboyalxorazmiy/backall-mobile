@@ -84,7 +84,7 @@ class App extends Component {
 
 			this.setState({fontsLoaded: true});
 		} catch (error) {
-			console.error("Error loading custom fonts:", error);
+			//.error("Error loading custom fonts:", error);
 		}
 	}
 
@@ -101,9 +101,9 @@ class App extends Component {
 			const databaseRepository = new DatabaseRepository();
 			try {
 				// await databaseRepository.init();
-				// console.log("Database initialized successfully");
+				// //.log("Database initialized successfully");
 			} catch (error) {
-				console.error("Error initializing database:", error);
+				//.error("Error initializing database:", error);
 			}
 
 			this.unsubscribe = NetInfo.addEventListener((state) => {
@@ -137,7 +137,7 @@ class App extends Component {
 			await Asset.loadAsync(splashImage);
 			this.setState({splashLoaded: true});
 		} catch (e) {
-			console.warn(e);
+			//.warn(e);
 		}
 	};
 
@@ -148,23 +148,23 @@ class App extends Component {
 			await AsyncStorage.getItem("window") === "Sell" || 
 			await AsyncStorage.getItem("animation") === "true"
 		) {
-			console.log("Window is Calendar, Sell or animation is true");
+			//.log("Window is Calendar, Sell or animation is true");
 			return;
 		}
 		
 		if (await AsyncStorage.getItem("isDownloaded") != "true") {
-			console.log("isDownloaded is false");
+			//.log("isDownloaded is false");
 			return;
 		}
 
-		console.log(
-			"Is connected?",
-			this.state.isConnected === null
-				? "Loading..."
-				: this.state.isConnected
-					? "Yes"
-					: "No"
-		);
+		// console.log(
+		// 	"Is connected?",
+		// 	this.state.isConnected === null
+		// 		? "Loading..."
+		// 		: this.state.isConnected
+		// 			? "Yes"
+		// 			: "No"
+		// );
 
 		if (this.state.isConnected) {
 			if (await AsyncStorage.getItem("isRequestInProgress") == "true") {
@@ -173,7 +173,7 @@ class App extends Component {
 
 			// Internet is available, perform actions
 			let isNotSaved = await AsyncStorage.getItem("isNotSaved");
-			console.log("Is not saved", isNotSaved);
+			//.log("Is not saved", isNotSaved);
 			let email = await AsyncStorage.getItem("email");
 
 			// Get the current date
@@ -186,7 +186,7 @@ class App extends Component {
 			if (this.state.notPayed) {
 
 				let isPayed = await this.apiService.getPayment(email, monthYear);
-				console.log("Payed: ", isPayed)
+				//.log("Payed: ", isPayed)
 
 				if (isPayed == true) {
 					await AsyncStorage.setItem("notPayed", "false")
@@ -206,12 +206,12 @@ class App extends Component {
 				let isPayed =
 					await this.apiService.getPayment(email, monthYear);
 
-				console.log("Payed: ", isPayed)
+				//.log("Payed: ", isPayed)
 
 				if (isPayed != undefined) {
 					await this.saveData();
 				} else {
-					console.log("Server ain't working.");
+					//.log("Server ain't working.");
 					return;
 				}
 
@@ -232,8 +232,8 @@ class App extends Component {
 
 					let lastPaymentShownDate = await AsyncStorage.getItem("lastPaymentShownDate");
 					let lastPaymentShownHour = await AsyncStorage.getItem("lastPaymentShownHour");
-					console.log("lastPaymentShownDate::", lastPaymentShownDate);
-					console.log("lastPaymentShownHour::", lastPaymentShownHour);
+					//.log("lastPaymentShownDate::", lastPaymentShownDate);
+					//.log("lastPaymentShownHour::", lastPaymentShownHour);
 
 
 					// (If)
@@ -261,13 +261,13 @@ class App extends Component {
 		if (this.state.isSavingStarted == false) {
 			this.setState({isSavingStarted: true});
 
-			console.log("CREATING NOT SAVED STARTED");
+			//.log("CREATING NOT SAVED STARTED");
 
 			try {
 				// PRODUCT
 				let productNotSaved = await AsyncStorage.getItem("productNotSaved");
 				if (productNotSaved == "true") {
-					console.log("Product creating ⏳⏳⏳")
+					//.log("Product creating ⏳⏳⏳")
 					let notSavedProducts =
 						await this.productRepository.findProductsBySavedFalse();
 					for (const product of notSavedProducts) {
@@ -282,7 +282,7 @@ class App extends Component {
 								return;
 							}
 
-							console.log("Response:", response);
+							//.log("Response:", response);
 
 							await this.productRepository.updateSavedTrueByProductId(product.id, response.id);
 						} catch (e) {
@@ -299,14 +299,14 @@ class App extends Component {
 				// STORE PRODUCT
 				let storeProductNotSaved = await AsyncStorage.getItem("storeProductNotSaved");
 				if (storeProductNotSaved == "true") {
-					console.log("Product setting into store ⏳⏳⏳")
+					//.log("Product setting into store ⏳⏳⏳")
 
 					let storeProducts = await this.storeProductRepository.findByWhereSavedFalse();
 					for (const storeProduct of storeProducts) {
 						try {
 							let products = await this.productRepository.findProductsById(storeProduct.product_id);
 
-							console.log("Products by id:: ", products);
+							//.log("Products by id:: ", products);
 
 							let response = await this.apiService.createStoreProducts(
 								products[0].global_id,
@@ -322,7 +322,7 @@ class App extends Component {
 								return;
 							}
 
-							console.log("Response: ", response);
+							//.log("Response: ", response);
 							await this.storeProductRepository.updateSavedTrueById(storeProduct.id, response.id);
 						} catch (e) {
 							
@@ -346,9 +346,9 @@ class App extends Component {
 					let profitGroups = await this.profitHistoryRepository.getProfitGroupSavedFalse();
 					let profitHistories = await this.profitHistoryRepository.getProfitHistorySavedFalse();
 
-					console.log("#SellGroup creating ⏳⏳⏳")
+					//.log("#SellGroup creating ⏳⏳⏳")
 					for (const sellGroup of sellGroups) {
-						console.log("Group: ", sellGroup)
+						//.log("Group: ", sellGroup)
 						try {
 							let response = await this.apiService.createSellGroup(
 								sellGroup.created_date,
@@ -372,14 +372,14 @@ class App extends Component {
 						}
 					}
 
-					console.log("#SellHistory creating started. ⏳⏳⏳");
+					//.log("#SellHistory creating started. ⏳⏳⏳");
 					for (const sellHistory of sellHistories) {
-						console.log("SellHistory: ", sellHistory);
+						//.log("SellHistory: ", sellHistory);
 
 						try {
 							let products = await this.productRepository.findProductsById(sellHistory.product_id);
 
-							console.log("Products: ", products);
+							//.log("Products: ", products);
 
 							let response = await this.apiService.createSellHistory(
 								products[0].global_id,
@@ -407,9 +407,9 @@ class App extends Component {
 						}
 					}
 
-					console.log("#SellHistoryLink creating started. ⏳⏳⏳");
+					//.log("#SellHistoryLink creating started. ⏳⏳⏳");
 					for (const sellHistoryGroup of sellHistoryGroups) {
-						console.log(sellHistoryGroup);
+						//.log(sellHistoryGroup);
 						try {
 							let sellHistory = await this.sellHistoryRepository.findSellHistoryById(
 								sellHistoryGroup.history_id
@@ -441,9 +441,9 @@ class App extends Component {
 						}
 					}
 
-					console.log("#SellAmountDate creating started. ⏳⏳⏳");
+					//.log("#SellAmountDate creating started. ⏳⏳⏳");
 					for (const sellAmountDate of notSavedSellAmountDates) {
-						console.log(sellAmountDate)
+						//.log(sellAmountDate)
 
 						try {
 
@@ -471,7 +471,7 @@ class App extends Component {
 						}
 					}
 
-					console.log("#ProfitGroup creating started. ⏳⏳⏳");
+					//.log("#ProfitGroup creating started. ⏳⏳⏳");
 					for (const profitGroup of profitGroups) {
 						try {
 							let response = await this.apiService.createProfitGroup(
@@ -497,7 +497,7 @@ class App extends Component {
 						}
 					}
 
-					console.log("#ProfitHistory creating started. ⏳⏳⏳");
+					//.log("#ProfitHistory creating started. ⏳⏳⏳");
 					for (const profitHistory of profitHistories) {
 						try {
 							let products = await this.productRepository.findProductsById(
@@ -530,7 +530,7 @@ class App extends Component {
 						}
 					}
 
-					console.log("#ProfitHistoryLink creating started. ⏳⏳⏳");
+					//.log("#ProfitHistoryLink creating started. ⏳⏳⏳");
 					for (const profitHistoryGroup of profitHistoryGroups) {
 						try {
 							let profitHistory =
@@ -567,10 +567,10 @@ class App extends Component {
 						}
 					}
 
-					console.log("#ProfitAmountDate creating started. ⏳⏳⏳");
+					//.log("#ProfitAmountDate creating started. ⏳⏳⏳");
 					for (const profitAmountDate of notSavedProfitAmountDates) {
 						try {
-							console.log("PROFIT AMOUNT::", profitAmountDate);
+							//.log("PROFIT AMOUNT::", profitAmountDate);
 
 							let response =
 								await this.apiService.createProfitAmountDate(

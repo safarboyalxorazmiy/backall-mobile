@@ -16,17 +16,19 @@ import ApiService from "../../service/ApiService";
 
 import HistoryGroup from "./HistoryGroup";
 import ShoppingHeader from "./ShoppingHeader";
-import _ from 'lodash';
 import i18n from '../../i18n';
 
+import SkeletonLoader from "expo-skeleton-loader";
+
 const screenWidth = Dimensions.get("window").width;
+
+
 
 class Shopping extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			sellingHistory: [],
 			groupedHistories: [],
 			lastDate: new Date(),
 			currentMonthTotal: 0,
@@ -52,7 +54,8 @@ class Shopping extends Component {
 			loading: false,
 			globalFullyLoaded: false,
 			localFullyLoaded: false,
-			incomeTitle: ""
+			incomeTitle: "",
+			loaderCount: 0,
 		};
 
 		this.sellHistoryRepository = new SellHistoryRepository();
@@ -60,15 +63,15 @@ class Shopping extends Component {
 		this.productRepository = new ProductRepository();
 		this.apiService = new ApiService();
 
-		this.onEndReached = _.debounce(this.onEndReached.bind(this), 400);
 		this.flatListRef = React.createRef();
+		
+		this.loaderRef = React.createRef(false);
 	}
 
 
 	async componentDidMount() {
 		console.log("Component mounted mf")
 		await AsyncStorage.setItem("window", "Shopping");
-		await AsyncStorage.setItem("stopLoader", "false");
 
 		// !IMPORTANT 🔭******************************
 		// Bu method bu yerda stateni component mount bo'lganda sahifani hamma ma'lumotlarini tozalash uchun yozildi.
@@ -103,27 +106,21 @@ class Shopping extends Component {
 
 		let firstSellGroup = await this.sellHistoryRepository.getFirstSellGroup();
 
+
 		this.setState({
 			firstGroupGlobalId: firstSellGroup.global_id,
-			lastGroupId: lastGroupId,
+			lastGroupId: lastGroupId + 11,
 			loading: false,
 			localFullyLoaded: false
 		});
 
 		//.log("Shopping mounted");
 
-
 		this.onEndReached();
 
 		const {navigation} = this.props;
 
-		navigation.addListener("focus", async () => {	
-			this.stopLoader();
-			
-			if (this.state.loading) {
-				return;
-			}		
-
+		navigation.addListener("focus", async () => {
 			await AsyncStorage.setItem("window", "Shopping");
 
 			// !IMPORTANT 🔭******************************
@@ -142,13 +139,13 @@ class Shopping extends Component {
 					firstGroupGlobalId: firstSellGroup.global_id,
 					lastGroupId: lastGroupId,
 					incomeTitle: i18n.t("oyIncome"),
-					loading: false,
+					groupedHistories: [],
 					localFullyLoaded: false
 				});
 
-				this.onEndReached();
-
 				await AsyncStorage.setItem("loadShopping", "false");
+				this.onEndReached();
+				return;
 			}
 
 			/* Month sell amount setting value ** */
@@ -178,7 +175,6 @@ class Shopping extends Component {
 	
 					this.setState({
 						groupedHistories: [],
-						sellingHistory: [],
 						firstGroupGlobalId: firstSellGroup.global_id,
 						lastGroupId: lastGroupId,
 						prevFromDate: null,
@@ -186,8 +182,6 @@ class Shopping extends Component {
 						loading: false,
 						localFullyLoaded: false
 					});
-	
-					this.onEndReached();
 					return;
 				}
 				
@@ -215,7 +209,10 @@ class Shopping extends Component {
 				// If there is no history get histories
 				if (this.state.groupedHistories.length <= 0) {
 					this.setState({loading: false, localFullyLoaded: false});
-					this.onEndReached();
+					this.setState({
+						loading: false,
+						localFullyLoaded: false
+					})
 					this.scrollToTop();
 					return;
 				}
@@ -233,19 +230,11 @@ class Shopping extends Component {
 			if (this.state.fromDate != null && this.state.toDate != null) {
 				if (await AsyncStorage.getItem("lastWindow") == "ShoppingDetail") {
 					await AsyncStorage.removeItem("lastWindow");
-					this.onEndReached();
 					return;
 				}
 
 				console.log("fromDate:", this.state.fromDate);
 				console.log("toDate:", this.state.toDate);
-
-				this.setState({
-					loading: true,
-					localFullyLoaded: false,
-					groupedHistories: [],
-					sellingHistory: []
-				});
 
 				let amount = 
 					await this.amountDateRepository.getSumSellAmountByDate(this.state.fromDate, this.state.toDate);
@@ -263,16 +252,13 @@ class Shopping extends Component {
 
 				if (amount == null || amount.length < 0 || amount[0] == null || amount[0].total_amount == null) {
 					this.setState({
-						loading: false,
 						thisMonthSellAmount: 0,
+						groupedHistories: [],
+						localFullyLoaded: false
 					});
 
 					return;
 				}
-
-				this.setState({
-					thisMonthSellAmount: amount[0].total_amount
-				});
 
 				let firstSellGroup = await this.sellHistoryRepository.getFirstSellGroupByDate(
 					this.state.fromDate,
@@ -284,14 +270,17 @@ class Shopping extends Component {
 					);
 				let lastGroupId = lastGroup.id;
 
+				console.log(lastGroup);
+
 				this.setState({
 					firstGroupGlobalId: firstSellGroup.global_id,
-					lastGroupId: lastGroupId,
-					loading: false
+					lastGroupId: lastGroupId + 11,
+					groupedHistories: [],
+					thisMonthSellAmount: amount[0].total_amount,
+					localFullyLoaded: false
+				}, () => {
+					// this.onEndReached();
 				});
-
-				await AsyncStorage.setItem("newCalendarShopping", "false");
-				this.onEndReached();
 				return;
 			}
 			// reloading after removing date
@@ -303,27 +292,17 @@ class Shopping extends Component {
 
 				this.setState({
 					groupedHistories: [],
-					sellingHistory: [],
 					firstGroupGlobalId: firstSellGroup.global_id,
-					lastGroupId: lastGroupId,
+					lastGroupId: lastGroupId + 11,
 					prevFromDate: null,
 					incomeTitle: i18n.t("oyIncome"),
-					loading: false,
 					localFullyLoaded: false
+				}, () => {
+					// this.onEndReached();
 				});
-
-				this.onEndReached();
 				return;
 			}
-
-			this.onEndReached();
 		});
-	}
-
-	componentWillUnmount() {
-    if (this.onEndReached) {
-			this.onEndReached.cancel();
-    }
 	}
 
 	async getDateInfo() {
@@ -371,7 +350,6 @@ class Shopping extends Component {
 	// Bu method bizga screenni stateini holatini boshlang'ich holatga tushurib berish uchun yozildi.
 	async initializeScreen() {
 		this.setState({
-			sellingHistory: [],
 			groupedHistories: [],
 			lastDate: new Date(),
 			currentMonthTotal: 0,
@@ -411,119 +389,17 @@ class Shopping extends Component {
 	}
 
 	async loadMore() {
-		if (await AsyncStorage.getItem("window") != "Shopping") {
-			console.log("Loader turned off in loadMore")
-			this.stopLoader();
+		this.loaderRef.current = true;
+		let isLoaded = await this.loadLocalSellGroups();
+		if (isLoaded) {
+			this.loaderRef.current = false;
 			return;
 		}
 
-		if (this.state.localFullyLoaded === false) {
-			this.setState({loading: true});
-			let isLoaded = await this.loadLocalSellGroups();
-			if (isLoaded) {
-				return;
-			}
-		}
-
-		console.log("localFullyLoaded === true; returned");
-
-		if (this.state.globalFullyLoaded || this.state.loading) return;
-
-		if (!this.state.firstGroupGlobalId) {
-			return;
-		}
-
-		this.setState({loading: true});
-
-		try {
-			let response;
-			if (this.state.fromDate != null && this.state.toDate != null) {
-				response = await this.apiService.getSellGroupsByDate(
-					this.state.firstGroupGlobalId,
-					this.state.fromDate,
-					this.state.toDate,
-					this.state.lastSellGroupPage,
-					22,
-					this.props.navigation
-				);
-				//.log(response);
-			} else {
-				response = await this.apiService.getSellGroups(
-					this.state.firstGroupGlobalId,
-					this.state.lastSellGroupPage,
-					22,
-					this.props.navigation
-				);
-			}
-
-			if (!response || !response.content || response.content.length === 0) {
-				this.setState({loading: false, globalFullyLoaded: true});
-				return;
-			}
-
-			let grouped = [...this.state.groupedHistories];
-			let lastDate, lastAmount;
-
-			for (const history of response.content) {
-				if (history == null) {
-					continue;
-				}
-
-				const currentDate = new Date(history.created_date);
-				const date = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`;
-				let group = grouped.find(group => group.date === date);
-
-				if (!group) {
-					const formattedDate = this.formatDate(date);
-					group = {date, dateInfo: formattedDate, histories: [], totalAmount: 0};
-					grouped.push(group);
-				}
-
-				group.histories.push({
-					id: (history.id) + 10000000,
-					created_date: history.createdDate,
-					amount: history.amount
-				});
-
-				if (lastDate !== date) {
-					try {
-						let response =
-							await this.apiService.getSellAmountByDate(date, this.props.navigation);
-						lastAmount = response.amount;
-					} catch (e) {
-						lastAmount = 0;
-					}
-					lastDate = date;
-				}
-
-				group.totalAmount = lastAmount;
-			}
-
-			this.setState(prevState => ({
-				sellingHistory: [...prevState.sellingHistory, ...response.content],
-				groupedHistories: grouped,
-				firstGroupGlobalId: response.content[0].id,
-			}));
-			// //.log(grouped)
-		} catch (error) {
-			//.error("Error fetching global products:", error);
-		} finally {
-			this.setState({loading: false});
-		}
+		this.loaderRef.current = false;
 	}
 
 	async loadLocalSellGroups() {
-		//.log("loading");
-
-		if (this.state.lastGroupId <= 0) {
-			console.log("this.state.lastGroupId <= 0; returned");
-			this.setState({
-				loading: false,
-				localFullyLoaded: true
-			});
-			return false;
-		}
-
 		try {
 			let sellHistories;
 			// 
@@ -535,13 +411,11 @@ class Shopping extends Component {
 					await this.sellHistoryRepository.getTop11SellGroup(this.state.lastGroupId);
 			}
 
-			if (sellHistories.length === 0) {
+			if (sellHistories.length === 0 || sellHistories.length !== 11) {
 				console.log("sellHistories.length === 0; returned");
 				this.setState({
-					loading: false,
 					localFullyLoaded: true
 				});
-				return false;
 			}
 
 			let grouped = [...this.state.groupedHistories];
@@ -566,7 +440,6 @@ class Shopping extends Component {
 				}
 
 				if (lastDate !== date) {
-					console.log(date)
 					lastAmount = await this.amountDateRepository.getSellAmountInfoByDate(date).catch(() => 0);
 					lastDate = date;
 				}
@@ -596,29 +469,20 @@ class Shopping extends Component {
 
 			if (await AsyncStorage.getItem("window") != "Shopping") {
 				console.log("Loader turned off in loadLocalSellGroups()")
-				this.stopLoader();
-				return;
+				return false;
 			}
 	
-			this.setState(prevState => ({
-				sellingHistory: [...prevState.sellingHistory, ...sellHistories],
-				groupedHistories: groupedCopy,
-				lastGroupId: prevState.lastGroupId - 11,
-				loading: false
-			}));
+			this.setState({
+				groupedHistories: groupedCopy
+			});
 
 			return true;
 		} catch (error) {
-			this.setState({
-				loading: false
-			});
 			return false;
 		}
 	}
 
 	async loadTop1LocalSellGroups() {
-		//.log("loading");
-
 		try {
 			const sellHistories = await this.sellHistoryRepository.getTop1SellGroup();
 
@@ -659,7 +523,6 @@ class Shopping extends Component {
 				});
 			}
 
-			const startTime = performance.now();
 			this.setState({groupedHistories: grouped});
 
 
@@ -687,26 +550,12 @@ class Shopping extends Component {
 		}
 	}
 
-	stopLoader() {
-		this.setState({
-			loading: false
+	onEndReached = async () => {
+		this.setState(state => ({
+			lastGroupId: state.lastGroupId - 11
+		}),async () => {
+			await this.loadMore();
 		});
-
-		this.onEndReached.cancel();
-	}
-
-	async onEndReached() {
-		if (await AsyncStorage.getItem("window") != "Shopping") {
-			this.stopLoader();
-			return;
-		}
-
-		if (this.state.loading) {
-			console.log("Loading true ; stopped");
-			return;
-		};
-
-		this.loadMore();
 	}
 
 	scrollToTop = () => {
@@ -723,41 +572,117 @@ class Shopping extends Component {
 						ref={this.flatListRef}
 						data={this.state.groupedHistories}
 						keyExtractor={(item) => item.date}
-						onEndReachedThreshold={40}
+						onEndReachedThreshold={0.2}
 						onEndReached={this.onEndReached}
-						initialNumToRender={100}
-
+						// initialNumToRender={11}
+						style={{width: "100%", height: "100%"}}
 						ListHeaderComponent={
 							<ShoppingHeader
-								stopLoader={() => {
-									this.stopLoader();
-								}}
 								navigation={this.props.navigation}
 								incomeTitle={this.state.incomeTitle}
 								calendarInputContent={this.state.calendarInputContent}
 								thisMonthSellAmount={this.state.thisMonthSellAmount}
 							/>
 						}
-
-						ListFooterComponent={() => {
-							if (!this.state.loading) return null;
-							return (
-								<View style={{padding: 10}}>
-									<ActivityIndicator size="large" color={"#9A50AD"}/>
-								</View>
-							);
+						onScrollEndDrag={() => {
+							this.loaderRef.current = true;
 						}}
+						ListFooterComponent={
+							(this.loaderRef.current == false || this.state.localFullyLoaded == true) ? <></>:
+							(
+								<SkeletonLoader style={{ marginVertical: 10, }} >
+									
+									<SkeletonLoader.Item
+										style={{ 
+											height: 50,
+											marginTop: 4,
+											width: "100%",
+											paddingHorizontal: 16,
+											paddingVertical: 6,
+										}}
+										/>
+									<SkeletonLoader.Item
+										style={{ 
+											height: 50,
+											marginTop: 4,
+											width: "100%",
+											paddingHorizontal: 16,
+											paddingVertical: 6,
+										}}
+									/>
+									<SkeletonLoader.Item
+										style={{ 
+											height: 50,
+											marginTop: 4,
+											width: "100%",
+											paddingHorizontal: 16,
+											paddingVertical: 6,
+										}}
+									/>
+									<SkeletonLoader.Item
+										style={{ 
+											height: 50,
+											marginTop: 4,
+											width: "100%",
+											paddingHorizontal: 16,
+											paddingVertical: 6,
+										}}
+									/>
+									<SkeletonLoader.Item
+										style={{ 
+											height: 50,
+											marginTop: 4,
+											width: "100%",
+											paddingHorizontal: 16,
+											paddingVertical: 6,
+										}}
+										/>
+									<SkeletonLoader.Item
+										style={{ 
+											height: 50,
+											marginTop: 4,
+											width: "100%",
+											paddingHorizontal: 16,
+											paddingVertical: 6,
+										}}
+									/>
+									<SkeletonLoader.Item
+										style={{ 
+											height: 50,
+											marginTop: 4,
+											width: "100%",
+											paddingHorizontal: 16,
+											paddingVertical: 6,
+										}}
+									/>
+									<SkeletonLoader.Item
+										style={{ 
+											height: 50,
+											marginTop: 4,
+											width: "100%",
+											paddingHorizontal: 16,
+											paddingVertical: 6,
+										}}
+									/>
+								</SkeletonLoader>
+							)
+						}
 
 						renderItem={({item}) => (
 							<HistoryGroup
 								key={item.date}
 								item={item}
-								stopLoader={() => {
-									this.stopLoader();
-								}}
 								navigation={navigation}/>
 						)}
 					/>
+
+					{/* {this.loaderRef.current && (
+						<SkeletonLoader style={{ marginVertical: 10 }} >
+							<SkeletonLoader.Item
+								style={styles.skeletonItem}
+								/>
+						</SkeletonLoader>
+					)} */}
 				</View>
 
 				<StatusBar style="auto"/>

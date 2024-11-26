@@ -10,7 +10,6 @@ const screenWidth = Dimensions.get('window').width;
 
 const ShoppingHeader = memo(({ navigation, calendarInputContent, incomeTitle, thisMonthSellAmount, stopLoader }) => {
 	const handlePress = async () => {
-		stopLoader();
 		await AsyncStorage.setItem("window", "Calendar");
 		await AsyncStorage.setItem("calendarFromPage", "Shopping");
 		navigation.navigate("Calendar");

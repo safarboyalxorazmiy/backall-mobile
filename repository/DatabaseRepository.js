@@ -148,11 +148,11 @@ class DatabaseRepository {
 						// `DROP TABLE profit_history;`,
 					];
 
-					console.log(queries)
+					//.log(queries)
 					await this.executeQueries(tx, queries);
 				});
 			} catch (error) {
-				console.error('Error initializing database:', error);
+				//.error('Error initializing database:', error);
 			}
 		}
 	}
@@ -178,7 +178,7 @@ class DatabaseRepository {
                 tx.executeSql(query);
                 });
             });
-            console.log('Database cleared successfully.');
+            //.log('Database cleared successfully.');
         } catch (error) { }
         }
     }

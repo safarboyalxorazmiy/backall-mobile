@@ -71,7 +71,7 @@ class ProfitHistoryRepository {
 			let lastProfitHistoryGroup = await this.getLastProfitHistoryGroupId();
 			return lastProfitHistoryGroup;
 		} catch (error) {
-			console.error("Error creating profit group:", error);
+			//.error("Error creating profit group:", error);
 			throw error;
 		}
 	}
@@ -104,7 +104,7 @@ class ProfitHistoryRepository {
 			let lastProfitHistoryGroup = await this.getLastProfitHistoryGroupId();
 			return lastProfitHistoryGroup;
 		} catch (error) {
-			console.error("Error creating profit group:", error);
+			//.error("Error creating profit group:", error);
 			throw error;
 		}
 	}
@@ -130,7 +130,7 @@ class ProfitHistoryRepository {
 			});
 
 			if (!result || !result.rows || !result.rows._array) {
-				console.error("Unexpected result structure:", result);
+				//.error("Unexpected result structure:", result);
 				throw new Error("Unexpected result structure");
 			}
 
@@ -138,7 +138,7 @@ class ProfitHistoryRepository {
 
 			return rows;
 		} catch (error) {
-			console.error("Error retrieving profit history:", error);
+			//.error("Error retrieving profit history:", error);
 			throw error;
 		}
 	}
@@ -170,10 +170,10 @@ class ProfitHistoryRepository {
 
 			const rows = result.rows._array;
 
-			console.log(rows)
+			//.log(rows)
 			return rows;
 		} catch (error) {
-			console.error("Error getTop10ProfitGroupByDate:", error);
+			//.error("Error getTop10ProfitGroupByDate:", error);
 			throw error;
 		}
 	}
@@ -323,14 +323,14 @@ class ProfitHistoryRepository {
 			});
 
 			if (!result || !result.rows || !result.rows._array) {
-				console.error("Unexpected result structure:", result);
+				//.error("Unexpected result structure:", result);
 				throw new Error("Unexpected result structure");
 			}
 
 			const rows = result.rows._array;
 			return rows;
 		} catch (error) {
-			console.error("Error retrieving profit history:", error);
+			//.error("Error retrieving profit history:", error);
 			throw error;
 		}
 	}
@@ -356,14 +356,14 @@ class ProfitHistoryRepository {
 			});
 
 			if (!result || !result.rows || !result.rows._array) {
-				console.error("Unexpected result structure:", result);
+				//.error("Unexpected result structure:", result);
 				throw new Error("Unexpected result structure");
 			}
 
 			const rows = result.rows._array;
 			return rows;
 		} catch (error) {
-			console.error("Error retrieving profit history:", error);
+			//.error("Error retrieving profit history:", error);
 			throw error;
 		}
 	}
@@ -388,14 +388,14 @@ class ProfitHistoryRepository {
 			});
 
 			if (!result || !result.rows || !result.rows._array) {
-				console.error("Unexpected result structure:", result);
+				//.error("Unexpected result structure:", result);
 				throw new Error("Unexpected result structure");
 			}
 
 			const rows = result.rows._array;
 			return rows;
 		} catch (error) {
-			console.error("Error retrieving profit history:", error);
+			//.error("Error retrieving profit history:", error);
 			throw error;
 		}
 	}
@@ -420,14 +420,14 @@ class ProfitHistoryRepository {
 			});
 
 			if (!result || !result.rows || !result.rows._array) {
-				console.error("Unexpected result structure:", result);
+				//.error("Unexpected result structure:", result);
 				throw new Error("Unexpected result structure");
 			}
 
 			const rows = result.rows._array;
 			return rows;
 		} catch (error) {
-			console.error("Error retrieving profit history:", error);
+			//.error("Error retrieving profit history:", error);
 			throw error;
 		}
 	}
@@ -445,7 +445,7 @@ class ProfitHistoryRepository {
 				);
 			});
 		} catch (error) {
-			console.error(`Error updating product: ${error}`);
+			//.error(`Error updating product: ${error}`);
 			throw error; // Re-throw to handle the error in the calling code
 		}
 	}
@@ -459,7 +459,7 @@ class ProfitHistoryRepository {
 				);
 			});
 		} catch (error) {
-			console.error(`Error updating product: ${error}`);
+			//.error(`Error updating product: ${error}`);
 			throw error; // Re-throw to handle the error in the calling code
 		}
 	}
@@ -473,7 +473,7 @@ class ProfitHistoryRepository {
 				);
 			});
 		} catch (error) {
-			console.error(`Error updating product: ${error}`);
+			//.error(`Error updating product: ${error}`);
 			throw error; // Re-throw to handle the error in the calling code
 		}
 	}
@@ -501,14 +501,14 @@ class ProfitHistoryRepository {
 			});
 
 			if (!result || !result.rows || !result.rows._array) {
-				console.error("Unexpected result structure:", result);
+				//.error("Unexpected result structure:", result);
 				throw new Error("Unexpected result structure");
 			}
 
 			const rows = result.rows._array;
 			return rows;
 		} catch (error) {
-			console.error("Error retrieving profit history:", error);
+			//.error("Error retrieving profit history:", error);
 			throw error;
 		}
 	}
@@ -533,14 +533,14 @@ class ProfitHistoryRepository {
 			});
 
 			if (!result || !result.rows || !result.rows._array) {
-				console.error("Unexpected result structure:", result);
+				//.error("Unexpected result structure:", result);
 				throw new Error("Unexpected result structure");
 			}
 
 			const rows = result.rows._array;
 			return rows;
 		} catch (error) {
-			console.error("Error retrieving profit history:", error);
+			//.error("Error retrieving profit history:", error);
 			throw error;
 		}
 	}
@@ -568,14 +568,14 @@ class ProfitHistoryRepository {
 			});
 
 			if (!result || !result.rows || !result.rows._array) {
-				console.error("Unexpected result structure:", result);
+				//.error("Unexpected result structure:", result);
 				throw new Error("Unexpected result structure");
 			}
 
 			const rows = result.rows._array;
 			return rows;
 		} catch (error) {
-			console.error("Error retrieving profit history:", error);
+			//.error("Error retrieving profit history:", error);
 			throw error;
 		}
 	}
@@ -600,14 +600,14 @@ class ProfitHistoryRepository {
 			});
 
 			if (!result || !result.rows || !result.rows._array) {
-				console.error("Unexpected result structure:", result);
+				//.error("Unexpected result structure:", result);
 				throw new Error("Unexpected result structure");
 			}
 
 			const rows = result.rows._array;
 			return rows;
 		} catch (error) {
-			console.error("Error retrieving profit history:", error);
+			//.error("Error retrieving profit history:", error);
 			throw error;
 		}
 	}
@@ -632,14 +632,14 @@ class ProfitHistoryRepository {
 			});
 
 			if (!result || !result.rows || !result.rows._array) {
-				console.error("Unexpected result structure:", result);
+				//.error("Unexpected result structure:", result);
 				throw new Error("Unexpected result structure");
 			}
 
 			const rows = result.rows._array;
 			return rows;
 		} catch (error) {
-			console.error("Error retrieving profit history:", error);
+			//.error("Error retrieving profit history:", error);
 			throw error;
 		}
 	}
@@ -664,14 +664,14 @@ class ProfitHistoryRepository {
 			});
 
 			if (!result || !result.rows || !result.rows._array) {
-				console.error("Unexpected result structure:", result);
+				//.error("Unexpected result structure:", result);
 				throw new Error("Unexpected result structure");
 			}
 
 			const rows = result.rows._array;
 			return rows;
 		} catch (error) {
-			console.error("Error retrieving profit history:", error);
+			//.error("Error retrieving profit history:", error);
 			throw error;
 		}
 	}
@@ -702,7 +702,7 @@ class ProfitHistoryRepository {
 			});
 
 			if (!result || !result.rows || !result.rows._array) {
-				console.error("Unexpected result structure:", result);
+				//.error("Unexpected result structure:", result);
 				throw new Error("Unexpected result structure");
 			}
 
@@ -710,7 +710,7 @@ class ProfitHistoryRepository {
 
 			return rows;
 		} catch (error) {
-			console.error("Error retrieving profit history:", error);
+			//.error("Error retrieving profit history:", error);
 			throw error;
 		}
 	}
@@ -743,7 +743,7 @@ class ProfitHistoryRepository {
 			const rows = result.rows._array;
 			return rows;
 		} catch (error) {
-			console.error("Error retrieving profit history:", error);
+			//.error("Error retrieving profit history:", error);
 			throw error;
 		}
 	}
@@ -804,7 +804,7 @@ class ProfitHistoryRepository {
 			const rows = result.rows._array;
 			return rows;
 		} catch (error) {
-			console.error("Error retrieving profit history:", error);
+			//.error("Error retrieving profit history:", error);
 			throw error;
 		}
 	}
@@ -813,7 +813,7 @@ class ProfitHistoryRepository {
 	async getProfitHistoryDetailByGroupId(group_id) {
 		try {
 			if (group_id === null) {
-				console.log('group_id is null. Skipping query.');
+				//.log('group_id is null. Skipping query.');
 				return [];
 			}
 
@@ -854,7 +854,7 @@ class ProfitHistoryRepository {
 
 			return historyInfo;
 		} catch (error) {
-			console.error("Error retrieving profit history details:", error);
+			//.error("Error retrieving profit history details:", error);
 			throw error;
 		}
 	}
@@ -862,7 +862,7 @@ class ProfitHistoryRepository {
 	async getLastProfitHistoryDetailByGroupId(groupId) {
 		try {
 			if (!groupId) {
-				console.log('groupId is null or undefined. Skipping query.');
+				//.log('groupId is null or undefined. Skipping query.');
 				return [];
 			}
 
@@ -913,7 +913,7 @@ class ProfitHistoryRepository {
 
 			return historyInfo;
 		} catch (error) {
-			console.error("Error retrieving profit history details:", error);
+			//.error("Error retrieving profit history details:", error);
 			throw error;
 		}
 	}
@@ -941,13 +941,13 @@ class ProfitHistoryRepository {
 			});
 
 			if (!result || !result.rows || !result.rows._array) {
-				console.error("Unexpected result structure:", result);
+				//.error("Unexpected result structure:", result);
 				throw new Error("Unexpected result structure");
 			}
 
 			return result.rows._array;
 		} catch (error) {
-			console.error("Error retrieving profit history:", error);
+			//.error("Error retrieving profit history:", error);
 			throw error;
 		}
 	}
@@ -973,14 +973,14 @@ class ProfitHistoryRepository {
 			});
 
 			if (!result || !result.rows || !result.rows._array) {
-				console.error("Unexpected result structure:", result);
+				//.error("Unexpected result structure:", result);
 				throw new Error("Unexpected result structure");
 			}
 
 			const rows = result.rows._array;
 			return rows;
 		} catch (error) {
-			console.error("Error retrieving profit history:", error);
+			//.error("Error retrieving profit history:", error);
 			throw error;
 		}
 	}
@@ -1006,7 +1006,7 @@ class ProfitHistoryRepository {
 			});
 
 			if (!result || !result.rows || !result.rows._array) {
-				console.error("Unexpected result structure:", result);
+				//.error("Unexpected result structure:", result);
 				throw new Error("Unexpected result structure");
 			}
 
@@ -1014,7 +1014,7 @@ class ProfitHistoryRepository {
 
 			return rows;
 		} catch (error) {
-			console.error("Error getLastProfitHistoryGroupId:", error);
+			//.error("Error getLastProfitHistoryGroupId:", error);
 			throw error;
 		}
 	}
@@ -1040,7 +1040,7 @@ class ProfitHistoryRepository {
 			});
 
 			if (!result || !result.rows || !result.rows._array) {
-				console.error("Unexpected result structure:", result);
+				//.error("Unexpected result structure:", result);
 				throw new Error("Unexpected result structure");
 			}
 
@@ -1048,7 +1048,7 @@ class ProfitHistoryRepository {
 
 			return rows;
 		} catch (error) {
-			console.error("Error getLastProfitHistoryGroupId:", error);
+			//.error("Error getLastProfitHistoryGroupId:", error);
 			throw error;
 		}
 	}
@@ -1076,14 +1076,14 @@ class ProfitHistoryRepository {
 			});
 
 			if (!result || !result.rows || !result.rows._array) {
-				console.error("Unexpected result structure:", result);
+				//.error("Unexpected result structure:", result);
 				throw new Error("Unexpected result structure");
 			}
 
 			profitHistoryGroups = result.rows._array;
-			console.log("Selected profitHistoryGroups:", profitHistoryGroups);
+			//.log("Selected profitHistoryGroups:", profitHistoryGroups);
 		} catch (error) {
-			console.error("Error fetching profit history groups:", error);
+			//.error("Error fetching profit history groups:", error);
 			throw error;
 		}
 
@@ -1107,13 +1107,13 @@ class ProfitHistoryRepository {
 							[profitHistoryGroup.history_id],
 							(_, resultSet) => {
 								if (resultSet.rowsAffected > 0) {
-									console.log(`Deleted history_id: ${profitHistoryGroup.history_id}`);
+									//.log(`Deleted history_id: ${profitHistoryGroup.history_id}`);
 								} else {
-									console.log(`No rows deleted for history_id: ${profitHistoryGroup.history_id}`);
+									//.log(`No rows deleted for history_id: ${profitHistoryGroup.history_id}`);
 								}
 							},
 							(_, error) => {
-								console.error("Error deleting from profit_history:", error);
+								//.error("Error deleting from profit_history:", error);
 								reject(error); // Reject the promise to roll back the transaction
 							}
 						);
@@ -1130,14 +1130,14 @@ class ProfitHistoryRepository {
 						[group_id],
 						(_, resultSet) => {
 							if (resultSet.rowsAffected > 0) {
-								console.log("Deleted groups with id <= ", group_id);
+								//.log("Deleted groups with id <= ", group_id);
 							} else {
-								console.log("No rows deleted in profit_group.");
+								//.log("No rows deleted in profit_group.");
 							}
 							resolve(true); // Resolve the promise to commit the transaction
 						},
 						(_, error) => {
-							console.error("Error deleting from profit_group:", error);
+							//.error("Error deleting from profit_group:", error);
 							reject(error); // Reject the promise to roll back the transaction
 						}
 					);
@@ -1146,7 +1146,7 @@ class ProfitHistoryRepository {
 
 			return true; // All deletions were successful
 		} catch (error) {
-			console.error("Error during deletion transaction:", error);
+			//.error("Error during deletion transaction:", error);
 			return false; // Return false in case of an error
 		}
 	}
@@ -1179,7 +1179,7 @@ class ProfitHistoryRepository {
 			const rows = result.rows._array;
 			return rows;
 		} catch (error) {
-			console.error("Error getAllProfitGroup:", error);
+			//.error("Error getAllProfitGroup:", error);
 			throw error;
 		}
 	}
@@ -1240,7 +1240,7 @@ class ProfitHistoryRepository {
 			const row = result.rows._array[0];
 			return row;
 		} catch (error) {
-			console.error("Error retrieving profit history:", error);
+			//.error("Error retrieving profit history:", error);
 			throw error;
 		}
 	}
@@ -1298,17 +1298,17 @@ class ProfitHistoryRepository {
 			});
 
 			if (!result || !result.rows || !result.rows._array) {
-				console.error("Unexpected result structure:", result);
+				//.error("Unexpected result structure:", result);
 				throw new Error("Unexpected result structure");
 			}
 
 			const rows = result.rows._array[0];
 
-			console.log("result:: ", rows);
+			//.log("result:: ", rows);
 
 			return rows;
 		} catch (error) {
-			console.error("Error getFirstProfitGroupByDate:", error);
+			//.error("Error getFirstProfitGroupByDate:", error);
 			throw error;
 		}
 	}

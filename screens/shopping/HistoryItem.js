@@ -13,7 +13,7 @@ import i18n from '../../i18n';
 
 const screenWidth = Dimensions.get("window").width;
 
-const HistoryItem = ({history, navigation, stopLoader}) => {
+const HistoryItem = ({history, navigation}) => {
 	const getFormattedTime = (created_date) => {
 		let date = new Date(created_date);
 		let hours = date.getHours();
@@ -32,7 +32,6 @@ const HistoryItem = ({history, navigation, stopLoader}) => {
 			key={history.id}
 			style={styles.history}
 			onPress={async () => {
-				stopLoader();
 				await AsyncStorage.setItem("window", "ShoppingDetail");
 				let historyId = history.id + "";
 
@@ -52,6 +51,8 @@ const HistoryItem = ({history, navigation, stopLoader}) => {
 			</View>
 
 			<Text style={styles.historyTime}>{getFormattedTime(history.created_date)}</Text>
+			<Text style={styles.historyTime}>{history.id}</Text>
+
 		</TouchableOpacity>
 	);
 };

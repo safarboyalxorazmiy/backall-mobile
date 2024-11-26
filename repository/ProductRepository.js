@@ -31,7 +31,7 @@ class ProductRepository {
 
 			return result;
 		} catch (error) {
-			console.error(`Error creating or getting product ID: ${error}`);
+			//.error(`Error creating or getting product ID: ${error}`);
 			throw error;
 		}
 	}
@@ -45,7 +45,7 @@ class ProductRepository {
 				);
 			});
 		} catch (error) {
-			console.error(`Error updating product: ${error}`);
+			//.error(`Error updating product: ${error}`);
 			throw error; // Re-throw to handle the error in the calling code
 		}
 	}
@@ -71,10 +71,10 @@ class ProductRepository {
 				});
 			});
 
-			console.log(`Product created with ID: ${result}`);
+			//.log(`Product created with ID: ${result}`);
 			return result;
 		} catch (error) {
-			console.error(`Error creating product: ${error}`);
+			//.error(`Error creating product: ${error}`);
 			throw error;
 		}
 	}
@@ -100,10 +100,10 @@ class ProductRepository {
 				});
 			});
 
-			console.log(`Product created with ID: ${result}`);
+			//.log(`Product created with ID: ${result}`);
 			return result;
 		} catch (error) {
-			console.error(`Error creating product: ${error}`);
+			//.error(`Error creating product: ${error}`);
 			throw error;
 		}
 	}
@@ -130,9 +130,9 @@ class ProductRepository {
 					});
 				});
 
-				console.log(`Product ${currentObject.productId} added with ID: ${result}`);
+				//.log(`Product ${currentObject.productId} added with ID: ${result}`);
 			} catch (error) {
-				console.error(`Error adding product ${currentObject.productId}: ${error.message}`);
+				//.error(`Error adding product ${currentObject.productId}: ${error.message}`);
 			}
 		}
 	}
@@ -149,7 +149,7 @@ class ProductRepository {
 						"SELECT * FROM product WHERE serial_number LIKE ?;",
 						['%' + keyword + '%'],
 						(_, results) => {
-							console.log('Results:', results.rows);
+							//.log('Results:', results.rows);
 
 							const products = Array.from(results.rows._array).map((row) => {
 								if (row) {
@@ -160,7 +160,7 @@ class ProductRepository {
 										serial_number: row.serial_number,
 									};
 								} else {
-									console.warn("Received undefined row in query results.");
+									//.warn("Received undefined row in query results.");
 									return null; // or handle it according to your needs
 								}
 							});
@@ -168,7 +168,7 @@ class ProductRepository {
 							resolve(products);
 						},
 						(_, error) => {
-							console.error("Error executing SQL query:", error);
+							//.error("Error executing SQL query:", error);
 							reject(error);
 						}
 					);
@@ -177,7 +177,7 @@ class ProductRepository {
 
 			return result;
 		} catch (error) {
-			console.error(`Error finding products by serial number: ${error}`);
+			//.error(`Error finding products by serial number: ${error}`);
 			throw error;
 		}
 	}
@@ -194,7 +194,7 @@ class ProductRepository {
 						"SELECT * FROM product WHERE serial_number = ? AND saved = 1;",
 						[serialNumber],
 						(_, results) => {
-							console.log('Results:', results.rows);
+							//.log('Results:', results.rows);
 
 							const products = Array.from(results.rows._array).map((row) => {
 								if (row) {
@@ -205,7 +205,7 @@ class ProductRepository {
 										serial_number: row.serial_number,
 									};
 								} else {
-									console.warn("Received undefined row in query results.");
+									//.warn("Received undefined row in query results.");
 									return null; // or handle it according to your needs
 								}
 							});
@@ -213,7 +213,7 @@ class ProductRepository {
 							resolve(products);
 						},
 						(_, error) => {
-							console.error("Error executing SQL query:", error);
+							//.error("Error executing SQL query:", error);
 							reject(error);
 						}
 					);
@@ -222,7 +222,7 @@ class ProductRepository {
 
 			return result || []; // Ensure result is an array, return empty array if undefined
 		} catch (error) {
-			console.error(`Error finding products by serial number: ${error}`);
+			//.error(`Error finding products by serial number: ${error}`);
 			return [];
 		}
 	}
@@ -235,7 +235,7 @@ class ProductRepository {
 						"SELECT * FROM product WHERE saved = 0;",
 						[],
 						(_, results) => {
-							console.log('Results:', results.rows);
+							//.log('Results:', results.rows);
 
 							const products = Array.from(results.rows._array).map((row) => {
 								if (row) {
@@ -248,7 +248,7 @@ class ProductRepository {
 										global_id: row.global_id
 									};
 								} else {
-									console.warn("Received undefined row in query results.");
+									//.warn("Received undefined row in query results.");
 									return null; // or handle it according to your needs
 								}
 							});
@@ -256,7 +256,7 @@ class ProductRepository {
 							resolve(products);
 						},
 						(_, error) => {
-							console.error("Error executing SQL query:", error);
+							//.error("Error executing SQL query:", error);
 							reject(error);
 						}
 					);
@@ -265,7 +265,7 @@ class ProductRepository {
 
 			return result || []; // Ensure result is an array, return empty array if undefined
 		} catch (error) {
-			console.error(`Error finding products by serial number: ${error}`);
+			//.error(`Error finding products by serial number: ${error}`);
 			return [];
 		}
 	}
@@ -278,7 +278,7 @@ class ProductRepository {
 						"SELECT * FROM product WHERE global_id = ?;",
 						[global_id],
 						(_, results) => {
-							console.log('Results:', results.rows);
+							//.log('Results:', results.rows);
 
 							const products = Array.from(results.rows._array).map((row) => {
 								if (row) {
@@ -289,7 +289,7 @@ class ProductRepository {
 										serial_number: row.serial_number,
 									};
 								} else {
-									console.warn("Received undefined row in query results.");
+									//.warn("Received undefined row in query results.");
 									return null; // or handle it according to your needs
 								}
 							});
@@ -297,7 +297,7 @@ class ProductRepository {
 							resolve(products);
 						},
 						(_, error) => {
-							console.error("Error executing SQL query:", error);
+							//.error("Error executing SQL query:", error);
 							reject(error);
 						}
 					);
@@ -306,7 +306,7 @@ class ProductRepository {
 
 			return result;
 		} catch (error) {
-			console.error(`Error finding products by serial number: ${error}`);
+			//.error(`Error finding products by serial number: ${error}`);
 			throw error;
 		}
 	}
@@ -319,7 +319,7 @@ class ProductRepository {
 						"SELECT * FROM product WHERE id = ?;",
 						[id],
 						(_, results) => {
-							console.log('Results:', results.rows);
+							//.log('Results:', results.rows);
 
 							const products = Array.from(results.rows._array).map((row) => {
 								if (row) {
@@ -331,7 +331,7 @@ class ProductRepository {
 										global_id: row.global_id
 									};
 								} else {
-									console.warn("Received undefined row in query results.");
+									//.warn("Received undefined row in query results.");
 									return null; // or handle it according to your needs
 								}
 							});
@@ -339,7 +339,7 @@ class ProductRepository {
 							resolve(products);
 						},
 						(_, error) => {
-							console.error("Error executing SQL query:", error);
+							//.error("Error executing SQL query:", error);
 							reject(error);
 						}
 					);
@@ -348,7 +348,7 @@ class ProductRepository {
 
 			return result;
 		} catch (error) {
-			console.error(`Error finding products by serial number: ${error}`);
+			//.error(`Error finding products by serial number: ${error}`);
 			throw error;
 		}
 	}
@@ -386,7 +386,7 @@ class ProductRepository {
 
 			return result;
 		} catch (error) {
-			console.error(`Error getting product name and brand by ID: ${error}`);
+			//.error(`Error getting product name and brand by ID: ${error}`);
 			throw error;
 		}
 	}

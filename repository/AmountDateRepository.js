@@ -50,13 +50,13 @@ class AmountDateRepository {
 					saved ? 1 : 0
 				], (tx, insertResults) => {
 					if (insertResults.rowsAffected > 0) {
-						console.log(`Profit amount inserted successfully`);
+						//.log(`Profit amount inserted successfully`);
 					} else {
-						console.log(`Failed to insert profit amount`);
+						//.log(`Failed to insert profit amount`);
 					}
 				},
 				error => {
-					console.error(`Error inserting profit amount: ${error.message}`);
+					//.error(`Error inserting profit amount: ${error.message}`);
 				});
 		});
 	}
@@ -71,13 +71,13 @@ class AmountDateRepository {
 				insertQuery, [date, sellAmount, global_id, saved ? 1 : 0],
 				(tx, insertResults) => {
 					if (insertResults.rowsAffected > 0) {
-						console.log(`Sell amount inserted successfully`);
+						//.log(`Sell amount inserted successfully`);
 					} else {
-						console.log(`Failed to insert sell amount`);
+						//.log(`Failed to insert sell amount`);
 					}
 				},
 				error => {
-					console.error("Error on createSellAmountWithAllValues: ", error)
+					//.error("Error on createSellAmountWithAllValues: ", error)
 				}
 			);
 		})
@@ -99,9 +99,9 @@ class AmountDateRepository {
                                              WHERE date = ?;`;
 						tx.executeSql(updateQuery, [updatedProfit, date], (tx, updateResults) => {
 								if (updateResults.rowsAffected > 0) {
-									console.log(`Profit amount updated successfully`);
+									//.log(`Profit amount updated successfully`);
 								} else {
-									console.log(`Failed to update profit amount`);
+									//.log(`Failed to update profit amount`);
 								}
 							},
 							error => {
@@ -110,13 +110,13 @@ class AmountDateRepository {
                                                      VALUES (?, ?, ?, ?);`;
 								tx.executeSql(insertQuery, [date, profitAmount, null, 0], (tx, insertResults) => {
 										if (insertResults.rowsAffected > 0) {
-											console.log(`Profit amount inserted successfully`);
+											//.log(`Profit amount inserted successfully`);
 										} else {
-											console.log(`Failed to insert profit amount`);
+											//.log(`Failed to insert profit amount`);
 										}
 									},
 									error => {
-										console.error(`Error inserting profit amount: ${error.message}`);
+										//.error(`Error inserting profit amount: ${error.message}`);
 									});
 							});
 					} else {
@@ -124,13 +124,13 @@ class AmountDateRepository {
                                              VALUES (?, ?, ?, ?);`;
 						tx.executeSql(insertQuery, [date, profitAmount, null, 0], (tx, insertResults) => {
 								if (insertResults.rowsAffected > 0) {
-									console.log(`Profit amount inserted successfully`);
+									//.log(`Profit amount inserted successfully`);
 								} else {
-									console.log(`Failed to insert profit amount`);
+									//.log(`Failed to insert profit amount`);
 								}
 							},
 							error => {
-								console.error(`Error inserting profit amount: ${error.message}`);
+								//.error(`Error inserting profit amount: ${error.message}`);
 							});
 					}
 				},
@@ -148,7 +148,7 @@ class AmountDateRepository {
 		this.db.transaction(tx => {
 			tx.executeSql(selectQuery, [date], (tx, results) => {
 					if (results.rows.length > 0) {
-						console.log(results.rows.item(0))
+						//.log(results.rows.item(0))
 						// If record with the given date exists, add the new sell amount to the existing one
 						const currentSell = results.rows.item(0).amount;
 						const updatedSell = currentSell + sellAmount;
@@ -159,13 +159,13 @@ class AmountDateRepository {
                                              WHERE date = ?;`;
 						tx.executeSql(updateQuery, [updatedSell, date], (tx, updateResults) => {
 								if (updateResults.rowsAffected > 0) {
-									console.log(`Sell amount updated successfully`);
+									//.log(`Sell amount updated successfully`);
 								} else {
-									console.log(`Failed to update sell amount`);
+									//.log(`Failed to update sell amount`);
 								}
 							},
 							error => {
-								console.error("Error setting sell amount", error);
+								//.error("Error setting sell amount", error);
 							});
 					} else {
 						// If no record with the given date exists, insert a new record
@@ -173,14 +173,14 @@ class AmountDateRepository {
                                              VALUES (?, ?, null, 0);`;
 						tx.executeSql(insertQuery, [date, sellAmount], (tx, insertResults) => {
 								if (insertResults.rowsAffected > 0) {
-									console.log(`Sell amount inserted successfully`);
+									//.log(`Sell amount inserted successfully`);
 								} else {
-									console.log(`Failed to insert sell amount`);
+									//.log(`Failed to insert sell amount`);
 								}
 							},
 							error => {
 								// If no record with the given date exists, insert a new record
-								console.error("Error setting sell amount:", error)
+								//.error("Error setting sell amount:", error)
 							});
 					}
 				},
@@ -189,13 +189,13 @@ class AmountDateRepository {
                                          VALUES (?, ?, null, 0);`;
 					tx.executeSql(insertQuery, [date, sellAmount], (tx, insertResults) => {
 							if (insertResults.rowsAffected > 0) {
-								console.log(`Sell amount inserted successfully`);
+								//.log(`Sell amount inserted successfully`);
 							} else {
-								console.log(`Failed to insert sell amount`);
+								//.log(`Failed to insert sell amount`);
 							}
 						},
 						error => {
-							console.error(`Error inserting sell amount: ${error.message}`);
+							//.error(`Error inserting sell amount: ${error.message}`);
 						});
 				});
 		});
@@ -210,7 +210,7 @@ class AmountDateRepository {
 				);
 			});
 		} catch (error) {
-			console.error(`Error updating product: ${error}`);
+			//.error(`Error updating product: ${error}`);
 			throw error; // Re-throw to handle the error in the calling code
 		}
 	}
@@ -224,7 +224,7 @@ class AmountDateRepository {
 				);
 			});
 		} catch (error) {
-			console.error(`Error updating product: ${error}`);
+			//.error(`Error updating product: ${error}`);
 			throw error; // Re-throw to handle the error in the calling code
 		}
 	}

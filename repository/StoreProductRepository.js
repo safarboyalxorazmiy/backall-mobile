@@ -57,11 +57,11 @@ class StoreProductRepository {
 						[product_id],
 						(_, {rows}) => {
 							if (rows._array && rows.length >= 1) {
-								console.log(rows._array);
+								//.log(rows._array);
 
 								let previousCount = parseFloat(rows._array[0].count);
 
-								console.log(previousCount + parseFloat(count));
+								//.log(previousCount + parseFloat(count));
 
 								tx.executeSql(
 									`UPDATE store_product
@@ -91,14 +91,14 @@ class StoreProductRepository {
 							}
 						},
 						(_, error) => {
-							console.error("Error creating store product:", error);
+							//.error("Error creating store product:", error);
 							reject(false);
 						}
 					)
 				})
 			});
 		} catch (error) {
-			console.error(`Error creating store product: ${error}`);
+			//.error(`Error creating store product: ${error}`);
 			throw error;
 		}
 	}
@@ -142,7 +142,7 @@ class StoreProductRepository {
 							}
 						},
 						(_, error) => {
-							console.error("Error fetching store product count:", error);
+							//.error("Error fetching store product count:", error);
 							reject(error);
 						}
 					);
@@ -163,7 +163,7 @@ class StoreProductRepository {
 									resolve(true);
 								},
 								(_, error) => {
-									console.error("Error deleting store product:", error);
+									//.error("Error deleting store product:", error);
 									reject(error);
 								}
 							);
@@ -183,7 +183,7 @@ class StoreProductRepository {
 									resolve(true);
 								},
 								(_, error) => {
-									console.error("Error updating store product count:", error);
+									//.error("Error updating store product count:", error);
 									reject(error);
 								}
 							);
@@ -222,7 +222,7 @@ class StoreProductRepository {
 								resolve(true);
 							},
 							(_, error) => {
-								console.error("Error creating store product:", error);
+								//.error("Error creating store product:", error);
 								reject(error);
 							}
 						);
@@ -230,7 +230,7 @@ class StoreProductRepository {
 				});
 			}
 		} catch (error) {
-			console.error(`Error processing store product: ${error}`);
+			//.error(`Error processing store product: ${error}`);
 			throw error;
 		}
 	}
@@ -259,24 +259,24 @@ class StoreProductRepository {
 										resolve(true);
 									},
 									(_, error) => {
-										console.error("Error updating store product count:", error);
+										//.error("Error updating store product count:", error);
 										reject(false);
 									}
 								);
 							} else {
-								console.error("Product not found in the store");
+								//.error("Product not found in the store");
 								reject(false);
 							}
 						},
 						(_, error) => {
-							console.error("Error fetching store product count:", error);
+							//.error("Error fetching store product count:", error);
 							reject(false);
 						}
 					);
 				});
 			});
 		} catch (error) {
-			console.error(`Error updating store product count: ${error}`);
+			//.error(`Error updating store product count: ${error}`);
 			throw error;
 		}
 	}
@@ -290,7 +290,7 @@ class StoreProductRepository {
 				);
 			});
 		} catch (error) {
-			console.error(`Error updating product: ${error}`);
+			//.error(`Error updating product: ${error}`);
 			throw error; // Re-throw to handle the error in the calling code
 		}
 	}
@@ -304,7 +304,7 @@ class StoreProductRepository {
 				);
 			});
 		} catch (error) {
-			console.error(`Error updating product: ${error}`);
+			//.error(`Error updating product: ${error}`);
 			throw error; // Re-throw to handle the error in the calling code
 		}
 	}
@@ -330,7 +330,7 @@ class StoreProductRepository {
 						resolve(storeProductsInfo);
 					},
 					(_, error) => {
-						console.error("Error retrieving store products info:", error);
+						//.error("Error retrieving store products info:", error);
 						reject(error);
 					}
 				);
@@ -351,7 +351,7 @@ class StoreProductRepository {
 						resolve(storeProductsInfo);
 					},
 					(_, error) => {
-						console.error("Error retrieving store products info:", error);
+						//.error("Error retrieving store products info:", error);
 						reject(error);
 					}
 				);
@@ -373,7 +373,7 @@ class StoreProductRepository {
 						resolve(storeProductsInfo);
 					},
 					(_, error) => {
-						console.error("Error retrieving store products info:", error);
+						//.error("Error retrieving store products info:", error);
 						reject(error);
 					}
 				);
@@ -398,7 +398,7 @@ class StoreProductRepository {
 							resolve(storeProductsInfo);
 						},
 						(_, error) => {
-							console.error("Error retrieving store products info:", error);
+							//.error("Error retrieving store products info:", error);
 							reject(error);
 						}
 					);
@@ -421,7 +421,7 @@ class StoreProductRepository {
 						resolve(storeProductsInfo);
 					},
 					(_, error) => {
-						console.error("Error retrieving store products info:", error);
+						//.error("Error retrieving store products info:", error);
 						reject(error);
 					}
 				);
@@ -453,7 +453,7 @@ class StoreProductRepository {
 						resolve(storeProductsInfo);
 					},
 					(_, error) => {
-						console.error("Error retrieving store products info:", error);
+						//.error("Error retrieving store products info:", error);
 						reject(error);
 					}
 				);
@@ -486,7 +486,7 @@ class StoreProductRepository {
 						resolve(storeProductsInfo);
 					},
 					(_, error) => {
-						console.error("Error retrieving store products info:", error);
+						//.error("Error retrieving store products info:", error);
 						reject(error);
 					}
 				);

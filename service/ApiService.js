@@ -1245,14 +1245,6 @@ return undefined;		}
 			//("Request body:", requestOptions);
 
 			const response = await fetch(`${serverUrl}/api/v1/store/profit/group/get?lastId=${lastId}&storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
-
-
-			if (response.status == 401) {
-				console.log("unauthorized::" + response.url);
-				await this.logout(navigation);
-				return;
-			}
-
 			if (!response.ok) {
 				return undefined;
 			}
@@ -1296,13 +1288,6 @@ return undefined;		}
 			//("Request options:", requestOptions);
 
 			const response = await fetch(url, requestOptions);
-
-
-			if (response.status === 401) {
-				await this.logout(navigation);
-				return;
-			}
-
 			const responseBody = await response.json();
 
 

@@ -74,7 +74,7 @@ class SellHistoryRepository {
 			const lastSellHistoryGroup = await this.getLastSellGroup();
 			return lastSellHistoryGroup.id;
 		} catch (error) {
-			console.error("Error createSellHistoryGroup:", error);
+			//.error("Error createSellHistoryGroup:", error);
 			throw error;
 		}
 	}
@@ -105,13 +105,13 @@ class SellHistoryRepository {
 				]);
 			});
 
-			console.log("Sell group created successfully.", created_date, "\n", date, "\n", global_id, "\n", amount,	"\n", saved);
+			//.log("Sell group created successfully.", created_date, "\n", date, "\n", global_id, "\n", amount,	"\n", saved);
 
 			const lastSellHistoryGroup = await this.getLastSellGroup();
-			console.log("createSellHistoryGroupWithAllValues:", lastSellHistoryGroup);
+			//.log("createSellHistoryGroupWithAllValues:", lastSellHistoryGroup);
 			return lastSellHistoryGroup.id;
 		} catch (error) {
-			console.error("Error createSellHistoryGroupWithAllValues:", error);
+			//.error("Error createSellHistoryGroupWithAllValues:", error);
 			throw error;
 		}
 	}
@@ -137,7 +137,7 @@ class SellHistoryRepository {
 			});
 
 			if (!result || !result.rows || !result.rows._array) {
-				console.error("Unexpected result structure:", result);
+				//.error("Unexpected result structure:", result);
 				throw new Error("Unexpected result structure");
 			}
 
@@ -145,7 +145,7 @@ class SellHistoryRepository {
 
 			return rows;
 		} catch (error) {
-			console.error("Error getLastSellHistoryGroupId:", error);
+			//.error("Error getLastSellHistoryGroupId:", error);
 			throw error;
 		}
 	}
@@ -171,7 +171,7 @@ class SellHistoryRepository {
 			});
 
 			if (!result || !result.rows || !result.rows._array) {
-				console.error("Unexpected result structure:", result);
+				//.error("Unexpected result structure:", result);
 				throw new Error("Unexpected result structure");
 			}
 
@@ -179,7 +179,7 @@ class SellHistoryRepository {
 
 			return rows;
 		} catch (error) {
-			console.error("Error getLastSellHistoryGroupId:", error);
+			//.error("Error getLastSellHistoryGroupId:", error);
 			throw error;
 		}
 	}
@@ -211,24 +211,24 @@ class SellHistoryRepository {
 							created_date.toISOString()
 						],
 						async (_, result) => {
-							console.log('Sell history created successfully.');
-							console.log("=================");
-							console.log(await this.getAll());
-							console.log("=================");
+							//.log('Sell history created successfully.');
+							//.log("=================");
+							//.log(await this.getAll());
+							//.log("=================");
 
 							let lastIdOfSellHistory = await this.getLastIdOfSellHistory(product_id, created_date.toISOString());
-							console.log(lastIdOfSellHistory);
+							//.log(lastIdOfSellHistory);
 							resolve(lastIdOfSellHistory.id);
 						},
 						(_, error) => {
-							console.error("Transaction error:", error);
+							//.error("Transaction error:", error);
 							reject(error);
 						}
 					);
 				});
 			});
 		} catch (error) {
-			console.error("Error createSellHistory:", error);
+			//.error("Error createSellHistory:", error);
 			throw error;
 		}
 	}
@@ -270,7 +270,7 @@ class SellHistoryRepository {
 				await this.getLastIdOfSellHistory(product_id, created_date);
 			return lastIdOfSellHistory.id;
 		} catch (error) {
-			console.error("Error createSellHistoryWithAllValues:", error);
+			//.error("Error createSellHistoryWithAllValues:", error);
 			throw error;
 		}
 	}
@@ -291,12 +291,12 @@ class SellHistoryRepository {
 					insert,
 					[group_id, history_id],
 					(_, result) => {
-						console.log("SELL HISTORY LINKED");
-						console.log("History Id: " + history_id + " Group Id: " + group_id);
+						//.log("SELL HISTORY LINKED");
+						//.log("History Id: " + history_id + " Group Id: " + group_id);
 						resolve(result);
 					},
 					(_, error) => {
-						console.error("Transaction error:", error);
+						//.error("Transaction error:", error);
 						reject(error);
 					}
 				);
@@ -349,7 +349,7 @@ class SellHistoryRepository {
 			});
 
 			if (!result || !result.rows || !result.rows._array) {
-				console.error("Unexpected result structure:", result);
+				//.error("Unexpected result structure:", result);
 				throw new Error("Unexpected result structure");
 			}
 
@@ -360,7 +360,7 @@ class SellHistoryRepository {
 
 			return rows;
 		} catch (error) {
-			console.error("Error getLastIdOfSellHistory:", error);
+			//.error("Error getLastIdOfSellHistory:", error);
 			throw error;
 		}
 	}
@@ -384,16 +384,16 @@ class SellHistoryRepository {
 			});
 
 			if (!result || !result.rows || !result.rows._array) {
-				console.error("Unexpected result structure:", result);
+				//.error("Unexpected result structure:", result);
 				throw new Error("Unexpected result structure");
 			}
 
 			const rows = result.rows._array;
 
-			console.log('Sell history retrieved successfully:', rows);
+			//.log('Sell history retrieved successfully:', rows);
 			return rows;
 		} catch (error) {
-			console.error("Error getAll:", error);
+			//.error("Error getAll:", error);
 			throw error;
 		}
 	}
@@ -426,7 +426,7 @@ class SellHistoryRepository {
 			const rows = result.rows._array;
 			return rows;
 		} catch (error) {
-			console.error("Error getAllSellGroup:", error);
+			//.error("Error getAllSellGroup:", error);
 			throw error;
 		}
 	}
@@ -458,7 +458,7 @@ class SellHistoryRepository {
 			const rows = result.rows._array;
 			return rows;
 		} catch (error) {
-			console.error("Error getAllSellGroup:", error);
+			//.error("Error getAllSellGroup:", error);
 			throw error;
 		}
 	}
@@ -477,7 +477,7 @@ class SellHistoryRepository {
 			if (toDate == fromDate) {
 				query = `SELECT *
 								FROM sell_group
-								WHERE id < ${lastHistoryId}
+								WHERE id <= ${lastHistoryId}
 									AND DATE(date) = DATE('${fromDate}')
 								ORDER BY id DESC
 								limit 11;`
@@ -523,7 +523,7 @@ class SellHistoryRepository {
 			const rows = result.rows._array;
 			return rows;
 		} catch (error) {
-			console.error("Error retrieving sell history:", error);
+			//.error("Error retrieving sell history:", error);
 			throw error;
 		}
 	}
@@ -554,7 +554,7 @@ class SellHistoryRepository {
 			const rows = result.rows._array;
 			return rows;
 		} catch (error) {
-			console.error("Error getSellGroupSavedFalse:", error);
+			//.error("Error getSellGroupSavedFalse:", error);
 			throw error;
 		}
 	}
@@ -585,7 +585,7 @@ class SellHistoryRepository {
 			const rows = result.rows._array;
 			return rows;
 		} catch (error) {
-			console.error("Error getSellHistorySavedFalse:", error);
+			//.error("Error getSellHistorySavedFalse:", error);
 			throw error;
 		}
 	}
@@ -599,7 +599,7 @@ class SellHistoryRepository {
 				);
 			});
 		} catch (error) {
-			console.error(`Error updating product: ${error}`);
+			//.error(`Error updating product: ${error}`);
 			throw error; // Re-throw to handle the error in the calling code
 		}
 	}
@@ -613,7 +613,7 @@ class SellHistoryRepository {
 				);
 			});
 		} catch (error) {
-			console.error(`Error updating product: ${error}`);
+			//.error(`Error updating product: ${error}`);
 			throw error; // Re-throw to handle the error in the calling code
 		}
 	}
@@ -627,7 +627,7 @@ class SellHistoryRepository {
 				);
 			});
 		} catch (error) {
-			console.error(`Error updating product: ${error}`);
+			//.error(`Error updating product: ${error}`);
 			throw error; // Re-throw to handle the error in the calling code
 		}
 	}
@@ -658,7 +658,7 @@ class SellHistoryRepository {
 			const rows = result.rows._array;
 			return rows;
 		} catch (error) {
-			console.error("Error getSellHistoryGroupSavedFalse:", error);
+			//.error("Error getSellHistoryGroupSavedFalse:", error);
 			throw error;
 		}
 	}
@@ -690,10 +690,10 @@ class SellHistoryRepository {
 
 			const rows = result.rows._array;
 
-			console.log(rows)
+			//.log(rows)
 			return rows;
 		} catch (error) {
-			console.error("Error getTop1SellGroup:", error);
+			//.error("Error getTop1SellGroup:", error);
 			throw error;
 		}
 	}
@@ -724,7 +724,7 @@ class SellHistoryRepository {
 			const rows = result.rows._array;
 			return rows;
 		} catch (error) {
-			console.error("Error findSellHistoryById:", error);
+			//.error("Error findSellHistoryById:", error);
 			throw error;
 		}
 	}
@@ -755,7 +755,7 @@ class SellHistoryRepository {
 			const rows = result.rows._array;
 			return rows;
 		} catch (error) {
-			console.error("Error findSellHistoryById:", error);
+			//.error("Error findSellHistoryById:", error);
 			throw error;
 		}
 	}
@@ -786,7 +786,7 @@ class SellHistoryRepository {
 			const rows = result.rows._array;
 			return rows;
 		} catch (error) {
-			console.error("Error findSellGroupById:", error);
+			//.error("Error findSellGroupById:", error);
 			throw error;
 		}
 	}
@@ -817,7 +817,7 @@ class SellHistoryRepository {
 			const rows = result.rows._array;
 			return rows;
 		} catch (error) {
-			console.error("Error findSellGroupById:", error);
+			//.error("Error findSellGroupById:", error);
 			throw error;
 		}
 	}
@@ -825,9 +825,9 @@ class SellHistoryRepository {
 	// {peoduct_name, count, count_type}
 	async getSellHistoryDetailByGroupId(groupId, lastId) {
 		try {
-			console.log("group_id ", groupId);
+			//.log("group_id ", groupId);
 			if (groupId === null) {
-				console.log('group_id is null. Skipping query.');
+				//.log('group_id is null. Skipping query.');
 				return [];
 			}
 
@@ -875,7 +875,7 @@ class SellHistoryRepository {
 				throw new Error("Unexpected result structure");
 			}
 
-			console.log("res: ", result.rows._array);
+			//.log("res: ", result.rows._array);
 			const historyGroupLinkedArray = result.rows._array;
 
 			let historyInfo = [];
@@ -883,30 +883,30 @@ class SellHistoryRepository {
 			for (const historyGroupLinked of historyGroupLinkedArray) {
 				let profitHistoryInfo = await this.getSellHistoryInfoById(historyGroupLinked.history_id);
 
-				console.log("SELL HISTORY INFO INSIDE OF FOR EACH ", profitHistoryInfo[0]);
+				//.log("SELL HISTORY INFO INSIDE OF FOR EACH ", profitHistoryInfo[0]);
 				let currentProfitHistoryInfo = profitHistoryInfo[0];
 				let product = await this.productRepository.getProductNameAndBrandById(currentProfitHistoryInfo.product_id);
 
 				currentProfitHistoryInfo.productName = product.brand_name + " " + product.name;
 
 				historyInfo = [...historyInfo, currentProfitHistoryInfo];
-				console.log("SELL ARRAY: ", historyInfo);
+				//.log("SELL ARRAY: ", historyInfo);
 			}
 
-			console.log("SELL INFO: ", historyInfo);
+			//.log("SELL INFO: ", historyInfo);
 			return historyInfo;
 		} catch (error) {
-			console.error("Error retrieving profit history details:", error);
+			//.error("Error retrieving profit history details:", error);
 			throw error;
 		}
 	}
 
 	async getLastSellHistoryDetailByGroupId(groupId) {
 		try {
-			console.log("group_id ", groupId);
+			//.log("group_id ", groupId);
 
 			if (!groupId) {
-				console.log('groupId is null or undefined. Skipping query.');
+				//.log('groupId is null or undefined. Skipping query.');
 				return [];
 			}
 
@@ -941,7 +941,7 @@ class SellHistoryRepository {
 				let profitHistoryInfo = await this.getSellHistoryInfoById(historyGroupLinked.history_id);
 
 				if (!profitHistoryInfo || profitHistoryInfo.length === 0) {
-					console.log('No profit history info found for history ID:', historyGroupLinked.history_id);
+					//.log('No profit history info found for history ID:', historyGroupLinked.history_id);
 					continue;
 				}
 
@@ -949,7 +949,7 @@ class SellHistoryRepository {
 				let product = await this.productRepository.getProductNameAndBrandById(currentProfitHistoryInfo.product_id);
 
 				if (!product) {
-					console.log('No product found for product ID:', currentProfitHistoryInfo.product_id);
+					//.log('No product found for product ID:', currentProfitHistoryInfo.product_id);
 					continue;
 				}
 
@@ -957,19 +957,19 @@ class SellHistoryRepository {
 				historyInfo.push(currentProfitHistoryInfo);
 			}
 
-			console.log("SELL INFO: ", historyInfo);
+			//.log("SELL INFO: ", historyInfo);
 			return historyInfo;
 		} catch (error) {
-			console.error("Error retrieving profit history details:", error);
+			//.error("Error retrieving profit history details:", error);
 			throw error;
 		}
 	}
 
 	async getSellHistoryDetailByGroupId(group_id) {
 		try {
-			console.log("group_id ", group_id);
+			//.log("group_id ", group_id);
 			if (group_id === null) {
-				console.log('group_id is null. Skipping query.');
+				//.log('group_id is null. Skipping query.');
 				return [];
 			}
 
@@ -980,10 +980,10 @@ class SellHistoryRepository {
 			`;
 
 
-			console.log("===============")
-			console.log("ALL INFO sell_history_group")
-			console.log(await this.getAll());
-			console.log("===============")
+			//.log("===============")
+			//.log("ALL INFO sell_history_group")
+			//.log(await this.getAll());
+			//.log("===============")
 
 			const result = await new Promise((resolve, reject) => {
 				this.db.transaction((tx) => {
@@ -1000,7 +1000,7 @@ class SellHistoryRepository {
 				throw new Error("Unexpected result structure");
 			}
 
-			console.log("res: ", result.rows._array);
+			//.log("res: ", result.rows._array);
 			const historyGroupLinkedArray = result.rows._array;
 
 			let historyInfo = [];
@@ -1008,20 +1008,20 @@ class SellHistoryRepository {
 			for (const historyGroupLinked of historyGroupLinkedArray) {
 				let profitHistoryInfo = await this.getSellHistoryInfoById(historyGroupLinked.history_id);
 
-				console.log("SELL HISTORY INFO INSIDE OF FOR EACH ", profitHistoryInfo[0]);
+				//.log("SELL HISTORY INFO INSIDE OF FOR EACH ", profitHistoryInfo[0]);
 				let currentProfitHistoryInfo = profitHistoryInfo[0];
 				let product = await this.productRepository.getProductNameAndBrandById(currentProfitHistoryInfo.product_id);
 
 				currentProfitHistoryInfo.productName = product.brand_name + " " + product.name;
 
 				historyInfo = [...historyInfo, currentProfitHistoryInfo];
-				console.log("SELL ARRAY: ", historyInfo);
+				//.log("SELL ARRAY: ", historyInfo);
 			}
 
-			console.log("SELL INFO: ", historyInfo);
+			//.log("SELL INFO: ", historyInfo);
 			return historyInfo;
 		} catch (error) {
-			console.error("Error retrieving profit history details:", error);
+			//.error("Error retrieving profit history details:", error);
 			throw error;
 		}
 	}
@@ -1046,20 +1046,20 @@ class SellHistoryRepository {
 			});
 
 			if (!result || !result.rows || !result.rows._array) {
-				console.error("Unexpected result structure:", result);
+				//.error("Unexpected result structure:", result);
 				throw new Error("Unexpected result structure");
 			}
 
 			const rows = result.rows._array;
 
-			console.log("===============;");
-			console.log("sell_history WHERE id: " + history_id);
-			console.log(rows);
-			console.log("===============;");
+			//.log("===============;");
+			//.log("sell_history WHERE id: " + history_id);
+			//.log(rows);
+			//.log("===============;");
 
 			return rows;
 		} catch (error) {
-			console.error("Error getSellHistoryInfoById:", error);
+			//.error("Error getSellHistoryInfoById:", error);
 			throw error;
 		}
 	}
@@ -1085,14 +1085,14 @@ class SellHistoryRepository {
 			});
 
 			if (!result || !result.rows || !result.rows._array) {
-				console.error("Unexpected result structure:", result);
+				//.error("Unexpected result structure:", result);
 				throw new Error("Unexpected result structure");
 			}
 
-			console.log("ins res: ", result.rows._array);
+			//.log("ins res: ", result.rows._array);
 			return result.rows._array;
 		} catch (error) {
-			console.error("Error getSellGroupInfoById:", error);
+			//.error("Error getSellGroupInfoById:", error);
 			throw error;
 		}
 	}
@@ -1120,14 +1120,14 @@ class SellHistoryRepository {
 			});
 
 			if (!result || !result.rows || !result.rows._array) {
-				console.error("Unexpected result structure:", result);
+				//.error("Unexpected result structure:", result);
 				throw new Error("Unexpected result structure");
 			}
 
 			sellHistoryGroups = result.rows._array;
-			console.log("Selected sellHistoryGroups:", sellHistoryGroups);
+			//.log("Selected sellHistoryGroups:", sellHistoryGroups);
 		} catch (error) {
-			console.error("Error fetching sell history groups:", error);
+			//.error("Error fetching sell history groups:", error);
 			throw error;
 		}
 
@@ -1151,13 +1151,13 @@ class SellHistoryRepository {
 							[sellHistoryGroup.history_id],
 							(_, resultSet) => {
 								if (resultSet.rowsAffected > 0) {
-									console.log(`Deleted history_id: ${sellHistoryGroup.history_id}`);
+									//.log(`Deleted history_id: ${sellHistoryGroup.history_id}`);
 								} else {
-									console.log(`No rows deleted for history_id: ${sellHistoryGroup.history_id}`);
+									//.log(`No rows deleted for history_id: ${sellHistoryGroup.history_id}`);
 								}
 							},
 							(_, error) => {
-								console.error("Error deleting from sell_history:", error);
+								//.error("Error deleting from sell_history:", error);
 								reject(error); // Reject the promise to roll back the transaction
 							}
 						);
@@ -1174,14 +1174,14 @@ class SellHistoryRepository {
 						[group_id],
 						(_, resultSet) => {
 							if (resultSet.rowsAffected > 0) {
-								console.log("Deleted groups with id <= ", group_id);
+								//.log("Deleted groups with id <= ", group_id);
 							} else {
-								console.log("No rows deleted in sell_group.");
+								//.log("No rows deleted in sell_group.");
 							}
 							resolve(true); // Resolve the promise to commit the transaction
 						},
 						(_, error) => {
-							console.error("Error deleting from sell_group:", error);
+							//.error("Error deleting from sell_group:", error);
 							reject(error); // Reject the promise to roll back the transaction
 						}
 					);
@@ -1190,7 +1190,7 @@ class SellHistoryRepository {
 
 			return true; // All deletions were successful
 		} catch (error) {
-			console.error("Error during deletion transaction:", error);
+			//.error("Error during deletion transaction:", error);
 			return false; // Return false in case of an error
 		}
 	}
@@ -1253,7 +1253,7 @@ class SellHistoryRepository {
 
 			return row;
 		} catch (error) {
-			console.error("Error retrieving sell history:", error);
+			//.error("Error retrieving sell history:", error);
 			throw error;
 		}
 	}
@@ -1309,13 +1309,13 @@ class SellHistoryRepository {
 			});
 
 			if (!result || !result.rows || !result.rows._array) {
-				console.error("Unexpected result structure:", result);
+				//.error("Unexpected result structure:", result);
 				throw new Error("Unexpected result structure");
 			}
 
 			const rows = result.rows._array[0];
 
-			console.log("result:: ", rows);
+			//.log("result:: ", rows);
 
 			return rows;
 		}
