@@ -13,7 +13,7 @@ import i18n from '../../i18n';
 
 const screenWidth = Dimensions.get("window").width;
 
-const ProfitItem = ({history, navigation, stopLoader}) => {
+const ProfitItem = ({history, navigation}) => {
 	const getFormattedTime = (created_date) => {
 		let date = new Date(created_date);
 		let hours = date.getHours();
@@ -30,9 +30,7 @@ const ProfitItem = ({history, navigation, stopLoader}) => {
 		<TouchableOpacity
 			key={history.id}
 			style={styles.history}
-			onPress={async () => {
-				stopLoader();
-				
+			onPress={async () => {				
 				await AsyncStorage.setItem("window", "ProfitDetail");
 				let historyId = history.id + "";
 

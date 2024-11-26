@@ -8,10 +8,8 @@ import { TouchableRipple } from 'react-native-paper';
 
 const screenWidth = Dimensions.get('window').width;
 
-const ProfitHeader = memo(({navigation, incomeTitle, calendarInputContent, thisMonthProfitAmount, stopLoader}) => {
+const ProfitHeader = memo(({navigation, incomeTitle, calendarInputContent, thisMonthProfitAmount}) => {
 	const handlePress = async () => {
-		stopLoader();
-
 		await AsyncStorage.setItem("window", "Calendar");
 		await AsyncStorage.setItem("calendarFromPage", "Profit");
 		navigation.navigate("Calendar");

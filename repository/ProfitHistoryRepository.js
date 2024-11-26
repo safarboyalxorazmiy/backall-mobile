@@ -762,7 +762,7 @@ class ProfitHistoryRepository {
 			if (toDate == fromDate) {
 				query = `SELECT *
             FROM profit_group
-            WHERE id < ${lastHistoryId}
+            WHERE id <= ${lastHistoryId}
               AND DATE(date) = DATE('${fromDate}')
             ORDER BY id DESC
             limit 11;`

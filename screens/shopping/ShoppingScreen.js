@@ -104,19 +104,19 @@ class Shopping extends Component {
 		let lastSellGroup = await this.sellHistoryRepository.getLastSellGroup();
 		let lastGroupId = lastSellGroup.id;
 
-		let firstSellGroup = await this.sellHistoryRepository.getFirstSellGroup();
-
-
 		this.setState({
-			firstGroupGlobalId: firstSellGroup.global_id,
-			lastGroupId: lastGroupId + 11,
-			loading: false,
-			localFullyLoaded: false
+			lastGroupId: lastGroupId + 11
+		}, () => {
+			this.setState({
+				loading: false,
+				localFullyLoaded: false,
+				groupedHistories: []
+			}, () => {
+				this.onEndReached();
+			});
 		});
 
 		//.log("Shopping mounted");
-
-		// this.onEndReached();
 
 		const {navigation} = this.props;
 
@@ -136,11 +136,16 @@ class Shopping extends Component {
 				let firstSellGroup = await this.sellHistoryRepository.getFirstSellGroup();
 
 				this.setState({
-					firstGroupGlobalId: firstSellGroup.global_id,
-					lastGroupId: lastGroupId,
-					incomeTitle: i18n.t("oyIncome"),
-					groupedHistories: [],
-					localFullyLoaded: false
+					lastGroupId: lastGroupId + 11,
+				}, () => {
+					this.setState({
+						firstGroupGlobalId: firstSellGroup.global_id,
+						incomeTitle: i18n.t("oyIncome"),
+						groupedHistories: [],
+						localFullyLoaded: false
+					}, () => {
+						this.onEndReached();
+					})
 				});
 
 				await AsyncStorage.setItem("loadShopping", "false");
@@ -167,59 +172,70 @@ class Shopping extends Component {
 				await AsyncStorage.getItem("shoppingFullyLoaded") !== null &&
 				await AsyncStorage.getItem("shoppingFullyLoaded") !== "true"
 			) {
-				if (this.state.prevFromDate != null) {
+				if (this.state.prevFromDate != null || this.state.fromDate != null || this.state.toDate != null) {
 					let lastSellGroup = await this.sellHistoryRepository.getLastSellGroup();
 					let lastGroupId = lastSellGroup.id;
-	
-					let firstSellGroup = await this.sellHistoryRepository.getFirstSellGroup();
-	
+		
 					this.setState({
-						groupedHistories: [],
-						firstGroupGlobalId: firstSellGroup.global_id,
-						lastGroupId: lastGroupId,
 						prevFromDate: null,
-						incomeTitle: i18n.t("oyIncome"),
-						loading: false,
-						localFullyLoaded: false
+						fromDate : null,
+						toDate: null
+					}, () => {
+						this.setState({
+							lastGroupId: lastGroupId + 11,
+						}, () => {
+							this.setState({
+								groupedHistories: [],
+								incomeTitle: i18n.t("oyIncome"),
+								localFullyLoaded: false,
+							}, () => {
+								this.onEndReached();
+							});	
+						});
 					});
+					
+					// Remove date
+					await AsyncStorage.removeItem("ShoppingFromDate");
+					await AsyncStorage.removeItem("ShoppingToDate");
+					await AsyncStorage.setItem("shoppingFullyLoaded", "true");	
+					await this.getDateInfo();
 					return;
 				}
 				
-				// Remove date
-				await AsyncStorage.removeItem("ShoppingFromDate");
-				await AsyncStorage.removeItem("ShoppingToDate");
-				await AsyncStorage.setItem("shoppingFullyLoaded", "false");
-				await this.getDateInfo();
-
-				let lastSellGroup = await this.sellHistoryRepository.getLastSellGroup();
-				let lastGroupId = lastSellGroup.id;
-
-				if ((lastGroupId - 1000000) > 0) {
-					await this.sellHistoryRepository.deleteByGroupIdLessThan(lastGroupId - 1000000);
-				}
-
-				// Explanation for firstSellGroup. We need it for getting rest of rows from global.
-				// Right here we update it again cause we deleted rows which ids higher then 1000000
-				let firstSellGroup = await this.sellHistoryRepository.getFirstSellGroup();
-				this.setState({
-					firstGroupGlobalId: firstSellGroup.global_id,
-					globalFullyLoaded: false
-				});
 
 				// If there is no history get histories
 				if (this.state.groupedHistories.length <= 0) {
-					this.setState({loading: false, localFullyLoaded: false});
+					let lastSellGroup = await this.sellHistoryRepository.getLastSellGroup();
+					let lastGroupId = lastSellGroup.id;
+
 					this.setState({
-						loading: false,
-						localFullyLoaded: false
-					})
-					this.scrollToTop();
+						lastGroupId: lastGroupId + 11,
+					}, () => {
+						this.setState({
+							localFullyLoaded: false, 
+							groupedHistories: [],
+							incomeTitle: i18n.t("oyIncome"),
+							fromDate : null,
+							toDate: null,
+							prevFromDate:null
+						}, () => {
+							this.onEndReached();
+						});
+					});
+
+					// Remove date
+					await AsyncStorage.removeItem("ShoppingFromDate");
+					await AsyncStorage.removeItem("ShoppingToDate");
+					await AsyncStorage.setItem("shoppingFullyLoaded", "true");	
+					await this.getDateInfo();
+					this.onEndReached();
 					return;
 				}
 
 				// If there is history load top 1
 				await this.loadTop1LocalSellGroups();
 				this.scrollToTop();
+
 				await AsyncStorage.setItem("shoppingFullyLoaded", "true");	
 				return;
 			}
@@ -228,6 +244,8 @@ class Shopping extends Component {
 			await this.getDateInfo();
 
 			if (this.state.fromDate != null && this.state.toDate != null) {
+				await this.getDateInfo();
+
 				if (await AsyncStorage.getItem("lastWindow") == "ShoppingDetail") {
 					await AsyncStorage.removeItem("lastWindow");
 					return;
@@ -242,7 +260,7 @@ class Shopping extends Component {
 
 				if (dateType == "" || dateType == null) {
 					this.setState({
-						incomeTitle: i18n.t("oyIncome")
+						incomeTitle: this.state.calendarInputContent
 					});
 				} else {
 					this.setState({
@@ -254,7 +272,10 @@ class Shopping extends Component {
 					this.setState({
 						thisMonthSellAmount: 0,
 						groupedHistories: [],
+						lastGroupId: 0,
 						localFullyLoaded: false
+					}, () => {
+						this.onEndReached();
 					});
 
 					return;
@@ -273,14 +294,18 @@ class Shopping extends Component {
 				console.log(lastGroup);
 
 				this.setState({
-					firstGroupGlobalId: firstSellGroup.global_id,
 					lastGroupId: lastGroupId + 11,
-					groupedHistories: [],
+					firstGroupGlobalId: firstSellGroup.global_id,
 					thisMonthSellAmount: amount[0].total_amount,
 					localFullyLoaded: false
 				}, () => {
-					// this.onEndReached();
-				});
+					this.setState({
+						groupedHistories: []
+					}, () => {
+						this.onEndReached();
+					});
+				})
+				
 				return;
 			}
 			// reloading after removing date
@@ -291,14 +316,17 @@ class Shopping extends Component {
 				let firstSellGroup = await this.sellHistoryRepository.getFirstSellGroup();
 
 				this.setState({
-					groupedHistories: [],
-					firstGroupGlobalId: firstSellGroup.global_id,
 					lastGroupId: lastGroupId + 11,
-					prevFromDate: null,
-					incomeTitle: i18n.t("oyIncome"),
-					localFullyLoaded: false
 				}, () => {
-					// this.onEndReached();
+					this.setState({
+						groupedHistories: [],
+						firstGroupGlobalId: firstSellGroup.global_id,
+						prevFromDate: null,
+						incomeTitle: i18n.t("oyIncome"),
+						localFullyLoaded: false
+					}, () => {
+						this.onEndReached();
+					})
 				});
 				return;
 			}
@@ -322,7 +350,9 @@ class Shopping extends Component {
 			let toDate = this.state.toDate.replace(/-/g, "/");
 
 			//.log(fromDate + " - " + toDate);
-			this.setState({calendarInputContent: fromDate + " - " + toDate});
+			this.setState({
+				calendarInputContent: fromDate.substring(0, 10) + " - " + toDate.substring(0, 10),
+			});
 		} else {
 			this.setState({calendarInputContent: "--/--/----"});
 		}

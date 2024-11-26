@@ -511,16 +511,23 @@ class CalendarPage extends Component {
 							}}/>
 					</View>
 
-					<TouchableHighlight
-
+					<TouchableRipple
+						delayHoverIn={true}
+						delayLongPress={false}
+						delayHoverOut={false}
+						unstable_pressDelay={false}
+						rippleColor="rgba(0, 0, 0, .1)"
+						rippleContainerBorderRadius={50}
+						borderless={true}
 						style={{
-							width: 60,
-							height: 40,
+							width: 50,
+							height: 50,
+							borderRadius: 50,
 							display: "flex",
 							justifyContent: "center",
 							alignItems: "center"
 						}}
-						onPress={() => {
+						onPress={async () => {
 							// this.setState({
 							// 	isModalVisible: true,
 							// 	selectingDateType: "FROM"
@@ -529,10 +536,12 @@ class CalendarPage extends Component {
 								selectingDateType: "FROM"
 							});
 
+							await AsyncStorage.setItem("dateType", "");
+
 							this.modal.current?.setModalVisible(true);
 						}}>
 						<CalendarIcon />
-					</TouchableHighlight>
+					</TouchableRipple>
 				</View>
 
 				<ActionSheet
@@ -724,19 +733,28 @@ class CalendarPage extends Component {
 							}}/>
 					</View>
 
-					<TouchableOpacity
+					<TouchableRipple
+						delayHoverIn={true}
+						delayLongPress={false}
+						delayHoverOut={false}
+						unstable_pressDelay={false}
+						rippleColor="rgba(0, 0, 0, .1)"
+						rippleContainerBorderRadius={50}
+						borderless={true}
 						style={{
-							width: 60,
-							height: 40,
+							width: 50,
+							height: 50,
+							borderRadius: 50,
 							display: "flex",
 							justifyContent: "center",
-							alignItems: "center",
+							alignItems: "center"
 						}}
-						onPress={() => {
+						onPress={async () => {
+							await AsyncStorage.setItem("dateType", "");
 							this.modal.current?.setModalVisible(true);
 						}}>
 						<CalendarIcon />
-					</TouchableOpacity>
+					</TouchableRipple>
 				</View>
 
 				<TouchableRipple
