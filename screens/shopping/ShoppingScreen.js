@@ -5,7 +5,7 @@ import {
 	StyleSheet,
 	View,
 	FlatList,
-	ActivityIndicator
+	Appearance
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -21,7 +21,6 @@ import i18n from '../../i18n';
 import SkeletonLoader from "expo-skeleton-loader";
 
 const screenWidth = Dimensions.get("window").width;
-
 
 
 class Shopping extends Component {
@@ -56,6 +55,7 @@ class Shopping extends Component {
 			localFullyLoaded: false,
 			incomeTitle: "",
 			loaderCount: 0,
+			colorScheme: Appearance.getColorScheme()
 		};
 
 		this.sellHistoryRepository = new SellHistoryRepository();
@@ -116,7 +116,7 @@ class Shopping extends Component {
 
 		//.log("Shopping mounted");
 
-		this.onEndReached();
+		// this.onEndReached();
 
 		const {navigation} = this.props;
 
@@ -144,7 +144,7 @@ class Shopping extends Component {
 				});
 
 				await AsyncStorage.setItem("loadShopping", "false");
-				this.onEndReached();
+				// this.onEndReached();
 				return;
 			}
 
@@ -411,10 +411,14 @@ class Shopping extends Component {
 					await this.sellHistoryRepository.getTop11SellGroup(this.state.lastGroupId);
 			}
 
-			if (sellHistories.length === 0 || sellHistories.length !== 11) {
+			if (sellHistories.length === 0 || sellHistories.length < 11) {
 				console.log("sellHistories.length === 0; returned");
 				this.setState({
 					localFullyLoaded: true
+				});
+			} else {
+				this.setState({
+					localFullyLoaded: false
 				});
 			}
 
@@ -448,7 +452,7 @@ class Shopping extends Component {
 					id: history.id,
 					created_date: history.created_date,
 					amount: history.amount,
-					calendar: true
+					calendar: false
 				});
 
 				grouped[groupIndex].totalAmount = lastAmount;
@@ -464,7 +468,7 @@ class Shopping extends Component {
 
 			const lastGroup = grouped[grouped.length - 1];
 			if (lastGroup) {
-				groupedCopy[groupedCopy.length - 1].histories[0].calendar = true;
+				groupedCopy[groupedCopy.length - 1].histories[0].calendar = false;
 			}
 
 			if (await AsyncStorage.getItem("window") != "Shopping") {
@@ -572,7 +576,7 @@ class Shopping extends Component {
 						ref={this.flatListRef}
 						data={this.state.groupedHistories}
 						keyExtractor={(item) => item.date}
-						onEndReachedThreshold={0.2}
+						onEndReachedThreshold={1}
 						onEndReached={this.onEndReached}
 						// initialNumToRender={11}
 						style={{width: "100%", height: "100%"}}
@@ -588,9 +592,12 @@ class Shopping extends Component {
 							this.loaderRef.current = true;
 						}}
 						ListFooterComponent={
-							(this.loaderRef.current == false || this.state.localFullyLoaded == true) ? <></>:
+							(this.state.localFullyLoaded == true) ? <></>:
 							(
-								<SkeletonLoader style={{ marginVertical: 10, }} >
+								<SkeletonLoader 
+									style={{ marginVertical: 15, marginHorizontal: 10 }} 
+									boneColor={this.state.colorScheme === "dark" ? "#121212" : "#F1F1F1"}
+									highlightColor={this.state.colorScheme === "dark" ? "#333333" : "#F1F1F1"} >
 									
 									<SkeletonLoader.Item
 										style={{ 
@@ -598,7 +605,7 @@ class Shopping extends Component {
 											marginTop: 4,
 											width: "100%",
 											paddingHorizontal: 16,
-											paddingVertical: 6,
+											paddingVertical: 6
 										}}
 										/>
 									<SkeletonLoader.Item
@@ -607,7 +614,7 @@ class Shopping extends Component {
 											marginTop: 4,
 											width: "100%",
 											paddingHorizontal: 16,
-											paddingVertical: 6,
+											paddingVertical: 6
 										}}
 									/>
 									<SkeletonLoader.Item
@@ -616,7 +623,7 @@ class Shopping extends Component {
 											marginTop: 4,
 											width: "100%",
 											paddingHorizontal: 16,
-											paddingVertical: 6,
+											paddingVertical: 6
 										}}
 									/>
 									<SkeletonLoader.Item

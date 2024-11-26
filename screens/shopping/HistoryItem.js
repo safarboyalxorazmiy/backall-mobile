@@ -51,7 +51,6 @@ const HistoryItem = ({history, navigation}) => {
 			</View>
 
 			<Text style={styles.historyTime}>{getFormattedTime(history.created_date)}</Text>
-			<Text style={styles.historyTime}>{history.id}</Text>
 
 		</TouchableOpacity>
 	);
