@@ -4,8 +4,7 @@ import {
 	Dimensions,
 	StyleSheet,
 	View,
-	FlatList,
-	Appearance
+	FlatList
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -19,6 +18,7 @@ import ProfitHeader from "./ProfitHeader";
 import i18n from '../../i18n';
 
 import SkeletonLoader from "../SkeletonLoader";
+import TokenService from "../../service/TokenService";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -29,6 +29,7 @@ class Profit extends Component {
 
 		this.state = {
 			groupedHistories: [],
+			loadCount: 0,
 			lastDate: new Date(),
 			currentMonthTotal: 0,
 			lastGroupId: 0,
@@ -53,15 +54,14 @@ class Profit extends Component {
 			loading: false,
 			globalFullyLoaded: false,
 			localFullyLoaded: false,
-			incomeTitle: "",
-			loaderCount: 0,
-			colorScheme: Appearance.getColorScheme()
+			incomeTitle: ""
 		};
 
 		this.profitHistoryRepository = new ProfitHistoryRepository();
 		this.amountDateRepository = new AmountDateRepository();
 		this.productRepository = new ProductRepository();
 		this.apiService = new ApiService();
+		this.tokenService = new TokenService();
 
 		this.flatListRef = React.createRef();
 		
@@ -70,64 +70,35 @@ class Profit extends Component {
 
 
 	async componentDidMount() {
-		console.log("Component mounted mf")
-		await AsyncStorage.setItem("window", "Profit");
-
-		// !IMPORTANT 🔭******************************
-		// Bu method bu yerda stateni component mount bo'lganda sahifani hamma ma'lumotlarini tozalash uchun yozildi.
-		// yozilmasa double element degan bug chiqayapti
-		await this.initializeScreen();
-
-		
-		// !IMPORTANT 🔭******************************
-		// Bu if bizga faqat eski user akkauntdan chiqib ketib yangi user bu telefonga login yoki register qilayotganda kerak.
-		// Bu yerda shunchaki tozalab tashlaymiz chunki bizga endi uni keragi yo'q
-		if (await AsyncStorage.getItem("loadProfit") === "true") {
-			await AsyncStorage.setItem("loadProfit", "false");
-		}
-
-		/* Month profit amount setting value ** */
-		let thisMonthProfitAmount = parseInt(await AsyncStorage.getItem("month_profit_amount"));
-		thisMonthProfitAmount = isNaN(thisMonthProfitAmount) ? 0 : thisMonthProfitAmount;
-
-		let currentDate = new Date();
-		let currentMonth = currentDate.getMonth();
-		let lastStoredMonth = parseInt(await AsyncStorage.getItem("month"));
-
-		if (currentMonth === lastStoredMonth) {
-			this.setState({
-				thisMonthProfitAmount: thisMonthProfitAmount,
-				incomeTitle: i18n.t("oyIncome")
-			});
-		}
-
-		let lastProfitGroup = await this.profitHistoryRepository.getLastProfitGroup();
-		let lastGroupId = lastProfitGroup.id;
-
-		let firstProfitGroup = await this.profitHistoryRepository.getFirstProfitGroup();
-
-
-		this.setState({
-			lastGroupId: lastGroupId + 11,
-		}, () => {
-			this.setState({
-				groupedHistories: [],
-				firstGroupGlobalId: firstProfitGroup.global_id,
-				loading: false,
-				localFullyLoaded: false
-			}, () => {
-				this.onEndReached();
-			});
-		})
-
-		//.log("Profit mounted");
-
-		// this.onEndReached();
-
 		const {navigation} = this.props;
 
 		navigation.addListener("focus", async () => {
 			await AsyncStorage.setItem("window", "Profit");
+
+			// !IMPORTANT 🔭******************************
+			// Bu yerda foydalanuvchi tokeni bor yoki yo'qligini tekshiradi 
+			// agar token yo'q bo'lsa unda login oynasiga otadi.
+			let isLoggedIn = await this.tokenService.checkTokens();
+			if (!isLoggedIn) {
+				console.log("LOGGED OUT BY 401 FROM HOME")
+				await this.databaseRepository.clear();
+				await AsyncStorage.clear();
+				navigation.navigate("Login");
+				return;
+			}
+			//************************************
+
+			// !IMPORTANT 🔭******************************
+			// Bu yerda agar yangi telefondan login bo'lsa ya'ni apidan 401 kelsa login oynasiga otadi.
+			let authError = await AsyncStorage.getItem("authError");
+			if (authError != null && authError == "true") {
+				console.log("LOGGED OUT BY 401 FROM HOME")
+				await this.databaseRepository.clear();
+				await AsyncStorage.clear();
+				navigation.navigate("Login");
+				return;	
+			}
+			//************************************
 
 			// !IMPORTANT 🔭******************************
 			// Bu if bizga faqat eski user akkauntdan chiqib ketib yangi user bu telefonga login yoki register qilayotganda kerak.
@@ -188,7 +159,6 @@ class Profit extends Component {
 						groupedHistories: [],
 						prevFromDate: null,
 						incomeTitle: i18n.t("oyIncome"),
-						loading: false,
 						localFullyLoaded: false
 					}, () => {
 						this.onEndReached()
@@ -275,8 +245,6 @@ class Profit extends Component {
 				let lastProfitGroup = await this.profitHistoryRepository.getLastProfitGroup();
 				let lastGroupId = lastProfitGroup.id;
 
-				let firstProfitGroup = await this.profitHistoryRepository.getFirstProfitGroup();
-
 				this.setState({
 					lastGroupId: lastGroupId + 11,
 				}, () => {
@@ -292,6 +260,52 @@ class Profit extends Component {
 				return;
 			}
 		});
+
+		console.log("Component mounted mf")
+		await AsyncStorage.setItem("window", "Profit");
+
+		// !IMPORTANT 🔭******************************
+		// Bu method bu yerda stateni component mount bo'lganda sahifani hamma ma'lumotlarini tozalash uchun yozildi.
+		// yozilmasa double element degan bug chiqayapti
+		await this.initializeScreen();
+
+		
+		// !IMPORTANT 🔭******************************
+		// Bu if bizga faqat eski user akkauntdan chiqib ketib yangi user bu telefonga login yoki register qilayotganda kerak.
+		// Bu yerda shunchaki tozalab tashlaymiz chunki bizga endi uni keragi yo'q
+		if (await AsyncStorage.getItem("loadProfit") === "true") {
+			await AsyncStorage.setItem("loadProfit", "false");
+		}
+
+		/* Month profit amount setting value ** */
+		let thisMonthProfitAmount = parseInt(await AsyncStorage.getItem("month_profit_amount"));
+		thisMonthProfitAmount = isNaN(thisMonthProfitAmount) ? 0 : thisMonthProfitAmount;
+
+		let currentDate = new Date();
+		let currentMonth = currentDate.getMonth();
+		let lastStoredMonth = parseInt(await AsyncStorage.getItem("month"));
+
+		if (currentMonth === lastStoredMonth) {
+			this.setState({
+				thisMonthProfitAmount: thisMonthProfitAmount,
+				incomeTitle: i18n.t("oyIncome")
+			});
+		}
+
+		let lastProfitGroup = await this.profitHistoryRepository.getLastProfitGroup();
+		let lastGroupId = lastProfitGroup.id;
+
+		this.setState({
+			lastGroupId: lastGroupId + 11,
+		}, () => {
+			this.setState({
+				loading: false,
+				groupedHistories: [],
+				localFullyLoaded: false
+			}, () => {
+				this.onEndReached();
+			});
+		})
 	}
 
 	async getDateInfo() {
@@ -342,6 +356,7 @@ class Profit extends Component {
 	async initializeScreen() {
 		this.setState({
 			groupedHistories: [],
+			loadCount: 0,
 			lastDate: new Date(),
 			currentMonthTotal: 0,
 			lastGroupId: 0,
@@ -381,6 +396,10 @@ class Profit extends Component {
 
 	async loadLocalProfitGroups() {
 		try {
+			this.setState({
+				loading: true
+			});
+
 			let profitHistories;
 			// 
 			if (this.state.fromDate != null && this.state.toDate != null) {
@@ -392,7 +411,7 @@ class Profit extends Component {
 			}
 
 			if (profitHistories.length === 0 || profitHistories.length < 11) {
-				console.log("profitHistories.length === 0; returned");
+				console.log("profitHistories.length === 0; returned lastGroupId::", this.state.lastGroupId);
 				this.setState({
 					localFullyLoaded: true
 				});
@@ -452,7 +471,11 @@ class Profit extends Component {
 			}
 
 			if (await AsyncStorage.getItem("window") != "Profit") {
-				console.log("Loader turned off in loadLocalProfitGroups()")
+				console.log("Loader turned off in loadLocalProfitGroups()");
+				this.setState({
+					loading: false,
+					lastGroupId: this.state.lastGroupId + 11
+				});
 				return false;
 			}
 	
@@ -460,7 +483,20 @@ class Profit extends Component {
 				groupedHistories: groupedCopy
 			});
 
-			return true;
+			if ((this.state.loadCount - 1) === 0) {
+				this.setState({
+					loading: false,
+					loadCount: this.state.loadCount - 1
+				});
+				return true;
+			} else {
+				this.setState({
+					loadCount: this.state.loadCount - 1,
+					lastGroupId: this.state.lastGroupId - 11
+				}, async () => {
+					await this.loadLocalProfitGroups();
+				});
+			}
 		} catch (error) {
 			return false;
 		}
@@ -534,12 +570,24 @@ class Profit extends Component {
 		}
 	}
 
-	onEndReached = async () => {
+	onEndReached = () => {
+		if (this.state.loading == true) {
+			this.setState({
+				loadCount: this.state.loadCount + 1
+			});
+			return;
+		};
+
 		this.setState(state => ({
-			lastGroupId: state.lastGroupId - 11
-		}), async () => {
-			await this.loadLocalProfitGroups();
+			lastGroupId: state.lastGroupId - 11,
+			loadCount: state.loadCount + 1
+		}), () => {
+			this.loadMore();
 		});
+	}
+
+	async loadMore() {
+		await this.loadLocalProfitGroups();
 	}
 
 	scrollToTop = () => {

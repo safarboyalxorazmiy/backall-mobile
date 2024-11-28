@@ -4,8 +4,7 @@ import {
 	Dimensions,
 	StyleSheet,
 	View,
-	FlatList,
-	Appearance
+	FlatList
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -18,6 +17,7 @@ import HistoryGroup from "./HistoryGroup";
 import ShoppingHeader from "./ShoppingHeader";
 import i18n from '../../i18n';
 import SkeletonLoader from "../SkeletonLoader";
+import TokenService from "../../service/TokenService";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -28,6 +28,7 @@ class Shopping extends Component {
 
 		this.state = {
 			groupedHistories: [],
+			loadCount: 0,
 			lastDate: new Date(),
 			currentMonthTotal: 0,
 			lastGroupId: 0,
@@ -53,14 +54,13 @@ class Shopping extends Component {
 			globalFullyLoaded: false,
 			localFullyLoaded: false,
 			incomeTitle: "",
-			loaderCount: 0,
-			colorScheme: Appearance.getColorScheme()
 		};
 
 		this.sellHistoryRepository = new SellHistoryRepository();
 		this.amountDateRepository = new AmountDateRepository();
 		this.productRepository = new ProductRepository();
 		this.apiService = new ApiService();
+		this.tokenService = new TokenService();
 
 		this.flatListRef = React.createRef();
 		
@@ -69,57 +69,34 @@ class Shopping extends Component {
 
 
 	async componentDidMount() {
-		console.log("Component mounted mf")
-		await AsyncStorage.setItem("window", "Shopping");
-
-		// !IMPORTANT 🔭******************************
-		// Bu method bu yerda stateni component mount bo'lganda sahifani hamma ma'lumotlarini tozalash uchun yozildi.
-		// yozilmasa double element degan bug chiqayapti
-		await this.initializeScreen();
-
-		
-		// !IMPORTANT 🔭******************************
-		// Bu if bizga faqat eski user akkauntdan chiqib ketib yangi user bu telefonga login yoki register qilayotganda kerak.
-		// Bu yerda shunchaki tozalab tashlaymiz chunki bizga endi uni keragi yo'q
-		if (await AsyncStorage.getItem("loadShopping") === "true") {
-			await AsyncStorage.setItem("loadShopping", "false");
-		}
-
-		/* Month sell amount setting value ** */
-		let thisMonthSellAmount = parseInt(await AsyncStorage.getItem("month_sell_amount"));
-		thisMonthSellAmount = isNaN(thisMonthSellAmount) ? 0 : thisMonthSellAmount;
-
-		let currentDate = new Date();
-		let currentMonth = currentDate.getMonth();
-		let lastStoredMonth = parseInt(await AsyncStorage.getItem("month"));
-
-		if (currentMonth === lastStoredMonth) {
-			this.setState({
-				thisMonthSellAmount: thisMonthSellAmount,
-				incomeTitle: i18n.t("oyIncome")
-			});
-		}
-
-		let lastSellGroup = await this.sellHistoryRepository.getLastSellGroup();
-		let lastGroupId = lastSellGroup.id;
-
-		this.setState({
-			lastGroupId: lastGroupId + 11
-		}, () => {
-			this.setState({
-				loading: false,
-				localFullyLoaded: false,
-				groupedHistories: []
-			}, () => {
-				this.onEndReached();
-			});
-		});
-
-		//.log("Shopping mounted");
-
 		const {navigation} = this.props;
 
 		navigation.addListener("focus", async () => {
+			// !IMPORTANT 🔭******************************
+			// Bu yerda foydalanuvchi tokeni bor yoki yo'qligini tekshiradi 
+			// agar token yo'q bo'lsa unda login oynasiga otadi.
+			let isLoggedIn = await this.tokenService.checkTokens();
+			if (!isLoggedIn) {
+				console.log("LOGGED OUT BY 401 FROM HOME")
+				await this.databaseRepository.clear();
+				await AsyncStorage.clear();
+				navigation.navigate("Login");
+				return;
+			}
+			//************************************
+
+			// !IMPORTANT 🔭******************************
+			// Bu yerda agar yangi telefondan login bo'lsa ya'ni apidan 401 kelsa login oynasiga otadi.
+			let authError = await AsyncStorage.getItem("authError");
+			if (authError != null && authError == "true") {
+				console.log("LOGGED OUT BY 401 FROM HOME")
+				await this.databaseRepository.clear();
+				await AsyncStorage.clear();
+				navigation.navigate("Login");
+				return;	
+			}
+			//************************************
+
 			await AsyncStorage.setItem("window", "Shopping");
 
 			// !IMPORTANT 🔭******************************
@@ -132,13 +109,10 @@ class Shopping extends Component {
 				let lastSellGroup = await this.sellHistoryRepository.getLastSellGroup();
 				let lastGroupId = lastSellGroup.id;
 
-				let firstSellGroup = await this.sellHistoryRepository.getFirstSellGroup();
-
 				this.setState({
 					lastGroupId: lastGroupId + 11,
 				}, () => {
 					this.setState({
-						firstGroupGlobalId: firstSellGroup.global_id,
 						incomeTitle: i18n.t("oyIncome"),
 						groupedHistories: [],
 						localFullyLoaded: false
@@ -148,7 +122,6 @@ class Shopping extends Component {
 				});
 
 				await AsyncStorage.setItem("loadShopping", "false");
-				// this.onEndReached();
 				return;
 			}
 
@@ -227,7 +200,6 @@ class Shopping extends Component {
 					await AsyncStorage.removeItem("ShoppingToDate");
 					await AsyncStorage.setItem("shoppingFullyLoaded", "true");	
 					await this.getDateInfo();
-					this.onEndReached();
 					return;
 				}
 
@@ -312,14 +284,11 @@ class Shopping extends Component {
 				let lastSellGroup = await this.sellHistoryRepository.getLastSellGroup();
 				let lastGroupId = lastSellGroup.id;
 
-				let firstSellGroup = await this.sellHistoryRepository.getFirstSellGroup();
-
 				this.setState({
 					lastGroupId: lastGroupId + 11,
 				}, () => {
 					this.setState({
 						groupedHistories: [],
-						firstGroupGlobalId: firstSellGroup.global_id,
 						prevFromDate: null,
 						incomeTitle: i18n.t("oyIncome"),
 						localFullyLoaded: false
@@ -330,6 +299,55 @@ class Shopping extends Component {
 				return;
 			}
 		});
+
+
+		console.log("Component mounted mf")
+		await AsyncStorage.setItem("window", "Shopping");
+
+		// !IMPORTANT 🔭******************************
+		// Bu method bu yerda stateni component mount bo'lganda sahifani hamma ma'lumotlarini tozalash uchun yozildi.
+		// yozilmasa double element degan bug chiqayapti
+		await this.initializeScreen();
+
+		
+		// !IMPORTANT 🔭******************************
+		// Bu if bizga faqat eski user akkauntdan chiqib ketib yangi user bu telefonga login yoki register qilayotganda kerak.
+		// Bu yerda shunchaki tozalab tashlaymiz chunki bizga endi uni keragi yo'q
+		if (await AsyncStorage.getItem("loadShopping") === "true") {
+			await AsyncStorage.setItem("loadShopping", "false");
+		}
+
+		/* Month sell amount setting value ** */
+		let thisMonthSellAmount = parseInt(await AsyncStorage.getItem("month_sell_amount"));
+		thisMonthSellAmount = isNaN(thisMonthSellAmount) ? 0 : thisMonthSellAmount;
+
+		let currentDate = new Date();
+		let currentMonth = currentDate.getMonth();
+		let lastStoredMonth = parseInt(await AsyncStorage.getItem("month"));
+
+		if (currentMonth === lastStoredMonth) {
+			this.setState({
+				thisMonthSellAmount: thisMonthSellAmount,
+				incomeTitle: i18n.t("oyIncome")
+			});
+		}
+
+		let lastSellGroup = await this.sellHistoryRepository.getLastSellGroup();
+		let lastGroupId = lastSellGroup.id;
+
+		this.setState({
+			lastGroupId: lastGroupId + 11
+		}, () => {
+			this.setState({
+				loading: false,
+				localFullyLoaded: false,
+				groupedHistories: []
+			}, () => {
+				this.onEndReached();
+			});
+		});
+
+		
 	}
 
 	async getDateInfo() {
@@ -380,6 +398,7 @@ class Shopping extends Component {
 	async initializeScreen() {
 		this.setState({
 			groupedHistories: [],
+			loadCount: 0,
 			lastDate: new Date(),
 			currentMonthTotal: 0,
 			lastGroupId: 0,
@@ -404,7 +423,8 @@ class Shopping extends Component {
 			loading: false,
 			globalFullyLoaded: false,
 			localFullyLoaded: false,
-			incomeTitle: ""
+			incomeTitle: "",
+			loadCount: 0
 		});
 
 		this.sellHistoryRepository = new SellHistoryRepository();
@@ -423,6 +443,10 @@ class Shopping extends Component {
 
 	async loadLocalSellGroups() {
 		try {
+			this.setState({
+				loading: true
+			});
+
 			let sellHistories;
 			// 
 			if (this.state.fromDate != null && this.state.toDate != null) {
@@ -434,7 +458,7 @@ class Shopping extends Component {
 			}
 
 			if (sellHistories.length === 0 || sellHistories.length < 11) {
-				console.log("sellHistories.length === 0; returned");
+				console.log("sellHistories.length === 0; returned lastGroupId::", this.state.lastGroupId);
 				this.setState({
 					localFullyLoaded: true
 				});
@@ -451,6 +475,8 @@ class Shopping extends Component {
 			for (const history of sellHistories) {
 				const currentDate = new Date(history.created_date);
 				const date = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`;
+
+				console.log(date);
 
 				let groupIndex = grouped.findIndex(group => group.date === date);
 
@@ -494,7 +520,11 @@ class Shopping extends Component {
 			}
 
 			if (await AsyncStorage.getItem("window") != "Shopping") {
-				console.log("Loader turned off in loadLocalSellGroups()")
+				console.log("Loader turned off in loadLocalSellGroups()");
+				this.setState({
+					loading: false,
+					lastGroupId: this.state.lastGroupId + 11
+				});
 				return false;
 			}
 	
@@ -502,7 +532,20 @@ class Shopping extends Component {
 				groupedHistories: groupedCopy
 			});
 
-			return true;
+			if ((this.state.loadCount - 1) === 0) {
+				this.setState({
+					loading: false,
+					loadCount: this.state.loadCount - 1
+				});
+				return true;
+			} else {
+				this.setState({
+					loadCount: this.state.loadCount - 1,
+					lastGroupId: this.state.lastGroupId - 11
+				}, async () => {
+					await this.loadLocalSellGroups();
+				});
+			}
 		} catch (error) {
 			return false;
 		}
@@ -576,11 +619,19 @@ class Shopping extends Component {
 		}
 	}
 
-	onEndReached = async () => {
+	onEndReached = () => {
+		if (this.state.loading == true) {
+			this.setState({
+				loadCount: this.state.loadCount + 1
+			});
+			return;
+		};
+
 		this.setState(state => ({
-			lastGroupId: state.lastGroupId - 11
-		}),async () => {
-			await this.loadMore();
+			lastGroupId: state.lastGroupId - 11,
+			loadCount: state.loadCount + 1
+		}), () => {
+			this.loadMore();
 		});
 	}
 

@@ -25,6 +25,7 @@ import BasketItem from "./BasketItem";
 import _ from "lodash";
 import { TouchableRipple } from 'react-native-paper';
 import i18n from '../../i18n';
+import TokenService from "../../service/TokenService";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -56,6 +57,7 @@ class Basket extends Component {
 		this.storeProductRepository = new StoreProductRepository();
 		this.apiService = new ApiService();
 		this.productRepository = new ProductRepository();
+		this.tokenService = new TokenService();
 
 		this.keyboardDidShowListener = Keyboard.addListener(
 			"keyboardDidShow",
@@ -107,6 +109,31 @@ class Basket extends Component {
 		navigation.addListener("focus",
 			async () => {
 				await AsyncStorage.setItem("window", "Basket");
+
+				// !IMPORTANT 🔭******************************
+				// Bu yerda foydalanuvchi tokeni bor yoki yo'qligini tekshiradi 
+				// agar token yo'q bo'lsa unda login oynasiga otadi.
+				let isLoggedIn = await this.tokenService.checkTokens();
+				if (!isLoggedIn) {
+					console.log("LOGGED OUT BY 401 FROM HOME")
+					await this.databaseRepository.clear();
+					await AsyncStorage.clear();
+					navigation.navigate("Login");
+					return;
+				}
+				//************************************
+
+				// !IMPORTANT 🔭******************************
+				// Bu yerda agar yangi telefondan login bo'lsa ya'ni apidan 401 kelsa login oynasiga otadi.
+				let authError = await AsyncStorage.getItem("authError");
+				if (authError != null && authError == "true") {
+					console.log("LOGGED OUT BY 401 FROM HOME")
+					await this.databaseRepository.clear();
+					await AsyncStorage.clear();
+					navigation.navigate("Login");
+					return;	
+				}
+				//************************************
 
 				if (await AsyncStorage.getItem("loadBasket") === "true") {
 					await this.initializeScreen();
