@@ -112,11 +112,161 @@ class Home extends Component {
 	}
 
 	async componentDidMount() {
+		const {navigation} = this.props;
+		navigation.addListener("focus", async () => {
+			await this.databaseRepository.init();
+
+			await AsyncStorage.setItem("window", "Home");
+			// !IMPORTANT 🔭******************************
+			// Bu yerda foydalanuvchi tokeni bor yoki yo'qligini tekshiradi 
+			// agar token yo'q bo'lsa unda login oynasiga otadi
+			let isLoggedIn = await this.tokenService.checkTokens();
+			if (!isLoggedIn) {
+				console.log("LOGGED OUT BY 401 FROM HOME")
+				await this.databaseRepository.clear();
+				await AsyncStorage.clear();
+				navigation.navigate("Login");
+				return;
+			}
+			//************************************
+
+			console.log("HOME NAVIGATED");
+			// !IMPORTANT 🔭******************************
+			// Internet bor yoki yo'qligini tekshirish.
+			this.unsubscribe = NetInfo.addEventListener((state) => {
+				this.setState({isConnected: state.isConnected});
+			});
+
+			if (this.unsubscribe) {
+				this.unsubscribe();
+			}
+			//************************************
+			
+			// !IMPORTANT 🔭******************************
+			// Agar data backenddan skachat adilmadik bo'lsa skachat adish.
+			let isDownloaded = await AsyncStorage.getItem("isDownloaded");
+			console.log("isDownloaded::", isDownloaded);
+			if (isDownloaded !== "true" || isDownloaded == null) {
+				this.databaseRepository.clear();
+				this.setState({spinner: true});
+
+				const {navigation} = this.props;
+
+				let isLoggedIn = await this.tokenService.checkTokens();
+				if (!isLoggedIn) {
+					console.log("FOCUS TOKEN CHECKING FAILED");
+					this.setState({spinner: false});
+					this.databaseRepository.clear();
+					await AsyncStorage.clear();	
+					navigation.navigate("Login");
+				}
+
+				await this.storeProductRepository.init();
+				await this.sellHistoryRepository.init();
+				await this.profitHistoryRepository.init();
+				await this.amountDateRepository.init();
+
+				if (isLoggedIn) {
+					console.log("isDownloaded??", isDownloaded);
+					if (isDownloaded !== "true" || isDownloaded == null) {
+						// LOAD..
+						console.log("ABOUT TO LOAD...");
+
+						console.log("Initial isConnected:", this.state.isConnected);
+
+						// Check if setInterval callback is reached
+						console.log("Setting up setInterval...");
+
+						if (!this.state.isConnected) {
+							this.setState({spinner: false});
+							this.databaseRepository.clear();
+							await AsyncStorage.clear();			
+							navigation.navigate("Login");
+							return;
+						}
+
+						try {
+							// Has internet connection
+							await this.loadProducts();
+
+						} catch (error) {
+							console.error("Error loading products:", error);
+						} finally {
+							this.setState({spinner: false});
+						}
+					}
+
+					await this.getAmountInfo();
+				}
+			}
+			//************************************
+
+			console.log("FOCUSED");
+			console.log("-------");
+
+			// !IMPORTANT 🔭******************************
+			// Dapadaki kirim bilan foydani go'rsatish.
+			await this.amountDateRepository.init();
+			await this.getAmountInfo();
+			//************************************
+
+			// !IMPORTANT 🔭******************************
+			// LineChart diagramma datasini yuklab olish.
+			let sellAmountDateData = await this.amountDateRepository.getSellAmountDate();
+
+			if (this.state.diagramData != sellAmountDateData) {
+				this.setState({diagramData: sellAmountDateData});
+			}
+			//************************************
+
+			// !IMPORTANT 🔭******************************
+			// If that is new user show payment modal untill he pays
+			if (await AsyncStorage.getItem("isNewUser") == "true") {
+				this.setState({
+					paymentModalVisible: true,
+					cardNumber: await AsyncStorage.getItem("cardNumber"),
+					cardNumberWithoutSpaces: await AsyncStorage.getItem("cardNumberWithoutSpaces"),
+					expirationDate: await AsyncStorage.getItem("expirationDate"),
+					expirationDateWithoutSlash: await AsyncStorage.getItem("expirationDateWithoutSlash"),
+					cardToken: await AsyncStorage.getItem("cardToken"),
+				});
+				return;
+			}
+
+			// !IMPORTANT 🔭******************************
+			// Tolov adadovn knopkani go'rsatish. Orqa fonda tolov adilganmi yo'qmi tekshirib durish.
+			if (this.state.intervalStarted == false) {
+				let intervalId = setInterval(async () => {
+					if (await AsyncStorage.getItem("animation") === "true") {
+						return;
+					}
+
+					if (await AsyncStorage.getItem("window") != "Home") {
+						this.setState({intervalStarted: false});
+						clearInterval(intervalId);
+						return;
+					}
+	
+					let notPayed = await AsyncStorage.getItem("notPayed");
+					if (notPayed == "true") {
+						console.log("not payed")
+						this.setState({notPayed: true});
+					} else {
+						console.log("payed")
+						this.setState({notPayed: false});
+					}
+	
+					console.log("Checking payment from HomeScreen..", notPayed);
+				}, 5000)
+	
+				this.setState({intervalStarted: true});
+			}
+			//************************************
+		});
+
 		console.log("Component mounted");
 		await AsyncStorage.setItem("window", "Home");
 		await this.databaseRepository.init();
-		
-		const {navigation} = this.props;
 
 		// !IMPORTANT 🔭******************************
 		// Bu yerda foydalanuvchi tokeni bor yoki yo'qligini tekshiradi 
@@ -268,155 +418,7 @@ class Home extends Component {
 		}
 		//************************************
 
-		navigation.addListener("focus", async () => {
-			await AsyncStorage.setItem("window", "Home");
-			await this.databaseRepository.init();
-			// !IMPORTANT 🔭******************************
-			// Bu yerda foydalanuvchi tokeni bor yoki yo'qligini tekshiradi 
-			// agar token yo'q bo'lsa unda login oynasiga otadi
-			let isLoggedIn = await this.tokenService.checkTokens();
-			if (!isLoggedIn) {
-				console.log("LOGGED OUT BY 401 FROM HOME")
-				await this.databaseRepository.clear();
-				await AsyncStorage.clear();
-				navigation.navigate("Login");
-				return;
-			}
-			//************************************
-
-			console.log("HOME NAVIGATED");
-			// !IMPORTANT 🔭******************************
-			// Internet bor yoki yo'qligini tekshirish.
-			this.unsubscribe = NetInfo.addEventListener((state) => {
-				this.setState({isConnected: state.isConnected});
-			});
-
-			if (this.unsubscribe) {
-				this.unsubscribe();
-			}
-			//************************************
-			
-			// !IMPORTANT 🔭******************************
-			// Agar data backenddan skachat adilmadik bo'lsa skachat adish.
-			let isDownloaded = await AsyncStorage.getItem("isDownloaded");
-			console.log("isDownloaded::", isDownloaded);
-			if (isDownloaded !== "true" || isDownloaded == null) {
-				this.databaseRepository.clear();
-				this.setState({spinner: true});
-
-				const {navigation} = this.props;
-
-				let isLoggedIn = await this.tokenService.checkTokens();
-				if (!isLoggedIn) {
-					console.log("FOCUS TOKEN CHECKING FAILED");
-					this.setState({spinner: false});
-					this.databaseRepository.clear();
-					await AsyncStorage.clear();	
-					navigation.navigate("Login");
-				}
-
-				await this.storeProductRepository.init();
-				await this.sellHistoryRepository.init();
-				await this.profitHistoryRepository.init();
-				await this.amountDateRepository.init();
-
-				if (isLoggedIn) {
-					console.log("isDownloaded??", isDownloaded);
-					if (isDownloaded !== "true" || isDownloaded == null) {
-						// LOAD..
-						console.log("ABOUT TO LOAD...");
-
-						console.log("Initial isConnected:", this.state.isConnected);
-
-						// Check if setInterval callback is reached
-						console.log("Setting up setInterval...");
-
-						if (!this.state.isConnected) {
-							this.setState({spinner: false});
-							this.databaseRepository.clear();
-							await AsyncStorage.clear();			
-							navigation.navigate("Login");
-							return;
-						}
-
-						try {
-							// Has internet connection
-							await this.loadProducts();
-
-						} catch (error) {
-							console.error("Error loading products:", error);
-						} finally {
-							this.setState({spinner: false});
-						}
-					}
-
-					await this.getAmountInfo();
-				}
-			}
-			//************************************
-
-			console.log("FOCUSED");
-			console.log("-------");
-
-			// !IMPORTANT 🔭******************************
-			// Dapadaki kirim bilan foydani go'rsatish.
-			await this.amountDateRepository.init();
-			await this.getAmountInfo();
-			//************************************
-
-			// !IMPORTANT 🔭******************************
-			// LineChart diagramma datasini yuklab olish.
-			let sellAmountDateData = await this.amountDateRepository.getSellAmountDate();
-
-			if (this.state.diagramData != sellAmountDateData) {
-				this.setState({diagramData: sellAmountDateData});
-			}
-			//************************************
-
-			// !IMPORTANT 🔭******************************
-			// If that is new user show payment modal untill he pays
-			if (await AsyncStorage.getItem("isNewUser") == "true") {
-				this.setState({
-					paymentModalVisible: true,
-					cardNumber: await AsyncStorage.getItem("cardNumber"),
-					cardNumberWithoutSpaces: await AsyncStorage.getItem("cardNumberWithoutSpaces"),
-					expirationDate: await AsyncStorage.getItem("expirationDate"),
-					expirationDateWithoutSlash: await AsyncStorage.getItem("expirationDateWithoutSlash"),
-					cardToken: await AsyncStorage.getItem("cardToken"),
-				});
-				return;
-			}
-
-			// !IMPORTANT 🔭******************************
-			// Tolov adadovn knopkani go'rsatish. Orqa fonda tolov adilganmi yo'qmi tekshirib durish.
-			if (this.state.intervalStarted == false) {
-				let intervalId = setInterval(async () => {
-					if (await AsyncStorage.getItem("animation") === "true") {
-						return;
-					}
-
-					if (await AsyncStorage.getItem("window") != "Home") {
-						this.setState({intervalStarted: false});
-						clearInterval(intervalId);
-						return;
-					}
 	
-					let notPayed = await AsyncStorage.getItem("notPayed");
-					if (notPayed == "true") {
-						console.log("not payed")
-						this.setState({notPayed: true});
-					} else {
-						console.log("payed")
-						this.setState({notPayed: false});
-					}
-	
-					console.log("Checking payment from HomeScreen..", notPayed);
-				}, 5000)
-	
-				this.setState({intervalStarted: true});
-			}
-			//************************************
-		});
 	}
 
 	async initializeScreen() {
