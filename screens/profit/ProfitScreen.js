@@ -18,7 +18,7 @@ import ProfitGroup from "./ProfitGroup";
 import ProfitHeader from "./ProfitHeader";
 import i18n from '../../i18n';
 
-import SkeletonLoader from "expo-skeleton-loader";
+import SkeletonLoader from "../SkeletonLoader";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -379,17 +379,6 @@ class Profit extends Component {
 		await this.amountDateRepository.init();
 	}
 
-	async loadMore() {
-		this.loaderRef.current = true;
-		let isLoaded = await this.loadLocalProfitGroups();
-		if (isLoaded) {
-			this.loaderRef.current = false;
-			return;
-		}
-
-		this.loaderRef.current = false;
-	}
-
 	async loadLocalProfitGroups() {
 		try {
 			let profitHistories;
@@ -548,8 +537,8 @@ class Profit extends Component {
 	onEndReached = async () => {
 		this.setState(state => ({
 			lastGroupId: state.lastGroupId - 11
-		}),async () => {
-			await this.loadMore();
+		}), async () => {
+			await this.loadLocalProfitGroups();
 		});
 	}
 
@@ -569,7 +558,6 @@ class Profit extends Component {
 						keyExtractor={(item) => item.date}
 						onEndReachedThreshold={1}
 						onEndReached={this.onEndReached}
-						// initialNumToRender={11}
 						style={{width: "100%", height: "100%"}}
 						ListHeaderComponent={
 							<ProfitHeader
@@ -579,93 +567,9 @@ class Profit extends Component {
 								thisMonthProfitAmount={this.state.thisMonthProfitAmount}
 							/>
 						}
-						onScrollEndDrag={() => {
-							this.loaderRef.current = true;
-						}}
 						ListFooterComponent={
-							(this.state.localFullyLoaded == true) ? <></>:
-							(
-								<SkeletonLoader 
-									style={{ marginVertical: 15, marginHorizontal: 10 }} 
-									boneColor={this.state.colorScheme === "dark" ? "#121212" : "#F1F1F1"}
-									highlightColor={this.state.colorScheme === "dark" ? "#333333" : "#F1F1F1"} >
-									
-									<SkeletonLoader.Item
-										style={{ 
-											height: 50,
-											marginTop: 4,
-											width: "100%",
-											paddingHorizontal: 16,
-											paddingVertical: 6
-										}}
-										/>
-									<SkeletonLoader.Item
-										style={{ 
-											height: 50,
-											marginTop: 4,
-											width: "100%",
-											paddingHorizontal: 16,
-											paddingVertical: 6
-										}}
-									/>
-									<SkeletonLoader.Item
-										style={{ 
-											height: 50,
-											marginTop: 4,
-											width: "100%",
-											paddingHorizontal: 16,
-											paddingVertical: 6
-										}}
-									/>
-									<SkeletonLoader.Item
-										style={{ 
-											height: 50,
-											marginTop: 4,
-											width: "100%",
-											paddingHorizontal: 16,
-											paddingVertical: 6,
-										}}
-									/>
-									<SkeletonLoader.Item
-										style={{ 
-											height: 50,
-											marginTop: 4,
-											width: "100%",
-											paddingHorizontal: 16,
-											paddingVertical: 6,
-										}}
-										/>
-									<SkeletonLoader.Item
-										style={{ 
-											height: 50,
-											marginTop: 4,
-											width: "100%",
-											paddingHorizontal: 16,
-											paddingVertical: 6,
-										}}
-									/>
-									<SkeletonLoader.Item
-										style={{ 
-											height: 50,
-											marginTop: 4,
-											width: "100%",
-											paddingHorizontal: 16,
-											paddingVertical: 6,
-										}}
-									/>
-									<SkeletonLoader.Item
-										style={{ 
-											height: 50,
-											marginTop: 4,
-											width: "100%",
-											paddingHorizontal: 16,
-											paddingVertical: 6,
-										}}
-									/>
-								</SkeletonLoader>
-							)
+							this.state.localFullyLoaded ? <></> : <SkeletonLoader />
 						}
-
 						renderItem={({item}) => (
 							<ProfitGroup
 								key={item.date}
@@ -673,14 +577,6 @@ class Profit extends Component {
 								navigation={navigation}/>
 						)}
 					/>
-
-					{/* {this.loaderRef.current && (
-						<SkeletonLoader style={{ marginVertical: 10 }} >
-							<SkeletonLoader.Item
-								style={styles.skeletonItem}
-								/>
-						</SkeletonLoader>
-					)} */}
 				</View>
 
 				<StatusBar style="auto"/>

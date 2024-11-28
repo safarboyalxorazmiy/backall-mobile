@@ -17,8 +17,7 @@ import ApiService from "../../service/ApiService";
 import HistoryGroup from "./HistoryGroup";
 import ShoppingHeader from "./ShoppingHeader";
 import i18n from '../../i18n';
-
-import SkeletonLoader from "expo-skeleton-loader";
+import SkeletonLoader from "../SkeletonLoader";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -419,14 +418,7 @@ class Shopping extends Component {
 	}
 
 	async loadMore() {
-		this.loaderRef.current = true;
-		let isLoaded = await this.loadLocalSellGroups();
-		if (isLoaded) {
-			this.loaderRef.current = false;
-			return;
-		}
-
-		this.loaderRef.current = false;
+		await this.loadLocalSellGroups();
 	}
 
 	async loadLocalSellGroups() {
@@ -618,91 +610,8 @@ class Shopping extends Component {
 								thisMonthSellAmount={this.state.thisMonthSellAmount}
 							/>
 						}
-						onScrollEndDrag={() => {
-							this.loaderRef.current = true;
-						}}
 						ListFooterComponent={
-							(this.state.localFullyLoaded == true) ? <></>:
-							(
-								<SkeletonLoader 
-									style={{ marginVertical: 15, marginHorizontal: 10 }} 
-									boneColor={this.state.colorScheme === "dark" ? "#121212" : "#F1F1F1"}
-									highlightColor={this.state.colorScheme === "dark" ? "#333333" : "#F1F1F1"} >
-									
-									<SkeletonLoader.Item
-										style={{ 
-											height: 50,
-											marginTop: 4,
-											width: "100%",
-											paddingHorizontal: 16,
-											paddingVertical: 6
-										}}
-										/>
-									<SkeletonLoader.Item
-										style={{ 
-											height: 50,
-											marginTop: 4,
-											width: "100%",
-											paddingHorizontal: 16,
-											paddingVertical: 6
-										}}
-									/>
-									<SkeletonLoader.Item
-										style={{ 
-											height: 50,
-											marginTop: 4,
-											width: "100%",
-											paddingHorizontal: 16,
-											paddingVertical: 6
-										}}
-									/>
-									<SkeletonLoader.Item
-										style={{ 
-											height: 50,
-											marginTop: 4,
-											width: "100%",
-											paddingHorizontal: 16,
-											paddingVertical: 6,
-										}}
-									/>
-									<SkeletonLoader.Item
-										style={{ 
-											height: 50,
-											marginTop: 4,
-											width: "100%",
-											paddingHorizontal: 16,
-											paddingVertical: 6,
-										}}
-										/>
-									<SkeletonLoader.Item
-										style={{ 
-											height: 50,
-											marginTop: 4,
-											width: "100%",
-											paddingHorizontal: 16,
-											paddingVertical: 6,
-										}}
-									/>
-									<SkeletonLoader.Item
-										style={{ 
-											height: 50,
-											marginTop: 4,
-											width: "100%",
-											paddingHorizontal: 16,
-											paddingVertical: 6,
-										}}
-									/>
-									<SkeletonLoader.Item
-										style={{ 
-											height: 50,
-											marginTop: 4,
-											width: "100%",
-											paddingHorizontal: 16,
-											paddingVertical: 6,
-										}}
-									/>
-								</SkeletonLoader>
-							)
+							this.state.localFullyLoaded ? <></> : <SkeletonLoader />
 						}
 
 						renderItem={({item}) => (
@@ -712,14 +621,6 @@ class Shopping extends Component {
 								navigation={navigation}/>
 						)}
 					/>
-
-					{/* {this.loaderRef.current && (
-						<SkeletonLoader style={{ marginVertical: 10 }} >
-							<SkeletonLoader.Item
-								style={styles.skeletonItem}
-								/>
-						</SkeletonLoader>
-					)} */}
 				</View>
 
 				<StatusBar style="auto"/>
