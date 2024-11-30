@@ -1997,6 +1997,7 @@ return undefined;		}
 			const responseBody = await response.json();
 
 			if (!response.ok) {
+				console.log("error::" + response.url);
 				return undefined;
 			}
 
@@ -2074,6 +2075,8 @@ return undefined;		}
 			count: count,
 			countType: countType
 		};
+
+		console.log(requestBody)
 
 		const requestOptions = {
 			method: "POST",

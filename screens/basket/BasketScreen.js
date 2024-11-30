@@ -26,6 +26,7 @@ import _ from "lodash";
 import { TouchableRipple } from 'react-native-paper';
 import i18n from '../../i18n';
 import TokenService from "../../service/TokenService";
+import DatabaseRepository from "../../repository/DatabaseRepository";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -58,6 +59,7 @@ class Basket extends Component {
 		this.apiService = new ApiService();
 		this.productRepository = new ProductRepository();
 		this.tokenService = new TokenService();
+		this.databaseRepository = new DatabaseRepository();
 
 		this.keyboardDidShowListener = Keyboard.addListener(
 			"keyboardDidShow",

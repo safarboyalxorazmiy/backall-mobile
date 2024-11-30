@@ -18,6 +18,7 @@ import ShoppingHeader from "./ShoppingHeader";
 import i18n from '../../i18n';
 import SkeletonLoader from "../SkeletonLoader";
 import TokenService from "../../service/TokenService";
+import DatabaseRepository from "../../repository/DatabaseRepository";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -61,6 +62,7 @@ class Shopping extends Component {
 		this.productRepository = new ProductRepository();
 		this.apiService = new ApiService();
 		this.tokenService = new TokenService();
+		this.databaseRepository = new DatabaseRepository();
 
 		this.flatListRef = React.createRef();
 		
@@ -523,7 +525,7 @@ class Shopping extends Component {
 				console.log("Loader turned off in loadLocalSellGroups()");
 				this.setState({
 					loading: false,
-					lastGroupId: this.state.lastGroupId + 11
+					// lastGroupId: this.state.lastGroupId + 11
 				});
 				return false;
 			}

@@ -474,7 +474,7 @@ class Profit extends Component {
 				console.log("Loader turned off in loadLocalProfitGroups()");
 				this.setState({
 					loading: false,
-					lastGroupId: this.state.lastGroupId + 11
+					// lastGroupId: this.state.lastGroupId + 11
 				});
 				return false;
 			}

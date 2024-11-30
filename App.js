@@ -279,6 +279,7 @@ class App extends Component {
 							);
 
 							if (!response) {
+								
 								return;
 							}
 
@@ -299,14 +300,21 @@ class App extends Component {
 				// STORE PRODUCT
 				let storeProductNotSaved = await AsyncStorage.getItem("storeProductNotSaved");
 				if (storeProductNotSaved == "true") {
-					//.log("Product setting into store ⏳⏳⏳")
+					console.log("Product setting into store ⏳⏳⏳")
 
 					let storeProducts = await this.storeProductRepository.findByWhereSavedFalse();
 					for (const storeProduct of storeProducts) {
 						try {
 							let products = await this.productRepository.findProductsById(storeProduct.product_id);
 
-							//.log("Products by id:: ", products);
+							if (
+								products.length == 0 || 
+								products[0].global_id == undefined
+							) {
+								return;
+							}
+
+							console.log("Products by id:: ", products);
 
 							let response = await this.apiService.createStoreProducts(
 								products[0].global_id,
@@ -315,14 +323,16 @@ class App extends Component {
 								storeProduct.selling_price,
 								null,
 								storeProduct.count,
-								storeProduct.count_type
+								storeProduct.count_type.toUpperCase()
 							);
+
+							console.log("Response: ", response);
 
 							if (!response) {
 								return;
 							}
 
-							//.log("Response: ", response);
+							console.log("Response: ", response);
 							await this.storeProductRepository.updateSavedTrueById(storeProduct.id, response.id);
 						} catch (e) {
 							
@@ -379,12 +389,18 @@ class App extends Component {
 						try {
 							let products = await this.productRepository.findProductsById(sellHistory.product_id);
 
+							if (
+								products.length == 0 || 
+								products[0].global_id == undefined
+							) {
+								return;
+							}
 							//.log("Products: ", products);
 
 							let response = await this.apiService.createSellHistory(
 								products[0].global_id,
 								sellHistory.count,
-								sellHistory.count_type,
+								sellHistory.count_type.toUpperCase(),
 								sellHistory.selling_price,
 								sellHistory.created_date,
 								this.props.navigation
@@ -417,6 +433,15 @@ class App extends Component {
 							let sellGroup = await this.sellHistoryRepository.findSellGroupById(
 								sellHistoryGroup.group_id
 							);
+
+							if (
+								sellHistory.length == 0 || 
+								sellGroup.length == 0 || 
+								sellHistory[0].global_id == undefined || 
+								sellGroup[0].global_id == undefined
+							) {
+								return;
+							}
 
 							let response = await this.apiService.createSellHistoryGroup(
 								sellHistory[0].global_id,
@@ -504,10 +529,14 @@ class App extends Component {
 								profitHistory.product_id
 							);
 
+							if (products.length == 0 || products[0].global_id == undefined) {
+								return;
+							}
+
 							let response = await this.apiService.createProfitHistory(
 								products[0].global_id,
 								profitHistory.count,
-								profitHistory.count_type,
+								profitHistory.count_type.toUpperCase(),
 								profitHistory.profit,
 								profitHistory.created_date,
 								this.props.navigation
@@ -543,6 +572,15 @@ class App extends Component {
 									profitHistoryGroup.group_id
 								);
 
+							if (
+								profitHistory.length == 0 || 
+								profitGroup.length == 0 || 
+								profitHistory[0].global_id == undefined || 
+								profitGroup[0].global_id == undefined
+							) {
+								return;
+							}
+
 							let response =
 								await this.apiService.createProfitHistoryGroup(
 									profitHistory[0].global_id,
@@ -559,7 +597,6 @@ class App extends Component {
 								response.id
 							);
 						} catch (e) {
-							
 							await AsyncStorage.setItem("isFetchingNotCompleated", "true");
 							await AsyncStorage.setItem("isNotSaved", "true");
 							this.setState({isSavingStarted: false});
