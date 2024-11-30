@@ -80,6 +80,67 @@ class ProductAdd extends Component {
 		this.storeProductRepository = new StoreProductRepository();
 	}
 
+	initializeScreen() {
+		this.setState({
+			selectedItem: null,
+
+			brandInputValue: "",
+			brandInputStyle: styles.input,
+			brandErr: false,
+
+			productInputValue: "",
+			productInputStyle: styles.input,
+			productNameErr: false,
+
+			amountInputValue: "",
+			amountInputStyle: styles.amountInput,
+			amountErr: false,
+
+			priceInputValue: "",
+			priceInputStyle: styles.input,
+			priceInputErr: false,
+
+			sellingPriceInputValue: "",
+			products: [],
+			nds: false,
+
+			seriyaInputValue: "",
+			seriyaError: false,
+			serialInputStyle: styles.serialInput,
+			serialInputContentStyle: {display: "none"},
+			isSerialInputActive: false,
+			focusedContentIndex: null,
+
+			sellingPriceError: false,
+			priceInput: styles.priceInput,
+
+			isCreated: false,
+
+			ndsWrapperStyle: styles.ndsWrapper,
+
+			amountType: "dona",
+			sellingPriceType: "so'm",
+
+			profitCalculation: "",
+			profitCalculationIsVisible: false,
+
+			sellingPrice: null,
+			percentageOfPrice: null
+		});
+
+		this.productRepository = new ProductRepository();
+		this.storeProductRepository = new StoreProductRepository();
+	}
+
+	componentDidMount() {
+		const {navigation} = this.props;
+		navigation.addListener("focus", async () => {
+			if (await AsyncStorage.getItem("loadProductAdd") == "true") {
+				this.initializeScreen();
+			}
+		});
+	}
+
 	handlePressIn = () => {
 	};
 

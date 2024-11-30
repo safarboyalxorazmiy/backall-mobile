@@ -106,5 +106,6 @@
   "enterSellingPrice": "Введите цену продажи",
   "count": "Количество",
   "totalProfit": "Общая прибыль",
-  "selledPrice": "Проданная цена"
+  "selledPrice": "Проданная цена",
+  "loading": "Загрузка..."
 }

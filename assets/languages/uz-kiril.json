@@ -26,7 +26,7 @@
   "sellingPrice": "Сотиш нархи",
   "enterSellingPrice": "Sotilish narxini kiriting",
   "incorrectSellingPrice": "Sotilish narxini xato kiritildi.",
-  "ndsTax": "НДС солиқ",
+  "ndsTax": "ҚҚС солиқ",
   "cancel": "Бекор қилиш",
 
   "productSuccessfulyCreated": "Маҳсулот мувафаққиятли яратилди!",
@@ -50,6 +50,8 @@
   "selledProducts": "Сотилган маҳсулотлар",
 
   "pureProfit": "Соф фойда",
+  "profitHistory": "Фойда тарихи",
+
   "profitOfProducts": "Маҳсулотдан қолган фойда",
 
   "confirm": "Тасдиқлаш",
@@ -74,8 +76,8 @@
 
   "monday": "Душанба",
   "tuesday": "Сешанба",
-  "wednesday": "Chorshanba",
-  "thursday": "Payshanba",
+  "wednesday": "Чоршанба",
+  "thursday": "Пайшанба",
   "friday": "Жума",
   "saturday": "Шанба",
   "sunday": "Якшанба",
@@ -101,8 +103,10 @@
   "quantityIsNotEnough": "Миқдори етарли эмас",
   "makeAnUtilization": "Утилизация қилиш",
   "enterPriceInSelling": "1 кг/дона нархини киритинг",
-  "litr": "litr",
+  "litr": "литр",
   "count": "Сони",
   "totalProfit": "Жами фойда",
-  "selledPrice": "Сотилган нархи"
+  "selledPrice": "Сотилган нархи",
+  "loading": "Юкланмоқда..."
+  
 }

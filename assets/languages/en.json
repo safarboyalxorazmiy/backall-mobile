@@ -110,5 +110,6 @@
   "incorrectSellingPrice": "Incorrect selling price.",
   "count": "Count",
   "totalProfit": "Total profit",
-  "selledPrice": "Selled price"
+  "selledPrice": "Selled price",
+  "loading": "Loading..."
 }

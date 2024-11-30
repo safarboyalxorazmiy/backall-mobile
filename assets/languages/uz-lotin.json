@@ -30,7 +30,6 @@
   "ndsTax": "QQS soliq",
   "cancel": "Bekor qilish",
 
-
   "productSuccessfulyCreated": "Mahsulot muvaffaqiyatli yaratildi!",
   "backToBasket": "SAVATGA QAYTISH",
 
@@ -107,5 +106,7 @@
   "litr": "litr",
   "count": "Soni",
   "totalProfit": "Qolgan foyda",
-  "selledPrice": "Sotilgan narxi"
+  "selledPrice": "Sotilgan narxi",
+  
+  "loading": "Yuklanmoqda..."
 }

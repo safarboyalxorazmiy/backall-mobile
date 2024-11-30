@@ -158,12 +158,18 @@ class Sell extends Component {
 						sellingProducts.splice(index, 1);
 					}
 
-					console.log(sellingProducts)
 					this.setState(prevState => ({
 						sellingProducts: prevState.sellingProducts.filter(product => product !== item)
 					}));
 
-					console.log(this.state.sellingProducts);
+					if ((item.selling_price * item.count) < 0) {
+						return;
+					}
+
+					this.setState({
+						amount: this.state.amount - (item.count * item.selling_price),
+						profit: this.state.profit - (item.count * (item.selling_price - item.price)),
+					})
 				}}
 				style={{
 					flex: 1,
@@ -759,10 +765,24 @@ class Sell extends Component {
 									<TouchableOpacity
 										style={styles.modalButton}
 										onPress={() => {
-
+											
+											let error = false;
 											let selectedProduct = this.state.selectedProduct;
-											if (!selectedProduct) {
-												// TODO RED ERROR
+											if (Object.keys(this.state.selectedProduct).length === 0 || !this.state.selectedProduct) {
+												this.setState({productNameInputError: true});
+												error = true;
+											}
+
+											if (
+												!this.state.quantityInputValue || 
+												isNaN(this.state.quantityInputValue) || 
+												this.state.quantityInputValue < 0
+											) {
+												this.setState({quantityInputError: true});
+												error = true;
+											}
+
+											if (error == true) {
 												return;
 											}
 
@@ -861,7 +881,8 @@ class Sell extends Component {
 												productNameInputValue: "",
 												quantityInputValue: "",
 												priceInputValue: "",
-												quantityInputError: false
+												quantityInputError: false,
+												productNameInputError: false
 											});
 
 											this.toggleModal();
@@ -1212,7 +1233,12 @@ class Sell extends Component {
 												error = true;
 											}
 
-											if (!this.state.quantityInputValue) {
+											if (
+												!this.state.quantityInputValue || 
+												this.state.quantityInputValue === "" ||
+												this.state.quantityInputValue === "0" || 
+												isNaN(this.state.quantityInputValue)
+											) {
 												this.setState({quantityInputError: true})
 												error = true;
 											}
@@ -1260,7 +1286,7 @@ class Sell extends Component {
 											selectedProduct.serial_number = "";
 											selectedProduct.count = parseFloat(this.state.quantityInputValue);
 
-											// DON"T ADD - value to AMOUNT
+											// DON'T ADD - value to AMOUNT
 											// this.setState({
 											// 	amount: this.state.amount + (selectedProduct.selling_price * selectedProduct.count)
 											// });

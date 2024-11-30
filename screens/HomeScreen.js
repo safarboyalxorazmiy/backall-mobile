@@ -1103,7 +1103,7 @@ class Home extends Component {
 				<Spinner
 					visible={this.state.spinner}
 					cancelable={false}
-					textContent={"Yuklanyapti 10%"}
+					textContent={i18n.t("loading")}
 					textStyle={{
 						fontFamily: "Gilroy-Bold",
 						color: "#FFF"
@@ -1131,6 +1131,7 @@ class Home extends Component {
 								await AsyncStorage.setItem("loadShopping", "true");
 								await AsyncStorage.setItem("loadProfit", "true");
 								await AsyncStorage.setItem("loadBasket", "true");
+								await AsyncStorage.setItem("loadProductAdd", "true");
 								loadLocale();
 							}}
 							style={{display: "none"}}
