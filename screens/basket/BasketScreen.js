@@ -488,6 +488,7 @@ const styles = StyleSheet.create({
 		fontFamily: "Gilroy-Medium",
 		fontWeight: "500",
 		borderWidth: 0,
+		width: "100%"
 	},
 
 	productList: {

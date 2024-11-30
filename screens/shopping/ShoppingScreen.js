@@ -334,6 +334,14 @@ class Shopping extends Component {
 			});
 		}
 
+		// New history created load new items **
+		if (
+			await AsyncStorage.getItem("shoppingFullyLoaded") !== null &&
+			await AsyncStorage.getItem("shoppingFullyLoaded") !== "true"
+		) {
+			await AsyncStorage.setItem("shoppingFullyLoaded", "true");	
+		}
+
 		let lastSellGroup = await this.sellHistoryRepository.getLastSellGroup();
 		let lastGroupId = lastSellGroup.id;
 
@@ -631,7 +639,8 @@ class Shopping extends Component {
 
 		this.setState(state => ({
 			lastGroupId: state.lastGroupId - 11,
-			loadCount: state.loadCount + 1
+			loadCount: state.loadCount + 1,
+			loading: true
 		}), () => {
 			this.loadMore();
 		});

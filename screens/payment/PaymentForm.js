@@ -51,12 +51,15 @@ class PaymentForm extends Component {
 		await AsyncStorage.setItem("cardNumberWithoutSpaces", cardNumberWithoutSpaces);
 
 		if (formattedNumber.length === 19) {
-			this.expirationDateInput.current.focus();
+			if (this.expirationDateInput.current) {
+				this.expirationDateInput.current.focus();
+			}
 		}
 	};
 
 	handleExpirationDateChange = async (text) => {
 		const cleanedText = text.replace(/\D/g, '').slice(0, 4);
+
 		const formattedExpirationDate = cleanedText.length > 2
 			? `${cleanedText.substring(0, 2)}/${cleanedText.substring(2, 4)}`
 			: cleanedText;
@@ -67,8 +70,6 @@ class PaymentForm extends Component {
 			expirationDate: formattedExpirationDate
 		});
 
-		await AsyncStorage.setItem("expirationDate", formattedExpirationDate);
-		await AsyncStorage.setItem("expirationDateWithoutSlash", cleanedText);
 
 		if (cleanedText.length === 4) {
 			this.setState({
@@ -77,7 +78,9 @@ class PaymentForm extends Component {
 
 			console.log("expirationDateWithoutSlash::", cleanedText)
 
-			this.expirationDateInput.current.blur();
+			if (this.expirationDateInput.current) {
+				this.expirationDateInput.current.blur();
+			}
 			this.setState({
 				loading: true
 			});
@@ -160,10 +163,22 @@ class PaymentForm extends Component {
 			);
 
 			if (result == "authError") {
+				this.setState({
+					error: true,
+					expirationError: true,
+					cardNumberError: true
+				});
+
 				await this.props.completePayment();
 			}
 
 			if (result) {
+				this.setState({
+					error: false,
+					expirationError: false,
+					cardNumberError: false
+				});
+
 				await this.props.completePayment();
 
 				// Tolov qilindi endi bu oynani boshqa ochish shartmas
@@ -399,7 +414,9 @@ class PaymentForm extends Component {
 											});
 										}
 
-										this.expirationDateInput.current.focus();
+										if (this.expirationDateInput.current) {
+											this.expirationDateInput.current.focus();
+										}
 									}}>
 									<AntDesign name="close" size={24} color="#FF3D71"/>
 								</TouchableOpacity>

@@ -292,6 +292,14 @@ class Profit extends Component {
 			});
 		}
 
+		// New history created load new items **
+		if (
+			await AsyncStorage.getItem("profitFullyLoaded") !== null &&
+			await AsyncStorage.getItem("profitFullyLoaded") !== "true"
+		) {
+			await AsyncStorage.setItem("profitFullyLoaded", "true");	
+		}
+
 		let lastProfitGroup = await this.profitHistoryRepository.getLastProfitGroup();
 		let lastGroupId = lastProfitGroup.id;
 

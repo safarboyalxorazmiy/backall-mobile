@@ -1081,6 +1081,8 @@ class Home extends Component {
 			await AsyncStorage.setItem("lastPaymentShownHour", hour.toString());
 		}
 
+		await AsyncStorage.setItem("notPayed", "false");
+
 		this.setState({
 			paymentModalVisible: false,
 			notPayed: false
@@ -1508,6 +1510,7 @@ class Home extends Component {
 				</View>
 
 				</Modal>
+
 			</ScrollView>
 		);
 	}

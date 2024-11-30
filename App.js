@@ -721,25 +721,25 @@ class App extends Component {
 		return (
 			<ApplicationProvider  {...eva} theme={eva.light}>
 				<GestureHandlerRootView style={{flex: 1}}>
-					<SafeAreaView>
-							{
-								this.state.notPayed == true &&
-								(
-									<Modal visible={this.state.notPayed}>
+					<SafeAreaView>	
+						<Modal visible={this.state.notPayed}>
+							<PaymentForm
+								completePayment={async () => {
+									await this.completePayment();
+								}}
 
-										<PaymentForm
-											completePayment={async () => {
-												await this.completePayment();
-											}}
+								closeModal={() => {
+									this.closeModal();
+								}}
 
-											closeModal={() => {
-												this.closeModal();
-											}}
-										/>
+								cardNumber={undefined}
+								cardNumberWithoutSpaces={undefined}
+								expirationDate={undefined}
+								expirationDateWithoutSlash={undefined}
+								cardToken={undefined}
+							/>
 
-									</Modal>
-								)
-							}
+						</Modal>
 					</SafeAreaView>
 
 					<NavigationService/>
