@@ -47,7 +47,7 @@ class RegisterVerificationScreen extends Component {
 			let email = await AsyncStorage.getItem("email");
 			let password = await AsyncStorage.getItem("password");
 
-			console.log(this.state.idempotencyKey)
+			//.log(this.state.idempotencyKey)
 			let result = await this.apiService.register(
 				this.state.idempotencyKey,
 				"Userjon",
@@ -69,11 +69,11 @@ class RegisterVerificationScreen extends Component {
 				await AsyncStorage.setItem("role", result.role);
 				await AsyncStorage.setItem("store_id", result.storeId + "");
 
-				console.log(result.role);
+				//.log(result.role);
 
 				const accessToken = await this.tokenService.retrieveAccessToken();
-				console.log(accessToken);
-				console.log(await this.tokenService.retrieveRefreshToken());
+				//.log(accessToken);
+				//.log(await this.tokenService.retrieveRefreshToken());
 
 				this.setState({
 					verificationCode: "",

@@ -79,7 +79,7 @@ class Shopping extends Component {
 			// agar token yo'q bo'lsa unda login oynasiga otadi.
 			let isLoggedIn = await this.tokenService.checkTokens();
 			if (!isLoggedIn) {
-				console.log("LOGGED OUT BY 401 FROM HOME")
+				//.log("LOGGED OUT BY 401 FROM HOME")
 				await this.databaseRepository.clear();
 				await AsyncStorage.clear();
 				navigation.navigate("Login");
@@ -91,7 +91,7 @@ class Shopping extends Component {
 			// Bu yerda agar yangi telefondan login bo'lsa ya'ni apidan 401 kelsa login oynasiga otadi.
 			let authError = await AsyncStorage.getItem("authError");
 			if (authError != null && authError == "true") {
-				console.log("LOGGED OUT BY 401 FROM HOME")
+				//.log("LOGGED OUT BY 401 FROM HOME")
 				await this.databaseRepository.clear();
 				await AsyncStorage.clear();
 				navigation.navigate("Login");
@@ -224,8 +224,8 @@ class Shopping extends Component {
 					return;
 				}
 
-				console.log("fromDate:", this.state.fromDate);
-				console.log("toDate:", this.state.toDate);
+				//.log("fromDate:", this.state.fromDate);
+				//.log("toDate:", this.state.toDate);
 
 				let amount = 
 					await this.amountDateRepository.getSumSellAmountByDate(this.state.fromDate, this.state.toDate);
@@ -264,7 +264,7 @@ class Shopping extends Component {
 					);
 				let lastGroupId = lastGroup.id;
 
-				console.log(lastGroup);
+				//.log(lastGroup);
 
 				this.setState({
 					lastGroupId: lastGroupId + 11,
@@ -303,7 +303,7 @@ class Shopping extends Component {
 		});
 
 
-		console.log("Component mounted mf")
+		//.log("Component mounted mf")
 		await AsyncStorage.setItem("window", "Shopping");
 
 		// !IMPORTANT 🔭******************************
@@ -468,7 +468,7 @@ class Shopping extends Component {
 			}
 
 			if (sellHistories.length === 0 || sellHistories.length < 11) {
-				console.log("sellHistories.length === 0; returned lastGroupId::", this.state.lastGroupId);
+				//.log("sellHistories.length === 0; returned lastGroupId::", this.state.lastGroupId);
 				this.setState({
 					localFullyLoaded: true
 				});
@@ -486,7 +486,7 @@ class Shopping extends Component {
 				const currentDate = new Date(history.created_date);
 				const date = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`;
 
-				console.log(date);
+				//.log(date);
 
 				let groupIndex = grouped.findIndex(group => group.date === date);
 
@@ -530,7 +530,7 @@ class Shopping extends Component {
 			}
 
 			if (await AsyncStorage.getItem("window") != "Shopping") {
-				console.log("Loader turned off in loadLocalSellGroups()");
+				//.log("Loader turned off in loadLocalSellGroups()");
 				this.setState({
 					loading: false,
 					// lastGroupId: this.state.lastGroupId + 11
@@ -574,7 +574,7 @@ class Shopping extends Component {
 			//.log(grouped[0])
 			const {id, created_date, amount} = sellHistories[0];
 			
-			console.log("created_date::", created_date);
+			//.log("created_date::", created_date);
 			const currentDate = new Date(created_date);
 			const historyDate = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`;
 
@@ -588,7 +588,7 @@ class Shopping extends Component {
 					created_date,
 					amount
 				});
-				console.log("Length updated::", grouped[0].histories.length);
+				//.log("Length updated::", grouped[0].histories.length);
 
 				grouped[0].totalAmount = await this.amountDateRepository.getSellAmountInfoByDate(historyDate).catch(() => 0);
 			} else {

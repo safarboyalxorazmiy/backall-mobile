@@ -80,7 +80,7 @@ class Profit extends Component {
 			// agar token yo'q bo'lsa unda login oynasiga otadi.
 			let isLoggedIn = await this.tokenService.checkTokens();
 			if (!isLoggedIn) {
-				console.log("LOGGED OUT BY 401 FROM HOME")
+				//.log("LOGGED OUT BY 401 FROM HOME")
 				await this.databaseRepository.clear();
 				await AsyncStorage.clear();
 				navigation.navigate("Login");
@@ -92,7 +92,7 @@ class Profit extends Component {
 			// Bu yerda agar yangi telefondan login bo'lsa ya'ni apidan 401 kelsa login oynasiga otadi.
 			let authError = await AsyncStorage.getItem("authError");
 			if (authError != null && authError == "true") {
-				console.log("LOGGED OUT BY 401 FROM HOME")
+				//.log("LOGGED OUT BY 401 FROM HOME")
 				await this.databaseRepository.clear();
 				await AsyncStorage.clear();
 				navigation.navigate("Login");
@@ -184,8 +184,8 @@ class Profit extends Component {
 					return;
 				}
 
-				console.log("fromDate:", this.state.fromDate);
-				console.log("toDate:", this.state.toDate);
+				//.log("fromDate:", this.state.fromDate);
+				//.log("toDate:", this.state.toDate);
 
 				let amount = 
 					await this.amountDateRepository.getSumProfitAmountByDate(this.state.fromDate, this.state.toDate);
@@ -224,7 +224,7 @@ class Profit extends Component {
 					);
 				let lastGroupId = lastGroup.id;
 
-				console.log(lastGroup);
+				//.log(lastGroup);
 
 				this.setState({
 					lastGroupId: lastGroupId + 11,
@@ -261,7 +261,7 @@ class Profit extends Component {
 			}
 		});
 
-		console.log("Component mounted mf")
+		//.log("Component mounted mf")
 		await AsyncStorage.setItem("window", "Profit");
 
 		// !IMPORTANT 🔭******************************
@@ -419,7 +419,7 @@ class Profit extends Component {
 			}
 
 			if (profitHistories.length === 0 || profitHistories.length < 11) {
-				console.log("profitHistories.length === 0; returned lastGroupId::", this.state.lastGroupId);
+				//.log("profitHistories.length === 0; returned lastGroupId::", this.state.lastGroupId);
 				this.setState({
 					localFullyLoaded: true
 				});
@@ -479,7 +479,7 @@ class Profit extends Component {
 			}
 
 			if (await AsyncStorage.getItem("window") != "Profit") {
-				console.log("Loader turned off in loadLocalProfitGroups()");
+				//.log("Loader turned off in loadLocalProfitGroups()");
 				this.setState({
 					loading: false,
 					// lastGroupId: this.state.lastGroupId + 11
@@ -523,7 +523,7 @@ class Profit extends Component {
 			//.log(grouped[0])
 			const {id, created_date, amount} = profitHistories[0];
 			
-			console.log("created_date::", created_date);
+			//.log("created_date::", created_date);
 			const currentDate = new Date(created_date);
 			const historyDate = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`;
 
@@ -537,7 +537,7 @@ class Profit extends Component {
 					created_date,
 					amount
 				});
-				console.log("Length updated::", grouped[0].histories.length);
+				//.log("Length updated::", grouped[0].histories.length);
 
 				grouped[0].totalAmount = await this.amountDateRepository.getProfitAmountInfoByDate(historyDate).catch(() => 0);
 			} else {

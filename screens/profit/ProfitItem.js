@@ -34,11 +34,11 @@ const ProfitItem = ({history, navigation}) => {
 				await AsyncStorage.setItem("window", "ProfitDetail");
 				let historyId = history.id + "";
 
-				console.log(historyId);
+				//.log(historyId);
 				try {
 					await AsyncStorage.setItem("profit_history_id", historyId);
 				} catch (error) {
-					console.error("Error profit_history_id:", error);
+					//.error("Error profit_history_id:", error);
 				}
 
 				navigation.navigate("ProfitDetail", {history});

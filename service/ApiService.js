@@ -41,7 +41,7 @@ class ApiService {
 
 			const responseBody = await response.json();
 
-			console.log(response.status);
+			//.log(response.status);
 			if (!response.ok) {
 				await AsyncStorage.setItem("isRequestInProgress", "false");
 				return undefined;
@@ -81,7 +81,7 @@ class ApiService {
 
 
 			if (response.status == 401) {
-				console.log("unauthorized::" + response.url);
+				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
@@ -121,7 +121,7 @@ class ApiService {
 			const response = await fetch(`${serverUrl}/api/v1/product/get/local/info/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
 			if (response.status == 401) {
-				console.log("unauthorized::" + response.url);
+				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
@@ -169,7 +169,7 @@ class ApiService {
 
 
 			if (response.status == 401) {
-				console.log("unauthorized::" + response.url);
+				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
@@ -215,7 +215,7 @@ class ApiService {
 
 
 			if (response.status == 401) {
-				console.log("unauthorized::" + response.url);
+				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
@@ -261,7 +261,7 @@ class ApiService {
 				await fetch(`${serverUrl}/api/v1/store/product/get/info/not/downloaded?storeId=${storeId}&page=${page}&size=${size}`, requestOptions);
 
 			if (response.status == 401) {
-				console.log("unauthorized::" + response.url);
+				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
@@ -707,7 +707,7 @@ return undefined;		}
 
 
 			if (response.status == 401) {
-				console.log("unauthorized::" + response.url);
+				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
@@ -864,7 +864,7 @@ return undefined;		}
 
 
 			if (response.status == 401) {
-				console.log("unauthorized::" + response.url);
+				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
@@ -909,7 +909,7 @@ return undefined;		}
 
 
 			if (response.status == 401) {
-				console.log("unauthorized::" + response.url);
+				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
@@ -1006,7 +1006,7 @@ return undefined;		}
 
 
 			if (response.status == 401) {
-				console.log("unauthorized::" + response.url);
+				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
@@ -1051,7 +1051,7 @@ return undefined;		}
 
 
 			if (response.status == 401) {
-				console.log("unauthorized::" + response.url);
+				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
@@ -1097,7 +1097,7 @@ return undefined;		}
 
 
 			if (response.status == 401) {
-				console.log("unauthorized::" + response.url);
+				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
@@ -1201,7 +1201,7 @@ return undefined;		}
 
 
 			if (response.status == 401) {
-				console.log("unauthorized::" + response.url);
+				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
@@ -1331,7 +1331,7 @@ return undefined;		}
 
 
 			if (response.status == 401) {
-				console.log("unauthorized::" + response.url);
+				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
@@ -1476,7 +1476,7 @@ return undefined;		}
 
 
 			if (response.status == 401) {
-				console.log("unauthorized::" + response.url);
+				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
@@ -1523,7 +1523,7 @@ return undefined;		}
 
 
 			if (response.status == 401) {
-				console.log("unauthorized::" + response.url);
+				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
@@ -1670,7 +1670,7 @@ return undefined;		}
 
 
 			if (response.status == 401) {
-				console.log("unauthorized::" + response.url);
+				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
@@ -1717,7 +1717,7 @@ return undefined;		}
 
 
 			if (response.status == 401) {
-				console.log("unauthorized::" + response.url);
+				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
@@ -1764,7 +1764,7 @@ return undefined;		}
 
 
 			if (response.status == 401) {
-				console.log("unauthorized::" + response.url);
+				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
@@ -1840,10 +1840,10 @@ return undefined;		}
 			let storeId = await this.getStoreId();
 
 			for (const string of await AsyncStorage.getAllKeys()) {
-				console.log(string);
+				//.log(string);
 			}
 
-			console.log("getProfitAmountDate() storeId::", storeId);
+			//.log("getProfitAmountDate() storeId::", storeId);
 
 			if (BigInt(storeId) <= BigInt(Number.MAX_SAFE_INTEGER)) {
 				storeId = Number(storeId); // Convert to a Number if it's safe
@@ -1866,7 +1866,7 @@ return undefined;		}
 
 
 			if (response.status == 401) {
-				console.log("unauthorized::" + response.url);
+				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
@@ -1913,7 +1913,7 @@ return undefined;		}
 
 
 			if (response.status == 401) {
-				console.log("unauthorized::" + response.url);
+				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
@@ -1989,7 +1989,7 @@ return undefined;		}
 			const response = await fetch(url, requestOptions);
 
 			if (response.status == 401) {
-				console.log("unauthorized::" + response.url);
+				//.log("unauthorized::" + response.url);
 				await AsyncStorage.setItem("authError", "true");
 				return false;
 			}
@@ -1997,7 +1997,7 @@ return undefined;		}
 			const responseBody = await response.json();
 
 			if (!response.ok) {
-				console.log("error::" + response.url);
+				//.log("error::" + response.url);
 				return undefined;
 			}
 
@@ -2076,7 +2076,7 @@ return undefined;		}
 			countType: countType
 		};
 
-		console.log(requestBody)
+		//.log(requestBody)
 
 		const requestOptions = {
 			method: "POST",
@@ -2406,7 +2406,7 @@ return undefined;		}
 
 
 			if (response.status == 401) {
-				console.log("unauthorized::" + response.url);
+				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
 				return;
 			}
@@ -2449,7 +2449,7 @@ return undefined;		}
 				return result; // Return the boolean value
 			} else {
 				// Handle non-successful responses
-				console.error("Request failed with status:", response.status);
+				//.error("Request failed with status:", response.status);
 
 				await AsyncStorage.setItem("isRequestInProgress", "false");
 				return false; // Return false indicating failure
@@ -2480,13 +2480,13 @@ return undefined;		}
 				await AsyncStorage.setItem("isRequestInProgress", "false");
 				return result;
 			} else {
-				console.error("Request failed with status:", response.status);
+				//.error("Request failed with status:", response.status);
 
 				await AsyncStorage.setItem("isRequestInProgress", "false");
 				return false;
 			}
 		} catch (error) {
-			console.error("Error:", error);
+			//.error("Error:", error);
 
 			await AsyncStorage.setItem("isRequestInProgress", "false");
 			return false;
@@ -2518,7 +2518,7 @@ return undefined;		}
 				return response.json();
 			} else {
 				// Handle non-successful responses
-				console.error("Request failed with status:", response.status);
+				//.error("Request failed with status:", response.status);
 
 				await AsyncStorage.setItem("isRequestInProgress", "false")
 				return false; // Return false indicating failure
@@ -2674,7 +2674,7 @@ return undefined;		}
 			const response = await fetch(`${serverUrl}/payment/make`, requestOptions);
 
 			if (response.status == 401) {
-				console.log("unauthorized::" + response.url);
+				//.log("unauthorized::" + response.url);
 				await AsyncStorage.setItem("authError", "true");
 				return false;
 			}
@@ -2712,7 +2712,7 @@ return undefined;		}
 			const response = await fetch(`${serverUrl}/payment/verify`, requestOptions);
 
 			if (response.status == 401) {
-				console.log("unauthorized::" + response.url);
+				//.log("unauthorized::" + response.url);
 				await AsyncStorage.setItem("authError", "true");
 				return "authError";
 			}

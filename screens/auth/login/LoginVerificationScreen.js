@@ -45,11 +45,11 @@ class LoginVerificationScreen extends Component {
 				this.state.verificationCode
 			);
 
-			console.log(
-				email,
-				password,
-				this.state.verificationCode
-			)
+			//.log(
+			// 	email,
+			// 	password,
+			// 	this.state.verificationCode
+			// )
 
 			if (result.access_token && result.refresh_token && result.role) {
 				await this.tokenService.storeAccessToken(result.access_token);
@@ -57,11 +57,11 @@ class LoginVerificationScreen extends Component {
 				await AsyncStorage.setItem("role", result.role);
 				await AsyncStorage.setItem("store_id", result.storeId + "");
 
-				console.log(result.role);
+				//.log(result.role);
 
 				const accessToken = await this.tokenService.retrieveAccessToken();
-				console.log(accessToken);
-				console.log(await this.tokenService.retrieveRefreshToken());
+				//.log(accessToken);
+				//.log(await this.tokenService.retrieveRefreshToken());
 
 				this.setState({
 					verificationCode: "",

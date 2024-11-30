@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
 
 export default memo(HistoryGroup, (
 	prevProps, nextProps) =>  {
-		// console.log(
+		// //.log(
 		// 	"useMemo() length::", 
 		// 			nextProps.item.histories.length - 1 + "," + 
 		// 			prevProps.item.histories.length

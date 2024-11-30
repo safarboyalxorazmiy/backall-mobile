@@ -122,7 +122,7 @@ class Home extends Component {
 			// agar token yo'q bo'lsa unda login oynasiga otadi
 			let isLoggedIn = await this.tokenService.checkTokens();
 			if (!isLoggedIn) {
-				console.log("LOGGED OUT BY 401 FROM HOME")
+				//.log("LOGGED OUT BY 401 FROM HOME")
 				await this.databaseRepository.clear();
 				await AsyncStorage.clear();
 				navigation.navigate("Login");
@@ -130,7 +130,7 @@ class Home extends Component {
 			}
 			//************************************
 
-			console.log("HOME NAVIGATED");
+			//.log("HOME NAVIGATED");
 			// !IMPORTANT 🔭******************************
 			// Internet bor yoki yo'qligini tekshirish.
 			this.unsubscribe = NetInfo.addEventListener((state) => {
@@ -145,7 +145,7 @@ class Home extends Component {
 			// !IMPORTANT 🔭******************************
 			// Agar data backenddan skachat adilmadik bo'lsa skachat adish.
 			let isDownloaded = await AsyncStorage.getItem("isDownloaded");
-			console.log("isDownloaded::", isDownloaded);
+			//.log("isDownloaded::", isDownloaded);
 			if (isDownloaded !== "true" || isDownloaded == null) {
 				this.databaseRepository.clear();
 				this.setState({spinner: true});
@@ -154,7 +154,7 @@ class Home extends Component {
 
 				let isLoggedIn = await this.tokenService.checkTokens();
 				if (!isLoggedIn) {
-					console.log("FOCUS TOKEN CHECKING FAILED");
+					//.log("FOCUS TOKEN CHECKING FAILED");
 					this.setState({spinner: false});
 					this.databaseRepository.clear();
 					await AsyncStorage.clear();	
@@ -167,15 +167,15 @@ class Home extends Component {
 				await this.amountDateRepository.init();
 
 				if (isLoggedIn) {
-					console.log("isDownloaded??", isDownloaded);
+					//.log("isDownloaded??", isDownloaded);
 					if (isDownloaded !== "true" || isDownloaded == null) {
 						// LOAD..
-						console.log("ABOUT TO LOAD...");
+						//.log("ABOUT TO LOAD...");
 
-						console.log("Initial isConnected:", this.state.isConnected);
+						//.log("Initial isConnected:", this.state.isConnected);
 
 						// Check if setInterval callback is reached
-						console.log("Setting up setInterval...");
+						//.log("Setting up setInterval...");
 
 						if (!this.state.isConnected) {
 							this.setState({spinner: false});
@@ -190,7 +190,7 @@ class Home extends Component {
 							await this.loadProducts();
 
 						} catch (error) {
-							console.error("Error loading products:", error);
+							//.error("Error loading products:", error);
 						} finally {
 							this.setState({spinner: false});
 						}
@@ -201,15 +201,15 @@ class Home extends Component {
 			}
 			//************************************
 
-			console.log("FOCUSED");
-			console.log("-------");
+			//.log("FOCUSED");
+			//.log("-------");
 			
 			let notPayed = await AsyncStorage.getItem("notPayed");
 			if (notPayed == "true") {
-				console.log("not payed")
+				//.log("not payed")
 				this.setState({notPayed: true});
 			} else {
-				console.log("payed")
+				//.log("payed")
 				this.setState({notPayed: false});
 			}
 
@@ -258,14 +258,14 @@ class Home extends Component {
 	
 					let notPayed = await AsyncStorage.getItem("notPayed");
 					if (notPayed == "true") {
-						console.log("not payed")
+						//.log("not payed")
 						this.setState({notPayed: true});
 					} else {
-						console.log("payed")
+						//.log("payed")
 						this.setState({notPayed: false});
 					}
 	
-					console.log("Checking payment from HomeScreen..", notPayed);
+					//.log("Checking payment from HomeScreen..", notPayed);
 				}, 5000)
 	
 				this.setState({intervalStarted: true});
@@ -273,7 +273,7 @@ class Home extends Component {
 			//************************************
 		});
 
-		console.log("Component mounted");
+		//.log("Component mounted");
 		await AsyncStorage.setItem("window", "Home");
 		await this.databaseRepository.init();
 
@@ -282,7 +282,7 @@ class Home extends Component {
 		// agar token yo'q bo'lsa unda login oynasiga otadi.
 		let isLoggedIn = await this.tokenService.checkTokens();
 		if (!isLoggedIn) {
-			console.log("LOGGED OUT BY 401 FROM HOME")
+			//.log("LOGGED OUT BY 401 FROM HOME")
 			await this.databaseRepository.clear();
 			await AsyncStorage.clear();
 			navigation.navigate("Login");
@@ -294,7 +294,7 @@ class Home extends Component {
 		// Bu yerda agar yangi telefondan login bo'lsa ya'ni apidan 401 kelsa login oynasiga otadi.
 		let authError = await AsyncStorage.getItem("authError");
 		if (authError != null && authError == "true") {
-			console.log("LOGGED OUT BY 401 FROM HOME")
+			//.log("LOGGED OUT BY 401 FROM HOME")
 			await this.databaseRepository.clear();
 			await AsyncStorage.clear();
 			navigation.navigate("Login");
@@ -346,15 +346,15 @@ class Home extends Component {
 			}
 
 			if (isLoggedIn) {
-				console.log("isDownloaded??", isDownloaded);
+				//.log("isDownloaded??", isDownloaded);
 				if (isDownloaded !== "true" || isDownloaded == null) {
 					// LOAD..
-					console.log("ABOUT TO LOAD...");
+					//.log("ABOUT TO LOAD...");
 
-					console.log("Initial isConnected:", this.state.isConnected);
+					//.log("Initial isConnected:", this.state.isConnected);
 
 					// Check if setInterval callback is reached
-					console.log("Setting up setInterval...");
+					//.log("Setting up setInterval...");
 
 					if (!this.state.isConnected) {
 						this.setState({spinner: false});
@@ -369,7 +369,7 @@ class Home extends Component {
 						await this.loadProducts();
 
 					} catch (error) {
-						console.error("Error loading products:", error);
+						//.error("Error loading products:", error);
 					} finally {
 						this.setState({spinner: false});
 					}
@@ -514,7 +514,7 @@ class Home extends Component {
 		}
 
 		try {
-			console.log("LOADING STARTED");
+			//.log("LOADING STARTED");
 
 			this.setState({isLoading: true}); // loading started
 
@@ -556,8 +556,8 @@ class Home extends Component {
 				let sellMonthAmount = await this.apiService.getSellMonthAmount(this.props.navigation);
 				let profitMonthAmount = await this.apiService.getProfitMonthAmount(this.props.navigation);
 
-				console.log("sellMonthAmount:: ", sellMonthAmount);
-				console.log("profitMonthAmount:: ", profitMonthAmount);
+				//.log("sellMonthAmount:: ", sellMonthAmount);
+				//.log("profitMonthAmount:: ", profitMonthAmount);
 				await AsyncStorage.setItem(
 					"month_sell_amount",
 					sellMonthAmount.toString() + ""
@@ -605,20 +605,20 @@ class Home extends Component {
 
 			// storing result of product storing
 			await AsyncStorage.setItem("isDownloaded", isDownloaded.toString());
-			console.log("LOADING", isDownloaded.toString());
+			//.log("LOADING", isDownloaded.toString());
 
 			this.setState({
 				isLoading: false, // loading finished
 				isDownloaded: isDownloaded.toString()
 			});
-			console.log("LOADING FINISHED");
+			//.log("LOADING FINISHED");
 
 		} catch (e) {
 			this.setState({
 				isLoading: false,
 				isDownloaded: "false"
 			});
-			console.log("LOADING FINISHED");
+			//.log("LOADING FINISHED");
 
 			// Storing result of product storing
 			await AsyncStorage.setItem("isDownloaded", "false");
@@ -628,7 +628,7 @@ class Home extends Component {
 
 	// PRODUCT PAGINATION
 	async getLocalProducts() {
-		console.log("GETTING LOCAL PRODUCTS ⏳⏳⏳");
+		//.log("GETTING LOCAL PRODUCTS ⏳⏳⏳");
 
 		let size = this.state.lastLocalProductsSize;
 		let page = this.state.lastLocalProductsPage;
@@ -656,7 +656,7 @@ class Home extends Component {
 						true
 					);
 				} catch (error) {
-					console.error("Error creating local products:", error);
+					//.error("Error creating local products:", error);
 				}
 			}
 
@@ -667,7 +667,7 @@ class Home extends Component {
 	}
 
 	async getGlobalProducts() {
-		console.log("GETTING GLOBAL PRODUCTS ⏳⏳⏳")
+		//.log("GETTING GLOBAL PRODUCTS ⏳⏳⏳")
 
 		let size = this.state.lastGlobalProductsSize;
 		let page = this.state.lastGlobalProductsPage;
@@ -682,7 +682,7 @@ class Home extends Component {
 					return false;
 				}
 			} catch (error) {
-				console.error("getGlobalProducts()", error);
+				//.error("getGlobalProducts()", error);
 				this.setState({
 					lastSize: size,
 					lastPage: page
@@ -712,7 +712,7 @@ class Home extends Component {
 						);
 					}
 				} catch (error) {
-					console.error("Error getGlobalProducts:", error);
+					//.error("Error getGlobalProducts:", error);
 					// Continue with next product
 					continue;
 				}
@@ -723,7 +723,7 @@ class Home extends Component {
 	}
 
 	async getStoreProducts() {
-		console.log("GETTING STORE PRODUCTS ⏳⏳⏳");
+		//.log("GETTING STORE PRODUCTS ⏳⏳⏳");
 
 		let size = this.state.lastStoreProductsSize;
 		let page = this.state.lastStoreProductsPage;
@@ -738,7 +738,7 @@ class Home extends Component {
 					return false;
 				}
 			} catch (error) {
-				console.error("getStoreProducts()", error);
+				//.error("getStoreProducts()", error);
 				this.setState({
 					lastSize: size,
 					lastPage: page
@@ -754,8 +754,8 @@ class Home extends Component {
 			for (const storeProduct of response.content) {
 				try {
 					let products = await this.productRepository.findProductsByGlobalId(storeProduct.productId);
-					console.log("Bug:")
-					console.log(products);
+					//.log("Bug:")
+					//.log(products);
 					await this.storeProductRepository.createStoreProductWithAllValues(
 						products[0].id,
 						storeProduct.nds,
@@ -768,7 +768,7 @@ class Home extends Component {
 						true
 					)
 				} catch (error) {
-					console.error("Error getStoreProducts:", error);
+					//.error("Error getStoreProducts:", error);
 					// Continue with next product
 					continue;
 				}
@@ -781,7 +781,7 @@ class Home extends Component {
 	// SELL PAGINATION
 	async getSellGroupsAndHistories() {
 		// GET LAST ID OF GROUPS
-		console.log("GETTING SELL GROUPS ⏳⏳⏳");
+		//.log("GETTING SELL GROUPS ⏳⏳⏳");
 
 		let response;
 		try {
@@ -821,7 +821,7 @@ class Home extends Component {
 					true
 				);
 			} catch (error) {
-				console.error("Error getSellGroups:", error);
+				//.error("Error getSellGroups:", error);
 			}
 		}
 
@@ -859,7 +859,7 @@ class Home extends Component {
 	}
 
 	async getSellAmountDate() {
-		console.log("GETTING SELL AMOUNT DATE ⏳⏳⏳");
+		//.log("GETTING SELL AMOUNT DATE ⏳⏳⏳");
 		let response;
 		try {
 			let lastSellAmountGlobalId =
@@ -878,7 +878,7 @@ class Home extends Component {
 				return false;
 			}
 		} catch (error) {
-			console.error("getSellAmountDate():", error);
+			//.error("getSellAmountDate():", error);
 			this.setState({
 				lastSize: 1000000,
 				lastPage: 0
@@ -900,7 +900,7 @@ class Home extends Component {
 					true
 				);
 			} catch (error) {
-				console.error("Error getSellAmountDate:", error);
+				//.error("Error getSellAmountDate:", error);
 				// Continue with next product
 				continue;
 			}
@@ -911,7 +911,7 @@ class Home extends Component {
 
 	// PROFIT
 	async getProfitGroupsAndHistories() {
-		console.log("GETTING PROFIT GROUPS ⏳⏳⏳");
+		//.log("GETTING PROFIT GROUPS ⏳⏳⏳");
 
 		let response;
 		try {
@@ -931,7 +931,7 @@ class Home extends Component {
 				return false;
 			}
 		} catch (error) {
-			console.error("Error fetching getProfitGroups():", error);
+			//.error("Error fetching getProfitGroups():", error);
 			this.setState({
 				lastSize: 1000000,
 				lastPage: 0
@@ -953,7 +953,7 @@ class Home extends Component {
 					true
 				);
 			} catch (error) {
-				console.error("Error getProfitGroups:", error);
+				//.error("Error getProfitGroups:", error);
 				// Continue with next product
 				continue;
 			}
@@ -994,7 +994,7 @@ class Home extends Component {
 	}
 
 	async getProfitAmountDate() {
-		console.log("GETTING PROFIT AMOUNT DATE ⏳⏳⏳");
+		//.log("GETTING PROFIT AMOUNT DATE ⏳⏳⏳");
 		let response;
 		try {
 			let lastProfitAmountDateGlobalId =
@@ -1013,7 +1013,7 @@ class Home extends Component {
 				return false;
 			}
 		} catch (error) {
-			console.error("getProfitAmountDate():", error);
+			//.error("getProfitAmountDate():", error);
 			this.setState({
 				lastSize: 0,
 				lastPage: 1000000
@@ -1035,7 +1035,7 @@ class Home extends Component {
 					true
 				);
 			} catch (error) {
-				console.error("Error getProfitAmountDate:", error);
+				//.error("Error getProfitAmountDate:", error);
 				// Continue with next product
 				continue;
 			}

@@ -92,7 +92,7 @@ class Basket extends Component {
 			await AsyncStorage.setItem("loadBasket", "false");
 		}
 
-		console.log("Loaded..")
+		//.log("Loaded..")
 		const {navigation} = this.props;
 
 		this.setState(
@@ -117,7 +117,7 @@ class Basket extends Component {
 				// agar token yo'q bo'lsa unda login oynasiga otadi.
 				let isLoggedIn = await this.tokenService.checkTokens();
 				if (!isLoggedIn) {
-					console.log("LOGGED OUT BY 401 FROM HOME")
+					//.log("LOGGED OUT BY 401 FROM HOME")
 					await this.databaseRepository.clear();
 					await AsyncStorage.clear();
 					navigation.navigate("Login");
@@ -129,7 +129,7 @@ class Basket extends Component {
 				// Bu yerda agar yangi telefondan login bo'lsa ya'ni apidan 401 kelsa login oynasiga otadi.
 				let authError = await AsyncStorage.getItem("authError");
 				if (authError != null && authError == "true") {
-					console.log("LOGGED OUT BY 401 FROM HOME")
+					//.log("LOGGED OUT BY 401 FROM HOME")
 					await this.databaseRepository.clear();
 					await AsyncStorage.clear();
 					navigation.navigate("Login");
@@ -185,12 +185,12 @@ class Basket extends Component {
 							return;
 						}
 
-						console.log("INTERNAL STARTED SUCCESSFULLY! \n We are on: ");
-						console.log(await AsyncStorage.getItem("window"));
+						//.log("INTERNAL STARTED SUCCESSFULLY! \n We are on: ");
+						//.log(await AsyncStorage.getItem("window"));
 						if (await AsyncStorage.getItem("window") != "Basket") {
 							if (productsLoadingIntervalId !== undefined) {
 								clearInterval(productsLoadingIntervalId);
-								console.log("CLEARED " + productsLoadingIntervalId);
+								//.log("CLEARED " + productsLoadingIntervalId);
 								return;
 							}
 						}
@@ -248,7 +248,7 @@ class Basket extends Component {
 	}
 
 	async onEndReached() {
-		console.log("onEndReached()");
+		//.log("onEndReached()");
 		if (!this.state.loading) {
 			await this.loadMore();
 		}
@@ -289,7 +289,7 @@ class Basket extends Component {
 
 			return true;
 		} catch (error) {
-			console.error("Error fetching global products:", error);
+			//.error("Error fetching global products:", error);
 			this.setState({
 				loading: false
 			})
@@ -301,7 +301,7 @@ class Basket extends Component {
 		this.setState({searchInputValue: query});
 		let storeProducts = await this.storeProductRepository.searchProductsInfo(query + "%");
 		this.setState({storeProducts: storeProducts})
-		console.log(storeProducts);
+		//.log(storeProducts);
 	}
 
 	handlePressSearchInput = () => {

@@ -34,7 +34,7 @@ class DatabaseService {
 
 			return result; // Return the products fetched from the database
 		} catch (error) {
-			console.error(`Error selecting product: ${error}`);
+			//.error(`Error selecting product: ${error}`);
 			throw error; // Re-throw the error to handle it elsewhere if needed
 		}
 	}

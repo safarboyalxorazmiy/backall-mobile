@@ -51,7 +51,7 @@ class Login extends Component {
 		try {
 			this.setState({loading: true});
 			const result = await this.apiService.check(email + "@backall.uz", password);
-			console.log(result);
+			//.log(result);
 
 			if (result) {
 				await AsyncStorage.setItem("email", email + "@backall.uz");
@@ -65,7 +65,7 @@ class Login extends Component {
 			}
 
 		} catch (error) {
-			console.error("Error fetching data:", error);
+			//.error("Error fetching data:", error);
 		} finally {
 			this.setState({loading: false});
 		}

@@ -65,7 +65,7 @@ class PaymentForm extends Component {
 			: cleanedText;
 
 
-		// console.log(text.length)
+		// //.log(text.length)
 		this.setState({
 			expirationDate: formattedExpirationDate
 		});
@@ -76,7 +76,7 @@ class PaymentForm extends Component {
 				expirationDateWithoutSlash: cleanedText
 			});
 
-			console.log("expirationDateWithoutSlash::", cleanedText)
+			//.log("expirationDateWithoutSlash::", cleanedText)
 
 			if (this.expirationDateInput.current) {
 				this.expirationDateInput.current.blur();
@@ -111,7 +111,7 @@ class PaymentForm extends Component {
 				progress: 40
 			});
 
-			console.log("response started")
+			//.log("response started")
 			result = await this.apiService.makePaymentRequest(this.state.cardNumberWithoutSpaces, code);
 
 		} catch (error) {
@@ -129,10 +129,10 @@ class PaymentForm extends Component {
 			return;
 		}
 
-		console.log(result.phone);
+		//.log(result.phone);
 
-		console.log("response compleated")
-		console.log("makeCodeRequest()::", result);
+		//.log("response compleated")
+		//.log("makeCodeRequest()::", result);
 		if (result) {
 			this.setState({
 				cardToken: result.token,
@@ -146,17 +146,17 @@ class PaymentForm extends Component {
 			this.codeInput.current.focus();
 			this.scrollView.current?.scrollTo({x: 0, y: 400, animated: true});
 		}
-		console.log("cardToken::", result)
+		//.log("cardToken::", result)
 	}
 
 	async verifyPayment(code) {
 		if (this.state.cardToken == null) {
-			console.log("this.state.cardToken is null")
+			//.log("this.state.cardToken is null")
 			this.setState({
 				error: true
 			});
 		} else {
-			console.log("token, code", this.state.cardToken, code);
+			//.log("token, code", this.state.cardToken, code);
 
 			let result = await this.apiService.verifyPaymentRequest(
 				this.state.cardToken, code
@@ -196,7 +196,7 @@ class PaymentForm extends Component {
 
 
 	handleSubmit = () => {
-		console.log('Expiration Date:', this.state.expirationDateWithoutSlash);
+		//.log('Expiration Date:', this.state.expirationDateWithoutSlash);
 	};
 
 	handleCodeChange = async (text) => {
@@ -204,7 +204,7 @@ class PaymentForm extends Component {
 		this.setState({code: cleanedText});
 		if (cleanedText.length === 6) {
 			await this.verifyPayment(text);
-			console.log('Success');
+			//.log('Success');
 		}
 	};
 
@@ -270,7 +270,7 @@ class PaymentForm extends Component {
 									let monthYear = `${month}/${year}`;
 
 									let isPayed = await this.apiService.getPayment(email, monthYear);
-									console.log("Payed: ", isPayed)
+									//.log("Payed: ", isPayed)
 
 									this.setState({
 										CLOSE_BUTTON_VISIBLE: false
@@ -284,7 +284,7 @@ class PaymentForm extends Component {
 								} else {
 									// Kunni oshirish.
 									let paymentTryCount = await AsyncStorage.getItem("paymentTryCount");
-									console.log("paymentTryCount::", paymentTryCount);
+									//.log("paymentTryCount::", paymentTryCount);
 
 									await AsyncStorage.setItem("paymentTryCount", (tryCount + 1).toString());
 

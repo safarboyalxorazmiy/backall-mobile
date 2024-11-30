@@ -157,7 +157,7 @@ class App extends Component {
 			return;
 		}
 
-		// console.log(
+		// //.log(
 		// 	"Is connected?",
 		// 	this.state.isConnected === null
 		// 		? "Loading..."
@@ -300,7 +300,7 @@ class App extends Component {
 				// STORE PRODUCT
 				let storeProductNotSaved = await AsyncStorage.getItem("storeProductNotSaved");
 				if (storeProductNotSaved == "true") {
-					console.log("Product setting into store ⏳⏳⏳")
+					// //.log("Product setting into store ⏳⏳⏳")
 
 					let storeProducts = await this.storeProductRepository.findByWhereSavedFalse();
 					for (const storeProduct of storeProducts) {
@@ -314,7 +314,7 @@ class App extends Component {
 								return;
 							}
 
-							console.log("Products by id:: ", products);
+							// //.log("Products by id:: ", products);
 
 							let response = await this.apiService.createStoreProducts(
 								products[0].global_id,
@@ -326,13 +326,13 @@ class App extends Component {
 								storeProduct.count_type.toUpperCase()
 							);
 
-							console.log("Response: ", response);
+							//.log("Response: ", response);
 
 							if (!response) {
 								return;
 							}
 
-							console.log("Response: ", response);
+							// //.log("Response: ", response);
 							await this.storeProductRepository.updateSavedTrueById(storeProduct.id, response.id);
 						} catch (e) {
 							

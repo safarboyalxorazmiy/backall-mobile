@@ -35,13 +35,13 @@ const HistoryItem = ({history, navigation}) => {
 				await AsyncStorage.setItem("window", "ShoppingDetail");
 				let historyId = history.id + "";
 
-				console.log(historyId);
+				//.log(historyId);
 				try {
 					await AsyncStorage.setItem("sell_history_id", historyId);
 				} catch (error) {
 				}
 
-				console.log(navigation)
+				//.log(navigation)
 
 				navigation.navigate("ShoppingDetail");
 			}}>

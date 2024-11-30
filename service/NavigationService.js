@@ -297,7 +297,7 @@ class NavigationService extends Component {
 
 					// 	let authError = await AsyncStorage.getItem("authError");
 					// 	if (authError != null && authError == "true") {
-					// 		console.log("LOGGED OUT BY 401")
+					// 		//.log("LOGGED OUT BY 401")
 					// 		await this.databaseRepository.clear();
 					// 		await AsyncStorage.clear();
 					// 		navigation.jumpTo("Login");

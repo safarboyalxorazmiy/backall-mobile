@@ -237,10 +237,10 @@ class CalendarPage extends Component {
 			toDate: toDateString
 		});
 
-		console.log({
-			fromDate: fromDateString,
-			toDate: toDateString
-		})
+		//.log({
+		// 	fromDate: fromDateString,
+		// 	toDate: toDateString
+		// })
 	};
 
 	setForWeek() {
@@ -276,10 +276,10 @@ class CalendarPage extends Component {
 			toDate: toDateString
 		});
 
-		console.log({
-			fromDate: fromDateString,
-			toDate: toDateString
-		});
+		//.log({
+		// 	fromDate: fromDateString,
+		// 	toDate: toDateString
+		// });
 	};
 
 	render() {
@@ -397,7 +397,7 @@ class CalendarPage extends Component {
 						}}
 						onPress={() => {
 							this.setState({dateType: "Hafta"});
-							console.log(this.state.dateType);
+							//.log(this.state.dateType);
 
 							this.setForWeek();
 						}}>
@@ -506,7 +506,7 @@ class CalendarPage extends Component {
 									const newToDate = `${value}-${monthDay}`;
 									this.setState({toDate: newToDate});
 
-									console.log(newToDate);
+									//.log(newToDate);
 								});
 							}}/>
 					</View>
@@ -777,17 +777,17 @@ class CalendarPage extends Component {
 						await AsyncStorage.setItem(this.state.calendarFromPage + "FromDate", this.state.fromDate);
 						await AsyncStorage.setItem(this.state.calendarFromPage + "ToDate", this.state.toDate);
 
-						console.log(
-							this.state.calendarFromPage + "FromDate", this.state.fromDate
-						);
+						//.log(
+						// 	this.state.calendarFromPage + "FromDate", this.state.fromDate
+						// );
 
-						console.log(
-							this.state.calendarFromPage + "ToDate", this.state.toDate
-						)
+						//.log(
+						// 	this.state.calendarFromPage + "ToDate", this.state.toDate
+						// )
 
 						await AsyncStorage.setItem("window", this.state.calendarFromPage);
 						await AsyncStorage.setItem("dateType", this.state.dateType.toLocaleLowerCase());
-						console.log(this.state.dateType.toLocaleLowerCase());
+						//.log(this.state.dateType.toLocaleLowerCase());
 						await AsyncStorage.setItem("newCalendar", "true");
 						navigation.navigate(this.state.calendarFromPage);
 					}}>

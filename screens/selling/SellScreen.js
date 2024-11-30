@@ -84,14 +84,14 @@ class Sell extends Component {
 			"keyboardDidShow",
 			() => {
 				this.setState({isKeyboardOn: true});
-				console.log("Keyboard on")
+				//.log("Keyboard on")
 			}
 		);
 		this.keyboardDidHideListener = Keyboard.addListener(
 			"keyboardDidHide",
 			() => {
 				this.setState({isKeyboardOn: false});
-				console.log("Keyboard off")
+				//.log("Keyboard off")
 			}
 		);
 
@@ -199,7 +199,7 @@ class Sell extends Component {
 	};
 
 	selectProduct = (product) => {
-		console.log(product);
+		//.log(product);
 
 		this.setState({
 			productNameInputValue: product.brand_name + " " + product.name,
@@ -249,7 +249,7 @@ class Sell extends Component {
 		let storeProduct = await this.storeProductRepository.getProductInfoBySerialNumber(seriya);
 
 		if (storeProduct[0]) {
-			console.log(storeProduct[0])
+			//.log(storeProduct[0])
 			let newSellingProducts = [...this.state.sellingProducts];
 
 			let existingProductIndex =
@@ -260,7 +260,7 @@ class Sell extends Component {
 			if (existingProductIndex !== -1) {
 				newSellingProducts[existingProductIndex].count += 1;
 				let minusedValue = storeProduct[0].count - newSellingProducts[existingProductIndex].count;
-				console.log(minusedValue);
+				//.log(minusedValue);
 				if (minusedValue < 0) {
 					// no product error
 					return;
@@ -270,7 +270,7 @@ class Sell extends Component {
 					amount: prevState.amount + (
 						newSellingProducts[existingProductIndex].nds == 1 ? (
 							(() => {
-								console.log("NDS IS TRUE");
+								//.log("NDS IS TRUE");
 
 								let a = newSellingProducts[existingProductIndex].selling_price;
 								let twelvePercent = a * 0.12;
@@ -297,7 +297,7 @@ class Sell extends Component {
 					amount: prevState.amount + (
 						newSellingProduct.nds === 1
 							? (() => {
-								console.log("NDS IS TRUE");
+								//.log("NDS IS TRUE");
 								let a = newSellingProduct.selling_price;
 								let twelvePercent = a * 0.12;
 								a += twelvePercent;
@@ -315,8 +315,8 @@ class Sell extends Component {
 				});
 			}
 
-			console.log("PRODUCT IS ADDING..");
-			console.log(newSellingProducts);
+			//.log("PRODUCT IS ADDING..");
+			//.log(newSellingProducts);
 
 			this.setState(
 				{
@@ -674,7 +674,7 @@ class Sell extends Component {
 												this.setState({quantityInputValue: value});
 												// FIST OF ALL GET CURRENT SELLING PRICE.
 												let sellingPrice = this.state.selectedProduct.selling_price;
-												console.log((parseInt(value) * sellingPrice))
+												//.log((parseInt(value) * sellingPrice))
 												this.setState({priceInputValue: (parseInt(value) * sellingPrice) + ""})
 											}}
 
@@ -793,7 +793,7 @@ class Sell extends Component {
 													element => element.id === selectedProduct.id
 												);
 
-											console.log(existingProductIndex);
+											//.log(existingProductIndex);
 											if (existingProductIndex !== -1) {
 
 												let minusedValue =
@@ -1132,7 +1132,7 @@ class Sell extends Component {
 												this.setState({quantityInputValue: value});
 												// FIST OF ALL GET CURRENT SELLING PRICE.
 												let sellingPrice = this.state.selectedProduct.selling_price;
-												console.log((parseInt(value) * sellingPrice));
+												//.log((parseInt(value) * sellingPrice));
 												this.setState({priceInputValue: (parseInt(value) * sellingPrice) + ""});
 											}}
 
@@ -1225,7 +1225,7 @@ class Sell extends Component {
 										style={styles.modalButton}
 										onPress={() => {
 											let selectedProduct = this.state.selectedProduct;
-											console.log(selectedProduct)
+											//.log(selectedProduct)
 
 											let error = false;
 											if (Object.keys(selectedProduct).length === 0 || !this.state.selectedProduct) {
@@ -1254,7 +1254,7 @@ class Sell extends Component {
 													element => element.id === selectedProduct.id
 												);
 
-											console.log(existingProductIndex);
+											//.log(existingProductIndex);
 											if (existingProductIndex !== -1) {
 
 												let minusedValue =
@@ -1320,8 +1320,8 @@ class Sell extends Component {
 												}));
 											} else {
 												selectedProduct.count = parseFloat("-" + selectedProduct.count);
-												console.log("PRODUCT COUNT::")
-												console.log(selectedProduct.count)
+												//.log("PRODUCT COUNT::")
+												//.log(selectedProduct.count)
 
 												this.setState((prevState) => ({
 													sellingProducts: [...prevState.sellingProducts, selectedProduct]
@@ -1365,7 +1365,7 @@ class Sell extends Component {
 		}
 
 		if (this.state.SAVE_BUTTON_AVAILABLE == false) {
-			console.log("this.state.SAVE_BUTTON_AVAILABLE == false")
+			//.log("this.state.SAVE_BUTTON_AVAILABLE == false")
 			return;
 		}
 
@@ -1373,21 +1373,19 @@ class Sell extends Component {
 			SAVE_BUTTON_AVAILABLE: false
 		});
 
-		console.log(
-			this.state.sellingProducts
-		);
+		//.log(this.state.sellingProducts);
 
 		let sellGroupId =
 			await this.sellHistoryRepository.createSellGroup(this.state.amount);
-		console.log(this.state.profit);
+		//.log(this.state.profit);
 
 		let profitGroupId =
 			await this.profitHistoryRepository.createProfitGroup(this.state.profit);
 
-		console.log("PROFIT ", profitGroupId);
+		//.log("PROFIT ", profitGroupId);
 
 		for (const sellingProduct of this.state.sellingProducts) {
-			console.log(sellingProduct);
+			//.log(sellingProduct);
 
 			let historyId =
 				await this.sellHistoryRepository.createSellHistory(
@@ -1400,8 +1398,8 @@ class Sell extends Component {
 			await this.sellHistoryRepository.createSellHistoryGroup(historyId, sellGroupId);
 		}
 
-		console.log("PROFIT GROUP:::", profitGroupId);
-		console.log("SELL GROUP:::", sellGroupId);
+		//.log("PROFIT GROUP:::", profitGroupId);
+		//.log("SELL GROUP:::", sellGroupId);
 
 		// SMALL TASKS
 		/*
@@ -1493,7 +1491,7 @@ class Sell extends Component {
 			this.state.amount, formattedDate
 		);
 
-		console.log("setSellAmount::", formattedDate)
+		//.log("setSellAmount::", formattedDate)
 
 		// STORING CURRENT MONTHLY AMOUNTS
 		const currentMonth = currentDate.getMonth();
@@ -1550,9 +1548,9 @@ let currentMonth = currentDate.toLocaleString("uz-UZ", { month: "long" }).toLoca
 let currentDay = currentDate.getDate();
 let currentWeekDayName = weekDays[currentDate.getDay()];
 
-console.log(hourAndMinute);
-console.log(currentDay + "-" + currentMonth);
-console.log(currentWeekDayName);
+//.log(hourAndMinute);
+//.log(currentDay + "-" + currentMonth);
+//.log(currentWeekDayName);
 */
 
 const styles = StyleSheet.create({
