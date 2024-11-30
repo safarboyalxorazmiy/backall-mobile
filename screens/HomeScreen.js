@@ -203,6 +203,15 @@ class Home extends Component {
 
 			console.log("FOCUSED");
 			console.log("-------");
+			
+			let notPayed = await AsyncStorage.getItem("notPayed");
+			if (notPayed == "true") {
+				console.log("not payed")
+				this.setState({notPayed: true});
+			} else {
+				console.log("payed")
+				this.setState({notPayed: false});
+			}
 
 			// !IMPORTANT 🔭******************************
 			// Dapadaki kirim bilan foydani go'rsatish.
