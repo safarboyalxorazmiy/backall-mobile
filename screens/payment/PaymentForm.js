@@ -14,11 +14,12 @@ import { TouchableRipple } from 'react-native-paper';
 class PaymentForm extends Component {
 	constructor(props) {
 		super(props);
+
 		this.state = {
 			cardNumber: props.cardNumber || "",
 			cardNumberWithoutSpaces: props.cardNumberWithoutSpaces || "",
-			expirationDate: props.expirationDate || "",
-			expirationDateWithoutSlash: props.expirationDateWithoutSlash || "",
+			expirationDate: "",
+			expirationDateWithoutSlash: "",
 			code: "",
 
 			loading: false,
@@ -27,7 +28,7 @@ class PaymentForm extends Component {
 			error: false,
 			expirationError: false,
 			cardNumberError: false,
-			cardToken: props.cardToken || null,
+			cardToken: null,
 			CLOSE_BUTTON_VISIBLE: true
 		};
 
@@ -142,7 +143,6 @@ class PaymentForm extends Component {
 				cardNumberError: false,
 				expirationError: false
 			});
-			await AsyncStorage.setItem("cardToken", result.token);
 			this.codeInput.current.focus();
 			this.scrollView.current?.scrollTo({x: 0, y: 400, animated: true});
 		}

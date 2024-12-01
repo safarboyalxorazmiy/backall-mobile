@@ -83,9 +83,9 @@ class DatabaseRepository {
                  count        DOUBLE  NOT NULL,
                  count_type   TEXT    NOT NULL,
                  profit       DOUBLE  NOT NULL,
-                 created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                     global_id INTEGER,
-                 saved        boolean,
+                 created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                 global_id    INTEGER,
+                 saved        boolean
              );`,
 
 						`CREATE TABLE IF NOT EXISTS profit_group
@@ -95,7 +95,7 @@ class DatabaseRepository {
                  date         TEXT NOT NULL,
                  profit       DOUBLE,
                  global_id    INTEGER,
-                 saved        boolean,
+                 saved        boolean
              );`,
 
 						`CREATE TABLE IF NOT EXISTS profit_history_group

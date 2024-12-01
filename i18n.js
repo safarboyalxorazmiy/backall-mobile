@@ -4,7 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const i18n = new I18n(translations);
 
-i18n.defaultLocale = "English";
+i18n.defaultLocale = "UzbekLatin";
 i18n.fallbacks = true;
 
 export const setLocale = async (locale) => {

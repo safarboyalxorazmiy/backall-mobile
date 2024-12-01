@@ -21,10 +21,8 @@
     ],
     "jsEngine": "hermes",
     "ios": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
+      "userInterfaceStyle": "automatic",
+      "icon": "./assets/adaptive-icon.png",
       "jsEngine": "jsc",
       "supportsTablet": true,
       "bundleIdentifier": "com.safarboyalkhwarizmi.Backallmobile"
@@ -46,7 +44,6 @@
       }
     },
     "runtimeVersion": "sdk-49.0.13",
-    "channel": "default",
     "updates": {
       "url": "https://u.expo.dev/488daa54-ef3c-48ff-b4cb-744370363af0"
     },

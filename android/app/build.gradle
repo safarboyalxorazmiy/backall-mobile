@@ -81,7 +81,7 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.safarboyalkhwarizmi.Backallmobile"
+    namespace 'com.safarboyalkhwarizmi.Backallmobile'
     defaultConfig {
         applicationId 'com.safarboyalkhwarizmi.Backallmobile'
         minSdkVersion rootProject.ext.minSdkVersion

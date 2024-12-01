@@ -234,10 +234,7 @@ class Home extends Component {
 				this.setState({
 					paymentModalVisible: true,
 					cardNumber: await AsyncStorage.getItem("cardNumber"),
-					cardNumberWithoutSpaces: await AsyncStorage.getItem("cardNumberWithoutSpaces"),
-					expirationDate: await AsyncStorage.getItem("expirationDate"),
-					expirationDateWithoutSlash: await AsyncStorage.getItem("expirationDateWithoutSlash"),
-					cardToken: await AsyncStorage.getItem("cardToken"),
+					cardNumberWithoutSpaces: await AsyncStorage.getItem("cardNumberWithoutSpaces")
 				});
 				return;
 			}
@@ -400,10 +397,7 @@ class Home extends Component {
 			this.setState({
 				paymentModalVisible: true,
 				cardNumber: await AsyncStorage.getItem("cardNumber"),
-				cardNumberWithoutSpaces: await AsyncStorage.getItem("cardNumberWithoutSpaces"),
-				expirationDate: await AsyncStorage.getItem("expirationDate"),
-				expirationDateWithoutSlash: await AsyncStorage.getItem("expirationDateWithoutSlash"),
-				cardToken: await AsyncStorage.getItem("cardToken"),
+				cardNumberWithoutSpaces: await AsyncStorage.getItem("cardNumberWithoutSpaces")
 			});
 			return;
 		}
@@ -1227,11 +1221,8 @@ class Home extends Component {
 
 									this.setState({
 										paymentModalVisible: true,
-										cardNumber: await AsyncStorage.getItem("cardNumber"),
-										cardNumberWithoutSpaces: await AsyncStorage.getItem("cardNumberWithoutSpaces"),
-										expirationDate: await AsyncStorage.getItem("expirationDate"),
-										expirationDateWithoutSlash: await AsyncStorage.getItem("expirationDateWithoutSlash"),
-										cardToken: await AsyncStorage.getItem("cardToken"),
+										cardNumber: await AsyncStorage.getItem("cardNumber") || undefined,
+										cardNumberWithoutSpaces: await AsyncStorage.getItem("cardNumberWithoutSpaces") || undefined
 									});
 								}}
 								rippleColor="#FFF">
@@ -1499,25 +1490,21 @@ class Home extends Component {
 					style={{width: "101%", height: screenHeight}}
 					>
 
-				<View
-					style={{width: "101%", height: screenHeight, position: "relative", left: -20, top: 0, overflow: "scroll"}}
-					>
-					<PaymentForm
-						completePayment={async () => {
-							await this.completePayment()
-						}}
-						closeModal={() => {
-							this.closePaymentModal();
-						}}
-						cardNumber={this.state.cardNumber}
-						cardNumberWithoutSpaces={this.state.cardNumberWithoutSpaces}
-						expirationDate={this.state.expirationDate}
-						expirationDateWithoutSlash={this.state.expirationDateWithoutSlash}
-						cardToken={this.state.cardToken}
-
-					/>
+				<View style={{width: "101%", height: screenHeight, position: "relative", left: -20, top: 0, overflow: "scroll"}}>
+					<SafeAreaView>	
+						<PaymentForm
+							completePayment={async () => {
+								await this.completePayment()
+							}}
+							closeModal={() => {
+								this.closePaymentModal();
+							}}
+							
+							cardNumber={this.state.cardNumber}
+							cardNumberWithoutSpaces={this.state.cardNumberWithoutSpaces}
+						/>
+					</SafeAreaView>
 				</View>
-
 				</Modal>
 
 			</ScrollView>

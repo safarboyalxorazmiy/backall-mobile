@@ -732,11 +732,8 @@ class App extends Component {
 									this.closeModal();
 								}}
 
-								cardNumber={undefined}
-								cardNumberWithoutSpaces={undefined}
-								expirationDate={undefined}
-								expirationDateWithoutSlash={undefined}
-								cardToken={undefined}
+								cardNumber={""}
+								cardNumberWithoutSpaces={""}
 							/>
 
 						</Modal>

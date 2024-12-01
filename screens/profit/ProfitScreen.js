@@ -288,7 +288,7 @@ class Profit extends Component {
 		if (currentMonth === lastStoredMonth) {
 			this.setState({
 				thisMonthProfitAmount: thisMonthProfitAmount,
-				incomeTitle: i18n.t("oyIncome")
+				incomeTitle: i18n.t("oyProfit")
 			});
 		}
 
