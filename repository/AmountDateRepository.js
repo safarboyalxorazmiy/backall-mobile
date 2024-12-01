@@ -6,33 +6,55 @@ class AmountDateRepository {
 	}
 
 	async init() {
-		return new Promise((resolve, reject) => {
-			this.db.transaction(tx => {
-				tx.executeSql(
-					`CREATE TABLE IF NOT EXISTS profit_amount_date
-                     (
+    return new Promise((resolve, reject) => {
+        this.db.transaction(
+            tx => {
+                // Create profit_amount_date table
+                tx.executeSql(
+                    `CREATE TABLE IF NOT EXISTS profit_amount_date (
                          id        INTEGER PRIMARY KEY AUTOINCREMENT,
                          date      TEXT   NOT NULL,
                          amount    DOUBLE NOT NULL,
                          global_id INTEGER,
                          saved     INTEGER CHECK (saved IN (0, 1))
-                     );`
-				);
+                     );`,
+                    [],
+                    () => //.log("profit_amount_date table created successfully."),
+                    (_, error) => {
+                        //.error("Error creating profit_amount_date table:", error);
+                        reject(error);
+                        return true; // Abort transaction
+                    }
+                );
 
-				tx.executeSql(
-					`CREATE TABLE IF NOT EXISTS sell_amount_date
-                     (
+                // Create sell_amount_date table
+                tx.executeSql(
+                    `CREATE TABLE IF NOT EXISTS sell_amount_date (
                          id        INTEGER PRIMARY KEY AUTOINCREMENT,
                          date      TEXT   NOT NULL,
                          amount    DOUBLE NOT NULL,
                          global_id INTEGER,
                          saved     INTEGER CHECK (saved IN (0, 1))
-                     );`
-				);
-			})
-
-			resolve(true)
-		});
+                     );`,
+                    [],
+                    () => //.log("sell_amount_date table created successfully."),
+                    (_, error) => {
+                        //.error("Error creating sell_amount_date table:", error);
+                        reject(error);
+                        return true; // Abort transaction
+                    }
+                );
+            },
+            transactionError => {
+                //.error("Transaction error:", transactionError);
+                reject(transactionError);
+            },
+            () => {
+                //.log("All tables created successfully.");
+                resolve(true);
+            }
+        );
+    });
 	}
 
 	async createProfitAmountWithAllValues(profitAmount, date, global_id, saved) {

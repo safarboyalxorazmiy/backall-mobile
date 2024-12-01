@@ -283,10 +283,9 @@ class Sell extends Component {
 
 
 				this.setState({
-					profit: this.state.profit + (
-						newSellingProducts[existingProductIndex].selling_price -
-						newSellingProducts[existingProductIndex].price
-					)
+					profit: 
+						this.state.profit + 
+						(newSellingProducts[existingProductIndex].count * (newSellingProducts[existingProductIndex].selling_price - newSellingProducts[existingProductIndex].price))
 				});
 			} else {
 				let newSellingProduct = storeProduct[0];
@@ -308,9 +307,9 @@ class Sell extends Component {
 				}));
 
 				this.setState({
-					profit: this.state.profit + (
-						newSellingProduct.selling_price -
-						newSellingProduct.price
+					profit: this.state.profit + (newSellingProduct.count *
+						(newSellingProduct.selling_price -
+						newSellingProduct.price)
 					)
 				});
 			}
@@ -841,9 +840,9 @@ class Sell extends Component {
 
 
 											this.setState({
-												profit: this.state.profit + (
-													selectedProduct.selling_price -
-													selectedProduct.price
+												profit: this.state.profit + (selectedProduct.count *
+													(selectedProduct.selling_price -
+													selectedProduct.price)
 												)
 											});
 

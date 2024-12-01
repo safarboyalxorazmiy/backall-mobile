@@ -235,6 +235,7 @@ class Shopping extends Component {
 					this.setState({
 						incomeTitle: this.state.calendarInputContent
 					});
+					amount = await this.amountDateRepository.getSumSellAmountByDate(this.state.toDate, this.state.fromDate);
 				} else {
 					this.setState({
 						incomeTitle: i18n.t(dateType + "Income")

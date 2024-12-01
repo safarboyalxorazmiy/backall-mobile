@@ -137,7 +137,7 @@ class Home extends Component {
 				this.setState({isConnected: state.isConnected});
 			});
 
-			if (await AsyncStorage.getItem("fromScreen") != "RegisterVerification") {
+			if (await AsyncStorage.getItem("fromScreen") != "RegisterVerification") {				
 				//************************************
 				
 				// !IMPORTANT 🔭******************************
@@ -229,8 +229,8 @@ class Home extends Component {
 
 			}
 
-			console.log("About to showing payment modal..")
-
+			await AsyncStorage.setItem("fromScreen", "Home");
+			await AsyncStorage.setItem("isDownloaded", "true");
 
 			// !IMPORTANT 🔭******************************
 			// If that is new user show payment modal untill he pays
@@ -242,8 +242,6 @@ class Home extends Component {
 				});
 				return;
 			}
-
-			console.log("Payment modal shown")
 
 			// !IMPORTANT 🔭******************************
 			// Tolov adadovn knopkani go'rsatish. Orqa fonda tolov adilganmi yo'qmi tekshirib durish.
@@ -328,9 +326,10 @@ class Home extends Component {
 		
 		// !IMPORTANT 🔭******************************
 		// Agar data backenddan skachat adilmadik bo'lsa skachat adish.
-		this.setState({spinner: true});
 
 		if (await AsyncStorage.getItem("fromScreen") != "RegisterVerification") {
+			this.setState({spinner: true});
+
 			let isDownloaded = await AsyncStorage.getItem("isDownloaded");
 			if (isDownloaded !== "true" || isDownloaded == null) {
 				this.setState({spinner: true});
@@ -379,17 +378,19 @@ class Home extends Component {
 					await this.getAmountInfo();
 				}
 			}
-		}		
 
-		this.setState({spinner: false});
+			// !IMPORTANT 🔭******************************
+			// Dapadaki kirim bilan foydani go'rsatish.
+			await this.amountDateRepository.init();
+			await this.getAmountInfo();
+			//************************************
 
-		//************************************
+			this.setState({spinner: false});
+			//************************************
+		}
 
-		// !IMPORTANT 🔭******************************
-		// Dapadaki kirim bilan foydani go'rsatish.
-		await this.amountDateRepository.init();
-		await this.getAmountInfo();
-		//************************************
+		await AsyncStorage.setItem("fromScreen", "Home");
+		await AsyncStorage.setItem("isDownloaded", "true");
 
 		// !IMPORTANT 🔭******************************
 		// Agar yangi user bo'lsa payment oynasini ochadigan qilib qo'yamiz
@@ -1431,10 +1432,10 @@ class Home extends Component {
 									})
 								}}
 								onPress={async () => {
-									// if (await AsyncStorage.getItem("isFetchingNotCompleated") == "true") {
-									// 	// Actions not saved yet
-									// 	return;
-									// }
+									if (await AsyncStorage.getItem("isFetchingNotCompleated") == "true") {
+										// Actions not saved yet
+										return;
+									}
 
 									await this.databaseRepository.clear();
 									await AsyncStorage.clear();

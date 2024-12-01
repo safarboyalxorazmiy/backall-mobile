@@ -74,7 +74,6 @@ class Profit extends Component {
 
 		navigation.addListener("focus", async () => {
 			await AsyncStorage.setItem("window", "Profit");
-
 			// !IMPORTANT 🔭******************************
 			// Bu yerda foydalanuvchi tokeni bor yoki yo'qligini tekshiradi 
 			// agar token yo'q bo'lsa unda login oynasiga otadi.
@@ -195,6 +194,7 @@ class Profit extends Component {
 					this.setState({
 						incomeTitle: this.state.calendarInputContent
 					});
+					amount = await this.amountDateRepository.getSumProfitAmountByDate(this.state.toDate, this.state.fromDate);
 				} else {
 					this.setState({
 						incomeTitle: i18n.t(dateType + "Income")
@@ -478,14 +478,14 @@ class Profit extends Component {
 				groupedCopy[groupedCopy.length - 1].histories[0].calendar = false;
 			}
 
-			if (await AsyncStorage.getItem("window") != "Profit") {
-				//.log("Loader turned off in loadLocalProfitGroups()");
-				this.setState({
-					loading: false,
-					// lastGroupId: this.state.lastGroupId + 11
-				});
-				return false;
-			}
+			// if (await AsyncStorage.getItem("window") != "Profit") {
+			// 	//.log("Loader turned off in loadLocalProfitGroups()");
+			// 	this.setState({
+			// 		loading: false,
+			// 		// lastGroupId: this.state.lastGroupId + 11
+			// 	});
+			// 	return false;
+			// }
 	
 			this.setState({
 				groupedHistories: groupedCopy
