@@ -20,7 +20,7 @@ class ProfitHistoryRepository {
                profit       DOUBLE  NOT NULL,
                created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                global_id    INTEGER,
-               saved        BOOLEAN
+               saved     		INTEGER CHECK (saved IN (0, 1))
            );`
 				);
 
@@ -32,7 +32,7 @@ class ProfitHistoryRepository {
 							 date         TEXT NOT NULL,
                profit       DOUBLE,
                global_id    INTEGER,
-               saved        BOOLEAN
+               saved     		INTEGER CHECK (saved IN (0, 1))
            );`
 				);
 
@@ -43,7 +43,7 @@ class ProfitHistoryRepository {
                history_id INTEGER NOT NULL,
                group_id   INTEGER NOT NULL,
                global_id  INTEGER,
-               saved      BOOLEAN,
+               saved    	INTEGER CHECK (saved IN (0, 1)),
                FOREIGN KEY (group_id) REFERENCES profit_group (id),
                FOREIGN KEY (history_id) REFERENCES profit_history (id)
            );`

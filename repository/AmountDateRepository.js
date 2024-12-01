@@ -15,7 +15,7 @@ class AmountDateRepository {
                          date      TEXT   NOT NULL,
                          amount    DOUBLE NOT NULL,
                          global_id INTEGER,
-                         saved     boolean
+                         saved     INTEGER CHECK (saved IN (0, 1))
                      );`
 				);
 
@@ -26,7 +26,7 @@ class AmountDateRepository {
                          date      TEXT   NOT NULL,
                          amount    DOUBLE NOT NULL,
                          global_id INTEGER,
-                         saved     boolean
+                         saved     INTEGER CHECK (saved IN (0, 1))
                      );`
 				);
 			})
@@ -292,7 +292,7 @@ class AmountDateRepository {
 					}
 				},
 				error => {
-					reject(`Error retrieving sell amount date: ${error.message}`);
+					resolve([]); 
 				});
 			});
 		});

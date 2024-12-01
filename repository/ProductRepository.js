@@ -55,7 +55,7 @@ class ProductRepository {
 			const result = await new Promise((resolve, reject) => {
 				this.db.transaction((tx) => {
 					tx.executeSql(
-						"INSERT INTO product (name, brand_name, serial_number, type, global_id, saved) VALUES (?, ?, ?, ?, ?, ?)",
+						"INSERT INTO product (name, brand_name, serial_number, type, global_id, saved) VALUES (?, ?, ?, ?, ?, ?);",
 						[name, brand_name, serial_number, "LOCAL", null, 0],
 						(_, results) => {
 							if (results.insertId) {

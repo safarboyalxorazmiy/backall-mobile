@@ -137,96 +137,100 @@ class Home extends Component {
 				this.setState({isConnected: state.isConnected});
 			});
 
-			if (this.unsubscribe) {
-				this.unsubscribe();
-			}
-			//************************************
-			
-			// !IMPORTANT 🔭******************************
-			// Agar data backenddan skachat adilmadik bo'lsa skachat adish.
-			let isDownloaded = await AsyncStorage.getItem("isDownloaded");
-			//.log("isDownloaded::", isDownloaded);
-			if (isDownloaded !== "true" || isDownloaded == null) {
-				this.databaseRepository.clear();
-				this.setState({spinner: true});
-
-				const {navigation} = this.props;
-
-				let isLoggedIn = await this.tokenService.checkTokens();
-				if (!isLoggedIn) {
-					//.log("FOCUS TOKEN CHECKING FAILED");
-					this.setState({spinner: false});
+			if (await AsyncStorage.getItem("fromScreen") != "RegisterVerification") {
+				//************************************
+				
+				// !IMPORTANT 🔭******************************
+				// Agar data backenddan skachat adilmadik bo'lsa skachat adish.
+				let isDownloaded = await AsyncStorage.getItem("isDownloaded");
+				//.log("isDownloaded::", isDownloaded);
+				if (isDownloaded !== "true" || isDownloaded == null) {
 					this.databaseRepository.clear();
-					await AsyncStorage.clear();	
-					navigation.navigate("Login");
-				}
+					this.setState({spinner: true});
 
-				await this.storeProductRepository.init();
-				await this.sellHistoryRepository.init();
-				await this.profitHistoryRepository.init();
-				await this.amountDateRepository.init();
+					const {navigation} = this.props;
 
-				if (isLoggedIn) {
-					//.log("isDownloaded??", isDownloaded);
-					if (isDownloaded !== "true" || isDownloaded == null) {
-						// LOAD..
-						//.log("ABOUT TO LOAD...");
-
-						//.log("Initial isConnected:", this.state.isConnected);
-
-						// Check if setInterval callback is reached
-						//.log("Setting up setInterval...");
-
-						if (!this.state.isConnected) {
-							this.setState({spinner: false});
-							this.databaseRepository.clear();
-							await AsyncStorage.clear();			
-							navigation.navigate("Login");
-							return;
-						}
-
-						try {
-							// Has internet connection
-							await this.loadProducts();
-
-						} catch (error) {
-							//.error("Error loading products:", error);
-						} finally {
-							this.setState({spinner: false});
-						}
+					let isLoggedIn = await this.tokenService.checkTokens();
+					if (!isLoggedIn) {
+						//.log("FOCUS TOKEN CHECKING FAILED");
+						this.setState({spinner: false});
+						this.databaseRepository.clear();
+						await AsyncStorage.clear();	
+						navigation.navigate("Login");
 					}
 
-					await this.getAmountInfo();
+					await this.storeProductRepository.init();
+					await this.sellHistoryRepository.init();
+					await this.profitHistoryRepository.init();
+					await this.amountDateRepository.init();
+
+					if (isLoggedIn) {
+						//.log("isDownloaded??", isDownloaded);
+						if (isDownloaded !== "true" || isDownloaded == null) {
+							// LOAD..
+							//.log("ABOUT TO LOAD...");
+
+							//.log("Initial isConnected:", this.state.isConnected);
+
+							// Check if setInterval callback is reached
+							//.log("Setting up setInterval...");
+
+							if (!this.state.isConnected) {
+								this.setState({spinner: false});
+								this.databaseRepository.clear();
+								await AsyncStorage.clear();			
+								navigation.navigate("Login");
+								return;
+							}
+
+							try {
+								// Has internet connection
+								await this.loadProducts();
+
+							} catch (error) {
+								//.error("Error loading products:", error);
+							} finally {
+								this.setState({spinner: false});
+							}
+						}
+
+						await this.getAmountInfo();
+					}
 				}
+
+				//************************************
+							
+				//.log("FOCUSED");
+				//.log("-------");
+				
+				let notPayed = await AsyncStorage.getItem("notPayed");
+				if (notPayed == "true") {
+					//.log("not payed")
+					this.setState({notPayed: true});
+				} else {
+					//.log("payed")
+					this.setState({notPayed: false});
+				}
+
+				// !IMPORTANT 🔭******************************
+				// Dapadaki kirim bilan foydani go'rsatish.
+				await this.amountDateRepository.init();
+				await this.getAmountInfo();
+				//************************************
+
+				// !IMPORTANT 🔭******************************
+				// LineChart diagramma datasini yuklab olish.
+				let sellAmountDateData = await this.amountDateRepository.getSellAmountDate();
+
+				if (this.state.diagramData != sellAmountDateData) {
+					this.setState({diagramData: sellAmountDateData});
+				}
+				//************************************
+
 			}
-			//************************************
 
-			//.log("FOCUSED");
-			//.log("-------");
-			
-			let notPayed = await AsyncStorage.getItem("notPayed");
-			if (notPayed == "true") {
-				//.log("not payed")
-				this.setState({notPayed: true});
-			} else {
-				//.log("payed")
-				this.setState({notPayed: false});
-			}
+			console.log("About to showing payment modal..")
 
-			// !IMPORTANT 🔭******************************
-			// Dapadaki kirim bilan foydani go'rsatish.
-			await this.amountDateRepository.init();
-			await this.getAmountInfo();
-			//************************************
-
-			// !IMPORTANT 🔭******************************
-			// LineChart diagramma datasini yuklab olish.
-			let sellAmountDateData = await this.amountDateRepository.getSellAmountDate();
-
-			if (this.state.diagramData != sellAmountDateData) {
-				this.setState({diagramData: sellAmountDateData});
-			}
-			//************************************
 
 			// !IMPORTANT 🔭******************************
 			// If that is new user show payment modal untill he pays
@@ -238,6 +242,8 @@ class Home extends Component {
 				});
 				return;
 			}
+
+			console.log("Payment modal shown")
 
 			// !IMPORTANT 🔭******************************
 			// Tolov adadovn knopkani go'rsatish. Orqa fonda tolov adilganmi yo'qmi tekshirib durish.
@@ -318,65 +324,65 @@ class Home extends Component {
 			this.setState({isConnected: state.isConnected});
 		});
 
-		if (this.unsubscribe) {
-			this.unsubscribe();
-		}
 		//************************************
 		
 		// !IMPORTANT 🔭******************************
 		// Agar data backenddan skachat adilmadik bo'lsa skachat adish.
 		this.setState({spinner: true});
-		
-		let isDownloaded = await AsyncStorage.getItem("isDownloaded");
-		if (isDownloaded !== "true" || isDownloaded == null) {
-			this.setState({spinner: true});
-			this.databaseRepository.clear();
 
-			const {navigation} = this.props;
-
-			let isLoggedIn = await this.tokenService.checkTokens();
-			if (!isLoggedIn) {
-				this.setState({spinner: false});
+		if (await AsyncStorage.getItem("fromScreen") != "RegisterVerification") {
+			let isDownloaded = await AsyncStorage.getItem("isDownloaded");
+			if (isDownloaded !== "true" || isDownloaded == null) {
+				this.setState({spinner: true});
 				this.databaseRepository.clear();
-				await AsyncStorage.clear();
-				navigation.navigate("Login");
-			}
 
-			if (isLoggedIn) {
-				//.log("isDownloaded??", isDownloaded);
-				if (isDownloaded !== "true" || isDownloaded == null) {
-					// LOAD..
-					//.log("ABOUT TO LOAD...");
+				const {navigation} = this.props;
 
-					//.log("Initial isConnected:", this.state.isConnected);
-
-					// Check if setInterval callback is reached
-					//.log("Setting up setInterval...");
-
-					if (!this.state.isConnected) {
-						this.setState({spinner: false});
-						this.databaseRepository.clear();
-						await AsyncStorage.clear();		
-						navigation.navigate("Login");
-						return;
-					}
-
-					try {
-						// Has internet connection
-						await this.loadProducts();
-
-					} catch (error) {
-						//.error("Error loading products:", error);
-					} finally {
-						this.setState({spinner: false});
-					}
+				let isLoggedIn = await this.tokenService.checkTokens();
+				if (!isLoggedIn) {
+					this.setState({spinner: false});
+					this.databaseRepository.clear();
+					await AsyncStorage.clear();
+					navigation.navigate("Login");
 				}
 
-				await this.getAmountInfo();
+				if (isLoggedIn) {
+					//.log("isDownloaded??", isDownloaded);
+					if (isDownloaded !== "true" || isDownloaded == null) {
+						// LOAD..
+						//.log("ABOUT TO LOAD...");
+
+						//.log("Initial isConnected:", this.state.isConnected);
+
+						// Check if setInterval callback is reached
+						//.log("Setting up setInterval...");
+
+						if (!this.state.isConnected) {
+							this.setState({spinner: false});
+							this.databaseRepository.clear();
+							await AsyncStorage.clear();		
+							navigation.navigate("Login");
+							return;
+						}
+
+						try {
+							// Has internet connection
+							await this.loadProducts();
+
+						} catch (error) {
+							//.error("Error loading products:", error);
+						} finally {
+							this.setState({spinner: false});
+						}
+					}
+
+					await this.getAmountInfo();
+				}
 			}
-		}
+		}		
 
 		this.setState({spinner: false});
+
 		//************************************
 
 		// !IMPORTANT 🔭******************************
@@ -535,8 +541,8 @@ class Home extends Component {
 				);
 
 				this.setState({
-					sellAmount: sellAmount.amount,
-					profitAmount: profitAmount.amount
+					sellAmount: sellAmount.amount || 0,
+					profitAmount: profitAmount.amount || 0
 				})
 			} catch (e) { }
 
@@ -550,6 +556,9 @@ class Home extends Component {
 				let sellMonthAmount = await this.apiService.getSellMonthAmount(this.props.navigation);
 				let profitMonthAmount = await this.apiService.getProfitMonthAmount(this.props.navigation);
 
+				sellMonthAmount = sellMonthAmount.amount || 0;
+				profitMonthAmount = profitMonthAmount.amount || 0;
+				
 				//.log("sellMonthAmount:: ", sellMonthAmount);
 				//.log("profitMonthAmount:: ", profitMonthAmount);
 				await AsyncStorage.setItem(
@@ -632,6 +641,7 @@ class Home extends Component {
 			downloadedProducts = await this.apiService.getLocalProducts(page, size, this.props.navigation);
 
 			if (
+				downloadedProducts == undefined ||
 				!downloadedProducts ||
 				!downloadedProducts.content ||
 				downloadedProducts.content.length === 0
@@ -649,9 +659,7 @@ class Home extends Component {
 						"LOCAL",
 						true
 					);
-				} catch (error) {
-					//.error("Error creating local products:", error);
-				}
+				} catch (error) { }
 			}
 
 			page++;
@@ -673,7 +681,7 @@ class Home extends Component {
 					await this.apiService.getGlobalProducts(page, size, this.props.navigation);
 			
 				if (response == undefined) {
-					return false;
+					return true;
 				}
 			} catch (error) {
 				//.error("getGlobalProducts()", error);
@@ -682,10 +690,10 @@ class Home extends Component {
 					lastPage: page
 				});
 
-				return false; // Indicate failure
+				return true; // Indicate failure
 			}
 
-			if (!response || !response.content || response.content.length === 0) {
+			if (response == undefined || !response || !response.content || response.content.length === 0) {
 				return true; // Indicate success and exit the loop
 			}
 
@@ -714,6 +722,8 @@ class Home extends Component {
 
 			page++;
 		}
+
+		return true;
 	}
 
 	async getStoreProducts() {
@@ -727,9 +737,8 @@ class Home extends Component {
 			try {
 				response = await this.apiService.getStoreProducts(page, size, this.props.navigation);
 				
-				
 				if (response == undefined) {
-					return false;
+					return true;
 				}
 			} catch (error) {
 				//.error("getStoreProducts()", error);
@@ -738,18 +747,20 @@ class Home extends Component {
 					lastPage: page
 				});
 
-				return false; // Indicate failure
+				return true; // Indicate failure
 			}
 
-			if (!response || !response.content || response.content.length === 0) {
+			if (response == undefined || !response || !response.content || response.content.length === 0) {
 				return true; // Indicate success and exit the loop
 			}
 
 			for (const storeProduct of response.content) {
 				try {
 					let products = await this.productRepository.findProductsByGlobalId(storeProduct.productId);
-					//.log("Bug:")
-					//.log(products);
+					if (products.length === 0) {
+						continue;
+					}
+
 					await this.storeProductRepository.createStoreProductWithAllValues(
 						products[0].id,
 						storeProduct.nds,
@@ -770,6 +781,8 @@ class Home extends Component {
 
 			page++;
 		}
+
+		return true;
 	}
 
 	// SELL PAGINATION
@@ -782,7 +795,7 @@ class Home extends Component {
 			let lastSellGroupGlobalId =
 				await this.apiService.getLastSellGroupGlobalId(this.props.navigation);
 
-			if (lastSellGroupGlobalId === -1) { // NO GROUPS EXIST JUST BREAK THE PROCESS
+			if (lastSellGroupGlobalId === -1 || lastSellGroupGlobalId === undefined) { // NO GROUPS EXIST JUST BREAK THE PROCESS
 				return true;
 			}
 
@@ -795,11 +808,11 @@ class Home extends Component {
 				);
 
 			if (response == undefined) {
-				return false;
+				return true;
 			}
 			
 		} catch (error) {
-			return false;
+			return true;
 		}
 
 		if (!response || !response.content || response.content.length === 0) {
@@ -822,9 +835,17 @@ class Home extends Component {
 
 		let lastSellGroupGlobalIdByResponse = response.content[0].id;
 		let sellHistoryLinkInfos = await this.apiService.getSellHistoryLinkInfoByGroupId(lastSellGroupGlobalIdByResponse);
+		if (sellHistoryLinkInfos == undefined) {
+			return true;
+		}
+
 		if (sellHistoryLinkInfos.length !== 0) {
 			for (let sellHistoryLinkInfoElement of sellHistoryLinkInfos) {
 				let products = await this.productRepository.findProductsByGlobalId(sellHistoryLinkInfoElement.sellHistory.productId);
+				if (products.length === 0) {
+					continue;
+				}
+
 				let createdSellHistoryId = await this.sellHistoryRepository.createSellHistoryWithAllValues(
 					products[0].id,
 					sellHistoryLinkInfoElement.sellHistory.id,
@@ -838,6 +859,10 @@ class Home extends Component {
 				let createdSellGroup =
 					await this.sellHistoryRepository.findSellGroupByGlobalId(sellHistoryLinkInfoElement.sellGroupId);
 
+				if (createdSellGroup.length === 0) {
+					continue;
+				}
+				
 				if (createdSellGroup[0]) {
 					await this.sellHistoryRepository.createSellHistoryGroupWithAllValues(
 						createdSellHistoryId,
@@ -859,7 +884,7 @@ class Home extends Component {
 			let lastSellAmountGlobalId =
 				await this.apiService.getLastSellAmountDateGlobalId(this.props.navigation);
 
-			if (lastSellAmountGlobalId === -1) {
+			if (lastSellAmountGlobalId === -1 || lastSellAmountGlobalId === undefined) {
 				return true;
 			}
 
@@ -869,7 +894,7 @@ class Home extends Component {
 				);
 
 			if (response == undefined) {
-				return false;
+				return true;
 			}
 		} catch (error) {
 			//.error("getSellAmountDate():", error);
@@ -878,10 +903,10 @@ class Home extends Component {
 				lastPage: 0
 			});
 
-			return false; // Indicate failure
+			return true; // Indicate failure
 		}
 
-		if (!response || !response.content || response.content.length === 0) {
+		if (response == undefined || !response || !response.content || response.content.length === 0) {
 			return true; // Indicate success and exit the loop
 		}
 
@@ -922,7 +947,7 @@ class Home extends Component {
 				);
 			
 			if (response == undefined) {
-				return false;
+				return true;
 			}
 		} catch (error) {
 			//.error("Error fetching getProfitGroups():", error);
@@ -931,10 +956,10 @@ class Home extends Component {
 				lastPage: 0
 			});
 
-			return false;
+			return true;
 		}
 
-		if (!response || !response.content || response.content.length === 0) {
+		if (response == undefined ||!response || !response.content || response.content.length === 0) {
 			return true;
 		}
 
@@ -955,10 +980,16 @@ class Home extends Component {
 
 		let lastProfitGroupGlobalIdByResponse = response.content[0].id;
 		let profitHistoryLinkInfos = await this.apiService.getProfitHistoryLinkInfoByGroupId(lastProfitGroupGlobalIdByResponse);
+		if (profitHistoryLinkInfos == undefined) {
+			return true;
+		}
 		if (profitHistoryLinkInfos.length !== 0) {
 			for (let profitHistoryLinkInfoElement of profitHistoryLinkInfos) {
 				let products =
 					await this.productRepository.findProductsByGlobalId(profitHistoryLinkInfoElement.profitHistory.productId);
+				if (products.length === 0) {
+					continue;
+				}
 
 				let createdProfitHistoryId = await this.profitHistoryRepository.createProfitHistoryWithAllValues(
 					products[0].id,
@@ -973,14 +1004,16 @@ class Home extends Component {
 				let createdProfitGroup =
 					await this.profitHistoryRepository.findProfitGroupByGlobalId(profitHistoryLinkInfoElement.profitGroupId);
 
-				if (createdProfitGroup[0]) {
-					await this.profitHistoryRepository.createProfitHistoryGroupWithAllValues(
-						createdProfitHistoryId,
-						createdProfitGroup[0].id,
-						profitHistoryLinkInfoElement.id,
-						true
-					);
+				if (createdProfitGroup.length === 0) {
+					continue;
 				}
+
+				await this.profitHistoryRepository.createProfitHistoryGroupWithAllValues(
+					createdProfitHistoryId,
+					createdProfitGroup[0].id,
+					profitHistoryLinkInfoElement.id,
+					true
+				);
 			}
 		}
 
@@ -994,7 +1027,7 @@ class Home extends Component {
 			let lastProfitAmountDateGlobalId =
 				await this.apiService.getLastProfitAmountDateId(this.props.navigation);
 
-			if (lastProfitAmountDateGlobalId === -1) {
+			if (lastProfitAmountDateGlobalId === -1 || lastProfitAmountDateGlobalId === undefined) {
 				return true;
 			}
 
@@ -1004,7 +1037,7 @@ class Home extends Component {
 				);
 
 			if (response == undefined) {
-				return false;
+				return true;
 			}
 		} catch (error) {
 			//.error("getProfitAmountDate():", error);
@@ -1013,10 +1046,10 @@ class Home extends Component {
 				lastPage: 1000000
 			});
 
-			return false;
+			return true;
 		}
 
-		if (!response || !response.content || response.content.length === 0) {
+		if (response == undefined || !response || !response.content || response.content.length === 0) {
 			return true; // Indicate success and exit the loop
 		}
 
@@ -1486,26 +1519,23 @@ class Home extends Component {
 				
 				<Modal
 					visible={this.state.paymentModalVisible} 
-					// transparent={true}
 					style={{width: "101%", height: screenHeight}}
 					>
 
 				<View style={{width: "101%", height: screenHeight, position: "relative", left: -20, top: 0, overflow: "scroll"}}>
-					<SafeAreaView>	
-						<PaymentForm
-							completePayment={async () => {
-								await this.completePayment()
-							}}
-							closeModal={() => {
-								this.closePaymentModal();
-							}}
-							
-							cardNumber={this.state.cardNumber}
-							cardNumberWithoutSpaces={this.state.cardNumberWithoutSpaces}
-						/>
-					</SafeAreaView>
+					<PaymentForm
+						completePayment={async () => {
+							await this.completePayment()
+						}}
+						closeModal={() => {
+							this.closePaymentModal();
+						}}
+						
+						cardNumber={this.state.cardNumber}
+						cardNumberWithoutSpaces={this.state.cardNumberWithoutSpaces}
+					/>
 				</View>
-				</Modal>
+			</Modal>
 
 			</ScrollView>
 		);

@@ -21,7 +21,7 @@ class SellHistoryRepository {
                selling_price DOUBLE,
                created_date  TIMESTAMP,
                global_id     INTEGER,
-               saved         boolean,
+               saved     		 INTEGER CHECK (saved IN (0, 1)),
                FOREIGN KEY (product_id) REFERENCES product (id)
            );`,
 				);
@@ -34,7 +34,7 @@ class SellHistoryRepository {
 							 date         TEXT NOT NULL,
                amount       DOUBLE,
                global_id    INTEGER,
-               saved        boolean
+               saved     		INTEGER CHECK (saved IN (0, 1))
            );`
 				);
 
@@ -45,7 +45,7 @@ class SellHistoryRepository {
                group_id   INTEGER,
                history_id INTEGER,
                global_id  INTEGER,
-               saved      boolean,
+               saved     	INTEGER CHECK (saved IN (0, 1)),
                FOREIGN KEY (group_id) REFERENCES sell_group (id),
                FOREIGN KEY (history_id) REFERENCES sell_history (id)
            );`

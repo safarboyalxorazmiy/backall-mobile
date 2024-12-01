@@ -85,7 +85,9 @@ class RegisterVerificationScreen extends Component {
 				await AsyncStorage.setItem("loadBasket", "true");
 				await AsyncStorage.setItem("isDownloaded", "false");
 
-				await AsyncStorage.setItem("isNewUser", true + "");
+				await AsyncStorage.setItem("isNewUser", "true");
+
+				await AsyncStorage.setItem("fromScreen", "RegisterVerification");
 
 				await navigation.navigate("Home");
 			} else {

@@ -22,6 +22,7 @@ import SearchIcon from "../../assets/search-icon.svg";
 import BasketIcon from "../../assets/basket-icon-light.svg";
 import Success from "../../assets/success.svg";
 import BasketItem from "./BasketItem";
+import _ from "lodash";
 import { TouchableRipple } from 'react-native-paper';
 import i18n from '../../i18n';
 import TokenService from "../../service/TokenService";
@@ -44,7 +45,6 @@ class Basket extends Component {
 			role: "",
 
 			loading: false,
-			loadCount: 0,
 
 			lastNotDownloadedProductsPage: 0,
 			lastNotDownloadedProductsSize: 10,
@@ -71,6 +71,7 @@ class Basket extends Component {
 		);
 
 		this.textInputRef = React.createRef();
+		this.onEndReached = _.debounce(this.onEndReached.bind(this), 300);
 		this.flatListRef = React.createRef();
 	}
 
@@ -246,17 +247,11 @@ class Basket extends Component {
 		this.setState({isCreated: isCreated});
 	}
 
-	onEndReached() {
+	async onEndReached() {
 		//.log("onEndReached()");
-		if (this.state.loading) {
-			this.setState({
-				loadCount : this.state.loadCount + 1
-			})
-
-			return;
+		if (!this.state.loading) {
+			await this.loadMore();
 		}
-
-		this.loadMore();
 	}
 
 	scrollToTop = () => {
@@ -264,6 +259,7 @@ class Basket extends Component {
 	};
 
 	async loadMore() {
+		if (this.state.loading) return false;
 		try {
 			const newStoreProducts =
 				await this.storeProductRepository.findTopStoreProductsInfo(
@@ -286,22 +282,11 @@ class Basket extends Component {
 			}
 
 			this.setState(prevState => ({
+				loading: false,
 				storeProducts: [...prevState.storeProducts, ...newStoreProducts],
 				searchInputValue: ""
-			}), () => {
-				if (this.state.loadCount - 1 === 0) {
-					this.setState({
-						loading: false
-					});
-					return true;
-				}
-	
-				this.setState({
-					loadCount: this.state.loadCount - 1
-				}, () => {
-					this.loadMore();
-				})
-			});
+			}));
+
 			return true;
 		} catch (error) {
 			//.error("Error fetching global products:", error);

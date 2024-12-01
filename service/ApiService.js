@@ -81,9 +81,9 @@ class ApiService {
 
 
 			if (response.status == 401) {
-				//.log("unauthorized::" + response.url);
+				console.log("unauthorized::" + response.url);
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			const responseBody = await response.json();
@@ -95,7 +95,7 @@ class ApiService {
 
 			return responseBody;
 		} catch (error) {
-			//("Local fucking product error: ", error)
+			return undefined;
 		}
 	}
 
@@ -123,7 +123,7 @@ class ApiService {
 			if (response.status == 401) {
 				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			const responseBody = await response.json();
@@ -134,7 +134,7 @@ class ApiService {
 
 			return responseBody;
 		} catch (error) {
-			//("Local fucking product error: ", error)
+			return undefined;
 		}
 	}
 
@@ -169,18 +169,17 @@ class ApiService {
 
 
 			if (response.status == 401) {
-				//.log("unauthorized::" + response.url);
+				console.log("unauthorized::" + response.url);
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			if (!response.ok) {
 				return undefined;
 			}
 
-			return await response.json(); // Return the parsed JSON directly
+			return await response.json();
 		} catch (error) {
-			//("Error occurred: ", error);
 			return undefined;
 		}
 	}
@@ -215,9 +214,8 @@ class ApiService {
 
 
 			if (response.status == 401) {
-				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			const responseBody = await response.json();
@@ -229,7 +227,6 @@ class ApiService {
 
 			return responseBody;
 		} catch (error) {
-			//("Error occurred: ", error);
 			return undefined;
 		}
 	}
@@ -263,7 +260,7 @@ class ApiService {
 			if (response.status == 401) {
 				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			const responseBody = await response.json();
@@ -316,7 +313,7 @@ class ApiService {
 
 
 			if (!response.ok) {
-				throw new Error(`Network response was not ok: ${responseBody.message || response.statusText}`);
+				return undefined;
 			}
 
 			return responseBody;
@@ -362,7 +359,7 @@ class ApiService {
 
 
 			if (!response.ok) {
-				throw new Error(`Network response was not ok: ${responseBody.message || response.statusText}`);
+				return undefined;
 			}
 
 			return responseBody;
@@ -405,14 +402,14 @@ class ApiService {
 
 			if (response.status === 401) {
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			const responseBody = await response.json();
 
 
 			if (!response.ok) {
-				throw new Error(`Network response was not ok: ${responseBody.message || response.statusText}`);
+				return undefined;
 			}
 
 			return responseBody;
@@ -457,14 +454,14 @@ class ApiService {
 
 			if (response.status === 401) {
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			const responseBody = await response.json();
 
 
 			if (!response.ok) {
-				throw new Error(`Network response was not ok: ${responseBody.message || response.statusText}`);
+				return undefined;
 			}
 
 			return responseBody;
@@ -501,7 +498,7 @@ class ApiService {
 
 			if (response.status === 401) {
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			if (response.status === 404) {
@@ -509,7 +506,7 @@ class ApiService {
 			}
 
 			if (!response.ok) {
-				throw new Error(`Network response was not ok: ${response.message || response.statusText}`);
+				return undefined;
 			}
 
 			const responseBody = await response.text();
@@ -521,7 +518,7 @@ class ApiService {
 				return BigInt(responseBody);
 			}
 		} catch (error) {
-			throw error;
+			return undefined;
 		}
 	}
 
@@ -563,7 +560,7 @@ class ApiService {
 			// Handle 401 Unauthorized response
 			if (response.status === 401) {
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			// Check if the response is not OK
@@ -618,7 +615,7 @@ return undefined;		}
 			// Handle 401 Unauthorized response
 			if (response.status === 401) {
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			// Check if the response is not OK
@@ -660,14 +657,14 @@ return undefined;		}
 
 			if (response.status === 401) {
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			const responseBody = await response.json();
 
 
 			if (!response.ok) {
-				throw new Error(`Network response was not ok: ${responseBody.message || response.statusText}`);
+				return undefined;
 			}
 
 			return responseBody;
@@ -709,7 +706,7 @@ return undefined;		}
 			if (response.status == 401) {
 				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			const responseBody = await response.json();
@@ -760,7 +757,7 @@ return undefined;		}
 			// Handle 401 Unauthorized response
 			if (response.status === 401) {
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			// Check if the response is not OK
@@ -778,7 +775,8 @@ return undefined;		}
 				return BigInt(responseBody);
 			}
 		} catch (error) {
-return undefined;		}
+			return undefined;		
+		}
 	}
 
 
@@ -819,7 +817,7 @@ return undefined;		}
 			// Handle 401 Unauthorized response
 			if (response.status === 401) {
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			// Check if the response is not OK
@@ -866,7 +864,7 @@ return undefined;		}
 			if (response.status == 401) {
 				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			const responseBody = await response.json();
@@ -911,7 +909,7 @@ return undefined;		}
 			if (response.status == 401) {
 				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			const responseBody = await response.json();
@@ -956,7 +954,7 @@ return undefined;		}
 
 			if (response.status === 401) {
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			if (response.status === 404) {
@@ -976,7 +974,7 @@ return undefined;		}
 				return BigInt(responseBody);
 			}
 		} catch (error) {
-			throw error;
+			return undefined
 		}
 	}
 
@@ -1008,7 +1006,7 @@ return undefined;		}
 			if (response.status == 401) {
 				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			const responseBody = await response.json();
@@ -1053,7 +1051,7 @@ return undefined;		}
 			if (response.status == 401) {
 				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			const responseBody = await response.json();
@@ -1099,7 +1097,7 @@ return undefined;		}
 			if (response.status == 401) {
 				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			const responseBody = await response.json();
@@ -1150,7 +1148,7 @@ return undefined;		}
 			// Handle 401 Unauthorized response
 			if (response.status === 401) {
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			// Check if the response is not OK
@@ -1203,7 +1201,7 @@ return undefined;		}
 			if (response.status == 401) {
 				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			const responseBody = await response.json(); // Read JSON response only once
@@ -1292,7 +1290,7 @@ return undefined;		}
 
 
 			if (!response.ok) {
-				throw new Error(`Network response was not ok: ${responseBody.message || response.statusText}`);
+				return undefined;
 			}
 
 			return responseBody;
@@ -1333,7 +1331,7 @@ return undefined;		}
 			if (response.status == 401) {
 				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			if (!response.ok) {
@@ -1375,7 +1373,7 @@ return undefined;		}
 
 			if (response.status === 401) {
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			if (response.status === 404) {
@@ -1396,7 +1394,7 @@ return undefined;		}
 			}
 		} catch (error) {
 			//("Error occurred: ", error);
-			throw error;
+			return undefined
 		}
 	}
 
@@ -1434,7 +1432,7 @@ return undefined;		}
 			// Handle 401 Unauthorized response
 			if (response.status === 401) {
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			// Check if the response is not OK
@@ -1478,7 +1476,7 @@ return undefined;		}
 			if (response.status == 401) {
 				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			const responseBody = await response.json(); // Read JSON response only once
@@ -1525,7 +1523,7 @@ return undefined;		}
 			if (response.status == 401) {
 				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			const responseBody = await response.json(); // Read JSON response only once
@@ -1573,7 +1571,7 @@ return undefined;		}
 
 			if (response.status === 401) {
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			// Read the response body as text
@@ -1628,7 +1626,7 @@ return undefined;		}
 			// Handle 401 Unauthorized response
 			if (response.status === 401) {
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			// Check if the response is not OK
@@ -1672,7 +1670,7 @@ return undefined;		}
 			if (response.status == 401) {
 				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			const responseBody = await response.json(); // Read JSON response only once
@@ -1719,7 +1717,7 @@ return undefined;		}
 			if (response.status == 401) {
 				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			const responseBody = await response.json(); // Read JSON response only once
@@ -1766,7 +1764,7 @@ return undefined;		}
 			if (response.status == 401) {
 				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			const responseBody = await response.json(); // Read JSON response only once
@@ -1815,7 +1813,7 @@ return undefined;		}
 			if (response.status === 401) {
 				//(`Bearer ${accessToken}`, `${serverUrl}/api/v1/store/profit/link/get/lastId?storeId=${storeId}`)
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			const responseBody = await response.text();
@@ -1868,7 +1866,7 @@ return undefined;		}
 			if (response.status == 401) {
 				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			const responseBody = await response.json(); // Read JSON response only once
@@ -1915,7 +1913,7 @@ return undefined;		}
 			if (response.status == 401) {
 				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			const responseBody = await response.json(); // Read JSON response only once
@@ -1964,7 +1962,7 @@ return undefined;		}
 
 			if (response.status === 401) {
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			if (response.status === 404) {
@@ -2004,7 +2002,7 @@ return undefined;		}
 			return responseBody;
 		} catch (error) {
 			//("Error occurred: ", error);
-			throw error;
+			return undefined
 		}
 	}
 
@@ -2408,7 +2406,7 @@ return undefined;		}
 			if (response.status == 401) {
 				//.log("unauthorized::" + response.url);
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 			const responseBody = await response.json();
@@ -2588,7 +2586,7 @@ return undefined;		}
 
 			if (response.status === 401) {
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 
@@ -2632,7 +2630,7 @@ return undefined;		}
 
 			if (response.status === 401) {
 				await this.logout(navigation);
-				return;
+				return undefined;
 			}
 
 
@@ -2649,7 +2647,7 @@ return undefined;		}
 				return BigInt(responseBody);
 			}
 		} catch (error) {
-			throw error;
+			return undefined
 		}
 	}
 
@@ -2687,7 +2685,7 @@ return undefined;		}
 
 			return responseBody;
 		} catch (error) {
-			throw error;
+			return undefined
 		}
 	}
 
@@ -2733,7 +2731,7 @@ return undefined;		}
 				return undefined;
 			}
 		} catch (error) {
-			throw error;
+			return undefined
 		}
 	}
 }

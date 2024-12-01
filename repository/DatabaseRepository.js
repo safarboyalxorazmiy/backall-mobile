@@ -24,21 +24,22 @@ class DatabaseRepository {
                  serial_number TEXT NOT NULL,
                  type          TEXT NOT NULL,
                  global_id     INTEGER,
-                 saved         boolean
+                 saved         INTEGER CHECK (saved IN (0, 1))
              );`,
 
 						`CREATE TABLE IF NOT EXISTS store_product
              (
                  id            INTEGER PRIMARY KEY AUTOINCREMENT,
                  product_id    INTEGER,
-                 nds           BOOLEAN,
+                 nds           INTEGER CHECK (nds IN (0, 1)),
                  price         DOUBLE,
                  selling_price DOUBLE,
                  percentage    DOUBLE,
                  count         DOUBLE,
                  count_type    TEXT,
                  global_id     INTEGER,
-                 saved         BOOLEAN,
+                 saved         INTEGER CHECK (saved IN (0, 1)),
+                 updated       INTEGER CHECK (updated IN (0, 1)),
                  FOREIGN KEY (product_id) REFERENCES product (id)
              );`,
 
@@ -51,7 +52,7 @@ class DatabaseRepository {
                  selling_price DOUBLE,
                  created_date  TIMESTAMP,
                  global_id     INTEGER,
-                 saved         boolean,
+                 saved         INTEGER CHECK (saved IN (0, 1)),
                  FOREIGN KEY (product_id) REFERENCES product (id)
              );`,
 
@@ -62,7 +63,7 @@ class DatabaseRepository {
                  date         TEXT NOT NULL,
                  amount       DOUBLE,
                  global_id    INTEGER,
-                 saved        boolean
+                 saved         INTEGER CHECK (saved IN (0, 1))
              );`,
 
 						`CREATE TABLE IF NOT EXISTS sell_history_group
@@ -71,7 +72,7 @@ class DatabaseRepository {
                  group_id   INTEGER,
                  history_id INTEGER,
                  global_id  INTEGER,
-                 saved      boolean,
+                 saved      INTEGER CHECK (saved IN (0, 1)),
                  FOREIGN KEY (group_id) REFERENCES sell_group (id),
                  FOREIGN KEY (history_id) REFERENCES sell_history (id)
              );`,
@@ -85,7 +86,8 @@ class DatabaseRepository {
                  profit       DOUBLE  NOT NULL,
                  created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                  global_id    INTEGER,
-                 saved        boolean
+                 saved        INTEGER CHECK (saved IN (0, 1))
+
              );`,
 
 						`CREATE TABLE IF NOT EXISTS profit_group
@@ -95,7 +97,8 @@ class DatabaseRepository {
                  date         TEXT NOT NULL,
                  profit       DOUBLE,
                  global_id    INTEGER,
-                 saved        boolean
+                 saved        INTEGER CHECK (saved IN (0, 1))
+
              );`,
 
 						`CREATE TABLE IF NOT EXISTS profit_history_group
@@ -104,7 +107,8 @@ class DatabaseRepository {
                  global_id  INTEGER,
                  history_id INTEGER NOT NULL,
                  group_id   INTEGER NOT NULL,
-                 saved      boolean,
+                 saved      INTEGER CHECK (saved IN (0, 1))
+,
                  FOREIGN KEY (group_id) REFERENCES profit_group (id),
                  FOREIGN KEY (history_id) REFERENCES profit_history (id)
              );`,
@@ -117,7 +121,8 @@ class DatabaseRepository {
                  date      TEXT   NOT NULL,
                  amount    DOUBLE NOT NULL,
                  global_id INTEGER,
-                 saved     boolean
+                 saved     INTEGER CHECK (saved IN (0, 1))
+
              );`,
 
 						`CREATE TABLE IF NOT EXISTS sell_amount_date
@@ -126,27 +131,10 @@ class DatabaseRepository {
                  date      TEXT   NOT NULL,
                  amount    DOUBLE NOT NULL,
                  global_id INTEGER,
-                 saved     boolean
-             );`,
+                 saved     INTEGER CHECK (saved IN (0, 1))
 
-						// `DROP TABLE profit_amount_date;`,
-						// `DROP TABLE sell_amount_date;`
-						// `DELETE FROM sell_history_group;`,
-						// `DELETE FROM sell_history;`,
-						// `DELETE FROM sell_group;`,
-
-						// `DELETE FROM profit_history_group;`,
-						// `DELETE FROM profit_history;`,
-						// `DELETE FROM profit_group;`,
-
-						// `DELETE FROM store_product;`,
-						// `DELETE FROM product;`,
-						// `DROP TABLE profit_amount_date;`,
-						// `DELETE FROM sell_amount_date;`,
-
-						// `DROP TABLE sell_history; DROP TABLE sell_group; DROP TABLE sell_history_group;`
-						// `DROP TABLE profit_history;`,
-					];
+             );`
+				];
 
 					//.log(queries)
 					await this.executeQueries(tx, queries);

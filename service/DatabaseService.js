@@ -44,7 +44,7 @@ class DatabaseService {
 			const result = await new Promise((resolve, reject) => {
 				this.db.transaction((tx) => {
 					tx.executeSql(
-						"INSERT INTO store_products (product_id, price, sellingPrice, percentage, count, countType) VALUES (?, ?, ?, ?, ?, ?)",
+						"INSERT INTO store_products (product_id, price, sellingPrice, percentage, count, countType) VALUES (?, ?, ?, ?, ?, ?);",
 						[productId, price, sellingPrice, percentage, count, countType],
 						(tx, results) => {
 							if (results.insertId) {
@@ -226,4 +226,4 @@ class DatabaseService {
 	}
 }
 
-export default DatabaseService;  
+export default DatabaseService;

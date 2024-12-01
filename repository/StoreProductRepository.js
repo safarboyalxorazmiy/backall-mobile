@@ -17,7 +17,7 @@ class StoreProductRepository {
                serial_number TEXT NOT NULL,
                type          TEXT NOT NULL,
                global_id     INTEGER,
-               saved         boolean
+               saved         INTEGER CHECK (saved IN (0, 1))
            );`
 				);
 
@@ -26,15 +26,15 @@ class StoreProductRepository {
            (
                id            INTEGER PRIMARY KEY AUTOINCREMENT,
                product_id    INTEGER,
-               nds           BOOLEAN,
+               nds           INTEGER CHECK (nds IN (0, 1)),
                price         DOUBLE,
                selling_price DOUBLE,
                percentage    DOUBLE,
                count         DOUBLE,
                count_type    TEXT,
                global_id     INTEGER,
-               saved         boolean,
-               updated       boolean,
+               saved     		 INTEGER CHECK (saved IN (0, 1)),
+               updated       INTEGER CHECK (updated IN (0, 1)),
                FOREIGN KEY (product_id) REFERENCES product (id)
            );`
 				);
@@ -205,7 +205,7 @@ class StoreProductRepository {
                                           global_id,
                                           saved,
                                           updated)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
 							[
 								product_id,
 								nds,
