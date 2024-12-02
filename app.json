@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Backall",
-    "slug": "Backall-mobile",
+    "slug": "backall-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -25,14 +25,14 @@
       "icon": "./assets/adaptive-icon.png",
       "jsEngine": "jsc",
       "supportsTablet": true,
-      "bundleIdentifier": "com.safarboyalkhwarizmi.Backallmobile"
+      "bundleIdentifier": "com.safarboyalxorazmiy.Backallmobile"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.safarboyalkhwarizmi.Backallmobile"
+      "package": "com.safarboyalxorazmiy.Backallmobile"
     },
     "web": {
       "bundler": "metro",
@@ -40,15 +40,16 @@
     },
     "extra": {
       "eas": {
-        "projectId": "488daa54-ef3c-48ff-b4cb-744370363af0"
+        "projectId": "b592b50e-0d5a-4da1-a8eb-5e73267755b7"
       }
     },
     "runtimeVersion": "sdk-49.0.13",
     "updates": {
-      "url": "https://u.expo.dev/488daa54-ef3c-48ff-b4cb-744370363af0"
+      "url": "https://u.expo.dev/b592b50e-0d5a-4da1-a8eb-5e73267755b7"
     },
     "plugins": [
       "expo-localization"
-    ]
+    ],
+    "owner": "safarboyalxorazmiy"
   }
 }

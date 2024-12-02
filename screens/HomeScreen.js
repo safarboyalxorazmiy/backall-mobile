@@ -1432,8 +1432,12 @@ class Home extends Component {
 									})
 								}}
 								onPress={async () => {
-									if (await AsyncStorage.getItem("isFetchingNotCompleated") == "true") {
-										// Actions not saved yet
+									if (await AsyncStorage.getItem("productNotSaved") == "true" || 
+									await AsyncStorage.getItem("storeProductNotSaved") == "true" || 
+									await AsyncStorage.getItem("shoppingNotSaved") == "true" 
+								) {
+										console.log("Actions not saved yet");
+										await AsyncStorage.setItem("animation", "false");
 										return;
 									}
 
