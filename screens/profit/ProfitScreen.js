@@ -130,7 +130,7 @@ class Profit extends Component {
 			}
 
 			/* Month profit amount setting value ** */
-			let thisMonthProfitAmount = parseInt(await AsyncStorage.getItem("month_profit_amount"));
+			let thisMonthProfitAmount = await this.amountDateRepository.getCurrentMonthProfitAmount();
 
 			let currentDate = new Date();
 			let currentMonth = currentDate.getMonth();
@@ -278,7 +278,7 @@ class Profit extends Component {
 		}
 
 		/* Month profit amount setting value ** */
-		let thisMonthProfitAmount = parseInt(await AsyncStorage.getItem("month_profit_amount"));
+		let thisMonthProfitAmount = this.amountDateRepository.getCurrentMonthProfitAmount();
 		thisMonthProfitAmount = isNaN(thisMonthProfitAmount) ? 0 : thisMonthProfitAmount;
 
 		let currentDate = new Date();

@@ -73,6 +73,7 @@ class LoginVerificationScreen extends Component {
 				await AsyncStorage.setItem("loadBasket", "true");
 				await AsyncStorage.setItem("isDownloaded", "false");
 
+				await AsyncStorage.setItem("fromScreen", "LoginVerification");
 				await AsyncStorage.setItem("isNewUser", result.isNewUser + "");
 
 				await navigation.navigate("Home");

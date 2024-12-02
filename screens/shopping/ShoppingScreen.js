@@ -128,7 +128,7 @@ class Shopping extends Component {
 			}
 
 			/* Month sell amount setting value ** */
-			let thisMonthSellAmount = parseInt(await AsyncStorage.getItem("month_sell_amount"));
+			let thisMonthSellAmount = await this.amountDateRepository.getCurrentMonthSellAmount();
 
 			let currentDate = new Date();
 			let currentMonth = currentDate.getMonth();
@@ -321,7 +321,7 @@ class Shopping extends Component {
 		}
 
 		/* Month sell amount setting value ** */
-		let thisMonthSellAmount = parseInt(await AsyncStorage.getItem("month_sell_amount"));
+		let thisMonthSellAmount = await this.amountDateRepository.getCurrentMonthSellAmount();
 		thisMonthSellAmount = isNaN(thisMonthSellAmount) ? 0 : thisMonthSellAmount;
 
 		let currentDate = new Date();

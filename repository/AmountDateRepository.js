@@ -19,10 +19,9 @@ class AmountDateRepository {
                          saved     INTEGER CHECK (saved IN (0, 1))
                      );`,
                     [],
-                    () => //.log("profit_amount_date table created successfully."),
-                    (_, error) => {
-                        //.error("Error creating profit_amount_date table:", error);
-                        reject(error);
+                    () => {
+                    },
+                    () => {
                         return true; // Abort transaction
                     }
                 );
@@ -37,25 +36,23 @@ class AmountDateRepository {
                          saved     INTEGER CHECK (saved IN (0, 1))
                      );`,
                     [],
-                    () => //.log("sell_amount_date table created successfully."),
-                    (_, error) => {
-                        //.error("Error creating sell_amount_date table:", error);
-                        reject(error);
+                    () => {
+                    },
+                    () => {
                         return true; // Abort transaction
                     }
                 );
             },
-            transactionError => {
-                //.error("Transaction error:", transactionError);
-                reject(transactionError);
+            () => {
+                return true;
             },
             () => {
-                //.log("All tables created successfully.");
                 resolve(true);
             }
         );
     });
 	}
+
 
 	async createProfitAmountWithAllValues(profitAmount, date, global_id, saved) {
 		const insertQuery = `
@@ -314,7 +311,7 @@ class AmountDateRepository {
 					}
 				},
 				error => {
-					resolve([]); 
+					resolve([]); // Return an empty array if any error occurs
 				});
 			});
 		});
@@ -404,9 +401,44 @@ class AmountDateRepository {
 		}
 	}
 
+	async getCurrentMonthProfitAmount() {
+		return new Promise((resolve) => {
+			const selectQuery = `
+				SELECT COALESCE(SUM(amount), 0.00) AS total_amount
+				FROM profit_amount_date
+				WHERE MONTH(date) = MONTH(CURRENT_TIMESTAMP)
+					AND YEAR(date) = YEAR(CURRENT_TIMESTAMP)
+			`;
+			this.db.transaction((tx) => {
+				tx.executeSql(selectQuery, [], (_, { rows: { _array } }) => {
+					resolve(_array[0].total_amount);
+				}, () => {
+					resolve(0.00);
+				});
+			});
+		});
+	}
+
+	async getCurrentMonthSellAmount() {
+		return new Promise((resolve) => {
+			const selectQuery = `
+				SELECT COALESCE(SUM(amount), 0.00) AS total_amount
+				FROM sell_amount_date
+				WHERE MONTH(date) = MONTH(CURRENT_TIMESTAMP)
+					AND YEAR(date) = YEAR(CURRENT_TIMESTAMP)
+			`;
+			this.db.transaction((tx) => {
+				tx.executeSql(selectQuery, [], (_, { rows: { _array } }) => {
+					resolve(_array[0].total_amount);
+				}, () => {
+					resolve(0.00);
+				});
+			});
+		});
+	}
 
 	async getProfitAmountInfoByDate(date) {
-		return new Promise((resolve, reject) => {
+		return new Promise((resolve) => {
 			const selectQuery =
 				`SELECT amount
                  FROM profit_amount_date
@@ -418,13 +450,16 @@ class AmountDateRepository {
 						} else {
 							resolve(0.00);
 						}
+					},
+					() => {
+						resolve(0.00);
 					});
 			});
 		});
 	}
 
 	async getSellAmountInfoByDate(date) {
-		return new Promise((resolve, reject) => {
+		return new Promise((resolve) => {
 			const selectQuery =
 				`SELECT amount
                  FROM sell_amount_date
@@ -436,6 +471,9 @@ class AmountDateRepository {
 						} else {
 							resolve(0.00);
 						}
+					},
+					() => {
+						resolve(0.00);
 					});
 			});
 		});

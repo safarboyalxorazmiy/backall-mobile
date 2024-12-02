@@ -197,40 +197,40 @@ class Home extends Component {
 						await this.getAmountInfo();
 					}
 				}
-
-				//************************************
-							
-				//.log("FOCUSED");
-				//.log("-------");
-				
-				let notPayed = await AsyncStorage.getItem("notPayed");
-				if (notPayed == "true") {
-					//.log("not payed")
-					this.setState({notPayed: true});
-				} else {
-					//.log("payed")
-					this.setState({notPayed: false});
-				}
-
-				// !IMPORTANT 🔭******************************
-				// Dapadaki kirim bilan foydani go'rsatish.
-				await this.amountDateRepository.init();
-				await this.getAmountInfo();
-				//************************************
-
-				// !IMPORTANT 🔭******************************
-				// LineChart diagramma datasini yuklab olish.
-				let sellAmountDateData = await this.amountDateRepository.getSellAmountDate();
-
-				if (this.state.diagramData != sellAmountDateData) {
-					this.setState({diagramData: sellAmountDateData});
-				}
-				//************************************
-
 			}
 
-			await AsyncStorage.setItem("fromScreen", "Home");
 			await AsyncStorage.setItem("isDownloaded", "true");
+
+			//************************************
+						
+			//.log("FOCUSED");
+			//.log("-------");
+			
+			let notPayed = await AsyncStorage.getItem("notPayed");
+			if (notPayed == "true") {
+				//.log("not payed")
+				this.setState({notPayed: true});
+			} else {
+				//.log("payed")
+				this.setState({notPayed: false});
+			}
+
+			// !IMPORTANT 🔭******************************
+			// Dapadaki kirim bilan foydani go'rsatish.
+			await this.amountDateRepository.init();
+			await this.getAmountInfo();
+			//************************************
+
+			// !IMPORTANT 🔭******************************
+			// LineChart diagramma datasini yuklab olish.
+			let sellAmountDateData = await this.amountDateRepository.getSellAmountDate();
+
+			if (this.state.diagramData != sellAmountDateData) {
+				this.setState({diagramData: sellAmountDateData});
+			}
+			//************************************
+
+
 
 			// !IMPORTANT 🔭******************************
 			// If that is new user show payment modal untill he pays
@@ -378,20 +378,18 @@ class Home extends Component {
 					await this.getAmountInfo();
 				}
 			}
-
-			// !IMPORTANT 🔭******************************
-			// Dapadaki kirim bilan foydani go'rsatish.
-			await this.amountDateRepository.init();
-			await this.getAmountInfo();
-			//************************************
-
-			this.setState({spinner: false});
-			//************************************
 		}
 
-		await AsyncStorage.setItem("fromScreen", "Home");
 		await AsyncStorage.setItem("isDownloaded", "true");
 
+		// !IMPORTANT 🔭******************************
+		// Dapadaki kirim bilan foydani go'rsatish.
+		await this.amountDateRepository.init();
+		await this.getAmountInfo();
+		//************************************
+
+		this.setState({spinner: false});
+		//************************************
 		// !IMPORTANT 🔭******************************
 		// Agar yangi user bo'lsa payment oynasini ochadigan qilib qo'yamiz
 
@@ -804,7 +802,7 @@ class Home extends Component {
 				await this.apiService.getSellGroups(
 					lastSellGroupGlobalId,
 					0,
-					1000000,
+					1000000000,
 					this.props.navigation
 				);
 
@@ -891,7 +889,7 @@ class Home extends Component {
 
 			response = 
 				await this.apiService.getSellAmountDate(
-					lastSellAmountGlobalId + 1, 0, 1000000, this.props.navigation
+					lastSellAmountGlobalId + 1, 0, 1000000000, this.props.navigation
 				);
 
 			if (response == undefined) {
@@ -900,7 +898,7 @@ class Home extends Component {
 		} catch (error) {
 			//.error("getSellAmountDate():", error);
 			this.setState({
-				lastSize: 1000000,
+				lastSize: 1000000000,
 				lastPage: 0
 			});
 
@@ -944,7 +942,7 @@ class Home extends Component {
 
 			response = 
 				await this.apiService.getProfitGroups(
-					lastProfitGroupGlobalId, 0, 1000000, this.props.navigation
+					lastProfitGroupGlobalId, 0, 1000000000, this.props.navigation
 				);
 			
 			if (response == undefined) {
@@ -953,7 +951,7 @@ class Home extends Component {
 		} catch (error) {
 			//.error("Error fetching getProfitGroups():", error);
 			this.setState({
-				lastSize: 1000000,
+				lastSize: 1000000000,
 				lastPage: 0
 			});
 
@@ -1034,7 +1032,7 @@ class Home extends Component {
 
 			response = 
 				await this.apiService.getProfitAmountDate(
-					lastProfitAmountDateGlobalId + 1, 0, 1000000, this.props.navigation
+					lastProfitAmountDateGlobalId + 1, 0, 1000000000, this.props.navigation
 				);
 
 			if (response == undefined) {
@@ -1044,7 +1042,7 @@ class Home extends Component {
 			//.error("getProfitAmountDate():", error);
 			this.setState({
 				lastSize: 0,
-				lastPage: 1000000
+				lastPage: 1000000000
 			});
 
 			return true;
