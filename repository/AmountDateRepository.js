@@ -406,8 +406,8 @@ class AmountDateRepository {
 			const selectQuery = `
 				SELECT COALESCE(SUM(amount), 0.00) AS total_amount
 				FROM profit_amount_date
-				WHERE MONTH(date) = MONTH(CURRENT_TIMESTAMP)
-					AND YEAR(date) = YEAR(CURRENT_TIMESTAMP)
+				WHERE STRFTIME('%m', date) = STRFTIME('%m', CURRENT_TIMESTAMP)
+					AND STRFTIME('%Y', date) = STRFTIME('%Y', CURRENT_TIMESTAMP)
 			`;
 			this.db.transaction((tx) => {
 				tx.executeSql(selectQuery, [], (_, { rows: { _array } }) => {
@@ -424,8 +424,8 @@ class AmountDateRepository {
 			const selectQuery = `
 				SELECT COALESCE(SUM(amount), 0.00) AS total_amount
 				FROM sell_amount_date
-				WHERE MONTH(date) = MONTH(CURRENT_TIMESTAMP)
-					AND YEAR(date) = YEAR(CURRENT_TIMESTAMP)
+				WHERE STRFTIME('%m', date) = STRFTIME('%m', CURRENT_TIMESTAMP)
+					AND STRFTIME('%Y', date) = STRFTIME('%Y', CURRENT_TIMESTAMP)
 			`;
 			this.db.transaction((tx) => {
 				tx.executeSql(selectQuery, [], (_, { rows: { _array } }) => {

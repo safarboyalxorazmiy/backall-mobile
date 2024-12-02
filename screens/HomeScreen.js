@@ -206,6 +206,8 @@ class Home extends Component {
 			//.log("FOCUSED");
 			//.log("-------");
 			
+			console.log("Not payed data")
+
 			let notPayed = await AsyncStorage.getItem("notPayed");
 			if (notPayed == "true") {
 				//.log("not payed")
@@ -215,22 +217,27 @@ class Home extends Component {
 				this.setState({notPayed: false});
 			}
 
+			console.log("Amount data")
+
 			// !IMPORTANT 🔭******************************
 			// Dapadaki kirim bilan foydani go'rsatish.
 			await this.amountDateRepository.init();
 			await this.getAmountInfo();
 			//************************************
 
+			console.log("Diagram data")
 			// !IMPORTANT 🔭******************************
 			// LineChart diagramma datasini yuklab olish.
 			let sellAmountDateData = await this.amountDateRepository.getSellAmountDate();
 
-			if (this.state.diagramData != sellAmountDateData) {
+			if (sellAmountDateData.length > 0 && this.state.diagramData != sellAmountDateData) {
 				this.setState({diagramData: sellAmountDateData});
 			}
 			//************************************
 
 
+
+			console.log("New user")
 
 			// !IMPORTANT 🔭******************************
 			// If that is new user show payment modal untill he pays
@@ -421,7 +428,7 @@ class Home extends Component {
 		// LineChart diagramma datasini yuklab olish.
 		let sellAmountDateData = await this.amountDateRepository.getSellAmountDate();
 
-		if (this.state.diagramData != sellAmountDateData) {
+		if (sellAmountDateData.length > 0 &&this.state.diagramData != sellAmountDateData) {
 			this.setState({diagramData: sellAmountDateData});
 		}
 		//************************************
