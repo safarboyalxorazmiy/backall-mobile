@@ -256,7 +256,7 @@ class Sell extends Component {
 				newSellingProducts.findIndex(
 					element => element.id === storeProduct[0].id && element.count > 0
 				);
-
+			
 			if (existingProductIndex !== -1) {
 				newSellingProducts[existingProductIndex].count += 1;
 				let minusedValue = storeProduct[0].count - newSellingProducts[existingProductIndex].count;
@@ -291,6 +291,10 @@ class Sell extends Component {
 				console.log("Profit:: ", + this.state.profit);
 			} else {
 				let newSellingProduct = storeProduct[0];
+				if (newSellingProduct.count <= 0) {
+					return;
+				}
+
 				newSellingProduct.count = 1;
 				newSellingProducts.push(newSellingProduct);
 

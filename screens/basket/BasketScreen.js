@@ -276,6 +276,13 @@ class Basket extends Component {
 
 			let last = newStoreProducts[newStoreProducts.length - 1];
 			if (last != undefined) {
+				if (this.state.lastId === last.id) {
+					this.setState({
+						loading: false
+					});
+
+					return false;
+				}
 				this.setState({
 					lastId: last.id
 				});
