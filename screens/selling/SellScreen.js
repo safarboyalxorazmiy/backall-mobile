@@ -285,8 +285,10 @@ class Sell extends Component {
 				this.setState({
 					profit: 
 						this.state.profit + 
-						(newSellingProducts[existingProductIndex].count * (newSellingProducts[existingProductIndex].selling_price - newSellingProducts[existingProductIndex].price))
+						((newSellingProducts[existingProductIndex].selling_price - newSellingProducts[existingProductIndex].price))
 				});
+
+				console.log("Profit:: ", + this.state.profit);
 			} else {
 				let newSellingProduct = storeProduct[0];
 				newSellingProduct.count = 1;
@@ -312,6 +314,8 @@ class Sell extends Component {
 						newSellingProduct.price)
 					)
 				});
+
+				console.log("Profit:: ", + this.state.profit);
 			}
 
 			//.log("PRODUCT IS ADDING..");

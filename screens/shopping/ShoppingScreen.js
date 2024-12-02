@@ -130,16 +130,10 @@ class Shopping extends Component {
 			/* Month sell amount setting value ** */
 			let thisMonthSellAmount = await this.amountDateRepository.getCurrentMonthSellAmount();
 
-			let currentDate = new Date();
-			let currentMonth = currentDate.getMonth();
-			let lastStoredMonth = parseInt(await AsyncStorage.getItem("month"));
-
-			if (currentMonth === lastStoredMonth) {
-				this.setState({
-					thisMonthSellAmount: thisMonthSellAmount,
-					incomeTitle: i18n.t("oyIncome")
-				});
-			}
+			this.setState({
+				thisMonthSellAmount: thisMonthSellAmount,
+				incomeTitle: i18n.t("oyIncome")
+			});
 
 			// New history created load new items **
 			if (
@@ -324,16 +318,10 @@ class Shopping extends Component {
 		let thisMonthSellAmount = await this.amountDateRepository.getCurrentMonthSellAmount();
 		thisMonthSellAmount = isNaN(thisMonthSellAmount) ? 0 : thisMonthSellAmount;
 
-		let currentDate = new Date();
-		let currentMonth = currentDate.getMonth();
-		let lastStoredMonth = parseInt(await AsyncStorage.getItem("month"));
-
-		if (currentMonth === lastStoredMonth) {
-			this.setState({
-				thisMonthSellAmount: thisMonthSellAmount,
-				incomeTitle: i18n.t("oyIncome")
-			});
-		}
+		this.setState({
+			thisMonthSellAmount: thisMonthSellAmount,
+			incomeTitle: i18n.t("oyIncome")
+		});
 
 		// New history created load new items **
 		if (
@@ -642,8 +630,8 @@ class Shopping extends Component {
 			lastGroupId: state.lastGroupId - 11,
 			loadCount: state.loadCount + 1,
 			loading: true
-		}), () => {
-			this.loadMore();
+		}), async () => {
+			await this.loadMore();
 		});
 	}
 

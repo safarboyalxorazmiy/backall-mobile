@@ -132,16 +132,10 @@ class Profit extends Component {
 			/* Month profit amount setting value ** */
 			let thisMonthProfitAmount = await this.amountDateRepository.getCurrentMonthProfitAmount();
 
-			let currentDate = new Date();
-			let currentMonth = currentDate.getMonth();
-			let lastStoredMonth = parseInt(await AsyncStorage.getItem("month"));
-
-			if (currentMonth === lastStoredMonth) {
-				this.setState({
-					thisMonthProfitAmount: thisMonthProfitAmount,
-					incomeTitle: i18n.t("oyIncome")
-				});
-			}
+			this.setState({
+				thisMonthProfitAmount: thisMonthProfitAmount,
+				incomeTitle: i18n.t("oyIncome")
+			});
 
 			// New history created load new items **
 			if (
@@ -160,7 +154,7 @@ class Profit extends Component {
 						incomeTitle: i18n.t("oyIncome"),
 						localFullyLoaded: false
 					}, () => {
-						this.onEndReached()
+						// this.onEndReached()
 					});
 				});
 				
@@ -208,7 +202,7 @@ class Profit extends Component {
 						lastGroupId: 0,
 						localFullyLoaded: false
 					}, () => {
-						this.onEndReached();
+						// this.onEndReached();
 					});
 
 					return;
@@ -235,7 +229,7 @@ class Profit extends Component {
 						thisMonthProfitAmount: amount[0].total_amount,
 						localFullyLoaded: false
 					}, () => {
-						this.onEndReached();
+						// this.onEndReached();
 					});
 				});
 				return;
@@ -254,7 +248,7 @@ class Profit extends Component {
 						incomeTitle: i18n.t("oyIncome"),
 						localFullyLoaded: false
 					}, () => {
-						this.onEndReached();
+						// this.onEndReached();
 					});
 				})
 				return;
@@ -281,16 +275,10 @@ class Profit extends Component {
 		let thisMonthProfitAmount = this.amountDateRepository.getCurrentMonthProfitAmount();
 		thisMonthProfitAmount = isNaN(thisMonthProfitAmount) ? 0 : thisMonthProfitAmount;
 
-		let currentDate = new Date();
-		let currentMonth = currentDate.getMonth();
-		let lastStoredMonth = parseInt(await AsyncStorage.getItem("month"));
-
-		if (currentMonth === lastStoredMonth) {
-			this.setState({
-				thisMonthProfitAmount: thisMonthProfitAmount,
-				incomeTitle: i18n.t("oyProfit")
-			});
-		}
+		this.setState({
+			thisMonthProfitAmount: thisMonthProfitAmount,
+			incomeTitle: i18n.t("oyProfit")
+		});
 
 		// New history created load new items **
 		if (
@@ -311,7 +299,7 @@ class Profit extends Component {
 				groupedHistories: [],
 				localFullyLoaded: false
 			}, () => {
-				this.onEndReached();
+				//this.onEndReached();
 			});
 		})
 	}
@@ -589,8 +577,8 @@ class Profit extends Component {
 		this.setState(state => ({
 			lastGroupId: state.lastGroupId - 11,
 			loadCount: state.loadCount + 1
-		}), () => {
-			this.loadMore();
+		}), async  () => {
+			await this.loadMore();
 		});
 	}
 

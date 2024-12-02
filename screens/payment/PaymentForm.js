@@ -491,7 +491,7 @@ class PaymentForm extends Component {
 									color: "white",
 									fontFamily: "Gilroy-Regular",
 									fontSize: 24
-								}}>126,529.30 </Text>
+								}}>128 000 </Text>
 
 								<Text style={{
 									color: "white",
